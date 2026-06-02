@@ -1,0 +1,55 @@
+{
+ "actions": [],
+ "creation": "2026-06-02 00:00:00.000000",
+ "custom": 0,
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "technical_item",
+  "value",
+  "unit",
+  "remarks"
+ ],
+ "fields": [
+  {
+   "fieldname": "technical_item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Item T\u00e9cnico",
+   "options": "Technical Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "value",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Valor"
+  },
+  {
+   "fetch_from": "technical_item.default_unit",
+   "fieldname": "unit",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Unidade",
+   "read_only": 1
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "label": "Observa\u00e7\u00f5es"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-06-02 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Engenharia",
+ "name": "Project Specification",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
