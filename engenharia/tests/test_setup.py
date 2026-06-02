@@ -214,3 +214,95 @@ def create_test_task(project=None, subject=None, **kwargs):
 	doc = frappe.get_doc(data)
 	doc.insert(ignore_permissions=True)
 	return doc
+
+
+def create_test_public_agency(agency_name=None, **kwargs):
+	data = {
+		"doctype": "Public Agency",
+		"agency_name": agency_name or _uid("Prefeitura"),
+		**kwargs,
+	}
+	doc = frappe.get_doc(data)
+	doc.insert(ignore_permissions=True)
+	return doc
+
+
+def create_test_deadline(project=None, description=None, **kwargs):
+	if not project:
+		project = create_test_construction_project().name
+	data = {
+		"doctype": "Deadline",
+		"project": project,
+		"description": description or _uid("Prazo"),
+		"due_date": today(),
+		**kwargs,
+	}
+	doc = frappe.get_doc(data)
+	doc.insert(ignore_permissions=True)
+	return doc
+
+
+def create_test_communication_log(customer=None, project=None, **kwargs):
+	if not customer and not project:
+		project = create_test_construction_project().name
+		customer = frappe.db.get_value("Construction Project", project, "customer")
+	data = {
+		"doctype": "Communication Log",
+		"customer": customer,
+		"project": project,
+		"subject": _uid("Comunicação"),
+		"communication_type": "Telefone",
+		**kwargs,
+	}
+	doc = frappe.get_doc(data)
+	doc.insert(ignore_permissions=True)
+	return doc
+
+
+def create_test_time_log(project=None, activity=None, **kwargs):
+	if not project:
+		project = create_test_construction_project().name
+	data = {
+		"doctype": "Time Log",
+		"project": project,
+		"activity": activity or _uid("Atividade"),
+		"log_date": today(),
+		"duration_minutes": kwargs.pop("duration_minutes", 60),
+		**kwargs,
+	}
+	doc = frappe.get_doc(data)
+	doc.insert(ignore_permissions=True)
+	return doc
+
+
+def create_test_permit(project=None, **kwargs):
+	if not project:
+		project = create_test_construction_project().name
+	data = {
+		"doctype": "Permit",
+		"project": project,
+		"permit_type": "Alvará",
+		"protocol_date": today(),
+		**kwargs,
+	}
+	doc = frappe.get_doc(data)
+	doc.insert(ignore_permissions=True)
+	return doc
+
+
+def create_test_payment(project=None, amount=1000, **kwargs):
+	if not project:
+		project = create_test_construction_project().name
+	customer = frappe.db.get_value("Construction Project", project, "customer")
+	data = {
+		"doctype": "Payment",
+		"project": project,
+		"customer": customer,
+		"amount": amount,
+		"due_date": today(),
+		"status": "Pendente",
+		**kwargs,
+	}
+	doc = frappe.get_doc(data)
+	doc.insert(ignore_permissions=True)
+	return doc

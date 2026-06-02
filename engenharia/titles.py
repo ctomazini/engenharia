@@ -10,6 +10,10 @@ COMPOSED = {
 	"Payment": False,
 	"Work Cost": True,
 	"Reimbursable Expense": True,
+	"Deadline": False,
+	"Communication Log": False,
+	"Time Log": False,
+	"Permit": False,
 }
 
 
