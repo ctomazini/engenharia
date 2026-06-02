@@ -1,0 +1,111 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:STGE-{YYYY}-{####}",
+ "creation": "2026-06-02 00:00:00.000000",
+ "custom": 0,
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "project",
+  "stage_type",
+  "col_break_1",
+  "status",
+  "progress",
+  "order",
+  "sec_dates",
+  "start_date",
+  "expected_end",
+  "actual_end"
+ ],
+ "fields": [
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Obra",
+   "options": "Construction Project",
+   "reqd": 1
+  },
+  {
+   "fieldname": "stage_type",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Tipo de Etapa",
+   "options": "Stage Type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "col_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "N\u00e3o iniciada",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "N\u00e3o iniciada\nEm andamento\nConclu\u00edda"
+  },
+  {
+   "fieldname": "progress",
+   "fieldtype": "Percent",
+   "in_list_view": 1,
+   "label": "Avan\u00e7o"
+  },
+  {
+   "fieldname": "order",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Ordem"
+  },
+  {
+   "fieldname": "sec_dates",
+   "fieldtype": "Section Break",
+   "label": "Datas"
+  },
+  {
+   "fieldname": "start_date",
+   "fieldtype": "Date",
+   "label": "In\u00edcio"
+  },
+  {
+   "fieldname": "expected_end",
+   "fieldtype": "Date",
+   "label": "Previs\u00e3o de T\u00e9rmino"
+  },
+  {
+   "fieldname": "actual_end",
+   "fieldtype": "Date",
+   "label": "T\u00e9rmino Real"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-06-02 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Engenharia",
+ "name": "Project Stage",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "project,stage_type,status",
+ "sort_field": "order",
+ "sort_order": "ASC",
+ "track_changes": 1
+}
