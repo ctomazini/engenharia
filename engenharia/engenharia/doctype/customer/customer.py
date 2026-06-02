@@ -2,16 +2,24 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 
-from engenharia.validators import validar_cnpj, validar_cpf, validar_email, validar_telefone
+from engenharia.validators import limpar_numerico, validar_cnpj, validar_cpf, validar_email, validar_telefone
 
 
 class Customer(Document):
 	def before_save(self):
 		if self.person_type == "Pessoa Física":
 			self.trade_name = None
+			self.legal_representative = None
+			self.legal_representative_role = None
+			self.legal_representative_cpf = None
+			self.legal_representative_nationality = None
 			self.cnpj = None
 		else:
 			self.cpf = None
+			self.rg = None
+			self.marital_status = None
+			self.profession = None
+			self.nationality = None
 
 	def validate(self):
 		if self.person_type == "Pessoa Física":
@@ -28,14 +36,26 @@ class Customer(Document):
 					title=_("Campo obrigatório"),
 				)
 			self.cnpj = validar_cnpj(self.cnpj)
-
-		if self.phone:
-			tipo = "celular" if len((self.phone or "").replace(" ", "")) > 10 else "fixo"
-			self.phone = validar_telefone(self.phone, tipo=tipo)
-		if self.email:
-			self.email = validar_email(self.email)
+			if self.legal_representative_cpf:
+				self.legal_representative_cpf = validar_cpf(self.legal_representative_cpf)
 
 		self._validate_document_uniqueness()
+		self._validate_contacts()
+		self._validate_addresses()
+
+	def _validate_contacts(self):
+		for contact in self.contacts or []:
+			if contact.phone:
+				contact.phone = validar_telefone(contact.phone, tipo="fixo")
+			if contact.mobile:
+				contact.mobile = validar_telefone(contact.mobile, tipo="celular")
+			if contact.email:
+				contact.email = validar_email(contact.email)
+
+	def _validate_addresses(self):
+		for address in self.addresses or []:
+			if address.cep:
+				address.cep = limpar_numerico(address.cep)
 
 	def _validate_document_uniqueness(self):
 		if self.person_type == "Pessoa Física" and self.cpf:

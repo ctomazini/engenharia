@@ -108,25 +108,31 @@ const EngenhariaMasks = {
 		}
 	},
 
+	formatChildField(cdt, cdn, fieldname, maskFn) {
+		const row = locals[cdt] && locals[cdt][cdn];
+		if (!row || !row[fieldname]) return;
+		const masked = maskFn.call(this, row[fieldname]);
+		if (row[fieldname] !== masked) {
+			frappe.model.set_value(cdt, cdn, fieldname, masked);
+		}
+	},
+
 	setupCustomerForm(frm) {
 		if (!window.EngenhariaMasks) return;
 
 		if (frm.doc.person_type === "Pessoa Física") {
 			this.bindMask(frm, "cpf", this.applyCPF, "cpf");
 			this.unbindMask(frm, "cnpj");
+			this.unbindMask(frm, "legal_representative_cpf");
 		} else if (frm.doc.person_type === "Pessoa Jurídica") {
 			this.bindMask(frm, "cnpj", this.applyCNPJ, "cnpj");
+			this.bindMask(frm, "legal_representative_cpf", this.applyCPF, "cpf");
 			this.unbindMask(frm, "cpf");
 		}
 
-		["cpf", "cnpj", "phone"].forEach((fieldname) => {
+		["cpf", "cnpj", "legal_representative_cpf"].forEach((fieldname) => {
 			if (!frm.doc[fieldname]) return;
-			const fn =
-				fieldname === "cnpj"
-					? this.applyCNPJ
-					: fieldname === "cpf"
-						? this.applyCPF
-						: this.applyPhone;
+			const fn = fieldname === "cnpj" ? this.applyCNPJ : this.applyCPF;
 			this.formatFormField(frm, fieldname, fn);
 		});
 	},
