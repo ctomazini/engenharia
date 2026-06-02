@@ -1,7 +1,7 @@
 import frappe
 from frappe.tests.utils import FrappeTestCase
 
-from engenharia.tests.test_setup import _uid, create_test_customer
+from engenharia.tests.test_setup import _uid, create_test_construction_project, create_test_customer
 from engenharia.titles import TITLE_SEPARATOR, join_title_parts
 
 
@@ -12,23 +12,6 @@ def create_test_technical_item(**kwargs):
 		"default_unit": "m²",
 		"data_type": "Número",
 		"category": "Estrutural",
-		**kwargs,
-	}
-	doc = frappe.get_doc(data)
-	doc.insert(ignore_permissions=True)
-	return doc
-
-
-def create_test_construction_project(customer=None, **kwargs):
-	if not customer:
-		customer = create_test_customer().name
-	data = {
-		"doctype": "Construction Project",
-		"customer": customer,
-		"city": "São Paulo",
-		"address_uf": "SP",
-		"project_type": "Residencial",
-		"status": "Orçamento",
 		**kwargs,
 	}
 	doc = frappe.get_doc(data)

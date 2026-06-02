@@ -138,13 +138,18 @@ app_include_js = "/assets/engenharia/js/masks.js"
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+	"Engineering Contract": {
+		"on_update": "engenharia.financial.sync_payments_hook",
+	},
+	"Engineering Contract Installment": {
+		"on_update": "engenharia.tasks.on_installment_update",
+	},
+	"Payment": {
+		"on_update": "engenharia.financial.process_payment_on_update",
+		"on_trash": "engenharia.financial.on_payment_trash",
+	},
+}
 
 # Scheduled Tasks
 # ---------------
