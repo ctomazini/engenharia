@@ -1,0 +1,22 @@
+[
+ {
+  "doctype": "Custom Field",
+  "dt": "Event",
+  "fieldname": "custom_source_doctype",
+  "fieldtype": "Data",
+  "hidden": 1,
+  "label": "Source DocType",
+  "name": "Event-custom_source_doctype",
+  "no_copy": 1
+ },
+ {
+  "doctype": "Custom Field",
+  "dt": "Event",
+  "fieldname": "custom_source_name",
+  "fieldtype": "Data",
+  "hidden": 1,
+  "label": "Source Name",
+  "name": "Event-custom_source_name",
+  "no_copy": 1
+ }
+]

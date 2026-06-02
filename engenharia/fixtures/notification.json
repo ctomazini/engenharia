@@ -1,0 +1,24 @@
+[
+ {
+  "channel": "System Notification",
+  "date_changed": "due_date",
+  "days_in_advance": 3,
+  "doctype": "Notification",
+  "document_type": "Deadline",
+  "enabled": 1,
+  "event": "Days Before",
+  "message": "<p>O prazo '{{ doc.description }}' da obra {{ doc.project }} vence em {{ doc.notify_days_before or 3 }} dias ({{ frappe.utils.formatdate(doc.due_date) }}).</p>",
+  "message_type": "Markdown",
+  "module": "Engenharia",
+  "name": "Engenharia - Prazo vencendo",
+  "recipients": [
+   {
+    "receiver_by_document_field": "assigned_to"
+   },
+   {
+    "receiver_by_document_field": "owner"
+   }
+  ],
+  "subject": "Prazo vencendo: {{ doc.description }} - {{ doc.project }}"
+ }
+]

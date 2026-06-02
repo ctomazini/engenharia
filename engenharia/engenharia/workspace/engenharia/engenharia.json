@@ -1,0 +1,40 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"dash\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Engenharia</b></span>\",\"col\":12}},{\"id\":\"sc1\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Painel\",\"col\":3}},{\"id\":\"sc2\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Construction Project\",\"col\":3}},{\"id\":\"sc3\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Payment\",\"col\":3}},{\"id\":\"sc4\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Deadline\",\"col\":3}}]",
+ "creation": "2026-06-02 00:00:00.000000",
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "building-2",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "Engenharia",
+ "links": [
+  {"hidden": 0, "is_query_report": 0, "label": "Dia a Dia", "link_count": 0, "onboard": 0, "type": "Card Break"},
+  {"hidden": 0, "is_query_report": 0, "label": "Painel", "link_count": 0, "link_to": "eng-dashboard", "link_type": "Page", "onboard": 0, "type": "Link"},
+  {"hidden": 0, "is_query_report": 0, "label": "Obras", "link_count": 0, "link_to": "Construction Project", "link_type": "DocType", "onboard": 0, "type": "Link"},
+  {"hidden": 0, "is_query_report": 0, "label": "Financeiro", "link_count": 0, "onboard": 0, "type": "Card Break"},
+  {"hidden": 0, "is_query_report": 0, "label": "Pagamentos", "link_count": 0, "link_to": "Payment", "link_type": "DocType", "onboard": 0, "type": "Link"}
+ ],
+ "modified": "2026-06-02 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Engenharia",
+ "name": "Engenharia",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 10,
+ "shortcuts": [
+  {"color": "Blue", "doc_view": "", "format": "", "label": "Painel", "link_to": "eng-dashboard", "type": "Page"},
+  {"color": "Green", "doc_view": "List", "format": "", "label": "Construction Project", "link_to": "Construction Project", "type": "DocType"},
+  {"color": "Orange", "doc_view": "List", "format": "", "label": "Payment", "link_to": "Payment", "type": "DocType"},
+  {"color": "Red", "doc_view": "List", "format": "", "label": "Deadline", "link_to": "Deadline", "type": "DocType"}
+ ],
+ "title": "Engenharia",
+ "type": "Workspace",
+ "app": "engenharia"
+}

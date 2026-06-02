@@ -7,6 +7,22 @@ app_license = "mit"
 
 fixtures = [
 	{
+		"dt": "Workspace",
+		"filters": [["name", "=", "Engenharia"]],
+	},
+	{
+		"dt": "Notification",
+		"filters": [["name", "in", ["Engenharia - Prazo vencendo"]]],
+	},
+	{
+		"dt": "Custom Field",
+		"filters": [["dt", "=", "Event"], ["fieldname", "like", "custom_source%"]],
+	},
+	{
+		"dt": "Role",
+		"filters": [["name", "in", ["Engenharia User", "Engenharia Manager"]]],
+	},
+	{
 		"dt": "Kanban Board",
 		"filters": [["name", "=", "Engenharia Obras"]],
 	},
@@ -31,7 +47,10 @@ fixtures = [
 
 # include js, css files in header of desk.html
 # app_include_css = "/assets/engenharia/css/engenharia.css"
-app_include_js = "/assets/engenharia/js/masks.js"
+app_include_js = [
+	"/assets/engenharia/js/masks.js",
+	"/assets/engenharia/js/timer_global.js",
+]
 
 # include js, css files in header of web template
 # web_include_css = "/assets/engenharia/css/engenharia.css"
@@ -91,7 +110,17 @@ app_include_js = "/assets/engenharia/js/masks.js"
 # ------------
 
 # before_install = "engenharia.install.before_install"
-# after_install = "engenharia.install.after_install"
+after_install = "engenharia.setup.install.after_install"
+after_migrate = [
+	"engenharia.setup.install.ensure_engenharia_roles",
+	"engenharia.setup.install.ensure_event_custom_fields",
+	"engenharia.setup.permissions.ensure_engenharia_permissions",
+	"engenharia.setup.seed.ensure_seed_data",
+	"engenharia.setup.translations.ensure_doctype_translations",
+	"engenharia.setup.sidebar.ensure_engenharia_sidebar",
+	"engenharia.setup.reports.ensure_engenharia_reports",
+	"engenharia.setup.workspace.ensure_engenharia_workspace",
+]
 
 # Uninstallation
 # ------------
@@ -153,6 +182,14 @@ doc_events = {
 	"Payment": {
 		"on_update": "engenharia.financial.process_payment_on_update",
 		"on_trash": "engenharia.financial.on_payment_trash",
+	},
+	"Deadline": {
+		"after_insert": "engenharia.calendar_sync.sync_deadline_to_event",
+		"on_update": "engenharia.calendar_sync.sync_deadline_to_event",
+	},
+	"Permit": {
+		"after_insert": "engenharia.calendar_sync.sync_permit_to_event",
+		"on_update": "engenharia.calendar_sync.sync_permit_to_event",
 	},
 }
 
