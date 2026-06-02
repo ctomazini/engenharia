@@ -1,0 +1,88 @@
+{
+ "actions": [],
+ "creation": "2026-06-02 00:00:00.000000",
+ "custom": 0,
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "address_type",
+  "cep",
+  "street",
+  "number",
+  "complement",
+  "district",
+  "city",
+  "state",
+  "is_primary"
+ ],
+ "fields": [
+  {
+   "default": "Residencial",
+   "fieldname": "address_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Tipo",
+   "options": "Residencial\nComercial\nCorrespond\u00eancia\nOutro"
+  },
+  {
+   "fieldname": "cep",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "CEP"
+  },
+  {
+   "bold": 1,
+   "fieldname": "street",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Logradouro",
+   "reqd": 1
+  },
+  {
+   "fieldname": "number",
+   "fieldtype": "Data",
+   "label": "N\u00famero"
+  },
+  {
+   "fieldname": "complement",
+   "fieldtype": "Data",
+   "label": "Complemento"
+  },
+  {
+   "fieldname": "district",
+   "fieldtype": "Data",
+   "label": "Bairro"
+  },
+  {
+   "fieldname": "city",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Cidade"
+  },
+  {
+   "fieldname": "state",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Estado",
+   "options": "\nAC\nAL\nAP\nAM\nBA\nCE\nDF\nES\nGO\nMA\nMT\nMS\nMG\nPA\nPB\nPR\nPE\nPI\nRJ\nRN\nRS\nRO\nRR\nSC\nSP\nSE\nTO"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_primary",
+   "fieldtype": "Check",
+   "label": "Endere\u00e7o Principal"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-06-02 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Engenharia",
+ "name": "Customer Address",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
