@@ -2,8 +2,7 @@
  "actions": [],
  "allow_rename": 1,
  "autoname": "format:REEMB-{YYYY}-{####}",
- "creation": "2026-06-02 00:00:00.000000",
- "custom": 0,
+ "creation": "2026-06-02 00:00:00",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -109,11 +108,11 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-06-02 00:00:00.000000",
+ "modified": "2026-06-02 17:59:11.651632",
  "modified_by": "Administrator",
  "module": "Engenharia",
  "name": "Reimbursable Expense",
- "naming_rule": "Expression",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {
@@ -126,12 +125,37 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Engenharia User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Engenharia Manager",
+   "share": 1,
+   "write": 1
   }
  ],
+ "row_format": "Dynamic",
  "search_fields": "title,project,description,status",
  "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
+ "states": [],
  "title_field": "title",
  "track_changes": 1
 }

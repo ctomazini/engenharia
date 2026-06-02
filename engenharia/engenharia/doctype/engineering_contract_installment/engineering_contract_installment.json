@@ -1,7 +1,6 @@
 {
  "actions": [],
- "creation": "2026-06-02 00:00:00.000000",
- "custom": 0,
+ "creation": "2026-06-02 00:00:00",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
@@ -75,13 +74,15 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2026-06-02 00:00:00.000000",
+ "modified": "2026-06-02 17:59:12.392565",
  "modified_by": "Administrator",
  "module": "Engenharia",
  "name": "Engineering Contract Installment",
  "owner": "Administrator",
  "permissions": [],
+ "row_format": "Dynamic",
  "sort_field": "creation",
  "sort_order": "DESC",
+ "states": [],
  "track_changes": 1
 }

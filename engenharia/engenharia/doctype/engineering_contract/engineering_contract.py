@@ -157,10 +157,10 @@ def apply_amendment(contract_name: str, regenerate: int = 0) -> dict:
 
 	if regenerate:
 		contract.regenerate_future_installments()
-		contract.save(ignore_permissions=True)
+		contract.save(ignore_permissions=True)  # whitelisted: write validado acima; save dispara sync
 		message = _("Aditivo aplicado e parcelas futuras regeneradas.")
 	else:
-		contract.save(ignore_permissions=True)
+		contract.save(ignore_permissions=True)  # whitelisted: write validado acima; save dispara sync
 		message = _("Aditivo registrado no histórico.")
 
 	frappe.msgprint(message, title=_("Aditivo"), indicator="green")

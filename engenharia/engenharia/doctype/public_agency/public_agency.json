@@ -2,8 +2,7 @@
  "actions": [],
  "allow_rename": 1,
  "autoname": "field:agency_name",
- "creation": "2026-06-02 00:00:00.000000",
- "custom": 0,
+ "creation": "2026-06-02 00:00:00",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -41,7 +40,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-06-02 00:00:00.000000",
+ "modified": "2026-06-02 17:59:09.903636",
  "modified_by": "Administrator",
  "module": "Engenharia",
  "name": "Public Agency",
@@ -58,13 +57,38 @@
    "role": "System Manager",
    "share": 1,
    "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Engenharia User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Engenharia Manager",
+   "share": 1,
+   "write": 1
   }
  ],
  "quick_entry": 1,
+ "row_format": "Dynamic",
  "search_fields": "agency_name,sphere,city",
  "show_title_field_in_link": 1,
  "sort_field": "agency_name",
  "sort_order": "ASC",
+ "states": [],
  "title_field": "agency_name",
  "track_changes": 1
 }
