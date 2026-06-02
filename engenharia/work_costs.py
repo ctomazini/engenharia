@@ -37,7 +37,7 @@ def _aggregate_by_field(fieldname, project=None, statuses=None):
 		"Work Cost",
 		filters=_base_filters(project=project, statuses=statuses),
 		fields=[fieldname, "amount"],
-		limit_page_length=500,
+		limit=500,
 	)
 	totals = defaultdict(float)
 	for row in rows:
