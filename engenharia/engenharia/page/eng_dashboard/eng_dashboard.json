@@ -1,0 +1,13 @@
+{
+ "doctype": "Page",
+ "name": "eng-dashboard",
+ "page_name": "eng-dashboard",
+ "title": "Painel de Obras",
+ "module": "Engenharia",
+ "standard": "Yes",
+ "roles": [
+  {"role": "Engenharia User"},
+  {"role": "Engenharia Manager"},
+  {"role": "System Manager"}
+ ]
+}
