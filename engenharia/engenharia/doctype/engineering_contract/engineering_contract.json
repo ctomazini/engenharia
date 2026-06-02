@@ -1,0 +1,179 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:CNTR-{YYYY}-{####}",
+ "creation": "2026-06-02 00:00:00.000000",
+ "custom": 0,
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "project",
+  "customer",
+  "title",
+  "col_break_1",
+  "status",
+  "sec_values",
+  "base_value",
+  "current_value",
+  "col_break_2",
+  "installment_count",
+  "first_installment_date",
+  "installment_value",
+  "generate_installments",
+  "sec_installments",
+  "installments",
+  "sec_amendments",
+  "amendments",
+  "apply_amendment",
+  "sec_obs",
+  "observations"
+ ],
+ "fields": [
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Obra",
+   "options": "Construction Project",
+   "reqd": 1
+  },
+  {
+   "fetch_from": "project.customer",
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Cliente",
+   "options": "Customer",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_global_search": 1,
+   "label": "T\u00edtulo",
+   "read_only": 1
+  },
+  {
+   "fieldname": "col_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Vigente",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Vigente\nEncerrado\nCancelado\nQuitado"
+  },
+  {
+   "fieldname": "sec_values",
+   "fieldtype": "Section Break",
+   "label": "Valores"
+  },
+  {
+   "fieldname": "base_value",
+   "fieldtype": "Currency",
+   "label": "Valor Base",
+   "reqd": 1
+  },
+  {
+   "fieldname": "current_value",
+   "fieldtype": "Currency",
+   "label": "Valor Atual",
+   "read_only": 1
+  },
+  {
+   "fieldname": "col_break_2",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "installment_count",
+   "fieldtype": "Int",
+   "label": "N\u00famero de Parcelas"
+  },
+  {
+   "fieldname": "first_installment_date",
+   "fieldtype": "Date",
+   "label": "Data da Primeira Parcela"
+  },
+  {
+   "fieldname": "installment_value",
+   "fieldtype": "Currency",
+   "label": "Valor da Parcela",
+   "read_only": 1
+  },
+  {
+   "fieldname": "generate_installments",
+   "fieldtype": "Button",
+   "label": "Gerar Parcelas"
+  },
+  {
+   "fieldname": "sec_installments",
+   "fieldtype": "Section Break",
+   "label": "Parcelas"
+  },
+  {
+   "fieldname": "installments",
+   "fieldtype": "Table",
+   "label": "Parcelas",
+   "options": "Engineering Contract Installment"
+  },
+  {
+   "fieldname": "sec_amendments",
+   "fieldtype": "Section Break",
+   "label": "Aditivos"
+  },
+  {
+   "fieldname": "amendments",
+   "fieldtype": "Table",
+   "label": "Aditivos",
+   "options": "Engineering Contract Amendment"
+  },
+  {
+   "fieldname": "apply_amendment",
+   "fieldtype": "Button",
+   "label": "Aplicar Aditivo"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "sec_obs",
+   "fieldtype": "Section Break",
+   "label": "Observa\u00e7\u00f5es"
+  },
+  {
+   "fieldname": "observations",
+   "fieldtype": "Text Editor",
+   "label": "Observa\u00e7\u00f5es"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-06-02 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Engenharia",
+ "name": "Engineering Contract",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "title,project,customer,status",
+ "show_title_field_in_link": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "title_field": "title",
+ "track_changes": 1
+}
