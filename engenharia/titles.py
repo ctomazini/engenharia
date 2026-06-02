@@ -8,6 +8,8 @@ COMPOSED = {
 	"Construction Project": False,
 	"Engineering Contract": False,
 	"Payment": False,
+	"Work Cost": True,
+	"Reimbursable Expense": True,
 }
 
 

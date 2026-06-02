@@ -1,0 +1,62 @@
+import frappe
+from frappe.exceptions import ValidationError
+from frappe.tests.utils import FrappeTestCase
+
+from engenharia.tests.test_setup import (
+	create_test_construction_project,
+	create_test_cost_category,
+	create_test_project_stage,
+	create_test_supplier,
+	create_test_work_cost,
+)
+from engenharia.work_costs import (
+	get_work_cost_totals_by_category,
+	get_work_cost_totals_by_stage,
+	get_work_cost_totals_by_supplier,
+)
+
+
+class TestWorkCost(FrappeTestCase):
+	def tearDown(self):
+		frappe.db.rollback()
+
+	def test_crud(self):
+		cost = create_test_work_cost(amount=2500)
+		self.assertTrue(frappe.db.exists("Work Cost", cost.name))
+		self.assertTrue(cost.title.startswith(cost.name))
+		name = cost.name
+		cost.delete(ignore_permissions=True)
+		self.assertFalse(frappe.db.exists("Work Cost", name))
+
+	def test_cancelled_immutable(self):
+		cost = create_test_work_cost(status="Cancelado")
+		cost.amount = 999
+		with self.assertRaises(ValidationError):
+			cost.save(ignore_permissions=True)
+
+	def test_aggregate_by_category(self):
+		project = create_test_construction_project().name
+		cat_a = create_test_cost_category().name
+		cat_b = create_test_cost_category().name
+		create_test_work_cost(project=project, amount=1000, cost_category=cat_a, status="Pago")
+		create_test_work_cost(project=project, amount=500, cost_category=cat_b, status="Pago")
+		create_test_work_cost(project=project, amount=300, status="Pendente")
+
+		totals = get_work_cost_totals_by_category(project=project)
+		self.assertEqual(totals[cat_a], 1000)
+		self.assertEqual(totals[cat_b], 500)
+		self.assertEqual(len(totals), 2)
+
+	def test_aggregate_by_supplier(self):
+		project = create_test_construction_project().name
+		supplier = create_test_supplier().name
+		create_test_work_cost(project=project, amount=800, supplier=supplier, status="Pago")
+		totals = get_work_cost_totals_by_supplier(project=project)
+		self.assertEqual(totals[supplier], 800)
+
+	def test_aggregate_by_stage(self):
+		project = create_test_construction_project().name
+		stage = create_test_project_stage(project=project).name
+		create_test_work_cost(project=project, amount=1200, stage=stage, status="Pago")
+		totals = get_work_cost_totals_by_stage(project=project)
+		self.assertEqual(totals[stage], 1200)
