@@ -1,0 +1,168 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:COMM-{YYYY}-{####}",
+ "creation": "2026-06-02 00:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "info_section",
+  "title",
+  "project",
+  "customer",
+  "column_break_info",
+  "communication_date",
+  "communication_type",
+  "details_section",
+  "subject",
+  "summary",
+  "next_steps_section",
+  "next_steps",
+  "create_task",
+  "task"
+ ],
+ "fields": [
+  {
+   "fieldname": "info_section",
+   "fieldtype": "Section Break",
+   "label": "Informa\u00e7\u00f5es"
+  },
+  {
+   "allow_in_quick_entry": 1,
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "T\u00edtulo"
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Obra",
+   "options": "Construction Project"
+  },
+  {
+   "fetch_from": "project.customer",
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Cliente",
+   "options": "Customer",
+   "read_only": 1,
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_info",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "Now",
+   "fieldname": "communication_date",
+   "fieldtype": "Datetime",
+   "in_list_view": 1,
+   "label": "Data",
+   "reqd": 1
+  },
+  {
+   "fieldname": "communication_type",
+   "fieldtype": "Select",
+   "label": "Tipo",
+   "options": "Telefone\nWhatsApp\nEmail\nReuni\u00e3o Presencial\nReuni\u00e3o Virtual\nOutro",
+   "reqd": 1
+  },
+  {
+   "fieldname": "details_section",
+   "fieldtype": "Section Break",
+   "label": "Detalhes"
+  },
+  {
+   "fieldname": "subject",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Assunto",
+   "reqd": 1
+  },
+  {
+   "fieldname": "summary",
+   "fieldtype": "Text Editor",
+   "label": "Resumo"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "next_steps_section",
+   "fieldtype": "Section Break",
+   "label": "Pr\u00f3ximos Passos"
+  },
+  {
+   "fieldname": "next_steps",
+   "fieldtype": "Small Text",
+   "label": "Pr\u00f3ximos Passos"
+  },
+  {
+   "default": "0",
+   "description": "Cria uma Tarefa de follow-up (vencimento em 3 dias) com o texto de Pr\u00f3ximos Passos. S\u00f3 gera uma vez por comunica\u00e7\u00e3o.",
+   "fieldname": "create_task",
+   "fieldtype": "Check",
+   "label": "Gerar Tarefa"
+  },
+  {
+   "depends_on": "eval:doc.task",
+   "fieldname": "task",
+   "fieldtype": "Link",
+   "label": "Tarefa Gerada",
+   "options": "Task",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-06-02 17:59:10.455549",
+ "modified_by": "Administrator",
+ "module": "Engenharia",
+ "name": "Communication Log",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Engenharia User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Engenharia Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "search_fields": "subject,customer,communication_type",
+ "show_title_field_in_link": 1,
+ "sort_field": "communication_date",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "title",
+ "track_changes": 1
+}
