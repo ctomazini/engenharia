@@ -5,7 +5,12 @@ app_description = "Gestao de obras de engenharia civil"
 app_email = "charles.tomazini@gmail.com"
 app_license = "mit"
 
-# Apps
+fixtures = [
+	{
+		"dt": "Kanban Board",
+		"filters": [["name", "=", "Engenharia Obras"]],
+	},
+]
 # ------------------
 
 # required_apps = []

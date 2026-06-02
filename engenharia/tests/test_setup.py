@@ -114,3 +114,103 @@ def get_contract_payments(contract_name):
 		fields=["name", "status", "installment_origin_id", "amount"],
 		order_by="creation asc",
 	)
+
+
+def create_test_stage_type(stage_name=None, **kwargs):
+	data = {
+		"doctype": "Stage Type",
+		"stage_name": stage_name or _uid("Etapa Tipo"),
+		"default_order": 1,
+		**kwargs,
+	}
+	doc = frappe.get_doc(data)
+	doc.insert(ignore_permissions=True)
+	return doc
+
+
+def create_test_project_stage(project=None, stage_type=None, **kwargs):
+	if not project:
+		project = create_test_construction_project().name
+	if not stage_type:
+		stage_type = create_test_stage_type().name
+	data = {
+		"doctype": "Project Stage",
+		"project": project,
+		"stage_type": stage_type,
+		"status": "Não iniciada",
+		"order": 1,
+		**kwargs,
+	}
+	doc = frappe.get_doc(data)
+	doc.insert(ignore_permissions=True)
+	return doc
+
+
+def create_test_cost_category(category_name=None, **kwargs):
+	data = {
+		"doctype": "Cost Category",
+		"category_name": category_name or _uid("Categoria"),
+		**kwargs,
+	}
+	doc = frappe.get_doc(data)
+	doc.insert(ignore_permissions=True)
+	return doc
+
+
+def create_test_supplier(supplier_name=None, **kwargs):
+	data = {
+		"doctype": "Supplier",
+		"supplier_name": supplier_name or _uid("Fornecedor"),
+		**kwargs,
+	}
+	doc = frappe.get_doc(data)
+	doc.insert(ignore_permissions=True)
+	return doc
+
+
+def create_test_work_cost(project=None, amount=1000, **kwargs):
+	if not project:
+		project = create_test_construction_project().name
+	data = {
+		"doctype": "Work Cost",
+		"project": project,
+		"description": _uid("Custo"),
+		"amount": amount,
+		"status": "Pago",
+		"date": today(),
+		**kwargs,
+	}
+	doc = frappe.get_doc(data)
+	doc.insert(ignore_permissions=True)
+	return doc
+
+
+def create_test_reimbursable_expense(project=None, amount=500, **kwargs):
+	if not project:
+		project = create_test_construction_project().name
+	data = {
+		"doctype": "Reimbursable Expense",
+		"project": project,
+		"description": _uid("Despesa"),
+		"amount": amount,
+		"status": "A reembolsar",
+		**kwargs,
+	}
+	doc = frappe.get_doc(data)
+	doc.insert(ignore_permissions=True)
+	return doc
+
+
+def create_test_task(project=None, subject=None, **kwargs):
+	if not project:
+		project = create_test_construction_project().name
+	data = {
+		"doctype": "Task",
+		"project": project,
+		"subject": subject or _uid("Tarefa"),
+		"status": "A fazer",
+		**kwargs,
+	}
+	doc = frappe.get_doc(data)
+	doc.insert(ignore_permissions=True)
+	return doc

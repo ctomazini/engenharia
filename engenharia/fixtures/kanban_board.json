@@ -1,0 +1,39 @@
+[
+ {
+  "columns": [
+   {
+    "column_name": "A fazer",
+    "indicator": "Gray",
+    "order": "1",
+    "status": "Active"
+   },
+   {
+    "column_name": "Fazendo",
+    "indicator": "Orange",
+    "order": "2",
+    "status": "Active"
+   },
+   {
+    "column_name": "Feito",
+    "indicator": "Green",
+    "order": "3",
+    "status": "Active"
+   },
+   {
+    "column_name": "Cancelada",
+    "indicator": "Red",
+    "order": "4",
+    "status": "Active"
+   }
+  ],
+  "doctype": "Kanban Board",
+  "field_name": "status",
+  "fields": "[\"subject\", \"project\", \"priority\", \"due_date\"]",
+  "filters": "[]",
+  "kanban_board_name": "Engenharia Obras",
+  "name": "Engenharia Obras",
+  "private": 0,
+  "reference_doctype": "Task",
+  "show_labels": 0
+ }
+]
