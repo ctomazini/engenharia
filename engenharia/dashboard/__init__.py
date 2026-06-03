@@ -2,8 +2,11 @@ import frappe
 from frappe import _
 from frappe.utils import add_days, cint, get_first_day, get_last_day, today
 
+from engenharia.dashboard import agenda as dashboard_agenda
+from engenharia.dashboard import attention as dashboard_attention
 from engenharia.dashboard import deadlines as dashboard_deadlines
 from engenharia.dashboard import financial as dashboard_financial
+from engenharia.dashboard import health as dashboard_health
 from engenharia.dashboard import kpis as dashboard_kpis
 from engenharia.dashboard import timeline as dashboard_timeline
 from engenharia.dashboard._helpers import (
@@ -40,6 +43,8 @@ def get(
 	resumo = dashboard_kpis.build_summary(hoje, kpis, period_days)
 	alertas = dashboard_deadlines.build_alerts(hoje, period_end)
 	centro_atencao = dashboard_deadlines.build_centro_atencao(hoje, period_end, kpis, financeiro)
+	atencao = dashboard_attention.build_attention_tiles(hoje, period_end, period_days, kpis, financeiro)
+	saude_operacional = dashboard_health.build_operational_health(kpis, centro_atencao, financeiro)
 
 	deadlines_cap = _list_cap(list_limits, "deadlines")
 	tasks_cap = _list_cap(list_limits, "tasks")
@@ -54,7 +59,8 @@ def get(
 	payments_all = financeiro.get("pending_payments") or []
 	parcelas_all = payments_all
 	despesas_all = dashboard_financial.get_pending_reimbursables(LIST_LIMIT_MAX)
-	timeline_full = dashboard_timeline.build_timeline(hoje, period_end, deadlines_all, tasks_all)
+	agenda_full = dashboard_agenda.build_agenda(hoje, period_end, deadlines_all, tasks_all, payments_all)
+	agenda_days = dashboard_agenda.build_day_strip(hoje, period_days, agenda_full)
 	comunicacoes_all = dashboard_timeline.get_recent_communications(LIST_LIMIT_MAX)
 
 	horas_semana = dashboard_timeline.get_hours_summary(hoje)
@@ -62,7 +68,7 @@ def get(
 	total_despesas_mes = dashboard_financial.get_total_reimbursables_month(month_start, month_end)
 
 	list_meta = {
-		"timeline": {"showing": min(timeline_cap, len(timeline_full)), "total": len(timeline_full)},
+		"timeline": {"showing": min(timeline_cap, len(agenda_full)), "total": len(agenda_full)},
 		"pagamentos": {"showing": min(payments_cap, len(payments_all)), "total": len(payments_all)},
 		"parcelas": {"showing": min(parcelas_cap, len(parcelas_all)), "total": len(parcelas_all)},
 		"despesas": {"showing": min(despesas_cap, len(despesas_all)), "total": len(despesas_all)},
@@ -70,6 +76,8 @@ def get(
 			"showing": min(comunicacoes_cap, len(comunicacoes_all)),
 			"total": len(comunicacoes_all),
 		},
+		"deadlines": {"showing": min(deadlines_cap, len(deadlines_all)), "total": len(deadlines_all)},
+		"tasks": {"showing": min(tasks_cap, len(tasks_all)), "total": len(tasks_all)},
 	}
 
 	return {
@@ -83,7 +91,11 @@ def get(
 		"financeiro": financeiro,
 		"alertas": alertas,
 		"centro_atencao": centro_atencao,
-		"timeline": timeline_full[:timeline_cap],
+		"atencao": atencao,
+		"saude_operacional": saude_operacional,
+		"agenda_days": agenda_days,
+		"timeline": agenda_full[:timeline_cap],
+		"agenda": agenda_full[:timeline_cap],
 		"parcelas": parcelas_all[:parcelas_cap],
 		"pagamentos": payments_all[:payments_cap],
 		"despesas_pendentes": despesas_all[:despesas_cap],

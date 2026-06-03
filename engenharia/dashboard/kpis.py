@@ -84,6 +84,20 @@ def build_kpis(hoje, period_end, month_start, month_end):
 			"due_date": ["<", hoje],
 		},
 	)
+	permits_today = frappe.db.count(
+		"Permit",
+		{"protocol_date": hoje, "status": ["not in", ["Cancelado"]]},
+	)
+	permits_tomorrow = frappe.db.count(
+		"Permit",
+		{"protocol_date": add_days(hoje, 1), "status": ["not in", ["Cancelado"]]},
+	)
+	pending_work_cost_rows = frappe.get_all(
+		"Work Cost",
+		filters={"status": "Pendente"},
+		fields=["amount"],
+		limit_page_length=LIST_LIMIT_MAX,
+	)
 
 	receivable_amount = _sum_amount(pending_payments) + _sum_amount(overdue_payments)
 	overdue_amount = _sum_amount(overdue_payments)
@@ -140,6 +154,12 @@ def build_kpis(hoje, period_end, month_start, month_end):
 		"overdue_deadlines": overdue_deadlines,
 		"open_tasks": open_tasks,
 		"late_tasks": late_tasks,
+		"permits_today": permits_today,
+		"permits_tomorrow": permits_tomorrow,
+		"pending_work_costs": {
+			"count": len(pending_work_cost_rows),
+			"amount": _sum_amount(pending_work_cost_rows),
+		},
 		"total_customers": frappe.db.count("Customer"),
 		"spec_project_total": spec_project_total,
 	}
