@@ -5,7 +5,7 @@ Gestao de obras de engenharia civil
 Especificacoes tecnicas: cadastro em **Technical Item** (parametros + formulas em **Technical Item Output**);
 instancias na obra em **Project Item** (documento standalone ligado a **Construction Project**).
 
-Testes: `bench --site <site> run-tests --app engenharia` (123 testes)
+Testes: `bench --site <site> run-tests --app engenharia` (125 testes)
 
 ### Installation
 
