@@ -1,0 +1,158 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:PITEM-{#####}",
+ "creation": "2026-06-02 00:00:00",
+ "custom": 0,
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sec_identification",
+  "project",
+  "technical_item",
+  "instance_label",
+  "stage",
+  "quantity",
+  "total_value",
+  "title",
+  "sec_parameters",
+  "parameter_values",
+  "sec_results",
+  "computed_outputs"
+ ],
+ "fields": [
+  {
+   "fieldname": "sec_identification",
+   "fieldtype": "Section Break",
+   "label": "Identifica\u00e7\u00e3o"
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Obra",
+   "options": "Construction Project",
+   "reqd": 1
+  },
+  {
+   "fieldname": "technical_item",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Item T\u00e9cnico",
+   "options": "Technical Item",
+   "reqd": 1
+  },
+  {
+   "fieldname": "instance_label",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Identifica\u00e7\u00e3o"
+  },
+  {
+   "fieldname": "stage",
+   "fieldtype": "Link",
+   "label": "Etapa / Pavimento",
+   "options": "Project Stage"
+  },
+  {
+   "default": "1",
+   "fieldname": "quantity",
+   "fieldtype": "Int",
+   "label": "Quantidade"
+  },
+  {
+   "fieldname": "total_value",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Valor total (R$)",
+   "read_only": 1
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_global_search": 1,
+   "label": "T\u00edtulo",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sec_parameters",
+   "fieldtype": "Section Break",
+   "label": "Par\u00e2metros"
+  },
+  {
+   "description": "Preencha a coluna <b>Valor</b> em cada linha. Os campos v\u00eam do cadastro do item t\u00e9cnico.",
+   "fieldname": "parameter_values",
+   "fieldtype": "Table",
+   "label": "Par\u00e2metros",
+   "options": "Project Item Parameter",
+   "cannot_add_rows": 1,
+   "cannot_delete_rows": 1
+  },
+  {
+   "fieldname": "sec_results",
+   "fieldtype": "Section Break",
+   "label": "Resultados"
+  },
+  {
+   "fieldname": "computed_outputs",
+   "fieldtype": "Table",
+   "label": "Resultados calculados",
+   "options": "Project Item Output",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-06-02 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Engenharia",
+ "name": "Project Item",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Engenharia User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Engenharia Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "search_fields": "title,project,technical_item,instance_label",
+ "show_title_field_in_link": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "title",
+ "track_changes": 1
+}

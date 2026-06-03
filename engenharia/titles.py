@@ -6,6 +6,7 @@ TITLE_SEPARATOR = " — "
 
 COMPOSED = {
 	"Construction Project": False,
+	"Project Item": False,
 	"Engineering Contract": False,
 	"Payment": False,
 	"Work Cost": True,
