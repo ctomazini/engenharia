@@ -55,14 +55,14 @@ engenharia.dashboard.financial = {
 				<div class="eng-dash-chart-row">
 					<span>${frappe.utils.escape_html(g.label)}</span>
 					<div class="eng-dash-chart-track">
-						<div class="eng-dash-chart-fill ${g.tone || "neutral"}" style="width:${pct}%"></div>
+						<div class="eng-dash-chart-fill ${g.tone || "neutral"}" data-fill-pct="${pct}"></div>
 					</div>
 					<span class="eng-dash-chart-amt">${utils.currency_html(val)}</span>
 				</div>`;
 			})
 			.join("");
 
-		const taxa = fin.taxa_recebimento || 0;
+		const taxa = Math.max(4, Math.min(100, fin.taxa_recebimento || 0));
 		const recebido = fin.recebido_mes?.amount || fin.recebido_mes?.valor || 0;
 		const vencido = fin.vencido?.valor || fin.vencido?.amount || 0;
 		const previsto = fin.previsto_periodo?.valor || fin.previsto_periodo?.amount || 0;
@@ -97,15 +97,19 @@ engenharia.dashboard.financial = {
 						<div class="eng-dash-chart-row">
 							<span>${__("Taxa de recebimento")}</span>
 							<div class="eng-dash-chart-track">
-								<div class="eng-dash-chart-fill success" style="width:${Math.max(4, Math.min(100, taxa))}%"></div>
+								<div class="eng-dash-chart-fill success" data-fill-pct="${taxa}"></div>
 							</div>
-							<span class="eng-dash-chart-amt">${taxa}%</span>
+							<span class="eng-dash-chart-amt">${fin.taxa_recebimento || 0}%</span>
 						</div>
 						${chartRows}
 					</div>
 				</div>
 			</section>
 		`);
+
+		container.find("[data-fill-pct]").each(function () {
+			this.style.setProperty("--eng-dash-fill-pct", `${$(this).attr("data-fill-pct")}%`);
+		});
 
 		this.init_chart(container, fin, page);
 	},
