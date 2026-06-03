@@ -1,29 +1,38 @@
 frappe.provide("engenharia.dashboard");
 
 engenharia.dashboard.lists = {
-	render_duo(container, data) {
+	render_duo(container, data, page) {
 		const parcelas = data.parcelas || data.pagamentos || [];
 		const despesas = data.despesas_pendentes || [];
 		const totalMes = data.total_despesas_mes || 0;
+		const meta = data.list_meta || {};
+		const limits = data.list_limits || page?.eng_dash_list_limits || {};
 		const utils = engenharia.dashboard.utils;
 
 		const parcelasHtml = parcelas.length
 			? parcelas
 					.map(
 						(p) => `
-				<button type="button" class="eng-dash-op-row" data-doctype="Payment" data-name="${frappe.utils.escape_html(p.name)}">
-					<div>
-						<div class="eng-dash-op-row__title">${frappe.utils.escape_html(p.title || p.name)}</div>
-						<div class="eng-dash-op-row__sub">${frappe.utils.escape_html(p.due_date || p.vencimento || "")} · ${frappe.utils.escape_html(p.customer_name || "")}</div>
-					</div>
-					<div class="eng-dash-op-side">
-						${utils.currency_html(p.valor_total != null ? p.valor_total : p.amount, { alignEnd: true })}
-						${utils.status_pill(p.status)}
-					</div>
-				</button>`
+				<div class="eng-dash-op-row-wrap">
+					<button type="button" class="eng-dash-op-row" data-doctype="Payment" data-name="${frappe.utils.escape_html(p.name)}">
+						<div>
+							<div class="eng-dash-op-row__title">${frappe.utils.escape_html(p.title || p.name)}</div>
+							<div class="eng-dash-op-row__sub">${frappe.utils.escape_html(p.due_date || p.vencimento || "")} · ${frappe.utils.escape_html(p.customer_name || "")}</div>
+						</div>
+						<div class="eng-dash-op-side">
+							${utils.currency_html(p.valor_total != null ? p.valor_total : p.amount, { alignEnd: true })}
+							${utils.status_pill(p.status)}
+						</div>
+					</button>
+					${
+						p.status === "Pendente" || p.status === "Vencido"
+							? `<button type="button" class="btn btn-xs btn-default eng-dash-op-cta" data-mark-payment="${frappe.utils.escape_html(p.name)}">${__("Receber")}</button>`
+							: ""
+					}
+				</div>`
 					)
 					.join("")
-			: `<div class="eng-dash-empty">${__("Nenhum recebível no período.")}</div>`;
+			: utils.render_empty(__("Nenhum recebível pendente ✓"), "check-circle");
 
 		const despesasHtml = despesas.length
 			? despesas
@@ -32,7 +41,7 @@ engenharia.dashboard.lists = {
 				<button type="button" class="eng-dash-op-row" data-doctype="Reimbursable Expense" data-name="${frappe.utils.escape_html(d.name)}">
 					<div>
 						<div class="eng-dash-op-row__title">${frappe.utils.escape_html(d.title || d.name)}</div>
-						<div class="eng-dash-op-row__sub">${frappe.utils.escape_html(d.data || d.payment_date || "")} · ${frappe.utils.escape_html(d.customer_name || "")}</div>
+						<div class="eng-dash-op-row__sub">${frappe.utils.escape_html(d.payment_date || "")} · ${frappe.utils.escape_html(d.customer_name || "")}</div>
 					</div>
 					<div class="eng-dash-op-side">
 						${utils.currency_html(d.valor != null ? d.valor : d.amount, { alignEnd: true })}
@@ -41,22 +50,52 @@ engenharia.dashboard.lists = {
 				</button>`
 					)
 					.join("")
-			: `<div class="eng-dash-empty">${__("Nenhuma despesa a reembolsar.")}</div>`;
+			: utils.render_empty(__("Nenhuma despesa a reembolsar ✓"), "check-circle");
 
 		container.html(`
 			<div class="eng-dash-duo">
 				<section class="eng-dash-section">
-					<h3>${__("A receber")}</h3>
+					<div class="eng-dash-section-head">
+						<div>
+							<h3 class="eng-dash-section-title">${__("A receber")}</h3>
+							<p class="eng-dash-section-sub">${utils.list_meta_label(meta.parcelas)}</p>
+						</div>
+						${utils.render_list_limit_controls("parcelas", limits.parcelas || 5, meta.parcelas)}
+					</div>
 					${parcelasHtml}
 				</section>
 				<section class="eng-dash-section">
-					<h3>${__("A reembolsar")}</h3>
-					<p class="eng-dash-section-sub">${__("Mês calendário")}: ${utils.currency_html(totalMes)}</p>
+					<div class="eng-dash-section-head">
+						<div>
+							<h3 class="eng-dash-section-title">${__("A reembolsar")}</h3>
+							<p class="eng-dash-section-sub">${__("Mês calendário")}: ${utils.currency_html(totalMes)} · ${utils.list_meta_label(meta.despesas)}</p>
+						</div>
+						${utils.render_list_limit_controls("despesas", limits.despesas || 5, meta.despesas)}
+					</div>
 					${despesasHtml}
 				</section>
 			</div>
 		`);
 
 		utils.bind_routes(container);
+		this.bind_mark_payment(container);
+	},
+
+	bind_mark_payment($root) {
+		$root.find(".eng-dash-op-cta[data-mark-payment]").on("click", function (e) {
+			e.preventDefault();
+			e.stopPropagation();
+			const name = $(this).attr("data-mark-payment");
+			frappe.call({
+				method: "engenharia.dashboard_api.mark_payment_received",
+				args: { payment_name: name },
+				freeze: true,
+				callback() {
+					frappe.show_alert({ message: __("Pagamento recebido"), indicator: "green" });
+					const page = frappe.pages["eng-dashboard"]?.page;
+					if (page) eng_dashboard_load(page);
+				},
+			});
+		});
 	},
 };

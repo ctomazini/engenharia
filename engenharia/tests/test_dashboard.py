@@ -2,8 +2,11 @@ import frappe
 from frappe.tests.utils import FrappeTestCase
 
 from engenharia.dashboard import get as get_dashboard_data
+from engenharia.dashboard import agenda as dashboard_agenda
+from engenharia.dashboard import attention as dashboard_attention
 from engenharia.dashboard import deadlines as dashboard_deadlines
 from engenharia.dashboard import financial as dashboard_financial
+from engenharia.dashboard import health as dashboard_health
 from engenharia.dashboard import kpis as dashboard_kpis
 from engenharia.dashboard_api import get_dashboard_data as api_get_dashboard_data
 from engenharia.tests.test_setup import (
@@ -22,6 +25,10 @@ CONTRACT_KEYS = (
 	"resumo",
 	"financeiro",
 	"centro_atencao",
+	"atencao",
+	"saude_operacional",
+	"agenda_days",
+	"agenda",
 	"timeline",
 	"parcelas",
 	"despesas_pendentes",
@@ -29,6 +36,8 @@ CONTRACT_KEYS = (
 	"horas_periodo",
 	"horas_semana",
 )
+
+TILE_KEYS = ("count", "tone", "icon", "deep_link", "label")
 
 
 class TestDashboard(FrappeTestCase):
@@ -53,6 +62,57 @@ class TestDashboard(FrappeTestCase):
 			self.assertIn("valor", row)
 			self.assertNotIn("<div", str(row.get("valor", "")))
 
+	def test_attention_tiles_shape(self):
+		hoje = frappe.utils.today()
+		period_end = frappe.utils.add_days(hoje, 7)
+		month_start = frappe.utils.get_first_day(hoje)
+		month_end = frappe.utils.get_last_day(hoje)
+		k = dashboard_kpis.build_kpis(hoje, period_end, month_start, month_end)
+		fin = dashboard_financial.build_financial(hoje, period_end, k)
+		atencao = dashboard_attention.build_attention_tiles(hoje, period_end, 7, k, fin)
+
+		self.assertIn("urgent", atencao)
+		self.assertIn("period", atencao)
+		self.assertIn("tiles", atencao)
+		for tile in atencao["tiles"]:
+			for key in TILE_KEYS:
+				self.assertIn(key, tile, msg=f"missing tile key {key}")
+			self.assertIn("doctype", tile["deep_link"])
+			self.assertIn("filters", tile["deep_link"])
+
+	def test_operational_health_shape(self):
+		hoje = frappe.utils.today()
+		period_end = frappe.utils.add_days(hoje, 7)
+		month_start = frappe.utils.get_first_day(hoje)
+		month_end = frappe.utils.get_last_day(hoje)
+		k = dashboard_kpis.build_kpis(hoje, period_end, month_start, month_end)
+		fin = dashboard_financial.build_financial(hoje, period_end, k)
+		centro = dashboard_deadlines.build_centro_atencao(hoje, period_end, k, fin)
+		health = dashboard_health.build_operational_health(k, centro, fin)
+
+		self.assertIn("score", health)
+		self.assertIn("tone", health)
+		self.assertIn("label", health)
+		self.assertIn("breakdown", health)
+		self.assertGreaterEqual(health["score"], 0)
+		self.assertLessEqual(health["score"], 100)
+
+	def test_agenda_modules(self):
+		hoje = frappe.utils.today()
+		period_end = frappe.utils.add_days(hoje, 7)
+		deadlines = dashboard_deadlines.get_deadlines(hoje, period_end, 20)
+		tasks = []
+		payments = []
+		agenda = dashboard_agenda.build_agenda(hoje, period_end, deadlines, tasks, payments)
+		strip = dashboard_agenda.build_day_strip(hoje, 7, agenda)
+
+		self.assertIsInstance(agenda, list)
+		self.assertLessEqual(len(strip), 7)
+		for day in strip:
+			self.assertIn("label", day)
+			self.assertIn("count", day)
+			self.assertIn("tone", day)
+
 	def test_kpis_amounts_are_numeric(self):
 		payload = get_dashboard_data()
 		receivable = payload["kpis"]["amount_receivable"]["amount"]
@@ -72,7 +132,20 @@ class TestDashboard(FrappeTestCase):
 	def test_api_facade(self):
 		payload = api_get_dashboard_data()
 		self.assertIn("resumo", payload)
-		self.assertIn("centro_atencao", payload)
+		self.assertIn("atencao", payload)
+		self.assertIn("saude_operacional", payload)
+
+	def test_list_limits_respected(self):
+		payload = get_dashboard_data(list_limits={"parcelas": 10, "timeline": 5})
+		self.assertLessEqual(len(payload["parcelas"]), 10)
+		self.assertLessEqual(len(payload["agenda"]), 5)
+		self.assertEqual(payload["list_limits"]["parcelas"], 10)
+		self.assertEqual(payload["list_meta"]["parcelas"]["showing"], len(payload["parcelas"]))
+
+	def test_list_limits_normalize_invalid(self):
+		payload = get_dashboard_data(list_limits={"parcelas": 3, "timeline": 2})
+		self.assertEqual(payload["list_limits"]["parcelas"], 5)
+		self.assertEqual(payload["list_limits"]["timeline"], 5)
 
 	def test_permission_required(self):
 		user_email = f"dash_no_perm_{frappe.generate_hash(length=6)}@example.com"
