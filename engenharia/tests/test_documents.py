@@ -1,0 +1,163 @@
+import json
+import os
+import tempfile
+
+import frappe
+from frappe.tests.utils import FrappeTestCase
+
+from engenharia.documents import (
+	_build_context,
+	generate_project_documents,
+	get_available_kits,
+	get_available_templates,
+	get_placeholder_reference,
+)
+from engenharia.tests.test_setup import (
+	_uid,
+	create_test_construction_project,
+	create_test_customer,
+	create_test_engineering_contract,
+)
+
+
+def _ensure_engineering_settings(company_name="Escritório Teste Engenharia"):
+	settings = frappe.get_single("Engineering Settings")
+	settings.company_name = company_name
+	settings.save(ignore_permissions=True)
+	return settings
+
+
+def _create_test_document_template(paragraph="Doc test {{ customer_name }}"):
+	try:
+		from docx import Document as DocxDocument
+	except ImportError:
+		return None
+
+	with tempfile.NamedTemporaryFile(suffix=".docx", delete=False) as tmp:
+		doc = DocxDocument()
+		doc.add_paragraph(paragraph)
+		doc.save(tmp.name)
+		tmp_path = tmp.name
+
+	try:
+		file_doc = frappe.get_doc(
+			{
+				"doctype": "File",
+				"file_name": f"template_{frappe.generate_hash(length=6)}.docx",
+				"is_private": 1,
+			}
+		)
+		with open(tmp_path, "rb") as handle:
+			file_doc.content = handle.read()
+		file_doc.save(ignore_permissions=True)
+
+		template = frappe.get_doc(
+			{
+				"doctype": "Document Template",
+				"template_name": _uid("Template Doc"),
+				"title": _uid("Template Doc Title"),
+				"document_type": "Contrato",
+				"document_file": file_doc.file_url,
+				"enabled": 1,
+			}
+		).insert(ignore_permissions=True)
+		return template.name
+	finally:
+		if os.path.exists(tmp_path):
+			os.unlink(tmp_path)
+
+
+VALID_FIXO = "1132345678"
+VALID_CELULAR = "11987654321"
+
+
+class TestDocuments(FrappeTestCase):
+	def tearDown(self):
+		frappe.db.rollback()
+
+	def test_get_available_templates_list(self):
+		result = get_available_templates()
+		self.assertIsInstance(result, list)
+
+	def test_get_available_kits_list(self):
+		result = get_available_kits()
+		self.assertIsInstance(result, list)
+
+	def test_get_placeholder_reference_groups(self):
+		result = get_placeholder_reference()
+		self.assertIsInstance(result, list)
+		groups = [block["grupo"] for block in result]
+		self.assertIn("Escritório", groups)
+		self.assertIn("Cliente", groups)
+		self.assertIn("Obra", groups)
+
+	def test_build_context_company_and_customer(self):
+		_ensure_engineering_settings()
+		customer = create_test_customer(
+			customer_name=_uid("Cliente Doc"),
+			contacts=[{"contact_name": "Contato Teste", "phone": VALID_FIXO, "mobile": VALID_CELULAR, "email": "teste@example.com"}],
+			addresses=[
+				{
+					"street": "Rua Teste",
+					"number": "100",
+					"district": "Centro",
+					"city": "São Paulo",
+					"state": "SP",
+					"cep": "01001000",
+					"is_primary": 1,
+				}
+			],
+		)
+		project = create_test_construction_project(
+			customer=customer.name,
+			address_street="Av Obra",
+			address_number="50",
+			city="Campinas",
+		)
+		create_test_engineering_contract(project=project.name, base_value=25000, current_value=25000)
+
+		context = _build_context(project.name)
+		self.assertEqual(context["company_name"], "Escritório Teste Engenharia")
+		self.assertEqual(context["customer_name"], customer.customer_name)
+		self.assertEqual(context["nome"], customer.customer_name)
+		self.assertEqual(context["project"], project.name)
+		self.assertEqual(context["contract_value"], 25000)
+		self.assertIn("today", context)
+
+	def test_get_available_kits_with_templates(self):
+		template_name = _create_test_document_template()
+		if not template_name:
+			self.skipTest("python-docx não instalado")
+
+		kit_name = _uid("Kit Docs")
+		frappe.get_doc(
+			{
+				"doctype": "Document Kit",
+				"kit_name": kit_name,
+				"templates": [{"document_template": template_name, "sort_order": 0}],
+			}
+		).insert(ignore_permissions=True)
+
+		kits = get_available_kits()
+		match = next((k for k in kits if k.get("kit_name") == kit_name), None)
+		self.assertIsNotNone(match)
+		self.assertIn(template_name, match["templates"])
+
+	def test_generate_project_documents_batch(self):
+		try:
+			from docxtpl import DocxTemplate  # noqa: F401
+		except ImportError:
+			self.skipTest("docxtpl não instalado")
+
+		project = create_test_construction_project()
+		template_names = []
+		for idx in range(2):
+			name = _create_test_document_template(f"Doc {idx}: {{{{ customer_name }}}}")
+			if not name:
+				self.skipTest("python-docx não instalado")
+			template_names.append(name)
+
+		result = generate_project_documents(project.name, json.dumps(template_names))
+		self.assertEqual(result["total"], 2)
+		self.assertEqual(len(result["generated"]), 2)
+		self.assertFalse(result["failures"])
