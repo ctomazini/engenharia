@@ -18,6 +18,8 @@ frappe.pages["eng-dashboard"].on_page_load = function (wrapper) {
 const ENG_DASH_ASSETS = [
 	"/assets/engenharia/css/dashboard.css",
 	"/assets/engenharia/js/dashboard/utils.js",
+	"/assets/engenharia/js/dashboard/filters.js",
+	"/assets/engenharia/js/dashboard/quick_actions.js",
 	"/assets/engenharia/js/dashboard/hero.js",
 	"/assets/engenharia/js/dashboard/attention.js",
 	"/assets/engenharia/js/dashboard/health.js",
@@ -48,6 +50,8 @@ engenharia.dashboard.render_dashboard = function ($container, data, page) {
 	const $content = $('<div class="eng-dash-content"></div>').appendTo($container);
 
 	const $hero = $('<div class="eng-dash-hero-wrap"></div>').appendTo($content);
+	const $filters = $('<div class="eng-dash-filters-wrap"></div>').appendTo($content);
+	const $actions = $('<div class="eng-dash-actions-host"></div>').appendTo($content);
 	const $zona = $('<div class="eng-dash-zona-critica"></div>').appendTo($content);
 	const $centro = $('<div></div>').appendTo($zona);
 	const $destaques = $('<div class="eng-dash-destaques-grid"></div>').appendTo($zona);
@@ -58,10 +62,15 @@ engenharia.dashboard.render_dashboard = function ($container, data, page) {
 	const $lists = $('<div></div>').appendTo($content);
 
 	engenharia.dashboard.hero.render($hero, data);
+	engenharia.dashboard.filters.render($filters, data, page);
+	engenharia.dashboard.quick_actions.render($actions);
 	engenharia.dashboard.attention.render($centro, data);
 	engenharia.dashboard.health.render($saude, data);
 	engenharia.dashboard.kpis.render($kpis, data);
 	engenharia.dashboard.timeline.render($timeline, data);
 	engenharia.dashboard.financial.render($fin, data, page);
 	engenharia.dashboard.lists.render_duo($lists, data);
+
+	engenharia.dashboard.filters.bind($content, page, eng_dashboard_load);
+	engenharia.dashboard.quick_actions.bind($content);
 };
