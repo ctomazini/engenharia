@@ -2,7 +2,15 @@ import frappe
 from frappe.utils import cint, flt, getdate, today
 
 LIST_LIMIT_MAX = 100
-DEFAULT_LIST_LIMIT_KEYS = ("timeline", "payments", "deadlines", "tasks")
+DEFAULT_LIST_LIMIT_KEYS = (
+	"timeline",
+	"payments",
+	"parcelas",
+	"despesas",
+	"comunicacoes",
+	"deadlines",
+	"tasks",
+)
 
 
 def _names_lookup(doctype, names, name_field):

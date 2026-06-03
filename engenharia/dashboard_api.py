@@ -6,16 +6,19 @@ from engenharia.dashboard.financial import mark_payment_received as _mark_paymen
 
 @frappe.whitelist()
 def get_dashboard_data(
-	limit_start=0,
-	limit_page_length=20,
-	period_days=7,
-	list_limit=5,
+	limit_start: int = 0,
+	limit_page_length: int = 20,
+	period_days: int = 7,
+	periodo_dias: int | None = None,
+	list_limit: int = 5,
 	list_limits=None,
-):
+) -> dict:
+	frappe.has_permission("Construction Project", "read", throw=True)
 	return _get_dashboard_data(
 		limit_start=limit_start,
 		limit_page_length=limit_page_length,
 		period_days=period_days,
+		periodo_dias=periodo_dias,
 		list_limit=list_limit,
 		list_limits=list_limits,
 	)

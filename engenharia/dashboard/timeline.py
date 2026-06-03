@@ -94,7 +94,19 @@ def get_hours_summary(hoje):
 		fields=["duration_minutes"],
 		limit=LIST_LIMIT_MAX,
 	)
+	week_hours = round(sum(flt(r.duration_minutes or 0) for r in week_rows) / 60, 1)
+	month_hours = round(sum(flt(r.duration_minutes or 0) for r in month_rows) / 60, 1)
 	return {
-		"week_hours": round(sum(flt(r.duration_minutes or 0) for r in week_rows) / 60, 1),
-		"month_hours": round(sum(flt(r.duration_minutes or 0) for r in month_rows) / 60, 1),
+		"week_hours": week_hours,
+		"month_hours": month_hours,
 	}
+
+
+def get_hours_period(hoje, period_end):
+	rows = frappe.get_all(
+		"Time Log",
+		filters={"log_date": ["between", [hoje, period_end]]},
+		fields=["duration_minutes"],
+		limit_page_length=LIST_LIMIT_MAX,
+	)
+	return round(sum(flt(r.duration_minutes or 0) for r in rows) / 60, 1)

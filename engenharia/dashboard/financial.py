@@ -26,7 +26,7 @@ def build_financial(hoje, period_end, kpis):
 			"status",
 		],
 		order_by="due_date asc",
-		limit=LIST_LIMIT_MAX,
+		limit_page_length=LIST_LIMIT_MAX,
 	)
 	project_map = _project_lookup([p.project for p in pending if p.project])
 	customer_map = _customer_name_lookup(
@@ -37,6 +37,8 @@ def build_financial(hoje, period_end, kpis):
 	for row in pending:
 		row["project_title"] = (project_map.get(row.project) or {}).get("title") or row.project or ""
 		row["customer_name"] = customer_map.get(row.customer, row.customer or "")
+		row["valor_total"] = flt(row.amount)
+		row["vencimento"] = row.due_date
 		if row.due_date:
 			row["days_overdue"] = max(date_diff(hoje, row.due_date), 0) if row.status == "Vencido" else 0
 			row["days_until_due"] = max(date_diff(row.due_date, hoje), 0)
@@ -48,16 +50,67 @@ def build_financial(hoje, period_end, kpis):
 	overdue = flt(kpis["amount_overdue"]["amount"])
 	reimbursable = flt(kpis["amount_reimbursable"]["amount"])
 	costs = flt(kpis["month_costs"]["amount"])
+	received_month = flt(kpis["received_month"]["amount"])
+	previsto = kpis.get("previsto_periodo") or {"count": 0, "valor": 0}
+	previsto_valor = flt(previsto.get("valor"))
+	base_inadimplencia = overdue + received_month + previsto_valor
+	taxa_inadimplencia = round((overdue / base_inadimplencia) * 100, 1) if base_inadimplencia else 0
+
+	grafico = [
+		{"label": _("Vencido"), "valor": overdue, "tone": "danger"},
+		{"label": _("Recebido (mês)"), "valor": received_month, "tone": "success"},
+		{"label": _("A receber"), "valor": receivable, "tone": "warning"},
+		{"label": _("A reembolsar"), "valor": reimbursable, "tone": "neutral"},
+		{"label": _("Custos do mês"), "valor": costs, "tone": "info"},
+	]
 
 	return {
 		"pending_payments": pending,
 		"chart": [
-			{"label": "A receber", "amount": receivable, "tone": "warning"},
-			{"label": "Vencido", "amount": overdue, "tone": "danger"},
-			{"label": "A reembolsar", "amount": reimbursable, "tone": "neutral"},
-			{"label": "Custos do mês", "amount": costs, "tone": "info"},
+			{"label": _("A receber"), "amount": receivable, "valor": receivable, "tone": "warning"},
+			{"label": _("Vencido"), "amount": overdue, "valor": overdue, "tone": "danger"},
+			{"label": _("A reembolsar"), "amount": reimbursable, "valor": reimbursable, "tone": "neutral"},
+			{"label": _("Custos do mês"), "amount": costs, "valor": costs, "tone": "info"},
 		],
+		"grafico": grafico,
+		"recebido_mes": kpis["received_month"],
+		"vencido": kpis["parcelas_vencidas"],
+		"previsto_periodo": previsto,
+		"previsto_semana": previsto,
+		"taxa_recebimento": kpis.get("taxa_recebimento") or 0,
+		"taxa_inadimplencia": taxa_inadimplencia,
 	}
+
+
+def get_pending_reimbursables(limit):
+	rows = frappe.get_all(
+		"Reimbursable Expense",
+		filters={"status": "A reembolsar"},
+		fields=["name", "title", "project", "customer", "amount", "payment_date", "status"],
+		order_by="payment_date asc",
+		limit_page_length=limit,
+	)
+	project_map = _project_lookup([r.project for r in rows if r.project])
+	customer_map = _customer_name_lookup([r.customer for r in rows if r.customer])
+	for row in rows:
+		row["project_title"] = (project_map.get(row.project) or {}).get("title") or row.project or ""
+		row["customer_name"] = customer_map.get(row.customer, row.customer or "")
+		row["valor"] = flt(row.amount)
+		row["data"] = row.payment_date
+	return rows
+
+
+def get_total_reimbursables_month(month_start, month_end):
+	rows = frappe.get_all(
+		"Reimbursable Expense",
+		filters={
+			"status": ["!=", "Cancelado"],
+			"payment_date": ["between", [month_start, month_end]],
+		},
+		fields=["amount"],
+		limit_page_length=LIST_LIMIT_MAX,
+	)
+	return sum(flt(r.amount) for r in rows)
 
 
 def mark_payment_received(payment_name, received_date=None):
