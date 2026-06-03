@@ -10,12 +10,43 @@ frappe.ui.form.on("Construction Project", {
 
 		if (!frm.is_new()) {
 			eng_refresh_spec_rollup(frm);
+			eng_add_hub_create_buttons(frm);
 			frm.add_custom_button(__("Gerar Documentos"), () => eng_open_generate_documents_dialog(frm), __(
 				"Documentos"
 			));
 		}
 	},
 });
+
+function eng_hub_defaults(frm) {
+	return {
+		project: frm.doc.name,
+		customer: frm.doc.customer,
+	};
+}
+
+function eng_add_hub_create_buttons(frm) {
+	const hub = eng_hub_defaults(frm);
+
+	frm.add_custom_button(__("+ Contrato"), () => frappe.new_doc("Engineering Contract", hub), __("Criar"));
+	frm.add_custom_button(__("+ Pagamento"), () => frappe.new_doc("Payment", hub), __("Criar"));
+	frm.add_custom_button(__("+ Custo"), () => frappe.new_doc("Work Cost", { project: hub.project }), __("Criar"));
+	frm.add_custom_button(
+		__("+ Despesa reembolsável"),
+		() => frappe.new_doc("Reimbursable Expense", hub),
+		__("Criar")
+	);
+	frm.add_custom_button(__("+ Prazo"), () => frappe.new_doc("Deadline", hub), __("Criar"));
+	frm.add_custom_button(__("+ Protocolo"), () => frappe.new_doc("Permit", hub), __("Criar"));
+	frm.add_custom_button(__("+ Tarefa"), () => frappe.new_doc("Task", hub), __("Criar"));
+	frm.add_custom_button(__("+ Comunicação"), () => frappe.new_doc("Communication Log", hub), __("Criar"));
+	frm.add_custom_button(__("+ Horas"), () => frappe.new_doc("Time Log", hub), __("Criar"));
+	frm.add_custom_button(
+		__("+ Etapa"),
+		() => frappe.new_doc("Project Stage", { project: hub.project }),
+		__("Criar")
+	);
+}
 
 function eng_refresh_spec_rollup(frm) {
 	frappe.call({

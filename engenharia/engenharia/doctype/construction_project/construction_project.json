@@ -150,7 +150,7 @@
    "fieldname": "specs_help",
    "fieldtype": "HTML",
    "label": "Itens t\u00e9cnicos",
-   "options": "<p class=\"text-muted\">Use <b>Adicionar especifica\u00e7\u00e3o</b> ou a aba <b>Itens t\u00e9cnicos</b> (conex\u00f5es) para incluir Fossa s\u00e9ptica, Caixa d'\u00e1gua e outros modelos.</p>"
+   "options": "<p class=\"text-muted\">Use <b>Adicionar especifica\u00e7\u00e3o</b>, os bot\u00f5es <b>Criar</b> ou a aba <b>Conex\u00f5es</b> para ver e incluir registros ligados \u00e0 obra.</p>"
   },
   {
    "fieldname": "spec_preview_panel",
@@ -179,7 +179,57 @@
  "index_web_pages_for_search": 1,
  "links": [
   {
-   "group": "Especifica\u00e7\u00f5es",
+   "group": "Financeiro",
+   "link_doctype": "Engineering Contract",
+   "link_fieldname": "project"
+  },
+  {
+   "group": "Financeiro",
+   "link_doctype": "Payment",
+   "link_fieldname": "project"
+  },
+  {
+   "group": "Financeiro",
+   "link_doctype": "Work Cost",
+   "link_fieldname": "project"
+  },
+  {
+   "group": "Financeiro",
+   "link_doctype": "Reimbursable Expense",
+   "link_fieldname": "project"
+  },
+  {
+   "group": "Agenda",
+   "link_doctype": "Deadline",
+   "link_fieldname": "project"
+  },
+  {
+   "group": "Agenda",
+   "link_doctype": "Permit",
+   "link_fieldname": "project"
+  },
+  {
+   "group": "Agenda",
+   "link_doctype": "Task",
+   "link_fieldname": "project"
+  },
+  {
+   "group": "Comunicação",
+   "link_doctype": "Communication Log",
+   "link_fieldname": "project"
+  },
+  {
+   "group": "Produtividade",
+   "link_doctype": "Time Log",
+   "link_fieldname": "project"
+  },
+  {
+   "group": "Administração",
+   "link_doctype": "Project Stage",
+   "link_fieldname": "project"
+  },
+  {
+   "group": "Especificações",
    "link_doctype": "Project Item",
    "link_fieldname": "project"
   }
