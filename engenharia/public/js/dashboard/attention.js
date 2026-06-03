@@ -2,68 +2,58 @@ frappe.provide("engenharia.dashboard");
 
 engenharia.dashboard.attention = {
 	render(container, data) {
-		const centro = data.centro_atencao || {};
+		const atencao = data.atencao || {};
 		const period = data.periodo_dias || data.period_days || 7;
-		const tiles = [
-			{
-				tone: "red",
-				count: (centro.parcelas_vencidas && centro.parcelas_vencidas.count) || 0,
-				label: __("Parcelas vencidas"),
-				meta: centro.parcelas_vencidas?.valor,
-				is_money: true,
-			},
-			{
-				tone: "orange",
-				count: (centro.pagamentos_periodo && centro.pagamentos_periodo.count) || 0,
-				label: period === 1 ? __("A receber hoje") : __("A receber no período"),
-				meta: centro.pagamentos_periodo?.valor,
-				is_money: true,
-			},
-			{
-				tone: "green",
-				count: (centro.recebimentos_periodo && centro.recebimentos_periodo.count) || 0,
-				label: __("Recebidos no período"),
-				meta: centro.recebimentos_periodo?.valor,
-				is_money: true,
-			},
-			{
-				tone: "blue",
-				count: centro.prazos_proximos_3d || 0,
-				label: __("Prazos em 3 dias"),
-			},
-			{
-				tone: "red",
-				count: centro.prazos_vencidos || 0,
-				label: __("Prazos vencidos"),
-			},
-			{
-				tone: "orange",
-				count: centro.tarefas_atrasadas || 0,
-				label: __("Tarefas atrasadas"),
-			},
-		];
+		const utils = engenharia.dashboard.utils;
+		const urgent = atencao.urgent || [];
+		const periodTiles = atencao.period || [];
+		const allTiles = atencao.tiles || urgent.concat(periodTiles);
 
-		const html = tiles
-			.map((tile) => {
-				const meta = tile.is_money
-					? engenharia.dashboard.utils.currency_html(tile.meta || 0)
-					: tile.meta
-						? frappe.utils.escape_html(String(tile.meta))
-						: "";
-				return `
-				<button type="button" class="eng-dash-tile tone-${tile.tone}">
-					<div class="eng-dash-tile__count">${frappe.utils.escape_html(String(tile.count))}</div>
-					<div class="eng-dash-tile__label">${frappe.utils.escape_html(tile.label)}</div>
-					${meta ? `<div class="eng-dash-tile__meta">${meta}</div>` : ""}
-				</button>`;
-			})
-			.join("");
+		container.data("atencao-tiles", allTiles);
+
+		const renderGroup = (title, tiles, offset = 0) => {
+			if (!tiles.length) return "";
+			const cards = tiles
+				.map((tile, idx) => {
+					const index = offset + idx;
+					const meta = tile.meta_currency != null ? utils.currency_html(tile.meta_currency) : tile.meta ? frappe.utils.escape_html(String(tile.meta)) : "";
+					const pulse = tile.pulse ? " eng-dash-atencao-card--pulse" : "";
+					const zero = tile.count === 0 ? " eng-dash-atencao-card--ok" : "";
+					return `
+					<button type="button" class="eng-dash-atencao-card tone-${tile.tone}${pulse}${zero}" data-atencao-index="${index}">
+						<div class="eng-dash-atencao-icon">${utils.icon(tile.icon || "alert-circle")}</div>
+						<div class="eng-dash-atencao-body">
+							<div class="eng-dash-atencao-count">${frappe.utils.escape_html(String(tile.count))}</div>
+							<div class="eng-dash-atencao-label">${frappe.utils.escape_html(tile.label || "")}</div>
+							${meta ? `<div class="eng-dash-atencao-meta">${meta}</div>` : ""}
+						</div>
+					</button>`;
+				})
+				.join("");
+			return `
+				<div class="eng-dash-centro-group">
+					<h4 class="eng-dash-centro-group-title">${frappe.utils.escape_html(title)}</h4>
+					<div class="eng-dash-centro-grid">${cards}</div>
+				</div>`;
+		};
 
 		container.html(`
-			<section class="eng-dash-centro">
-				<h3>${__("Centro de Atenção")}</h3>
-				<div class="eng-dash-centro__grid">${html}</div>
+			<section class="eng-dash-centro eng-dash-priority-max" id="eng-dash-centro-atencao">
+				<div class="eng-dash-section-head">
+					<div>
+						<h3 class="eng-dash-section-title">${__("Zona de Atenção")}</h3>
+						<p class="eng-dash-section-sub">${__("O que exige ação agora — próximos {0} dias", [period])}</p>
+					</div>
+				</div>
+				<div class="eng-dash-centro-groups">
+					${renderGroup(__("Urgente"), urgent, 0)}
+					${renderGroup(__("No período"), periodTiles, urgent.length)}
+				</div>
 			</section>
 		`);
+	},
+
+	bind($root) {
+		engenharia.dashboard.utils.bind_attention_routes($root);
 	},
 };

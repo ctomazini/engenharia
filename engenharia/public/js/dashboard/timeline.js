@@ -1,68 +1,64 @@
 frappe.provide("engenharia.dashboard");
 
 engenharia.dashboard.timeline = {
-	render(container, data) {
-		const items = data.timeline || [];
-		const alerts = data.alertas || [];
-		const horas = data.horas_periodo != null ? { period_hours: data.horas_periodo } : data.horas || {};
-		const comunicacoes = data.comunicacoes_pendentes || data.ultimas_comunicacoes || [];
+	render(container, data, page) {
+		const items = data.agenda || data.timeline || [];
+		const days = data.agenda_days || [];
+		const period = data.periodo_dias || data.period_days || 7;
+		const meta = (data.list_meta || {}).timeline;
+		const limits = data.list_limits || page?.eng_dash_list_limits || {};
+		const utils = engenharia.dashboard.utils;
 
-		const alertHtml = alerts.length
-			? alerts
+		const stripHtml = days.length
+			? `<div class="eng-dash-agenda-strip">${days
 					.map(
-						(row) => `
-				<button type="button" class="eng-dash-alert eng-dash-alert--${row.level || "yellow"}" data-doctype="${frappe.utils.escape_html(row.doctype)}" data-name="${frappe.utils.escape_html(row.docname)}">
-					<strong>${frappe.utils.escape_html(row.title || "")}</strong>
-					<span>${frappe.utils.escape_html(row.date || "")}</span>
-				</button>`
+						(day) => `
+				<div class="eng-dash-agenda-day tone-${day.tone || "gray"}">
+					<div class="eng-dash-agenda-day__label">${frappe.utils.escape_html(day.label || "")}</div>
+					<div class="eng-dash-agenda-day__count">${day.count || 0}</div>
+				</div>`
 					)
-					.join("")
+					.join("")}</div>`
 			: "";
 
 		const timelineHtml = items.length
 			? items
 					.map(
 						(row) => `
-				<button type="button" class="eng-dash-timeline-item eng-dash-timeline-item--${row.urgency || "gray"}" data-doctype="${frappe.utils.escape_html(row.doctype)}" data-name="${frappe.utils.escape_html(row.docname)}">
-					<div class="eng-dash-timeline-item__title">${frappe.utils.escape_html(row.title || "")}</div>
-					<div class="eng-dash-timeline-item__meta">${frappe.utils.escape_html(row.subtitle || "")} · ${frappe.utils.escape_html(row.date || "")}</div>
+				<button type="button" class="eng-dash-timeline-item tone-${row.urgency || "gray"}" data-doctype="${frappe.utils.escape_html(row.doctype)}" data-name="${frappe.utils.escape_html(row.docname)}">
+					<div class="eng-dash-timeline-item__icon">${utils.icon(row.icon || "calendar")}</div>
+					<div class="eng-dash-timeline-item__body">
+						<div class="eng-dash-timeline-item__title">${frappe.utils.escape_html(row.title || "")}</div>
+						<div class="eng-dash-timeline-item__meta">
+							<span class="eng-dash-when tone-${row.urgency || "gray"}">${frappe.utils.escape_html(row.when_label || row.date || "")}</span>
+							${row.subtitle ? ` · ${frappe.utils.escape_html(row.subtitle)}` : ""}
+						</div>
+					</div>
+					${row.amount ? `<div class="eng-dash-timeline-item__amount">${utils.currency_html(row.amount, { alignEnd: true })}</div>` : ""}
 				</button>`
 					)
 					.join("")
-			: `<div class="eng-dash-empty">${__("Nada agendado no período.")}</div>`;
+			: utils.render_empty(
+					period === 1 ? __("Nenhum compromisso hoje ✓") : __("Nenhum compromisso no período ✓"),
+					"calendar-check"
+				);
 
-		const commHtml = comunicacoes.length
-			? comunicacoes
-					.map(
-						(row) => `
-				<button type="button" class="eng-dash-timeline-item" data-doctype="Communication Log" data-name="${frappe.utils.escape_html(row.name)}">
-					<div class="eng-dash-timeline-item__title">${frappe.utils.escape_html(row.subject || row.name)}</div>
-					<div class="eng-dash-timeline-item__meta">${frappe.utils.escape_html(row.communication_date || "")}</div>
-				</button>`
-					)
-					.join("")
-			: `<div class="eng-dash-empty">${__("Sem comunicações recentes.")}</div>`;
+		const title =
+			period === 1 ? __("Agenda de hoje") : __("Agenda — próximos {0} dias", [period]);
 
 		container.html(`
-			<div class="eng-dash-section">
-				<h3>${__("Alertas")}</h3>
-				<div class="eng-dash-alerts">${alertHtml || `<div class="eng-dash-empty">${__("Sem alertas urgentes.")}</div>`}</div>
-			</div>
-			<div class="eng-dash-section">
-				<h3>${__("Agenda")}</h3>
+			<section class="eng-dash-section eng-dash-section--agenda" id="eng-dash-agenda">
+				<div class="eng-dash-section-head">
+					<div>
+						<h3 class="eng-dash-section-title">${title}</h3>
+						<p class="eng-dash-section-sub">${utils.list_meta_label(meta)}</p>
+					</div>
+				</div>
+				${stripHtml}
 				<div class="eng-dash-timeline">${timelineHtml}</div>
-			</div>
-			<div class="eng-dash-section">
-				<h3>${__("Comunicações")}</h3>
-				<div class="eng-dash-timeline">${commHtml}</div>
-			</div>
-			<div class="eng-dash-section eng-dash-hours">
-				<span>${__("Horas na semana")}: <strong>${horas.week_hours || 0}h</strong></span>
-				<span>${__("Horas no período")}: <strong>${data.horas_periodo != null ? data.horas_periodo : 0}h</strong></span>
-				<span>${__("Horas no mês")}: <strong>${horas.month_hours || 0}h</strong></span>
-			</div>
+			</section>
 		`);
 
-		engenharia.dashboard.utils.bind_routes(container);
+		utils.bind_routes(container);
 	},
 };
