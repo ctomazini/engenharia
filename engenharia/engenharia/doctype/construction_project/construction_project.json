@@ -26,7 +26,9 @@
   "construction_area",
   "current_contract_value",
   "sec_specs",
-  "specifications",
+  "specs_help",
+  "spec_preview_panel",
+  "spec_project_total",
   "sec_obs",
   "observations"
  ],
@@ -145,10 +147,22 @@
    "label": "Especifica\u00e7\u00f5es T\u00e9cnicas"
   },
   {
-   "fieldname": "specifications",
-   "fieldtype": "Table",
-   "label": "Especifica\u00e7\u00f5es",
-   "options": "Project Specification"
+   "fieldname": "specs_help",
+   "fieldtype": "HTML",
+   "label": "Itens t\u00e9cnicos",
+   "options": "<p class=\"text-muted\">Use <b>Adicionar especifica\u00e7\u00e3o</b> ou a aba <b>Itens t\u00e9cnicos</b> (conex\u00f5es) para incluir Fossa s\u00e9ptica, Caixa d'\u00e1gua e outros modelos.</p>"
+  },
+  {
+   "fieldname": "spec_preview_panel",
+   "fieldtype": "HTML",
+   "label": "Pr\u00e9via das especifica\u00e7\u00f5es",
+   "options": "<p class=\"text-muted\">Carregando pr\u00e9via...</p>"
+  },
+  {
+   "fieldname": "spec_project_total",
+   "fieldtype": "Currency",
+   "label": "Total especifica\u00e7\u00f5es (obra)",
+   "read_only": 1
   },
   {
    "collapsible": 1,
@@ -163,7 +177,13 @@
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [],
+ "links": [
+  {
+   "group": "Especifica\u00e7\u00f5es",
+   "link_doctype": "Project Item",
+   "link_fieldname": "project"
+  }
+ ],
  "modified": "2026-06-02 17:59:11.031782",
  "modified_by": "Administrator",
  "module": "Engenharia",
