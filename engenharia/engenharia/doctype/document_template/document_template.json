@@ -3,14 +3,19 @@
  "allow_rename": 1,
  "autoname": "field:template_name",
  "creation": "2026-06-02 00:00:00",
+ "custom": 0,
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "template_name",
   "title",
   "document_type",
+  "description",
+  "col_break_1",
   "document_file",
-  "enabled"
+  "enabled",
+  "sec_placeholders",
+  "view_placeholders"
  ],
  "fields": [
   {
@@ -36,16 +41,37 @@
    "options": "Contrato\nProposta\nRelat\u00f3rio\nOutro"
   },
   {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Descri\u00e7\u00e3o"
+  },
+  {
+   "fieldname": "col_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
    "fieldname": "document_file",
    "fieldtype": "Attach",
    "label": "Arquivo .docx",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Modelo .docx com placeholders no formato {{ nome_do_campo }}. Clique em 'Ver Placeholders' abaixo para ver a lista completa."
   },
   {
    "default": "1",
    "fieldname": "enabled",
    "fieldtype": "Check",
    "label": "Habilitado"
+  },
+  {
+   "fieldname": "sec_placeholders",
+   "fieldtype": "Section Break",
+   "label": "Placeholders Dispon\u00edveis"
+  },
+  {
+   "fieldname": "view_placeholders",
+   "fieldtype": "Button",
+   "label": "Ver Placeholders Dispon\u00edveis",
+   "description": "Lista completa de placeholders para usar nos templates .docx"
   }
  ],
  "index_web_pages_for_search": 1,

@@ -17,6 +17,8 @@ SIDEBAR_LINK_ORDER = (
 	("Protocolos", "Permit", "DocType"),
 	("Contratos", "Engineering Contract", "DocType"),
 	("Pagamentos", "Payment", "DocType"),
+	("Templates de Documento", "Document Template", "DocType"),
+	("Kits de Documentos", "Document Kit", "DocType"),
 	("Custo por Obra", "work_cost_by_project", "Report"),
 	("Custo por Categoria", "work_cost_by_category", "Report"),
 	("Fluxo de Caixa", "cash_flow", "Report"),

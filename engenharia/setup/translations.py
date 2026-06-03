@@ -8,6 +8,7 @@ DOCTYPE_LABELS = {
 	"Communication Log": "Comunicação",
 	"Time Log": "Registro de Horas",
 	"Document Template": "Template de Documento",
+	"Document Kit": "Kit de Documentos",
 }
 
 
