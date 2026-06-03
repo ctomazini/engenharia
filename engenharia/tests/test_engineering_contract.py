@@ -56,7 +56,7 @@ class TestEngineeringContract(FrappeTestCase):
 	def test_installments_sum_mismatch_fails(self):
 		project = create_test_construction_project().name
 		customer = frappe.db.get_value("Construction Project", project, "customer")
-		with self.assertRaises(ValidationError):
+		with self.assertRaises(ValidationError) as ctx:
 			frappe.get_doc(
 				{
 					"doctype": "Engineering Contract",
@@ -72,6 +72,7 @@ class TestEngineeringContract(FrappeTestCase):
 					],
 				}
 			).insert(ignore_permissions=True)
+		self.assertIn("falta", str(ctx.exception).lower())
 
 	def test_apply_amendment_history_only(self):
 		contract = create_test_engineering_contract(base_value=10000, installment_count=2)
@@ -83,7 +84,11 @@ class TestEngineeringContract(FrappeTestCase):
 				"amount": 1000,
 			},
 		)
-		contract.save(ignore_permissions=True)
+		frappe.flags.skip_installment_sum_validation = True
+		try:
+			contract.save(ignore_permissions=True)
+		finally:
+			frappe.flags.skip_installment_sum_validation = False
 		apply_amendment(contract.name, regenerate=0)
 		contract.reload()
 		self.assertEqual(flt(contract.current_value), 11000)
@@ -104,7 +109,11 @@ class TestEngineeringContract(FrappeTestCase):
 				"amount": 3000,
 			},
 		)
-		contract.save(ignore_permissions=True)
+		frappe.flags.skip_installment_sum_validation = True
+		try:
+			contract.save(ignore_permissions=True)
+		finally:
+			frappe.flags.skip_installment_sum_validation = False
 
 		apply_amendment(contract.name, regenerate=1)
 		contract.reload()

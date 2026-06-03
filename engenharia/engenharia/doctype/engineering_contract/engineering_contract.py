@@ -52,32 +52,32 @@ class EngineeringContract(Document):
 				frappe.throw(_("Valor atual deve ser maior que zero para gerar parcelas."))
 
 	def _validate_installments(self):
+		if frappe.flags.get("skip_installment_sum_validation"):
+			return
+
 		installments = [row for row in self.get("installments") or [] if row.status != "Cancelado"]
 		if not installments:
 			return
 
 		total = sum(flt(row.amount) for row in installments)
 		current = flt(self.current_value)
+		diff = total - current
 
-		if total > current + 0.02:
-			frappe.throw(
-				_("Soma das parcelas (R$ {0}) excede o valor atual do contrato (R$ {1}).").format(
-					total, current
-				),
-				title=_("Erro de validação das parcelas"),
-			)
-
-		has_amendments = bool(self.amendments)
-		if has_amendments and total < current - 0.02:
+		if abs(diff) <= 0.02:
 			return
 
-		if abs(total - current) > 0.02:
-			frappe.throw(
-				_("Soma das parcelas (R$ {0}) difere do valor atual do contrato (R$ {1}).").format(
-					total, current
-				),
-				title=_("Erro de validação das parcelas"),
+		diff_label = frappe.format_value(diff, {"fieldtype": "Currency"})
+		if diff > 0:
+			detail = _("sobra de {0}").format(frappe.format_value(diff, {"fieldtype": "Currency"}))
+		else:
+			detail = _("falta de {0}").format(
+				frappe.format_value(abs(diff), {"fieldtype": "Currency"})
 			)
+
+		frappe.throw(
+			_("Soma das parcelas difere do total do contrato em {0} ({1}).").format(diff_label, detail),
+			title=_("Erro de validação das parcelas"),
+		)
 
 		first_date = getdate(self.first_installment_date) if self.first_installment_date else None
 		for row in installments:
@@ -160,7 +160,11 @@ def apply_amendment(contract_name: str, regenerate: int = 0) -> dict:
 		contract.save(ignore_permissions=True)  # whitelisted: write validado acima; save dispara sync
 		message = _("Aditivo aplicado e parcelas futuras regeneradas.")
 	else:
-		contract.save(ignore_permissions=True)  # whitelisted: write validado acima; save dispara sync
+		frappe.flags.skip_installment_sum_validation = True
+		try:
+			contract.save(ignore_permissions=True)  # whitelisted: write validado acima; save dispara sync
+		finally:
+			frappe.flags.skip_installment_sum_validation = False
 		message = _("Aditivo registrado no histórico.")
 
 	frappe.msgprint(message, title=_("Aditivo"), indicator="green")
