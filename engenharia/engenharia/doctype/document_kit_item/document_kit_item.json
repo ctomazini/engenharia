@@ -1,0 +1,42 @@
+{
+ "actions": [],
+ "creation": "2026-06-02 00:00:00.000000",
+ "custom": 0,
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "document_template",
+  "sort_order"
+ ],
+ "fields": [
+  {
+   "fieldname": "document_template",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Template",
+   "options": "Document Template",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "sort_order",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Ordem"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-06-02 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Engenharia",
+ "name": "Document Kit Item",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "sort_order",
+ "sort_order": "ASC",
+ "states": [],
+ "track_changes": 1
+}
