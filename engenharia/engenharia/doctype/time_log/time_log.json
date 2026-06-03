@@ -142,7 +142,7 @@
   {
    "fieldname": "timer_section",
    "fieldtype": "Section Break",
-   "label": "Timer"
+   "label": "Temporizador"
   },
   {
    "description": "Widget visual do contador (client-side)",

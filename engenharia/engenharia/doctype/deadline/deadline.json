@@ -81,7 +81,7 @@
    "fieldname": "deadline_type",
    "fieldtype": "Select",
    "in_standard_filter": 1,
-   "label": "Tipo",
+   "label": "Tipo de Prazo",
    "options": "Projeto\nCliente\n\u00d3rg\u00e3o\nOutro"
   },
   {

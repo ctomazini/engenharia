@@ -8,7 +8,10 @@ DOCTYPE_LABELS = {
 	"Communication Log": "Comunicação",
 	"Time Log": "Registro de Horas",
 	"Document Template": "Template de Documento",
-	"Document Kit": "Kit de Documentos",
+	"Permit": "Protocolo",
+	"Deadline": "Prazo",
+	"Permit Type": "Tipo de Protocolo",
+	"Payment": "Pagamento",
 }
 
 

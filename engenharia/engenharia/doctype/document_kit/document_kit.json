@@ -43,12 +43,12 @@
   {
    "fieldname": "sec_templates",
    "fieldtype": "Section Break",
-   "label": "Templates"
+   "label": "Modelos"
   },
   {
    "fieldname": "templates",
    "fieldtype": "Table",
-   "label": "Templates",
+   "label": "Modelos de documento",
    "options": "Document Kit Item",
    "reqd": 1
   }
