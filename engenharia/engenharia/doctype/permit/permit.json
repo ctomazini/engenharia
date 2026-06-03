@@ -53,11 +53,11 @@
   },
   {
    "fieldname": "permit_type",
-   "fieldtype": "Select",
+   "fieldtype": "Link",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Tipo",
-   "options": "Alvar\u00e1\nHabite-se\nLicen\u00e7a Ambiental\nART/RRT",
+   "label": "Tipo de Protocolo",
+   "options": "Permit Type",
    "reqd": 1
   },
   {

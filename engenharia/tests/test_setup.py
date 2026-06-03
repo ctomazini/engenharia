@@ -275,13 +275,23 @@ def create_test_time_log(project=None, activity=None, **kwargs):
 	return doc
 
 
+def ensure_test_permit_type(type_name="Alvará"):
+	if not frappe.db.exists("Permit Type", type_name):
+		frappe.get_doc({"doctype": "Permit Type", "type_name": type_name}).insert(
+			ignore_permissions=True
+		)
+	return type_name
+
+
 def create_test_permit(project=None, **kwargs):
 	if not project:
 		project = create_test_construction_project().name
+	permit_type = kwargs.pop("permit_type", "Alvará")
+	ensure_test_permit_type(permit_type)
 	data = {
 		"doctype": "Permit",
 		"project": project,
-		"permit_type": "Alvará",
+		"permit_type": permit_type,
 		"protocol_date": today(),
 		**kwargs,
 	}

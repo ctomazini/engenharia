@@ -1,7 +1,13 @@
 import frappe
 from frappe.tests.utils import FrappeTestCase
 
-from engenharia.setup.seed import ensure_default_cost_categories, ensure_default_stage_types, ensure_engineering_settings
+from engenharia.setup.seed import (
+	DEFAULT_PERMIT_TYPES,
+	ensure_default_cost_categories,
+	ensure_default_permit_types,
+	ensure_default_stage_types,
+	ensure_engineering_settings,
+)
 
 
 class TestSeed(FrappeTestCase):
@@ -21,3 +27,11 @@ class TestSeed(FrappeTestCase):
 
 		ensure_engineering_settings()
 		self.assertTrue(frappe.db.exists("Engineering Settings", "Engineering Settings"))
+
+	def test_seed_permit_types_idempotent(self):
+		ensure_default_permit_types()
+		count_before = frappe.db.count("Permit Type")
+		ensure_default_permit_types()
+		self.assertEqual(frappe.db.count("Permit Type"), count_before)
+		for type_name in DEFAULT_PERMIT_TYPES:
+			self.assertTrue(frappe.db.exists("Permit Type", type_name))

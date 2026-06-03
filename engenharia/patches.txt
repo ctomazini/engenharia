@@ -4,3 +4,4 @@
 
 [post_model_sync]
 engenharia.patches.v16_0.migrate_project_specification_to_project_item
+engenharia.patches.v16_0.migrate_permit_type_to_link

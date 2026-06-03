@@ -39,3 +39,4 @@ class TestPermit(FrappeTestCase):
 		for permit_type in ("Alvará", "Habite-se", "Licença Ambiental", "ART/RRT"):
 			permit = create_test_permit(permit_type=permit_type)
 			self.assertEqual(permit.permit_type, permit_type)
+			self.assertTrue(frappe.db.exists("Permit Type", permit_type))

@@ -18,6 +18,13 @@ DEFAULT_STAGE_TYPES = (
 	("Entrega", 7),
 )
 
+DEFAULT_PERMIT_TYPES = (
+	"Alvará",
+	"Habite-se",
+	"Licença Ambiental",
+	"ART/RRT",
+)
+
 DEFAULT_TECHNICAL_ITEMS = (
 	{
 		"item_name": "Fossa séptica",
@@ -100,6 +107,15 @@ def ensure_default_stage_types():
 		).insert(ignore_permissions=True)  # setup: seed idempotente de tipos de etapa
 
 
+def ensure_default_permit_types():
+	for type_name in DEFAULT_PERMIT_TYPES:
+		if frappe.db.exists("Permit Type", type_name):
+			continue
+		frappe.get_doc({"doctype": "Permit Type", "type_name": type_name}).insert(
+			ignore_permissions=True  # setup: seed idempotente de tipos de protocolo
+		)
+
+
 def ensure_engineering_settings():
 	if frappe.db.exists("Engineering Settings", "Engineering Settings"):
 		return
@@ -160,6 +176,7 @@ def ensure_technical_item_templates():
 def ensure_seed_data():
 	ensure_default_cost_categories()
 	ensure_default_stage_types()
+	ensure_default_permit_types()
 	ensure_engineering_settings()
 	ensure_technical_item_templates()
 	frappe.db.commit()  # setup: seed idempotente no migrate
