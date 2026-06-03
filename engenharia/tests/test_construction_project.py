@@ -5,18 +5,8 @@ from engenharia.tests.test_setup import _uid, create_test_construction_project, 
 from engenharia.titles import TITLE_SEPARATOR, join_title_parts
 
 
-def create_test_technical_item(**kwargs):
-	data = {
-		"doctype": "Technical Item",
-		"item_name": _uid("Item Tecnico"),
-		"default_unit": "m²",
-		"data_type": "Número",
-		"category": "Estrutural",
-		**kwargs,
-	}
-	doc = frappe.get_doc(data)
-	doc.insert(ignore_permissions=True)
-	return doc
+from engenharia.engenharia.doctype.construction_project.construction_project import create_project_item
+from engenharia.tests.test_project_item import create_test_technical_item_cylinder
 
 
 class TestConstructionProject(FrappeTestCase):
@@ -44,20 +34,14 @@ class TestConstructionProject(FrappeTestCase):
 		self.assertIn(TITLE_SEPARATOR, project.title)
 		self.assertIn("Campinas", project.title)
 
-	def test_specifications_child_table(self):
-		item = create_test_technical_item(default_unit="m")
-		project = create_test_construction_project(
-			specifications=[
-				{
-					"technical_item": item.name,
-					"value": "120",
-					"remarks": "Teste",
-				}
-			]
-		)
-		self.assertEqual(len(project.specifications), 1)
-		self.assertEqual(project.specifications[0].technical_item, item.name)
-		self.assertEqual(project.specifications[0].unit, "m")
+	def test_create_project_item_from_project(self):
+		item = create_test_technical_item_cylinder()
+		project = create_test_construction_project()
+		name = create_project_item(project=project.name, technical_item=item.name)
+		doc = frappe.get_doc("Project Item", name)
+		self.assertEqual(doc.project, project.name)
+		self.assertEqual(doc.technical_item, item.name)
+		self.assertEqual(len(doc.parameter_values), 3)
 
 	def test_title_updates_when_city_changes(self):
 		project = create_test_construction_project(city="Santos")

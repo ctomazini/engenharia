@@ -9,6 +9,7 @@ SIDEBAR_LINK_ORDER = (
 	("Comunicações", "Communication Log", "DocType"),
 	("Registro de Horas", "Time Log", "DocType"),
 	("Obras", "Construction Project", "DocType"),
+	("Itens na Obra", "Project Item", "DocType"),
 	("Clientes", "Customer", "DocType"),
 	("Custos de Obra", "Work Cost", "DocType"),
 	("Despesas Reembolsáveis", "Reimbursable Expense", "DocType"),
