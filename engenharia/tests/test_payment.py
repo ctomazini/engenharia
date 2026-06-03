@@ -41,3 +41,7 @@ class TestPayment(FrappeTestCase):
 		payment.amount = 999
 		with self.assertRaises(frappe.ValidationError):
 			payment.save(ignore_permissions=True)
+
+	def test_status_visible_in_list_view(self):
+		status_field = frappe.get_meta("Payment").get_field("status")
+		self.assertEqual(status_field.in_list_view, 1)
