@@ -9,12 +9,26 @@ class TestTechnicalItem(FrappeTestCase):
 		frappe.db.rollback()
 
 	def _create(self, **kwargs):
+		fields = kwargs.pop(
+			"fields",
+			[
+				{
+					"field_key": "value",
+					"label": "Valor",
+					"unit": "m²",
+					"data_type": "Número",
+					"required": 1,
+					"sort_order": 1,
+				}
+			],
+		)
 		data = {
 			"doctype": "Technical Item",
 			"item_name": _uid("Item"),
 			"default_unit": "m²",
 			"data_type": "Número",
 			"category": "Estrutural",
+			"fields": fields,
 			**kwargs,
 		}
 		doc = frappe.get_doc(data)

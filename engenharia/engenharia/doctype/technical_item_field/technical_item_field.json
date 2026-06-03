@@ -1,0 +1,78 @@
+{
+ "actions": [],
+ "creation": "2026-06-02 00:00:00.000000",
+ "custom": 0,
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "field_key",
+  "label",
+  "unit",
+  "data_type",
+  "default_value",
+  "required",
+  "sort_order"
+ ],
+ "fields": [
+  {
+   "fieldname": "field_key",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Chave",
+   "reqd": 1
+  },
+  {
+   "bold": 1,
+   "fieldname": "label",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "R\u00f3tulo",
+   "reqd": 1
+  },
+  {
+   "fieldname": "unit",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Unidade"
+  },
+  {
+   "default": "N\u00famero",
+   "fieldname": "data_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Tipo de Dado",
+   "options": "N\u00famero\nTexto\nSim-N\u00e3o",
+   "reqd": 1
+  },
+  {
+   "description": "Valor sugerido ao criar o item na obra (edit\u00e1vel).",
+   "fieldname": "default_value",
+   "fieldtype": "Data",
+   "label": "Valor padr\u00e3o"
+  },
+  {
+   "default": "0",
+   "fieldname": "required",
+   "fieldtype": "Check",
+   "label": "Obrigat\u00f3rio"
+  },
+  {
+   "default": "1",
+   "fieldname": "sort_order",
+   "fieldtype": "Int",
+   "label": "Ordem"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-06-02 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Engenharia",
+ "name": "Technical Item Field",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "sort_order",
+ "sort_order": "ASC",
+ "states": []
+}

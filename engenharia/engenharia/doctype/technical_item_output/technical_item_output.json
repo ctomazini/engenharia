@@ -1,0 +1,71 @@
+{
+ "actions": [],
+ "creation": "2026-06-02 00:00:00.000000",
+ "custom": 0,
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "output_key",
+  "label",
+  "role",
+  "unit",
+  "formula",
+  "sort_order"
+ ],
+ "fields": [
+  {
+   "fieldname": "output_key",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Chave",
+   "reqd": 1
+  },
+  {
+   "bold": 1,
+   "fieldname": "label",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "R\u00f3tulo",
+   "reqd": 1
+  },
+  {
+   "description": "Vazio = resultado local. volume = t\u00edtulo do item; value = valor total (R$) no item e soma na obra; preview = pr\u00e9via na obra; area = \u00e1rea total (deferido).",
+   "fieldname": "role",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Papel",
+   "options": "\nvolume\nvalue\npreview\narea"
+  },
+  {
+   "fieldname": "unit",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Unidade"
+  },
+  {
+   "fieldname": "formula",
+   "fieldtype": "Small Text",
+   "in_list_view": 1,
+   "label": "F\u00f3rmula",
+   "reqd": 1
+  },
+  {
+   "default": "1",
+   "fieldname": "sort_order",
+   "fieldtype": "Int",
+   "label": "Ordem"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-06-02 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Engenharia",
+ "name": "Technical Item Output",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "sort_order",
+ "sort_order": "ASC",
+ "states": []
+}

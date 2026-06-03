@@ -3,17 +3,25 @@
  "allow_rename": 1,
  "autoname": "field:item_name",
  "creation": "2026-06-02 00:00:00",
+ "custom": 0,
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
   "item_name",
-  "default_unit",
+  "item_key",
+  "col_break_1",
+  "category",
   "data_type",
-  "category"
+  "default_unit",
+  "sec_fields",
+  "fields",
+  "sec_outputs",
+  "outputs"
  ],
  "fields": [
   {
    "allow_in_quick_entry": 1,
+   "bold": 1,
    "fieldname": "item_name",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -23,19 +31,16 @@
    "unique": 1
   },
   {
-   "fieldname": "default_unit",
+   "description": "Identificador est\u00e1vel para documentos (ex.: fossa_septica). Gerado automaticamente se vazio.",
+   "fieldname": "item_key",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Unidade Padr\u00e3o"
+   "label": "Chave do Item",
+   "unique": 1
   },
   {
-   "fieldname": "data_type",
-   "fieldtype": "Select",
-   "in_list_view": 1,
-   "in_standard_filter": 1,
-   "label": "Tipo de Dado",
-   "options": "N\u00famero\nTexto\nSim-N\u00e3o",
-   "reqd": 1
+   "fieldname": "col_break_1",
+   "fieldtype": "Column Break"
   },
   {
    "fieldname": "category",
@@ -44,6 +49,42 @@
    "in_standard_filter": 1,
    "label": "Categoria",
    "options": "Estrutural\nEl\u00e9trica\nHidr\u00e1ulica\nAcabamento\nGeral"
+  },
+  {
+   "default": "N\u00famero",
+   "fieldname": "data_type",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Tipo de Dado (legado)",
+   "options": "N\u00famero\nTexto\nSim-N\u00e3o",
+   "reqd": 1
+  },
+  {
+   "fieldname": "default_unit",
+   "fieldtype": "Data",
+   "label": "Unidade Padr\u00e3o (legado)"
+  },
+  {
+   "fieldname": "sec_fields",
+   "fieldtype": "Section Break",
+   "label": "Campos da Especifica\u00e7\u00e3o"
+  },
+  {
+   "fieldname": "fields",
+   "fieldtype": "Table",
+   "label": "Campos",
+   "options": "Technical Item Field"
+  },
+  {
+   "fieldname": "sec_outputs",
+   "fieldtype": "Section Break",
+   "label": "Resultados calculados"
+  },
+  {
+   "fieldname": "outputs",
+   "fieldtype": "Table",
+   "label": "Sa\u00eddas",
+   "options": "Technical Item Output"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -92,7 +133,7 @@
  ],
  "quick_entry": 1,
  "row_format": "Dynamic",
- "search_fields": "item_name,category,data_type",
+ "search_fields": "item_name,item_key,category",
  "show_title_field_in_link": 1,
  "sort_field": "item_name",
  "sort_order": "ASC",
