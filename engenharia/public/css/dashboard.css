@@ -1,0 +1,468 @@
+/* Engenharia dashboard — tema via CSS variables (sem hex fixo) */
+
+.eng-dash-root {
+	--eng-dash-radius: 16px;
+	--eng-dash-gap: 24px;
+	--eng-dash-shadow: 0 1px 2px color-mix(in srgb, var(--gray-900) 4%, transparent),
+		0 8px 24px color-mix(in srgb, var(--gray-900) 5%, transparent);
+	max-width: 1280px;
+	margin: 0 auto;
+	padding: 12px 16px 64px;
+	color: var(--text-color);
+}
+
+.eng-dash-content {
+	animation: eng-dash-fade-in 0.4s ease-out;
+}
+
+@keyframes eng-dash-fade-in {
+	from {
+		opacity: 0;
+		transform: translateY(6px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.eng-dash-loading {
+	padding: 48px;
+	text-align: center;
+	color: var(--text-muted);
+}
+
+/* Hero */
+.eng-dash-hero {
+	padding: 28px 0 20px;
+	margin-bottom: var(--eng-dash-gap);
+}
+
+.eng-dash-hero__greeting {
+	font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+	font-weight: 600;
+	margin: 0 0 8px;
+	letter-spacing: -0.02em;
+}
+
+.eng-dash-hero__date {
+	margin: 0 0 6px;
+	color: var(--text-muted);
+}
+
+.eng-dash-hero__context {
+	margin: 0;
+	font-size: var(--text-sm);
+	color: var(--text-muted);
+	line-height: 1.5;
+}
+
+.eng-dash-currency {
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
+.eng-dash-currency--end {
+	display: block;
+	text-align: end;
+}
+
+/* Centro de atenção */
+.eng-dash-centro {
+	margin-bottom: var(--eng-dash-gap);
+}
+
+.eng-dash-centro__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+	gap: 10px;
+}
+
+.eng-dash-tile {
+	border: 1px solid var(--border-color);
+	border-radius: 12px;
+	padding: 12px 14px;
+	background: var(--card-bg);
+	cursor: pointer;
+	text-align: left;
+	transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.eng-dash-tile:hover {
+	border-color: var(--primary);
+	box-shadow: var(--eng-dash-shadow);
+}
+
+.eng-dash-tile__count {
+	font-size: 1.35rem;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+}
+
+.eng-dash-tile__label {
+	font-size: 12px;
+	color: var(--text-muted);
+	margin-top: 4px;
+}
+
+.eng-dash-tile__meta {
+	font-size: 12px;
+	margin-top: 6px;
+}
+
+.eng-dash-tile.tone-red {
+	border-left: 3px solid var(--red-500);
+}
+
+.eng-dash-tile.tone-orange {
+	border-left: 3px solid var(--orange-500);
+}
+
+.eng-dash-tile.tone-green {
+	border-left: 3px solid var(--green-500);
+}
+
+.eng-dash-tile.tone-blue {
+	border-left: 3px solid var(--blue-500);
+}
+
+.eng-dash-tile.tone-purple {
+	border-left: 3px solid var(--purple-500);
+}
+
+/* Saúde operacional (anel SVG) */
+.eng-dash-saude {
+	border: 1px solid var(--border-color);
+	border-radius: var(--eng-dash-radius);
+	padding: 16px;
+	background: var(--card-bg);
+	margin-bottom: var(--eng-dash-gap);
+}
+
+.eng-dash-saude__body {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: 16px;
+	align-items: center;
+}
+
+.eng-dash-saude-ring svg {
+	width: 88px;
+	height: 88px;
+	transform: rotate(-90deg);
+}
+
+.eng-dash-saude-ring-bg {
+	fill: none;
+	stroke: color-mix(in srgb, var(--border-color) 80%, transparent);
+	stroke-width: 8;
+}
+
+.eng-dash-saude-ring-fill {
+	fill: none;
+	stroke-width: 8;
+	stroke-linecap: round;
+}
+
+.eng-dash-saude-ring-fill.tone-green {
+	stroke: var(--green-500);
+}
+
+.eng-dash-saude-ring-fill.tone-orange {
+	stroke: var(--orange-500);
+}
+
+.eng-dash-saude-ring-fill.tone-red {
+	stroke: var(--red-500);
+}
+
+.eng-dash-saude-score {
+	position: relative;
+	margin-top: -88px;
+	height: 88px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	pointer-events: none;
+}
+
+.eng-dash-saude-score__num {
+	font-size: 1.1rem;
+	font-weight: 700;
+}
+
+.eng-dash-saude-score__label {
+	font-size: 10px;
+	color: var(--text-muted);
+}
+
+/* KPI grid */
+.eng-dash-kpi-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+	gap: 12px;
+	margin-bottom: var(--eng-dash-gap);
+}
+
+.eng-dash-kpi {
+	background: var(--card-bg);
+	border: 1px solid var(--border-color);
+	border-radius: 12px;
+	padding: 14px 16px;
+	box-shadow: var(--shadow-sm);
+}
+
+.eng-dash-kpi--blue {
+	border-top: 3px solid var(--blue-500);
+}
+
+.eng-dash-kpi--orange {
+	border-top: 3px solid var(--orange-500);
+}
+
+.eng-dash-kpi--purple {
+	border-top: 3px solid var(--purple-500);
+}
+
+.eng-dash-kpi--green {
+	border-top: 3px solid var(--green-500);
+}
+
+.eng-dash-kpi__label {
+	font-size: 12px;
+	color: var(--text-muted);
+	margin-bottom: 8px;
+}
+
+.eng-dash-kpi__value {
+	font-size: 1.35rem;
+	font-weight: 700;
+}
+
+.eng-dash-kpi__sub {
+	font-size: 12px;
+	color: var(--text-muted);
+	margin-top: 6px;
+}
+
+/* Sections */
+.eng-dash-section {
+	background: var(--card-bg);
+	border: 1px solid var(--border-color);
+	border-radius: 12px;
+	padding: 16px;
+	margin-bottom: 16px;
+}
+
+.eng-dash-section h3 {
+	margin: 0 0 12px;
+	font-size: 13px;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--text-muted);
+}
+
+.eng-dash-section-sub {
+	margin: -8px 0 12px;
+	font-size: 12px;
+	color: var(--text-muted);
+}
+
+.eng-dash-zona-critica {
+	display: grid;
+	gap: var(--eng-dash-gap);
+	margin-bottom: var(--eng-dash-gap);
+}
+
+.eng-dash-destaques-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 16px;
+}
+
+@media (max-width: 900px) {
+	.eng-dash-destaques-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+/* Financeiro */
+.eng-dash-finance-grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 16px;
+}
+
+@media (max-width: 900px) {
+	.eng-dash-finance-grid {
+		grid-template-columns: 1fr;
+	}
+}
+
+.eng-dash-finance-donut-wrap {
+	min-height: 220px;
+}
+
+.eng-dash-stat-row {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 10px;
+	margin-bottom: 12px;
+}
+
+.eng-dash-stat {
+	padding: 10px;
+	border-radius: 10px;
+	background: var(--control-bg);
+}
+
+.eng-dash-stat__label {
+	font-size: 11px;
+	color: var(--text-muted);
+}
+
+.eng-dash-stat__value {
+	font-weight: 700;
+	margin-top: 4px;
+}
+
+.eng-dash-stat__value--success {
+	color: var(--green-600);
+}
+
+.eng-dash-stat__value--danger {
+	color: var(--red-600);
+}
+
+.eng-dash-chart-row {
+	display: grid;
+	grid-template-columns: 1fr 2fr auto;
+	gap: 10px;
+	align-items: center;
+	margin-bottom: 8px;
+}
+
+.eng-dash-chart-track {
+	height: 8px;
+	background: color-mix(in srgb, var(--border-color) 60%, transparent);
+	border-radius: 999px;
+	overflow: hidden;
+}
+
+.eng-dash-chart-fill {
+	height: 100%;
+	border-radius: 999px;
+}
+
+.eng-dash-chart-fill.danger {
+	background: var(--red-500);
+}
+
+.eng-dash-chart-fill.success {
+	background: var(--green-500);
+}
+
+.eng-dash-chart-fill.warning {
+	background: var(--orange-500);
+}
+
+.eng-dash-chart-fill.neutral {
+	background: var(--gray-500);
+}
+
+.eng-dash-chart-fill.info {
+	background: var(--blue-500);
+}
+
+.eng-dash-chart-amt {
+	font-size: 12px;
+	text-align: end;
+}
+
+/* Listas operacionais */
+.eng-dash-duo {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 16px;
+	margin-bottom: var(--eng-dash-gap);
+}
+
+@media (max-width: 900px) {
+	.eng-dash-duo {
+		grid-template-columns: 1fr;
+	}
+}
+
+.eng-dash-op-row {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: 8px;
+	align-items: center;
+	border: 1px solid var(--border-color);
+	border-radius: 10px;
+	padding: 10px 12px;
+	margin-bottom: 8px;
+	cursor: pointer;
+	background: var(--control-bg);
+	text-align: left;
+	width: 100%;
+}
+
+.eng-dash-op-row:hover {
+	border-color: var(--primary);
+}
+
+.eng-dash-op-side {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: 6px;
+}
+
+.eng-dash-list,
+.eng-dash-timeline,
+.eng-dash-alerts {
+	display: grid;
+	gap: 8px;
+}
+
+.eng-dash-timeline-item,
+.eng-dash-alert {
+	text-align: left;
+	border: 1px solid var(--border-color);
+	background: var(--control-bg);
+	border-radius: 10px;
+	padding: 10px 12px;
+	cursor: pointer;
+}
+
+.eng-dash-timeline-item:hover,
+.eng-dash-alert:hover {
+	border-color: var(--primary);
+}
+
+.eng-dash-timeline-item__title,
+.eng-dash-op-row__title {
+	font-weight: 600;
+}
+
+.eng-dash-timeline-item__meta,
+.eng-dash-op-row__sub {
+	font-size: 12px;
+	color: var(--text-muted);
+	margin-top: 4px;
+}
+
+.eng-dash-empty {
+	color: var(--text-muted);
+	font-size: 13px;
+	padding: 8px 0;
+}
+
+.eng-dash-hours {
+	display: flex;
+	gap: 24px;
+	font-size: 13px;
+	color: var(--text-muted);
+}

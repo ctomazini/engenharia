@@ -4,6 +4,8 @@ engenharia.dashboard.timeline = {
 	render(container, data) {
 		const items = data.timeline || [];
 		const alerts = data.alertas || [];
+		const horas = data.horas_periodo != null ? { period_hours: data.horas_periodo } : data.horas || {};
+		const comunicacoes = data.comunicacoes_pendentes || data.ultimas_comunicacoes || [];
 
 		const alertHtml = alerts.length
 			? alerts
@@ -29,7 +31,18 @@ engenharia.dashboard.timeline = {
 					.join("")
 			: `<div class="eng-dash-empty">${__("Nada agendado no período.")}</div>`;
 
-		const horas = data.horas || {};
+		const commHtml = comunicacoes.length
+			? comunicacoes
+					.map(
+						(row) => `
+				<button type="button" class="eng-dash-timeline-item" data-doctype="Communication Log" data-name="${frappe.utils.escape_html(row.name)}">
+					<div class="eng-dash-timeline-item__title">${frappe.utils.escape_html(row.subject || row.name)}</div>
+					<div class="eng-dash-timeline-item__meta">${frappe.utils.escape_html(row.communication_date || "")}</div>
+				</button>`
+					)
+					.join("")
+			: `<div class="eng-dash-empty">${__("Sem comunicações recentes.")}</div>`;
+
 		container.html(`
 			<div class="eng-dash-section">
 				<h3>${__("Alertas")}</h3>
@@ -39,14 +52,17 @@ engenharia.dashboard.timeline = {
 				<h3>${__("Agenda")}</h3>
 				<div class="eng-dash-timeline">${timelineHtml}</div>
 			</div>
+			<div class="eng-dash-section">
+				<h3>${__("Comunicações")}</h3>
+				<div class="eng-dash-timeline">${commHtml}</div>
+			</div>
 			<div class="eng-dash-section eng-dash-hours">
 				<span>${__("Horas na semana")}: <strong>${horas.week_hours || 0}h</strong></span>
+				<span>${__("Horas no período")}: <strong>${data.horas_periodo != null ? data.horas_periodo : 0}h</strong></span>
 				<span>${__("Horas no mês")}: <strong>${horas.month_hours || 0}h</strong></span>
 			</div>
 		`);
 
-		container.find("[data-doctype][data-name]").on("click", function () {
-			engenharia.dashboard.utils.route_form($(this).data("doctype"), $(this).data("name"));
-		});
+		engenharia.dashboard.utils.bind_routes(container);
 	},
 };
