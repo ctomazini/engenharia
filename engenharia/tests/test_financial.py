@@ -5,10 +5,15 @@ from frappe.utils import flt, today
 from engenharia.financial import (
 	bulk_delete_payments,
 	cancel_contract_payment,
+	reimbursable_origin_id,
 	resync_contract_payments,
 	sync_payments_from_contract,
 )
-from engenharia.tests.test_setup import create_test_engineering_contract, get_contract_payments
+from engenharia.tests.test_setup import (
+	create_test_engineering_contract,
+	create_test_reimbursable_expense,
+	get_contract_payments,
+)
 
 
 class TestFinancial(FrappeTestCase):
@@ -75,3 +80,33 @@ class TestFinancial(FrappeTestCase):
 		payment_name = get_contract_payments(contract.name)[0].name
 		cancel_contract_payment(payment_name)
 		self.assertEqual(frappe.db.get_value("Payment", payment_name, "status"), "Cancelado")
+
+	def test_reimbursable_payment_included_in_receivable_kpi(self):
+		from engenharia.dashboard import kpis as dashboard_kpis
+
+		expense = create_test_reimbursable_expense(amount=250)
+		payment_name = frappe.db.get_value(
+			"Payment",
+			{"installment_origin_id": reimbursable_origin_id(expense.name)},
+			"name",
+		)
+		self.assertTrue(payment_name)
+
+		hoje = today()
+		period_end = frappe.utils.add_days(hoje, 7)
+		month_start = frappe.utils.get_first_day(hoje)
+		month_end = frappe.utils.get_last_day(hoje)
+		k = dashboard_kpis.build_kpis(hoje, period_end, month_start, month_end)
+		self.assertGreaterEqual(flt(k["amount_receivable"]["amount"]), 250)
+
+	def test_check_overdue_installments_marks_vencido(self):
+		from engenharia.tasks import check_overdue_installments
+
+		contract = create_test_engineering_contract(base_value=500, installment_count=1)
+		payment = frappe.get_doc("Payment", get_contract_payments(contract.name)[0].name)
+		payment.due_date = frappe.utils.add_days(today(), -5)
+		payment.status = "Pendente"
+		payment.save(ignore_permissions=True)
+
+		check_overdue_installments()
+		self.assertEqual(frappe.db.get_value("Payment", payment.name, "status"), "Vencido")

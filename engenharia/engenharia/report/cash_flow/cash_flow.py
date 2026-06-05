@@ -23,7 +23,7 @@ def execute(filters=None):
 		filters={"status": "Recebido", "received_date": ["between", [start, end]]},
 		fields=["name", "description", "received_date", "received_amount", "amount"],
 		order_by="received_date asc",
-		limit=0,
+		limit_page_length=0,
 	):
 		transactions.append(
 			{
@@ -40,11 +40,31 @@ def execute(filters=None):
 		filters={"status": "Pago", "date": ["between", [start, end]]},
 		fields=["name", "description", "date", "amount"],
 		order_by="date asc",
-		limit=0,
+		limit_page_length=0,
 	):
 		transactions.append(
 			{
 				"date": row.date,
+				"type": _("Saída"),
+				"description": row.description or row.name,
+				"inflow": 0,
+				"outflow": flt(row.amount),
+			}
+		)
+
+	for row in frappe.get_all(
+		"Reimbursable Expense",
+		filters={
+			"status": ["!=", "Cancelado"],
+			"payment_date": ["between", [start, end]],
+		},
+		fields=["name", "description", "payment_date", "amount"],
+		order_by="payment_date asc",
+		limit_page_length=0,
+	):
+		transactions.append(
+			{
+				"date": row.payment_date,
 				"type": _("Saída"),
 				"description": row.description or row.name,
 				"inflow": 0,

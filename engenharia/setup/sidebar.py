@@ -2,12 +2,16 @@ import os
 
 import frappe
 
+# Ordem canônica da sidebar Engenharia (espelha workspace_sidebar/engenharia.json).
+# Seções: Dia a Dia | Gestão de Obras | Financeiro | Relatórios | Cadastros | Administração
 SIDEBAR_LINK_ORDER = (
+	# Dia a Dia
 	("Painel", "eng-dashboard", "Page"),
 	("Prazos", "Deadline", "DocType"),
 	("Tarefas", "Task", "DocType"),
 	("Comunicações", "Communication Log", "DocType"),
 	("Registro de Horas", "Time Log", "DocType"),
+	# Gestão de Obras
 	("Obras", "Construction Project", "DocType"),
 	("Itens na Obra", "Project Item", "DocType"),
 	("Clientes", "Customer", "DocType"),
@@ -15,29 +19,106 @@ SIDEBAR_LINK_ORDER = (
 	("Despesas Reembolsáveis", "Reimbursable Expense", "DocType"),
 	("Etapas", "Project Stage", "DocType"),
 	("Protocolos", "Permit", "DocType"),
+	# Financeiro
 	("Contratos", "Engineering Contract", "DocType"),
 	("Pagamentos", "Payment", "DocType"),
 	("Templates de Documento", "Document Template", "DocType"),
 	("Kits de Documentos", "Document Kit", "DocType"),
+	# Relatórios
 	("Custo por Obra", "work_cost_by_project", "Report"),
 	("Custo por Categoria", "work_cost_by_category", "Report"),
 	("Fluxo de Caixa", "cash_flow", "Report"),
 	("Obras por Status", "projects_by_status", "Report"),
 	("Margem por Obra", "project_margin", "Report"),
+	# Cadastros
 	("Fornecedores", "Supplier", "DocType"),
 	("Categorias de Custo", "Cost Category", "DocType"),
 	("Tipos de Etapa", "Stage Type", "DocType"),
 	("Órgãos Públicos", "Public Agency", "DocType"),
 	("Itens Técnicos", "Technical Item", "DocType"),
+	# Administração
+	("Usuários", "User", "DocType"),
+	("Novo Usuário", "/app/user/new", "URL"),
 )
 
 SIDEBAR_SECTIONS = (
+	# Frappe v16: Section Break com filhos exige collapsible=1, senão toggle() quebra
+	# ao fechar a sidebar (evento sidebar-expand) e o scroll do desk trava.
 	{"label": "Dia a Dia", "collapsible": 1, "keep_closed": 0},
 	{"label": "Gestão de Obras", "collapsible": 1, "keep_closed": 0},
 	{"label": "Financeiro", "collapsible": 1, "keep_closed": 0},
 	{"label": "Relatórios", "collapsible": 1, "keep_closed": 1},
 	{"label": "Cadastros", "collapsible": 1, "keep_closed": 1},
+	{"label": "Administração", "collapsible": 1, "keep_closed": 1},
 )
+
+
+def _validate_section_break_collapsible():
+	"""Section Break com filhos deve ter collapsible=1 (requisito do Frappe v16 sidebar JS)."""
+	if not frappe.db.exists("Workspace Sidebar", "Engenharia"):
+		return
+
+	sections = frappe.get_all(
+		"Workspace Sidebar Item",
+		filters={"parent": "Engenharia", "type": "Section Break"},
+		fields=["label", "collapsible", "idx"],
+		order_by="idx asc",
+	)
+	links = frappe.get_all(
+		"Workspace Sidebar Item",
+		filters={"parent": "Engenharia", "type": "Link"},
+		fields=["idx"],
+		order_by="idx asc",
+	)
+	link_idxs = [row.idx for row in links]
+
+	for section in sections:
+		has_children = any(idx > section.idx for idx in link_idxs)
+		if has_children and not section.collapsible:
+			frappe.log_error(
+				title="Engenharia sidebar: Section Break sem collapsible",
+				message=(
+					f'Seção "{section.label}" tem itens filhos mas collapsible=0; '
+					"isso quebra Sidebar.close() no desk (toggle sem $drop_icon)."
+				),
+			)
+
+
+def _validate_sidebar_links():
+	"""Garante que o JSON importado mantém os links na ordem esperada."""
+	if not frappe.db.exists("Workspace Sidebar", "Engenharia"):
+		return
+
+	links = frappe.get_all(
+		"Workspace Sidebar Item",
+		filters={"parent": "Engenharia", "type": "Link"},
+		fields=["label", "link_to", "link_type", "url", "idx"],
+		order_by="idx asc",
+	)
+
+	if len(links) != len(SIDEBAR_LINK_ORDER):
+		frappe.log_error(
+			title="Engenharia sidebar: contagem de links divergente",
+			message=f"Esperado {len(SIDEBAR_LINK_ORDER)}, encontrado {len(links)}",
+		)
+		return
+
+	for idx, (expected, link) in enumerate(zip(SIDEBAR_LINK_ORDER, links, strict=True)):
+		label, link_to, link_type = expected
+		actual_link_to = link.url if link_type == "URL" else link.link_to
+		if (
+			link.label != label
+			or actual_link_to != link_to
+			or link.link_type != link_type
+		):
+			frappe.log_error(
+				title="Engenharia sidebar: ordem divergente",
+				message=(
+					f"Posição {idx + 1}: esperado {label}/{link_to}/{link_type}, "
+					f"encontrado {link.label}/{actual_link_to}/{link.link_type}"
+				),
+			)
+			return
 
 
 def ensure_engenharia_sidebar():
@@ -52,6 +133,8 @@ def ensure_engenharia_sidebar():
 		if os.path.exists(path):
 			frappe.import_doc(path)
 
+	_validate_sidebar_links()
+	_validate_section_break_collapsible()
 	frappe.clear_cache()
 	frappe.db.commit()  # setup: sincroniza sidebar/desktop icon no migrate
 

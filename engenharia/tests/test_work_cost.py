@@ -28,6 +28,11 @@ class TestWorkCost(FrappeTestCase):
 		cost.delete(ignore_permissions=True)
 		self.assertFalse(frappe.db.exists("Work Cost", name))
 
+	def test_customer_from_project(self):
+		project = create_test_construction_project()
+		cost = create_test_work_cost(project=project.name, amount=100)
+		self.assertEqual(cost.customer, project.customer)
+
 	def test_cancelled_immutable(self):
 		cost = create_test_work_cost(status="Cancelado")
 		cost.amount = 999

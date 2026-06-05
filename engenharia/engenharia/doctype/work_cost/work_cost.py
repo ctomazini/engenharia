@@ -14,6 +14,9 @@ class WorkCost(Document):
 		if flt(self.amount) <= 0:
 			frappe.throw(_("Valor deve ser maior que zero."))
 
+		if self.project and not self.customer:
+			self.customer = frappe.db.get_value("Construction Project", self.project, "customer")
+
 		self._compose_title()
 
 	def after_insert(self):

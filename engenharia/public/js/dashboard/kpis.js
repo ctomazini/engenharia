@@ -12,7 +12,7 @@ engenharia.dashboard.kpis = {
 			{
 				label: __("A receber (total)"),
 				value: kpis.amount_receivable?.amount || 0,
-				sub: `${kpis.amount_receivable?.count || 0} ${__("parcelas")}`,
+				sub: `${kpis.amount_receivable?.count || 0} ${__("itens")}`,
 				tone: "orange",
 				icon: "wallet",
 			},
@@ -24,9 +24,9 @@ engenharia.dashboard.kpis = {
 				icon: "circle-alert",
 			},
 			{
-				label: __("A reembolsar (total)"),
+				label: __("A reembolsar (cliente)"),
 				value: kpis.amount_reimbursable?.amount || 0,
-				sub: `${kpis.amount_reimbursable?.count || 0} ${__("despesas")}`,
+				sub: `${kpis.amount_reimbursable?.count || 0} ${__("despesas pendentes de devolução")}`,
 				tone: "yellow",
 				icon: "wallet",
 			},

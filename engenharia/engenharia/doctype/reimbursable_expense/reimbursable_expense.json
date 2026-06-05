@@ -12,12 +12,13 @@
   "col_break_1",
   "description",
   "status",
+  "payment",
   "sec_values",
   "amount",
   "payment_date",
   "col_break_2",
-  "reimburse_client",
-  "reimbursement_date",
+  "await_client_reimbursement",
+  "client_reimbursed_date",
   "receipt"
  ],
  "fields": [
@@ -68,6 +69,13 @@
    "options": "A reembolsar\nReembolsado\nCancelado"
   },
   {
+   "fieldname": "payment",
+   "fieldtype": "Link",
+   "label": "Pagamento",
+   "options": "Payment",
+   "read_only": 1
+  },
+  {
    "fieldname": "sec_values",
    "fieldtype": "Section Break",
    "label": "Valores"
@@ -82,7 +90,7 @@
   {
    "fieldname": "payment_date",
    "fieldtype": "Date",
-   "label": "Data de Pagamento"
+   "label": "Data do pagamento pelo escrit\u00f3rio"
   },
   {
    "fieldname": "col_break_2",
@@ -90,15 +98,15 @@
   },
   {
    "default": "1",
-   "fieldname": "reimburse_client",
+   "fieldname": "await_client_reimbursement",
    "fieldtype": "Check",
-   "label": "Reembolsar Cliente"
+   "label": "Cliente deve reembolsar"
   },
   {
-   "depends_on": "eval:doc.reimburse_client==1",
-   "fieldname": "reimbursement_date",
+   "depends_on": "eval:doc.await_client_reimbursement==1",
+   "fieldname": "client_reimbursed_date",
    "fieldtype": "Date",
-   "label": "Data de Reembolso"
+   "label": "Data do recebimento do cliente"
   },
   {
    "fieldname": "receipt",

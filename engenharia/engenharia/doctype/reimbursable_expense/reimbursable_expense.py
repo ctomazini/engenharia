@@ -15,7 +15,7 @@ class ReimbursableExpense(Document):
 		if not self.customer:
 			frappe.throw(_("Cliente é obrigatório. Selecione uma Obra válida."))
 
-		if self.reimbursement_date and self.status == "A reembolsar":
+		if self.client_reimbursed_date and self.status == "A reembolsar":
 			self.status = "Reembolsado"
 
 		self._compose_title()

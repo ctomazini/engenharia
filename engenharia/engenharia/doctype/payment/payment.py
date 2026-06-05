@@ -3,7 +3,7 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt
 
-from engenharia.financial import ORIGIN_CONTRACT_INSTALLMENT
+from engenharia.financial import ORIGIN_CONTRACT_INSTALLMENT, ORIGIN_REIMBURSABLE
 from engenharia.titles import apply_title_post_insert, recompose_title_if_empty
 
 
@@ -19,6 +19,12 @@ class Payment(Document):
 			frappe.throw(
 				_("Contrato é obrigatório para pagamentos de parcela do contrato."),
 				title=_("Campo obrigatório"),
+			)
+
+		if self.origin_type == ORIGIN_REIMBURSABLE and self.contract:
+			frappe.throw(
+				_("Pagamento de despesa reembolsável não pode estar vinculado a contrato."),
+				title=_("Campo inválido"),
 			)
 
 		if flt(self.amount) < 0:

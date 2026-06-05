@@ -48,17 +48,14 @@ def build_financial(hoje, period_end, kpis):
 
 	receivable = flt(kpis["amount_receivable"]["amount"])
 	overdue = flt(kpis["amount_overdue"]["amount"])
-	reimbursable = flt(kpis["amount_reimbursable"]["amount"])
 	costs = flt(kpis["month_costs"]["amount"])
 	received_month = flt(kpis["received_month"]["amount"])
 	previsto = kpis.get("previsto_periodo") or {"count": 0, "valor": 0}
 	previsto_valor = flt(previsto.get("valor"))
 	base_inadimplencia = overdue + received_month + previsto_valor
 	taxa_inadimplencia = round((overdue / base_inadimplencia) * 100, 1) if base_inadimplencia else 0
-	saidas = reimbursable + costs
 
 	grafico = [
-		{"label": _("A reembolsar"), "valor": reimbursable, "tone": "neutral"},
 		{"label": _("Custos do mês"), "valor": costs, "tone": "info"},
 	]
 
@@ -70,11 +67,12 @@ def build_financial(hoje, period_end, kpis):
 			"entrada": {
 				"label": _("A receber (total)"),
 				"amount": receivable,
+				"detail": _("parcelas + reembolsos do cliente"),
 				"tone": "warning",
 			},
 			"saida": {
-				"label": _("Saídas (reembolsar + custos)"),
-				"amount": saidas,
+				"label": _("Custos do mês"),
+				"amount": costs,
 				"tone": "info",
 			},
 		},

@@ -21,8 +21,17 @@ frappe.pages["eng-dashboard"].on_page_load = function (wrapper) {
 	frappe.pages["eng-dashboard"].page = page;
 
 	page.add_button(__("↺ Atualizar"), () => eng_dashboard_load(page));
+	eng_dashboard_polish_frappe_chrome();
 	eng_dashboard_load(page);
 };
+
+frappe.pages["eng-dashboard"].on_page_hide = function () {
+	$(document.body).removeClass("engenharia-dash-active");
+};
+
+function eng_dashboard_polish_frappe_chrome() {
+	$(document.body).addClass("engenharia-dash-active");
+}
 
 const ENG_DASH_ASSETS = [
 	"/assets/engenharia/css/dashboard.css",

@@ -27,10 +27,31 @@ STATUS_PAYMENT_TO_INSTALLMENT = {
 	"Renegociado": "Pendente",
 }
 
+STATUS_EXPENSE_TO_PAYMENT = {
+	"A reembolsar": "Pendente",
+	"Reembolsado": "Recebido",
+	"Cancelado": "Cancelado",
+}
+
+STATUS_PAYMENT_TO_EXPENSE = {
+	"Pendente": "A reembolsar",
+	"Vencido": "A reembolsar",
+	"Recebido": "Reembolsado",
+	"Cancelado": "Cancelado",
+}
+
 
 def is_contract_installment_payment(payment) -> bool:
 	origin = payment.get("origin_type") or ORIGIN_CONTRACT_INSTALLMENT
 	return origin == ORIGIN_CONTRACT_INSTALLMENT
+
+
+def is_reimbursable_payment(payment) -> bool:
+	return (payment.get("origin_type") or "") == ORIGIN_REIMBURSABLE
+
+
+def reimbursable_origin_id(expense_name: str) -> str:
+	return f"REEMB-{expense_name}"
 
 
 def sync_payments_hook(doc, method=None):
@@ -229,6 +250,17 @@ def _clear_installment_payment_link(payment):
 
 
 def on_payment_trash(doc, method=None):
+	if is_reimbursable_payment(doc):
+		if doc.status == "Recebido":
+			frappe.throw(
+				_("Não é possível excluir Pagamento com status '{0}'. Cancele o pagamento primeiro.").format(
+					doc.status
+				),
+				title=_("Exclusão Bloqueada"),
+			)
+		_clear_reimbursable_payment_link(doc)
+		return
+
 	if not is_contract_installment_payment(doc):
 		return
 
@@ -253,6 +285,9 @@ def process_payment_on_update(doc, method=None):
 
 def on_payment_update_financial(doc, method=None):
 	if getattr(frappe.flags, "in_payment_sync", False):
+		return
+	if is_reimbursable_payment(doc):
+		sync_reimbursable_from_payment(doc)
 		return
 	if not is_contract_installment_payment(doc):
 		return
@@ -498,3 +533,202 @@ def _cancel_orphan_payments(contract_name, active_origin_ids):
 			)
 			cancelled += 1
 	return cancelled
+
+
+def sync_reimbursable_payments_hook(doc, method=None):
+	if frappe.flags.in_payment_sync:
+		return
+	frappe.flags.in_payment_sync = True
+	try:
+		sync_payments_from_reimbursable(doc)
+	finally:
+		frappe.flags.in_payment_sync = False
+
+
+def sync_payments_from_reimbursable(expense_doc):
+	expense = _as_reimbursable_doc(expense_doc)
+	if not expense or not expense.name:
+		return
+
+	origin_id = reimbursable_origin_id(expense.name)
+	payment_name = frappe.db.get_value("Payment", {"installment_origin_id": origin_id}, "name")
+
+	if not expense.await_client_reimbursement:
+		if payment_name:
+			payment = frappe.get_doc("Payment", payment_name)
+			if payment.status not in ("Recebido", "Cancelado"):
+				payment.status = "Cancelado"
+				payment.save(ignore_permissions=True)
+		return
+
+	if expense.status == "Cancelado":
+		if payment_name:
+			payment = frappe.get_doc("Payment", payment_name)
+			if payment.status != "Recebido":
+				payment.status = "Cancelado"
+				payment.save(ignore_permissions=True)
+		return
+
+	payload = _reimbursable_to_payment_payload(expense, origin_id)
+
+	if not payment_name:
+		doc = frappe.get_doc({"doctype": "Payment", **payload})
+		doc.insert(ignore_permissions=True)
+		_link_payment_on_reimbursable(expense.name, doc.name)
+		return
+
+	payment = frappe.get_doc("Payment", payment_name)
+	_link_payment_on_reimbursable(expense.name, payment_name)
+	if payment.status == "Cancelado":
+		return
+	if payment.manual_override or payment.status == "Recebido":
+		return
+	if _can_update_reimbursable_payment(payment):
+		changed = _apply_reimbursable_payment_payload(payment, payload)
+		if changed:
+			payment.save(ignore_permissions=True)
+	elif payment.status in ("Pendente", "Vencido"):
+		new_status = payload.get("status")
+		if new_status and payment.status != new_status:
+			payment.status = new_status
+			payment.synced_at = now_datetime()
+			payment.save(ignore_permissions=True)
+
+
+def sync_reimbursable_from_payment(payment):
+	if not is_reimbursable_payment(payment):
+		return
+	if not payment.installment_origin_id or not payment.installment_origin_id.startswith("REEMB-"):
+		return
+
+	expense_name = payment.installment_origin_id.replace("REEMB-", "", 1)
+	if not frappe.db.exists("Reimbursable Expense", expense_name):
+		return
+
+	updates = {}
+	if payment.status == "Recebido":
+		updates["status"] = "Reembolsado"
+		updates["client_reimbursed_date"] = payment.received_date or today()
+	elif payment.status == "Cancelado":
+		updates["status"] = "Cancelado"
+	elif payment.status in ("Pendente", "Vencido"):
+		current_status = frappe.db.get_value("Reimbursable Expense", expense_name, "status")
+		if current_status != "Cancelado":
+			updates["status"] = "A reembolsar"
+			updates["client_reimbursed_date"] = None
+
+	if payment.name:
+		updates["payment"] = payment.name
+
+	if not updates:
+		return
+
+	already_syncing = getattr(frappe.flags, "in_payment_sync", False)
+	if not already_syncing:
+		frappe.flags.in_payment_sync = True
+	try:
+		frappe.db.set_value("Reimbursable Expense", expense_name, updates, update_modified=True)
+	finally:
+		if not already_syncing:
+			frappe.flags.in_payment_sync = False
+
+
+def _as_reimbursable_doc(expense_doc):
+	if isinstance(expense_doc, str):
+		return frappe.get_doc("Reimbursable Expense", expense_doc)
+	if getattr(expense_doc, "doctype", None) == "Reimbursable Expense":
+		return expense_doc
+	return None
+
+
+def _reimbursable_to_payment_payload(expense, origin_id):
+	status = STATUS_EXPENSE_TO_PAYMENT.get(expense.status or "A reembolsar", "Pendente")
+	received_amount = flt(expense.amount) if status == "Recebido" else 0
+	return {
+		"origin_type": ORIGIN_REIMBURSABLE,
+		"project": expense.project,
+		"customer": expense.customer,
+		"installment_origin_id": origin_id,
+		"description": expense.description,
+		"amount": flt(expense.amount),
+		"received_amount": received_amount,
+		"due_date": expense.payment_date or today(),
+		"received_date": expense.client_reimbursed_date if status == "Recebido" else None,
+		"status": status,
+		"notes": "",
+		"synced_at": now_datetime(),
+	}
+
+
+def _can_update_reimbursable_payment(payment):
+	if not is_reimbursable_payment(payment):
+		return False
+	if payment.status == "Cancelado":
+		return False
+	if payment.manual_override:
+		return False
+	if payment.status == "Recebido":
+		return False
+	if payment.received_date:
+		return False
+	return True
+
+
+def _apply_reimbursable_payment_payload(payment, payload):
+	changed = False
+	for field in (
+		"origin_type",
+		"project",
+		"customer",
+		"description",
+		"amount",
+		"due_date",
+		"notes",
+	):
+		if payment.get(field) != payload.get(field):
+			payment.set(field, payload.get(field))
+			changed = True
+	if payment.status != payload.get("status") and payment.status in ("Pendente", "Vencido"):
+		payment.status = payload.get("status")
+		changed = True
+	if payload.get("status") == "Recebido":
+		if payment.received_date != payload.get("received_date"):
+			payment.received_date = payload.get("received_date")
+			changed = True
+		if flt(payment.received_amount) != flt(payload.get("received_amount")):
+			payment.received_amount = payload.get("received_amount")
+			changed = True
+	payment.synced_at = now_datetime()
+	return changed
+
+
+def _link_payment_on_reimbursable(expense_name, payment_name):
+	if not expense_name or not payment_name:
+		return
+	current = frappe.db.get_value("Reimbursable Expense", expense_name, "payment")
+	if current != payment_name:
+		frappe.db.set_value(
+			"Reimbursable Expense",
+			expense_name,
+			"payment",
+			payment_name,
+			update_modified=False,
+		)
+
+
+def _clear_reimbursable_payment_link(payment):
+	if not payment.name:
+		return
+	expenses = frappe.get_all(
+		"Reimbursable Expense",
+		filters={"payment": payment.name},
+		pluck="name",
+	)
+	for expense_name in expenses:
+		frappe.db.set_value(
+			"Reimbursable Expense",
+			expense_name,
+			"payment",
+			"",
+			update_modified=False,
+		)

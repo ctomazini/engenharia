@@ -133,6 +133,13 @@ class TestEngineeringContract(FrappeTestCase):
 		self.assertEqual(flt(value), 15000)
 		self.assertEqual(flt(contract.current_value), 15000)
 
+	def test_multiple_contracts_aggregate_project_value(self):
+		project = create_test_construction_project()
+		create_test_engineering_contract(project=project.name, base_value=10000, installment_count=1)
+		create_test_engineering_contract(project=project.name, base_value=5000, installment_count=1)
+		value = frappe.db.get_value("Construction Project", project.name, "current_contract_value")
+		self.assertEqual(flt(value), 15000)
+
 	def test_contract_settled_when_all_payments_received(self):
 		from engenharia.tasks import on_payment_update
 

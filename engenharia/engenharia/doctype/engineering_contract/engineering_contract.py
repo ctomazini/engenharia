@@ -24,6 +24,10 @@ class EngineeringContract(Document):
 	def on_update(self):
 		self._sync_project_contract_value()
 
+	def on_trash(self):
+		if self.project:
+			sync_project_contract_value(self.project, exclude_contract=self.name)
+
 	def _compose_title(self):
 		recompose_title_if_empty(self)
 
@@ -89,13 +93,7 @@ class EngineeringContract(Document):
 	def _sync_project_contract_value(self):
 		if not self.project:
 			return
-		frappe.db.set_value(
-			"Construction Project",
-			self.project,
-			"current_contract_value",
-			flt(self.current_value),
-			update_modified=False,
-		)
+		sync_project_contract_value(self.project)
 
 	def regenerate_future_installments(self):
 		received_rows = [row for row in self.installments or [] if row.status == "Recebido"]
@@ -147,6 +145,39 @@ class EngineeringContract(Document):
 						"payment": row.payment,
 					},
 				)
+
+
+def sync_project_contract_value(project, exclude_contract=None):
+	"""Soma current_value de todos os contratos vigentes/quitados da obra."""
+	if not project:
+		return 0
+
+	conditions = [
+		"project = %s",
+		"status IN ('Vigente', 'Quitado')",
+	]
+	params = [project]
+	if exclude_contract:
+		conditions.append("name != %s")
+		params.append(exclude_contract)
+
+	total = frappe.db.sql(
+		f"""
+		SELECT COALESCE(SUM(current_value), 0)
+		FROM `tabEngineering Contract`
+		WHERE {" AND ".join(conditions)}
+		""",
+		tuple(params),
+	)[0][0]
+
+	frappe.db.set_value(
+		"Construction Project",
+		project,
+		"current_contract_value",
+		flt(total),
+		update_modified=False,
+	)
+	return flt(total)
 
 
 @frappe.whitelist()

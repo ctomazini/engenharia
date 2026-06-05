@@ -176,6 +176,9 @@ doc_events = {
 	"Engineering Contract": {
 		"on_update": "engenharia.financial.sync_payments_hook",
 	},
+	"Reimbursable Expense": {
+		"on_update": "engenharia.financial.sync_reimbursable_payments_hook",
+	},
 	"Engineering Contract Installment": {
 		"on_update": "engenharia.tasks.on_installment_update",
 	},
@@ -196,23 +199,11 @@ doc_events = {
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"engenharia.tasks.all"
-# 	],
-# 	"daily": [
-# 		"engenharia.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"engenharia.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"engenharia.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"engenharia.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+	"daily": [
+		"engenharia.tasks.check_overdue_installments",
+	],
+}
 
 # Testing
 # -------
