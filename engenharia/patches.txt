@@ -8,3 +8,4 @@ engenharia.patches.v16_0.migrate_project_specification_to_project_item
 engenharia.patches.v16_0.migrate_permit_type_to_link
 engenharia.patches.v16_0.sync_reimbursable_expense_payments
 engenharia.patches.v16_0.backfill_work_cost_customer
+engenharia.patches.v16_0.set_permit_type_is_art_rrt

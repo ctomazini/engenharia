@@ -37,6 +37,20 @@ class TestPermit(FrappeTestCase):
 
 	def test_permit_types(self):
 		for permit_type in ("Alvará", "Habite-se", "Licença Ambiental", "ART/RRT"):
-			permit = create_test_permit(permit_type=permit_type)
+			permit = create_test_permit(
+				permit_type=permit_type,
+				art_rrt_number="12345" if permit_type == "ART/RRT" else None,
+			)
 			self.assertEqual(permit.permit_type, permit_type)
 			self.assertTrue(frappe.db.exists("Permit Type", permit_type))
+
+	def test_art_rrt_number_required(self):
+		project = create_test_construction_project()
+		with self.assertRaises(ValidationError):
+			frappe.get_doc(
+				{
+					"doctype": "Permit",
+					"project": project.name,
+					"permit_type": "ART/RRT",
+				}
+			).insert(ignore_permissions=True)

@@ -25,6 +25,14 @@
   "sec_details",
   "construction_area",
   "current_contract_value",
+  "physical_progress",
+  "sec_technical",
+  "responsible_engineer",
+  "crea_number",
+  "col_break_technical",
+  "art_number",
+  "property_registration",
+  "gps_coordinates",
   "sec_specs",
   "specs_help",
   "spec_preview_panel",
@@ -140,6 +148,46 @@
    "fieldtype": "Currency",
    "label": "Valor Atual do Contrato",
    "read_only": 1
+  },
+  {
+   "fieldname": "physical_progress",
+   "fieldtype": "Percent",
+   "label": "Avan\u00e7o F\u00edsico Global",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sec_technical",
+   "fieldtype": "Section Break",
+   "label": "Responsabilidade T\u00e9cnica"
+  },
+  {
+   "fieldname": "responsible_engineer",
+   "fieldtype": "Data",
+   "label": "Respons\u00e1vel T\u00e9cnico"
+  },
+  {
+   "fieldname": "crea_number",
+   "fieldtype": "Data",
+   "label": "CREA do Respons\u00e1vel"
+  },
+  {
+   "fieldname": "col_break_technical",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "art_number",
+   "fieldtype": "Data",
+   "label": "N\u00ba ART Principal"
+  },
+  {
+   "fieldname": "property_registration",
+   "fieldtype": "Data",
+   "label": "Matr\u00edcula do Im\u00f3vel"
+  },
+  {
+   "fieldname": "gps_coordinates",
+   "fieldtype": "Data",
+   "label": "Coordenadas GPS"
   },
   {
    "fieldname": "sec_specs",

@@ -7,7 +7,8 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "type_name"
+  "type_name",
+  "is_art_rrt"
  ],
  "fields": [
   {
@@ -19,6 +20,13 @@
    "label": "Nome do tipo",
    "reqd": 1,
    "unique": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "is_art_rrt",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "ART/RRT"
   }
  ],
  "index_web_pages_for_search": 1,

@@ -4,7 +4,18 @@
  "custom": 0,
  "doctype": "DocType",
  "engine": "InnoDB",
- "field_order": ["company_name", "default_notify_days"],
+ "field_order": [
+  "company_name",
+  "company_crea",
+  "company_logo",
+  "default_notify_days",
+  "sec_bank",
+  "bank_name",
+  "bank_agency",
+  "col_break_bank",
+  "bank_account",
+  "bank_pix"
+ ],
  "fields": [
   {
    "fieldname": "company_name",
@@ -13,10 +24,49 @@
    "reqd": 1
   },
   {
+   "fieldname": "company_crea",
+   "fieldtype": "Data",
+   "label": "CREA da Empresa"
+  },
+  {
+   "fieldname": "company_logo",
+   "fieldtype": "Attach Image",
+   "label": "Logo do Escritório"
+  },
+  {
    "default": "3",
    "fieldname": "default_notify_days",
    "fieldtype": "Int",
    "label": "Dias padrão de antecedência (prazos)"
+  },
+  {
+   "fieldname": "sec_bank",
+   "fieldtype": "Section Break",
+   "label": "Dados Bancários"
+  },
+  {
+   "fieldname": "bank_name",
+   "fieldtype": "Data",
+   "label": "Banco"
+  },
+  {
+   "fieldname": "bank_agency",
+   "fieldtype": "Data",
+   "label": "Agência"
+  },
+  {
+   "fieldname": "col_break_bank",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "bank_account",
+   "fieldtype": "Data",
+   "label": "Conta"
+  },
+  {
+   "fieldname": "bank_pix",
+   "fieldtype": "Data",
+   "label": "Chave PIX"
   }
  ],
  "issingle": 1,

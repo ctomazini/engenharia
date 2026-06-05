@@ -276,10 +276,13 @@ def create_test_time_log(project=None, activity=None, **kwargs):
 
 
 def ensure_test_permit_type(type_name="Alvará"):
+	is_art_rrt = 1 if type_name in ("ART/RRT", "ART", "RRT") else 0
 	if not frappe.db.exists("Permit Type", type_name):
-		frappe.get_doc({"doctype": "Permit Type", "type_name": type_name}).insert(
-			ignore_permissions=True
-		)
+		frappe.get_doc(
+			{"doctype": "Permit Type", "type_name": type_name, "is_art_rrt": is_art_rrt}
+		).insert(ignore_permissions=True)
+	elif is_art_rrt:
+		frappe.db.set_value("Permit Type", type_name, "is_art_rrt", 1, update_modified=False)
 	return type_name
 
 

@@ -55,6 +55,15 @@ def create_project_item(
 class ConstructionProject(Document):
 	def validate(self):
 		self._compose_title()
+		self._sync_physical_progress()
+
+	def _sync_physical_progress(self):
+		from engenharia.project_progress import calculate_physical_progress
+
+		if self.is_new() or not self.name:
+			self.physical_progress = 0
+			return
+		self.physical_progress = calculate_physical_progress(self.name)
 
 	def _compose_title(self):
 		from engenharia.titles import recompose_title

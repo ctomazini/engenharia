@@ -27,6 +27,9 @@
   "received_date",
   "status",
   "sec_control",
+  "nf_number",
+  "bank_account",
+  "late_fee",
   "notes",
   "receipt"
  ],
@@ -171,6 +174,21 @@
    "fieldname": "sec_control",
    "fieldtype": "Section Break",
    "label": "Controle"
+  },
+  {
+   "fieldname": "nf_number",
+   "fieldtype": "Data",
+   "label": "N\u00ba Nota Fiscal"
+  },
+  {
+   "fieldname": "bank_account",
+   "fieldtype": "Data",
+   "label": "Conta Banc\u00e1ria"
+  },
+  {
+   "fieldname": "late_fee",
+   "fieldtype": "Currency",
+   "label": "Juros/Multa"
   },
   {
    "fieldname": "notes",

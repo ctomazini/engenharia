@@ -18,7 +18,15 @@
   "protocol_date",
   "expiry_date",
   "column_break_dates",
-  "document"
+  "document",
+  "sec_art_rrt",
+  "art_rrt_number",
+  "crea_cau_number",
+  "column_break_art",
+  "responsible_professional",
+  "art_validity_date",
+  "art_fee",
+  "art_fee_receipt"
  ],
  "fields": [
   {
@@ -107,6 +115,53 @@
    "fieldname": "document",
    "fieldtype": "Attach",
    "label": "Documento"
+  },
+  {
+   "depends_on": "eval:doc.permit_type && (doc.permit_type.includes('ART') || doc.permit_type.includes('RRT'))",
+   "fieldname": "sec_art_rrt",
+   "fieldtype": "Section Break",
+   "label": "Responsabilidade T\u00e9cnica"
+  },
+  {
+   "depends_on": "eval:doc.permit_type && (doc.permit_type.includes('ART') || doc.permit_type.includes('RRT'))",
+   "fieldname": "art_rrt_number",
+   "fieldtype": "Data",
+   "label": "N\u00ba ART/RRT"
+  },
+  {
+   "depends_on": "eval:doc.permit_type && (doc.permit_type.includes('ART') || doc.permit_type.includes('RRT'))",
+   "fieldname": "crea_cau_number",
+   "fieldtype": "Data",
+   "label": "CREA/CAU do Respons\u00e1vel"
+  },
+  {
+   "depends_on": "eval:doc.permit_type && (doc.permit_type.includes('ART') || doc.permit_type.includes('RRT'))",
+   "fieldname": "column_break_art",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval:doc.permit_type && (doc.permit_type.includes('ART') || doc.permit_type.includes('RRT'))",
+   "fieldname": "responsible_professional",
+   "fieldtype": "Data",
+   "label": "Profissional Respons\u00e1vel"
+  },
+  {
+   "depends_on": "eval:doc.permit_type && (doc.permit_type.includes('ART') || doc.permit_type.includes('RRT'))",
+   "fieldname": "art_validity_date",
+   "fieldtype": "Date",
+   "label": "Validade"
+  },
+  {
+   "depends_on": "eval:doc.permit_type && (doc.permit_type.includes('ART') || doc.permit_type.includes('RRT'))",
+   "fieldname": "art_fee",
+   "fieldtype": "Currency",
+   "label": "Taxa Paga"
+  },
+  {
+   "depends_on": "eval:doc.permit_type && (doc.permit_type.includes('ART') || doc.permit_type.includes('RRT'))",
+   "fieldname": "art_fee_receipt",
+   "fieldtype": "Attach",
+   "label": "Comprovante da Taxa"
   }
  ],
  "index_web_pages_for_search": 1,

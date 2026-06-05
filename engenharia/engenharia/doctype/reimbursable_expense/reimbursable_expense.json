@@ -10,6 +10,8 @@
   "customer",
   "title",
   "col_break_1",
+  "expense_category",
+  "supplier",
   "description",
   "status",
   "payment",
@@ -51,6 +53,18 @@
   {
    "fieldname": "col_break_1",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "expense_category",
+   "fieldtype": "Link",
+   "label": "Categoria",
+   "options": "Cost Category"
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "label": "Fornecedor",
+   "options": "Supplier"
   },
   {
    "fieldname": "description",

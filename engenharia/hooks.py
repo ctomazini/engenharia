@@ -194,6 +194,9 @@ doc_events = {
 		"after_insert": "engenharia.calendar_sync.sync_permit_to_event",
 		"on_update": "engenharia.calendar_sync.sync_permit_to_event",
 	},
+	"Project Stage": {
+		"on_update": "engenharia.project_progress.on_project_stage_update",
+	},
 }
 
 # Scheduled Tasks

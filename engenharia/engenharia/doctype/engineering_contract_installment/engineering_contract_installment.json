@@ -11,6 +11,9 @@
   "status",
   "description",
   "receipt_date",
+  "nf_number",
+  "bank_account",
+  "late_fee",
   "installment_origin_id",
   "payment"
  ],
@@ -52,6 +55,21 @@
    "fieldname": "receipt_date",
    "fieldtype": "Date",
    "label": "Data de Recebimento"
+  },
+  {
+   "fieldname": "nf_number",
+   "fieldtype": "Data",
+   "label": "N\u00ba Nota Fiscal"
+  },
+  {
+   "fieldname": "bank_account",
+   "fieldtype": "Data",
+   "label": "Conta Banc\u00e1ria"
+  },
+  {
+   "fieldname": "late_fee",
+   "fieldtype": "Currency",
+   "label": "Juros/Multa"
   },
   {
    "fieldname": "installment_origin_id",

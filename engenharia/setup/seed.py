@@ -108,12 +108,26 @@ def ensure_default_stage_types():
 
 
 def ensure_default_permit_types():
+	art_rrt_types = {"ART/RRT", "ART", "RRT"}
 	for type_name in DEFAULT_PERMIT_TYPES:
+		is_art_rrt = 1 if type_name in art_rrt_types else 0
 		if frappe.db.exists("Permit Type", type_name):
+			if is_art_rrt:
+				frappe.db.set_value(
+					"Permit Type",
+					type_name,
+					"is_art_rrt",
+					1,
+					update_modified=False,
+				)
 			continue
-		frappe.get_doc({"doctype": "Permit Type", "type_name": type_name}).insert(
-			ignore_permissions=True  # setup: seed idempotente de tipos de protocolo
-		)
+		frappe.get_doc(
+			{
+				"doctype": "Permit Type",
+				"type_name": type_name,
+				"is_art_rrt": is_art_rrt,
+			}
+		).insert(ignore_permissions=True)  # setup: seed idempotente de tipos de protocolo
 
 
 def ensure_engineering_settings():

@@ -11,6 +11,7 @@
   "col_break_1",
   "status",
   "progress",
+  "weight",
   "order",
   "sec_dates",
   "start_date",
@@ -54,6 +55,12 @@
    "fieldtype": "Percent",
    "in_list_view": 1,
    "label": "Avan\u00e7o"
+  },
+  {
+   "default": "1",
+   "fieldname": "weight",
+   "fieldtype": "Float",
+   "label": "Peso relativo"
   },
   {
    "fieldname": "order",

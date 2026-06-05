@@ -15,6 +15,10 @@
   "base_value",
   "current_value",
   "col_break_2",
+  "adjustment_index",
+  "technical_retention_pct",
+  "late_fee_pct",
+  "daily_interest_pct",
   "installment_count",
   "first_installment_date",
   "installment_value",
@@ -87,6 +91,27 @@
   {
    "fieldname": "col_break_2",
    "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "adjustment_index",
+   "fieldtype": "Select",
+   "label": "\u00cdndice de Reajuste",
+   "options": "\nINCC\nIPCA\nIGP-M\nNenhum"
+  },
+  {
+   "fieldname": "technical_retention_pct",
+   "fieldtype": "Percent",
+   "label": "Reten\u00e7\u00e3o T\u00e9cnica %"
+  },
+  {
+   "fieldname": "late_fee_pct",
+   "fieldtype": "Percent",
+   "label": "Multa Mora %"
+  },
+  {
+   "fieldname": "daily_interest_pct",
+   "fieldtype": "Float",
+   "label": "Juros Di\u00e1rios %"
   },
   {
    "fieldname": "installment_count",
