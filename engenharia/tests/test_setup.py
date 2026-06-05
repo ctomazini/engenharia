@@ -303,6 +303,30 @@ def create_test_permit(project=None, **kwargs):
 	return doc
 
 
+def create_test_construction_measurement(project=None, stage=None, **kwargs):
+	if not project:
+		project = create_test_construction_project().name
+	if not stage:
+		stage = create_test_project_stage(project=project, progress=20, stage_value=10000, status="Em andamento").name
+	items = kwargs.pop(
+		"measurement_items",
+		[{"project_stage": stage, "current_pct": 50}],
+	)
+	data = {
+		"doctype": "Construction Measurement",
+		"project": project,
+		"measurement_date": today(),
+		"measurement_number": 1,
+		"reference_period": "Jun/2026",
+		"status": "Rascunho",
+		"measurement_items": items,
+		**kwargs,
+	}
+	doc = frappe.get_doc(data)
+	doc.insert(ignore_permissions=True)
+	return doc
+
+
 def create_test_payment(project=None, amount=1000, **kwargs):
 	if not project:
 		project = create_test_construction_project().name

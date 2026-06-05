@@ -12,6 +12,7 @@
   "status",
   "progress",
   "weight",
+  "stage_value",
   "order",
   "sec_dates",
   "start_date",
@@ -61,6 +62,11 @@
    "fieldname": "weight",
    "fieldtype": "Float",
    "label": "Peso relativo"
+  },
+  {
+   "fieldname": "stage_value",
+   "fieldtype": "Currency",
+   "label": "Valor da etapa"
   },
   {
    "fieldname": "order",

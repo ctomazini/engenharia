@@ -11,6 +11,7 @@ COMPOSED = {
 	"Payment": False,
 	"Work Cost": True,
 	"Reimbursable Expense": True,
+	"Construction Measurement": True,
 	"Deadline": False,
 	"Communication Log": False,
 	"Time Log": False,
@@ -38,6 +39,11 @@ def _resolve_descriptor(doc, use_description=False):
 			parts.append(doc.city)
 		if parts:
 			return " - ".join(parts)
+
+	if doc.doctype == "Construction Measurement":
+		period = (getattr(doc, "reference_period", None) or "").strip()
+		if period:
+			return period
 
 	if not use_description and getattr(doc, "customer", None):
 		descritor = get_customer_name(doc.customer)

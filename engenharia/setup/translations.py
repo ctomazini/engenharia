@@ -32,6 +32,8 @@ DOCTYPE_LABELS = {
 	"Customer Address": "Endereço do Cliente",
 	"Engineering Contract Installment": "Parcela do Contrato",
 	"Engineering Contract Amendment": "Aditivo Contratual",
+	"Construction Measurement": "Boletim de Medição",
+	"Construction Measurement Item": "Item do Boletim",
 }
 
 

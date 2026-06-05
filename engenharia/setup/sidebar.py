@@ -18,6 +18,7 @@ SIDEBAR_LINK_ORDER = (
 	("Custos de Obra", "Work Cost", "DocType"),
 	("Despesas Reembolsáveis", "Reimbursable Expense", "DocType"),
 	("Etapas", "Project Stage", "DocType"),
+	("Boletins de Medição", "Construction Measurement", "DocType"),
 	("Protocolos", "Permit", "DocType"),
 	# Financeiro
 	("Contratos", "Engineering Contract", "DocType"),
