@@ -174,11 +174,64 @@ engenharia.dashboard.utils = {
 		`);
 	},
 
-	render_empty(message, icon = "check-circle") {
+	render_empty(message, icon = "check-circle", variant = "success") {
+		const variantClass = variant ? ` eng-dash-empty-state--${variant}` : "";
 		return `
-			<div class="eng-dash-empty-state">
+			<div class="eng-dash-empty-state${variantClass}">
 				<div class="eng-dash-empty-state__icon">${this.icon(icon, "md")}</div>
 				<p>${frappe.utils.escape_html(message)}</p>
 			</div>`;
+	},
+
+	event_type_label(type) {
+		const map = {
+			deadline: __("Prazo"),
+			task: __("Tarefa"),
+			payment: __("Pagamento"),
+			permit: __("Protocolo"),
+		};
+		return map[type] || __("Compromisso");
+	},
+
+	extract_time_from_sort_key(sort_key) {
+		if (!sort_key) return "";
+		const parts = String(sort_key).trim().split(/\s+/);
+		if (parts.length < 2) return "";
+		return parts[1].slice(0, 5);
+	},
+
+	group_timeline_by_date(items) {
+		const groups = [];
+		const seen = new Map();
+		(items || []).forEach((item) => {
+			const key = item.date || item.when_label || "";
+			if (!seen.has(key)) {
+				const group = {
+					date: key,
+					label: item.when_label || String(key),
+					items: [],
+				};
+				seen.set(key, group);
+				groups.push(group);
+			}
+			seen.get(key).items.push(item);
+		});
+		return groups;
+	},
+
+	render_view_all_footer(doctype, meta) {
+		if (!meta || !meta.total || meta.showing >= meta.total) return "";
+		return `
+			<div class="eng-dash-list-footer">
+				<button type="button" class="eng-dash-view-all" data-doctype="${frappe.utils.escape_html(doctype)}">
+					${__("Ver todos ({0})", [meta.total])}
+				</button>
+			</div>`;
+	},
+
+	bind_view_all($root) {
+		$root.find(".eng-dash-view-all[data-doctype]").on("click", function () {
+			frappe.set_route("List", $(this).attr("data-doctype"));
+		});
 	},
 };

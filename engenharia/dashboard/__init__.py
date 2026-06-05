@@ -61,6 +61,12 @@ def get(
 	despesas_all = dashboard_financial.get_pending_reimbursables(LIST_LIMIT_MAX)
 	agenda_full = dashboard_agenda.build_agenda(hoje, period_end, deadlines_all, tasks_all, payments_all)
 	agenda_days = dashboard_agenda.build_day_strip(hoje, period_days, agenda_full)
+	previsto_periodo = financeiro.get("previsto_periodo") or {"count": 0, "valor": 0}
+	agenda_summary = {
+		"total_events": len(agenda_full),
+		"period_receivable_count": previsto_periodo.get("count") or 0,
+		"period_receivable_amount": previsto_periodo.get("valor") or 0,
+	}
 	comunicacoes_all = dashboard_timeline.get_recent_communications(LIST_LIMIT_MAX)
 
 	horas_semana = dashboard_timeline.get_hours_summary(hoje)
@@ -94,6 +100,7 @@ def get(
 		"atencao": atencao,
 		"saude_operacional": saude_operacional,
 		"agenda_days": agenda_days,
+		"agenda_summary": agenda_summary,
 		"timeline": agenda_full[:timeline_cap],
 		"agenda": agenda_full[:timeline_cap],
 		"parcelas": parcelas_all[:parcelas_cap],

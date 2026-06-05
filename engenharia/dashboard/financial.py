@@ -55,24 +55,29 @@ def build_financial(hoje, period_end, kpis):
 	previsto_valor = flt(previsto.get("valor"))
 	base_inadimplencia = overdue + received_month + previsto_valor
 	taxa_inadimplencia = round((overdue / base_inadimplencia) * 100, 1) if base_inadimplencia else 0
+	saidas = reimbursable + costs
 
 	grafico = [
-		{"label": _("Vencido"), "valor": overdue, "tone": "danger"},
-		{"label": _("Recebido (mês)"), "valor": received_month, "tone": "success"},
-		{"label": _("A receber"), "valor": receivable, "tone": "warning"},
 		{"label": _("A reembolsar"), "valor": reimbursable, "tone": "neutral"},
 		{"label": _("Custos do mês"), "valor": costs, "tone": "info"},
 	]
 
 	return {
 		"pending_payments": pending,
-		"chart": [
-			{"label": _("A receber"), "amount": receivable, "valor": receivable, "tone": "warning"},
-			{"label": _("Vencido"), "amount": overdue, "valor": overdue, "tone": "danger"},
-			{"label": _("A reembolsar"), "amount": reimbursable, "valor": reimbursable, "tone": "neutral"},
-			{"label": _("Custos do mês"), "amount": costs, "valor": costs, "tone": "info"},
-		],
+		"chart": grafico,
 		"grafico": grafico,
+		"fluxo": {
+			"entrada": {
+				"label": _("A receber (total)"),
+				"amount": receivable,
+				"tone": "warning",
+			},
+			"saida": {
+				"label": _("Saídas (reembolsar + custos)"),
+				"amount": saidas,
+				"tone": "info",
+			},
+		},
 		"recebido_mes": kpis["received_month"],
 		"vencido": kpis["parcelas_vencidas"],
 		"previsto_periodo": previsto,

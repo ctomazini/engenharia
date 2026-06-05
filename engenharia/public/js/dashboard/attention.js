@@ -3,24 +3,26 @@ frappe.provide("engenharia.dashboard");
 engenharia.dashboard.attention = {
 	render(container, data) {
 		const atencao = data.atencao || {};
-		const period = data.periodo_dias || data.period_days || 7;
 		const utils = engenharia.dashboard.utils;
-		const urgent = atencao.urgent || [];
-		const periodTiles = atencao.period || [];
-		const allTiles = atencao.tiles || urgent.concat(periodTiles);
+		const tiles = (atencao.tiles || []).filter((tile) => cint(tile.count) > 0);
 
-		container.data("atencao-tiles", allTiles);
+		container.data("atencao-tiles", tiles);
 
-		const renderGroup = (title, tiles, offset = 0) => {
-			if (!tiles.length) return "";
+		let bodyHtml;
+		if (atencao.all_clear || !tiles.length) {
+			bodyHtml = utils.render_empty(atencao.empty_label || __("Nada exige ação agora"), "check-circle");
+		} else {
 			const cards = tiles
-				.map((tile, idx) => {
-					const index = offset + idx;
-					const meta = tile.meta_currency != null ? utils.currency_html(tile.meta_currency) : tile.meta ? frappe.utils.escape_html(String(tile.meta)) : "";
+				.map((tile, index) => {
+					const meta =
+						tile.meta != null
+							? frappe.utils.escape_html(String(tile.meta))
+							: tile.meta_currency != null
+								? utils.currency_html(tile.meta_currency)
+								: "";
 					const pulse = tile.pulse ? " eng-dash-atencao-card--pulse" : "";
-					const zero = tile.count === 0 ? " eng-dash-atencao-card--ok" : "";
 					return `
-					<button type="button" class="eng-dash-atencao-card tone-${tile.tone}${pulse}${zero}" data-atencao-index="${index}">
+					<button type="button" class="eng-dash-atencao-card tone-${tile.tone}${pulse}" data-atencao-index="${index}">
 						<div class="eng-dash-atencao-icon">${utils.icon(tile.icon || "alert-circle")}</div>
 						<div class="eng-dash-atencao-body">
 							<div class="eng-dash-atencao-count">${frappe.utils.escape_html(String(tile.count))}</div>
@@ -30,25 +32,20 @@ engenharia.dashboard.attention = {
 					</button>`;
 				})
 				.join("");
-			return `
-				<div class="eng-dash-centro-group">
-					<h4 class="eng-dash-centro-group-title">${frappe.utils.escape_html(title)}</h4>
-					<div class="eng-dash-centro-grid">${cards}</div>
-				</div>`;
-		};
+			bodyHtml = `
+				<div class="eng-dash-centro-grid">${cards}</div>
+				<p class="eng-dash-atencao-ok">${frappe.utils.escape_html(atencao.ok_summary || __("Resto em dia ✓"))}</p>`;
+		}
 
 		container.html(`
-			<section class="eng-dash-centro eng-dash-priority-max" id="eng-dash-centro-atencao">
+			<section class="eng-dash-centro" id="eng-dash-centro-atencao">
 				<div class="eng-dash-section-head">
 					<div>
 						<h3 class="eng-dash-section-title">${__("Zona de Atenção")}</h3>
-						<p class="eng-dash-section-sub">${__("O que exige ação agora — próximos {0} dias", [period])}</p>
+						<p class="eng-dash-section-sub eng-dash-atencao-subtitle">${__("Somente o que exige ação agora")}</p>
 					</div>
 				</div>
-				<div class="eng-dash-centro-groups">
-					${renderGroup(__("Urgente"), urgent, 0)}
-					${renderGroup(__("No período"), periodTiles, urgent.length)}
-				</div>
+				${bodyHtml}
 			</section>
 		`);
 	},

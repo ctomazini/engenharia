@@ -4,17 +4,19 @@ engenharia.dashboard.lists = {
 	render_duo(container, data, page) {
 		const parcelas = data.parcelas || data.pagamentos || [];
 		const despesas = data.despesas_pendentes || [];
-		const totalMes = data.total_despesas_mes || 0;
 		const meta = data.list_meta || {};
 		const limits = data.list_limits || page?.eng_dash_list_limits || {};
 		const utils = engenharia.dashboard.utils;
 
 		const parcelasHtml = parcelas.length
 			? parcelas
-					.map(
-						(p) => `
+					.map((p) => {
+						let rowClass = "eng-dash-op-row";
+						if (p.status === "Vencido") rowClass += " eng-dash-op-row--overdue";
+						else if (p.status === "Pendente") rowClass += " eng-dash-op-row--pending";
+						return `
 				<div class="eng-dash-op-row-wrap">
-					<button type="button" class="eng-dash-op-row" data-doctype="Payment" data-name="${frappe.utils.escape_html(p.name)}">
+					<button type="button" class="${rowClass}" data-doctype="Payment" data-name="${frappe.utils.escape_html(p.name)}">
 						<div>
 							<div class="eng-dash-op-row__title">${frappe.utils.escape_html(p.title || p.name)}</div>
 							<div class="eng-dash-op-row__sub">${frappe.utils.escape_html(p.due_date || p.vencimento || "")} · ${frappe.utils.escape_html(p.customer_name || "")}</div>
@@ -29,16 +31,18 @@ engenharia.dashboard.lists = {
 							? `<button type="button" class="btn btn-xs btn-default eng-dash-op-cta" data-mark-payment="${frappe.utils.escape_html(p.name)}">${__("Receber")}</button>`
 							: ""
 					}
-				</div>`
-					)
+				</div>`;
+					})
 					.join("")
 			: utils.render_empty(__("Nenhum recebível pendente ✓"), "check-circle");
 
 		const despesasHtml = despesas.length
 			? despesas
-					.map(
-						(d) => `
-				<button type="button" class="eng-dash-op-row" data-doctype="Reimbursable Expense" data-name="${frappe.utils.escape_html(d.name)}">
+					.map((d) => {
+						let rowClass = "eng-dash-op-row";
+						if (d.status === "A reembolsar") rowClass += " eng-dash-op-row--pending";
+						return `
+				<button type="button" class="${rowClass}" data-doctype="Reimbursable Expense" data-name="${frappe.utils.escape_html(d.name)}">
 					<div>
 						<div class="eng-dash-op-row__title">${frappe.utils.escape_html(d.title || d.name)}</div>
 						<div class="eng-dash-op-row__sub">${frappe.utils.escape_html(d.payment_date || "")} · ${frappe.utils.escape_html(d.customer_name || "")}</div>
@@ -47,8 +51,8 @@ engenharia.dashboard.lists = {
 						${utils.currency_html(d.valor != null ? d.valor : d.amount, { alignEnd: true })}
 						${utils.status_pill(d.status)}
 					</div>
-				</button>`
-					)
+				</button>`;
+					})
 					.join("")
 			: utils.render_empty(__("Nenhuma despesa a reembolsar ✓"), "check-circle");
 
@@ -57,27 +61,30 @@ engenharia.dashboard.lists = {
 				<section class="eng-dash-section">
 					<div class="eng-dash-section-head">
 						<div>
-							<h3 class="eng-dash-section-title">${__("A receber")}</h3>
+							<h3 class="eng-dash-section-title">${__("Parcelas pendentes")}</h3>
 							<p class="eng-dash-section-sub">${utils.list_meta_label(meta.parcelas)}</p>
 						</div>
 						${utils.render_list_limit_controls("parcelas", limits.parcelas || 5, meta.parcelas)}
 					</div>
 					${parcelasHtml}
+					${utils.render_view_all_footer("Payment", meta.parcelas)}
 				</section>
 				<section class="eng-dash-section">
 					<div class="eng-dash-section-head">
 						<div>
 							<h3 class="eng-dash-section-title">${__("A reembolsar")}</h3>
-							<p class="eng-dash-section-sub">${__("Mês calendário")}: ${utils.currency_html(totalMes)} · ${utils.list_meta_label(meta.despesas)}</p>
+							<p class="eng-dash-section-sub">${utils.list_meta_label(meta.despesas)}</p>
 						</div>
 						${utils.render_list_limit_controls("despesas", limits.despesas || 5, meta.despesas)}
 					</div>
 					${despesasHtml}
+					${utils.render_view_all_footer("Reimbursable Expense", meta.despesas)}
 				</section>
 			</div>
 		`);
 
 		utils.bind_routes(container);
+		utils.bind_view_all(container);
 		this.bind_mark_payment(container);
 	},
 

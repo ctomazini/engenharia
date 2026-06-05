@@ -72,10 +72,10 @@ engenharia.dashboard.render_dashboard = function ($container, data, page) {
 	$container.empty();
 	const $content = $('<div class="eng-dash-content dashboard-content"></div>').appendTo($container);
 
-	const $hero = $('<div class="eng-dash-hero-wrap"></div>').appendTo($content);
+	const $hero = $('<div class="eng-dash-hero-wrap eng-dash-priority-high"></div>').appendTo($content);
 	const $filters = $('<div class="eng-dash-filters-wrap"></div>').appendTo($content);
-	const $actions = $('<div class="eng-dash-actions-host"></div>').appendTo($content);
 	const $attention = $('<div class="eng-dash-zona-critica"></div>').appendTo($content);
+	const $actions = $('<div class="eng-dash-actions-host"></div>').appendTo($content);
 	const $agenda = $('<div class="eng-dash-agenda-host"></div>').appendTo($content);
 	const $financeZone = $('<div class="eng-dash-zona-financeira"></div>').appendTo($content);
 	const $financeHead = $('<div class="eng-dash-finance-head"></div>').appendTo($financeZone);
@@ -95,6 +95,8 @@ engenharia.dashboard.render_dashboard = function ($container, data, page) {
 	engenharia.dashboard.lists.render_duo($lists, data, page);
 
 	engenharia.dashboard.filters.bind($content, page, eng_dashboard_load);
+	engenharia.dashboard.utils.bind_list_limits($content, page, eng_dashboard_load);
+	engenharia.dashboard.hero.bind($content);
 	engenharia.dashboard.quick_actions.bind($content);
 	engenharia.dashboard.attention.bind($content);
 };

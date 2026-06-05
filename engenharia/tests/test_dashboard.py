@@ -28,6 +28,7 @@ CONTRACT_KEYS = (
 	"atencao",
 	"saude_operacional",
 	"agenda_days",
+	"agenda_summary",
 	"agenda",
 	"timeline",
 	"parcelas",
@@ -56,11 +57,15 @@ class TestDashboard(FrappeTestCase):
 
 		self.assertEqual(payload["period_days"], payload["periodo_dias"])
 		self.assertIn("grafico", payload["financeiro"])
+		self.assertIn("fluxo", payload["financeiro"])
 		self.assertIn("taxa_recebimento", payload["financeiro"])
 		self.assertIsInstance(payload["financeiro"]["grafico"], list)
+		self.assertLessEqual(len(payload["financeiro"]["grafico"]), 2)
 		for row in payload["financeiro"]["grafico"]:
 			self.assertIn("valor", row)
 			self.assertNotIn("<div", str(row.get("valor", "")))
+		self.assertIn("entrada", payload["financeiro"]["fluxo"])
+		self.assertIn("saida", payload["financeiro"]["fluxo"])
 
 	def test_attention_tiles_shape(self):
 		hoje = frappe.utils.today()
@@ -71,12 +76,12 @@ class TestDashboard(FrappeTestCase):
 		fin = dashboard_financial.build_financial(hoje, period_end, k)
 		atencao = dashboard_attention.build_attention_tiles(hoje, period_end, 7, k, fin)
 
-		self.assertIn("urgent", atencao)
-		self.assertIn("period", atencao)
 		self.assertIn("tiles", atencao)
+		self.assertIn("all_clear", atencao)
 		for tile in atencao["tiles"]:
 			for key in TILE_KEYS:
 				self.assertIn(key, tile, msg=f"missing tile key {key}")
+			self.assertGreater(tile["count"], 0)
 			self.assertIn("doctype", tile["deep_link"])
 			self.assertIn("filters", tile["deep_link"])
 

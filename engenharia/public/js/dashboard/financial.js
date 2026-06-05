@@ -39,77 +39,34 @@ engenharia.dashboard.financial = {
 
 	render(container, data, page) {
 		const fin = data.financeiro || {};
-		const grafico = fin.grafico || fin.chart || [];
+		const fluxo = fin.fluxo || {};
 		const utils = engenharia.dashboard.utils;
-		let maxVal = 1;
-		grafico.forEach((g) => {
-			const v = utils.flt(g.valor != null ? g.valor : g.amount);
-			if (v > maxVal) maxVal = v;
-		});
-
-		const chartRows = grafico
-			.map((g) => {
-				const val = utils.flt(g.valor != null ? g.valor : g.amount);
-				const pct = Math.max(4, Math.round((val / maxVal) * 100));
-				return `
-				<div class="eng-dash-chart-row">
-					<span>${frappe.utils.escape_html(g.label)}</span>
-					<div class="eng-dash-chart-track">
-						<div class="eng-dash-chart-fill ${g.tone || "neutral"}" data-fill-pct="${pct}"></div>
-					</div>
-					<span class="eng-dash-chart-amt">${utils.currency_html(val)}</span>
-				</div>`;
-			})
-			.join("");
-
-		const taxa = Math.max(4, Math.min(100, fin.taxa_recebimento || 0));
-		const recebido = fin.recebido_mes?.amount || fin.recebido_mes?.valor || 0;
-		const vencido = fin.vencido?.valor || fin.vencido?.amount || 0;
-		const previsto = fin.previsto_periodo?.valor || fin.previsto_periodo?.amount || 0;
+		const entrada = fluxo.entrada || {};
+		const saida = fluxo.saida || {};
 
 		container.html(`
 			<section class="eng-dash-section" id="eng-dash-financeiro">
-				<h3>${__("Financeiro")}</h3>
-				<p class="eng-dash-section-sub">${__("Recebíveis e custos consolidados")}</p>
+				<h3 class="eng-dash-section-title">${__("Entradas × saídas")}</h3>
+				<p class="eng-dash-section-sub">${__("Composição de custos no donut — receita e despesa não são fatias do mesmo todo")}</p>
 				<div class="eng-dash-finance-grid">
-					<div>
-						<div class="eng-dash-stat-row">
-							<div class="eng-dash-stat">
-								<div class="eng-dash-stat__label">${__("Recebido no mês")}</div>
-								<div class="eng-dash-stat__value eng-dash-stat__value--success">${utils.currency_html(recebido)}</div>
-							</div>
-							<div class="eng-dash-stat">
-								<div class="eng-dash-stat__label">${__("Vencido")}</div>
-								<div class="eng-dash-stat__value eng-dash-stat__value--danger">${utils.currency_html(vencido)}</div>
-							</div>
-							<div class="eng-dash-stat">
-								<div class="eng-dash-stat__label">${__("Previsto período")}</div>
-								<div class="eng-dash-stat__value">${utils.currency_html(previsto)}</div>
-							</div>
-							<div class="eng-dash-stat">
-								<div class="eng-dash-stat__label">${__("Inadimplência")}</div>
-								<div class="eng-dash-stat__value eng-dash-stat__value--danger">${fin.taxa_inadimplencia || 0}%</div>
-							</div>
+					<div class="eng-dash-fluxo-pair">
+						<div class="eng-dash-fluxo-card eng-dash-fluxo-card--${entrada.tone || "warning"}">
+							<div class="eng-dash-fluxo-card__label">${frappe.utils.escape_html(entrada.label || __("A receber (total)"))}</div>
+							<div class="eng-dash-fluxo-card__value">${utils.currency_html(entrada.amount || 0)}</div>
+						</div>
+						<div class="eng-dash-fluxo-vs">${__("vs")}</div>
+						<div class="eng-dash-fluxo-card eng-dash-fluxo-card--${saida.tone || "info"}">
+							<div class="eng-dash-fluxo-card__label">${frappe.utils.escape_html(saida.label || __("Saídas"))}</div>
+							<div class="eng-dash-fluxo-card__value">${utils.currency_html(saida.amount || 0)}</div>
 						</div>
 					</div>
 					<div>
+						<p class="eng-dash-section-sub">${__("Composição de custos")}</p>
 						<div id="eng-dash-finance-donut" class="eng-dash-finance-donut-wrap"></div>
-						<div class="eng-dash-chart-row">
-							<span>${__("Taxa de recebimento")}</span>
-							<div class="eng-dash-chart-track">
-								<div class="eng-dash-chart-fill success" data-fill-pct="${taxa}"></div>
-							</div>
-							<span class="eng-dash-chart-amt">${fin.taxa_recebimento || 0}%</span>
-						</div>
-						${chartRows}
 					</div>
 				</div>
 			</section>
 		`);
-
-		container.find("[data-fill-pct]").each(function () {
-			this.style.setProperty("--eng-dash-fill-pct", `${$(this).attr("data-fill-pct")}%`);
-		});
 
 		this.init_chart(container, fin, page);
 	},
