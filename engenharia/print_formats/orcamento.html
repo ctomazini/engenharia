@@ -1,0 +1,186 @@
+{% set settings = frappe.get_doc("Engineering Settings") %}
+{% set customer_name = frappe.db.get_value("Customer", doc.customer, "customer_name") or doc.customer %}
+{% set project_items = frappe.get_all("Project Item", filters={"project": doc.name}, fields=["name", "title", "technical_item", "instance_label", "quantity", "total_value"], order_by="creation asc", limit_page_length=500) %}
+<style>
+	.eng-print { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 11pt; color: #222; line-height: 1.45; }
+	.eng-print h1 { font-size: 18pt; margin: 0 0 4px; font-weight: 600; }
+	.eng-print h2 { font-size: 12pt; margin: 20px 0 8px; padding-bottom: 4px; border-bottom: 1px solid #ccc; text-transform: uppercase; letter-spacing: 0.04em; }
+	.eng-print .header { display: table; width: 100%; margin-bottom: 24px; border-bottom: 2px solid #333; padding-bottom: 12px; }
+	.eng-print .header-logo { display: table-cell; width: 120px; vertical-align: middle; }
+	.eng-print .header-logo img { max-height: 70px; max-width: 110px; }
+	.eng-print .header-info { display: table-cell; vertical-align: middle; padding-left: 16px; }
+	.eng-print .header-meta { display: table-cell; vertical-align: middle; text-align: right; font-size: 10pt; color: #555; }
+	.eng-print .doc-title { text-align: center; margin: 16px 0 24px; }
+	.eng-print .doc-title h1 { font-size: 16pt; text-transform: uppercase; }
+	.eng-print .grid { display: table; width: 100%; margin-bottom: 8px; }
+	.eng-print .grid-row { display: table-row; }
+	.eng-print .grid-label { display: table-cell; width: 32%; padding: 4px 8px 4px 0; font-weight: 600; color: #444; vertical-align: top; }
+	.eng-print .grid-value { display: table-cell; padding: 4px 0; vertical-align: top; }
+	.eng-print table.data { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 10pt; }
+	.eng-print table.data th { background: #f4f4f4; border: 1px solid #ccc; padding: 6px 8px; text-align: left; font-weight: 600; }
+	.eng-print table.data td { border: 1px solid #ccc; padding: 6px 8px; vertical-align: top; }
+	.eng-print .text-right { text-align: right; }
+	.eng-print .muted { color: #666; font-size: 10pt; }
+	.eng-print .total-box { margin-top: 16px; padding: 14px; border: 2px solid #333; text-align: right; }
+	.eng-print .total-label { font-size: 10pt; text-transform: uppercase; letter-spacing: 0.06em; color: #555; }
+	.eng-print .total-value { font-size: 18pt; font-weight: 700; margin-top: 4px; }
+	@media print {
+		.eng-print { font-size: 10pt; }
+		.eng-print table.data tr { page-break-inside: avoid; }
+	}
+</style>
+
+<div class="eng-print">
+	<div class="header">
+		{% if settings.company_logo %}
+		<div class="header-logo">
+			<img src="{{ settings.company_logo }}" alt="Logo">
+		</div>
+		{% endif %}
+		<div class="header-info">
+			<h1>{{ settings.company_name or "Escritório de Engenharia" }}</h1>
+			{% if settings.company_crea %}
+			<div class="muted">CREA {{ settings.company_crea }}</div>
+			{% endif %}
+		</div>
+		<div class="header-meta">
+			<div><strong>Obra:</strong> {{ doc.name }}</div>
+			<div><strong>Emissão:</strong> {{ frappe.utils.formatdate(frappe.utils.today()) }}</div>
+			{% if doc.status %}
+			<div><strong>Status:</strong> {{ doc.status }}</div>
+			{% endif %}
+		</div>
+	</div>
+
+	<div class="doc-title">
+		<h1>Orçamento da Obra</h1>
+		<div class="muted">{{ doc.title or doc.name }}</div>
+	</div>
+
+	<h2>Dados da Obra</h2>
+	<div class="grid">
+		<div class="grid-row">
+			<div class="grid-label">Cliente</div>
+			<div class="grid-value"><strong>{{ customer_name }}</strong></div>
+		</div>
+		{% if doc.project_type %}
+		<div class="grid-row">
+			<div class="grid-label">Tipo de obra</div>
+			<div class="grid-value">{{ doc.project_type }}</div>
+		</div>
+		{% endif %}
+		{% if doc.start_date or doc.expected_delivery %}
+		<div class="grid-row">
+			<div class="grid-label">Prazo</div>
+			<div class="grid-value">
+				{% if doc.start_date %}Início: {{ frappe.utils.formatdate(doc.start_date) }}{% endif %}
+				{% if doc.expected_delivery %}{% if doc.start_date %} — {% endif %}Entrega prevista: {{ frappe.utils.formatdate(doc.expected_delivery) }}{% endif %}
+			</div>
+		</div>
+		{% endif %}
+		{% if doc.construction_area %}
+		<div class="grid-row">
+			<div class="grid-label">Área construída</div>
+			<div class="grid-value">{{ doc.construction_area }} m²</div>
+		</div>
+		{% endif %}
+	</div>
+
+	{% if doc.address_street or doc.city %}
+	<h2>Endereço da Obra</h2>
+	<div class="grid">
+		<div class="grid-row">
+			<div class="grid-label">Local</div>
+			<div class="grid-value">
+				{% if doc.address_street %}{{ doc.address_street }}{% if doc.address_number %}, {{ doc.address_number }}{% endif %}{% endif %}
+				{% if doc.address_district %}<br>{{ doc.address_district }}{% endif %}
+				{% if doc.city %}<br>{{ doc.city }}{% if doc.address_uf %} — {{ doc.address_uf }}{% endif %}{% endif %}
+				{% if doc.address_cep %}<br>CEP: {{ doc.address_cep }}{% endif %}
+			</div>
+		</div>
+		{% if doc.gps_coordinates %}
+		<div class="grid-row">
+			<div class="grid-label">Coordenadas GPS</div>
+			<div class="grid-value">{{ doc.gps_coordinates }}</div>
+		</div>
+		{% endif %}
+		{% if doc.property_registration %}
+		<div class="grid-row">
+			<div class="grid-label">Matrícula</div>
+			<div class="grid-value">{{ doc.property_registration }}</div>
+		</div>
+		{% endif %}
+	</div>
+	{% endif %}
+
+	{% if doc.responsible_engineer or doc.crea_number or doc.art_number %}
+	<h2>Responsabilidade Técnica</h2>
+	<div class="grid">
+		{% if doc.responsible_engineer %}
+		<div class="grid-row">
+			<div class="grid-label">Responsável técnico</div>
+			<div class="grid-value">{{ doc.responsible_engineer }}</div>
+		</div>
+		{% endif %}
+		{% if doc.crea_number %}
+		<div class="grid-row">
+			<div class="grid-label">CREA</div>
+			<div class="grid-value">{{ doc.crea_number }}</div>
+		</div>
+		{% endif %}
+		{% if doc.art_number %}
+		<div class="grid-row">
+			<div class="grid-label">ART principal</div>
+			<div class="grid-value">{{ doc.art_number }}</div>
+		</div>
+		{% endif %}
+	</div>
+	{% endif %}
+
+	{% if project_items %}
+	<h2>Itens do Projeto</h2>
+	<table class="data">
+		<thead>
+			<tr>
+				<th style="width: 5%;">#</th>
+				<th>Item técnico</th>
+				<th>Identificação</th>
+				<th class="text-right">Qtd.</th>
+				<th class="text-right">Valor total</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for item in project_items %}
+			<tr>
+				<td>{{ loop.index }}</td>
+				<td>{{ item.technical_item }}</td>
+				<td>{{ item.instance_label or item.title or "—" }}</td>
+				<td class="text-right">{{ item.quantity or 1 }}</td>
+				<td class="text-right">{{ frappe.utils.fmt_money(item.total_value) if item.total_value else "—" }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% endif %}
+
+	{% if doc.spec_project_total %}
+	<div class="total-box">
+		<div class="total-label">Total das especificações</div>
+		<div class="total-value">{{ doc.get_formatted("spec_project_total") }}</div>
+	</div>
+	{% endif %}
+
+	{% if doc.current_contract_value %}
+	<div class="grid" style="margin-top: 16px;">
+		<div class="grid-row">
+			<div class="grid-label">Valor atual do contrato</div>
+			<div class="grid-value"><strong>{{ doc.get_formatted("current_contract_value") }}</strong></div>
+		</div>
+	</div>
+	{% endif %}
+
+	{% if doc.observations %}
+	<h2>Observações</h2>
+	<div class="muted">{{ doc.observations }}</div>
+	{% endif %}
+</div>

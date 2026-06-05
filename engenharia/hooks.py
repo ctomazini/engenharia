@@ -20,6 +20,14 @@ fixtures = [
 		]]],
 	},
 	{
+		"dt": "Print Format",
+		"filters": [["name", "in", [
+			"Engenharia - Contrato de Obra",
+			"Engenharia - Recibo de Pagamento",
+			"Engenharia - Orçamento da Obra",
+		]]],
+	},
+	{
 		"dt": "Custom Field",
 		"filters": [["dt", "=", "Event"], ["fieldname", "like", "custom_source%"]],
 	},
@@ -124,6 +132,7 @@ after_migrate = [
 	"engenharia.setup.translations.ensure_doctype_translations",
 	"engenharia.setup.sidebar.ensure_engenharia_sidebar",
 	"engenharia.setup.reports.ensure_engenharia_reports",
+	"engenharia.setup.print_formats.ensure_engenharia_print_formats",
 	"engenharia.setup.workspace.ensure_engenharia_workspace",
 ]
 

@@ -1,0 +1,216 @@
+{% set settings = frappe.get_doc("Engineering Settings") %}
+{% set customer_name = frappe.db.get_value("Customer", doc.customer, "customer_name") or doc.customer %}
+{% set project_title = frappe.db.get_value("Construction Project", doc.project, "title") or doc.project %}
+{% set customer_cpf = frappe.db.get_value("Customer", doc.customer, "cpf") %}
+{% set customer_cnpj = frappe.db.get_value("Customer", doc.customer, "cnpj") %}
+<style>
+	.eng-print { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 11pt; color: #222; line-height: 1.45; }
+	.eng-print h1 { font-size: 18pt; margin: 0 0 4px; font-weight: 600; }
+	.eng-print h2 { font-size: 12pt; margin: 20px 0 8px; padding-bottom: 4px; border-bottom: 1px solid #ccc; text-transform: uppercase; letter-spacing: 0.04em; }
+	.eng-print .header { display: table; width: 100%; margin-bottom: 24px; border-bottom: 2px solid #333; padding-bottom: 12px; }
+	.eng-print .header-logo { display: table-cell; width: 120px; vertical-align: middle; }
+	.eng-print .header-logo img { max-height: 70px; max-width: 110px; }
+	.eng-print .header-info { display: table-cell; vertical-align: middle; padding-left: 16px; }
+	.eng-print .header-meta { display: table-cell; vertical-align: middle; text-align: right; font-size: 10pt; color: #555; }
+	.eng-print .doc-title { text-align: center; margin: 16px 0 24px; }
+	.eng-print .doc-title h1 { font-size: 16pt; text-transform: uppercase; }
+	.eng-print .grid { display: table; width: 100%; margin-bottom: 8px; }
+	.eng-print .grid-row { display: table-row; }
+	.eng-print .grid-label { display: table-cell; width: 28%; padding: 4px 8px 4px 0; font-weight: 600; color: #444; vertical-align: top; }
+	.eng-print .grid-value { display: table-cell; padding: 4px 0; vertical-align: top; }
+	.eng-print table.data { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 10pt; }
+	.eng-print table.data th { background: #f4f4f4; border: 1px solid #ccc; padding: 6px 8px; text-align: left; font-weight: 600; }
+	.eng-print table.data td { border: 1px solid #ccc; padding: 6px 8px; vertical-align: top; }
+	.eng-print .text-right { text-align: right; }
+	.eng-print .muted { color: #666; font-size: 10pt; }
+	.eng-print .bank-box { margin-top: 16px; padding: 12px; border: 1px solid #ccc; background: #fafafa; }
+	.eng-print .obs { margin-top: 16px; font-size: 10pt; }
+	@media print {
+		.eng-print { font-size: 10pt; }
+		.eng-print table.data { page-break-inside: auto; }
+		.eng-print table.data tr { page-break-inside: avoid; }
+	}
+</style>
+
+<div class="eng-print">
+	<div class="header">
+		{% if settings.company_logo %}
+		<div class="header-logo">
+			<img src="{{ settings.company_logo }}" alt="Logo">
+		</div>
+		{% endif %}
+		<div class="header-info">
+			<h1>{{ settings.company_name or "Escritório de Engenharia" }}</h1>
+			{% if settings.company_crea %}
+			<div class="muted">CREA {{ settings.company_crea }}</div>
+			{% endif %}
+		</div>
+		<div class="header-meta">
+			<div><strong>Contrato:</strong> {{ doc.name }}</div>
+			<div><strong>Emissão:</strong> {{ frappe.utils.formatdate(frappe.utils.today()) }}</div>
+			{% if doc.status %}
+			<div><strong>Status:</strong> {{ doc.status }}</div>
+			{% endif %}
+		</div>
+	</div>
+
+	<div class="doc-title">
+		<h1>Contrato de Obra</h1>
+		<div class="muted">{{ doc.title or doc.name }}</div>
+	</div>
+
+	<h2>Partes</h2>
+	<div class="grid">
+		<div class="grid-row">
+			<div class="grid-label">Contratante</div>
+			<div class="grid-value">
+				<strong>{{ customer_name }}</strong>
+				{% if customer_cpf %}<br><span class="muted">CPF: {{ customer_cpf }}</span>{% endif %}
+				{% if customer_cnpj %}<br><span class="muted">CNPJ: {{ customer_cnpj }}</span>{% endif %}
+			</div>
+		</div>
+		<div class="grid-row">
+			<div class="grid-label">Obra</div>
+			<div class="grid-value">{{ project_title }}</div>
+		</div>
+		<div class="grid-row">
+			<div class="grid-label">Contratada</div>
+			<div class="grid-value">{{ settings.company_name or "—" }}</div>
+		</div>
+	</div>
+
+	<h2>Valores e Condições</h2>
+	<div class="grid">
+		<div class="grid-row">
+			<div class="grid-label">Valor base</div>
+			<div class="grid-value">{{ doc.get_formatted("base_value") }}</div>
+		</div>
+		<div class="grid-row">
+			<div class="grid-label">Valor atual</div>
+			<div class="grid-value"><strong>{{ doc.get_formatted("current_value") }}</strong></div>
+		</div>
+		{% if doc.adjustment_index %}
+		<div class="grid-row">
+			<div class="grid-label">Índice de reajuste</div>
+			<div class="grid-value">{{ doc.adjustment_index }}</div>
+		</div>
+		{% endif %}
+		{% if doc.technical_retention_pct %}
+		<div class="grid-row">
+			<div class="grid-label">Retenção técnica</div>
+			<div class="grid-value">{{ doc.get_formatted("technical_retention_pct") }}</div>
+		</div>
+		{% endif %}
+		{% if doc.late_fee_pct %}
+		<div class="grid-row">
+			<div class="grid-label">Multa mora</div>
+			<div class="grid-value">{{ doc.get_formatted("late_fee_pct") }}</div>
+		</div>
+		{% endif %}
+		{% if doc.daily_interest_pct %}
+		<div class="grid-row">
+			<div class="grid-label">Juros diários</div>
+			<div class="grid-value">{{ doc.daily_interest_pct }}%</div>
+		</div>
+		{% endif %}
+		{% if doc.installment_count %}
+		<div class="grid-row">
+			<div class="grid-label">Nº de parcelas</div>
+			<div class="grid-value">{{ doc.installment_count }}</div>
+		</div>
+		{% endif %}
+		{% if doc.installment_value %}
+		<div class="grid-row">
+			<div class="grid-label">Valor da parcela</div>
+			<div class="grid-value">{{ doc.get_formatted("installment_value") }}</div>
+		</div>
+		{% endif %}
+	</div>
+
+	{% if doc.installments %}
+	<h2>Parcelas</h2>
+	<table class="data">
+		<thead>
+			<tr>
+				<th style="width: 5%;">#</th>
+				<th>Vencimento</th>
+				<th class="text-right">Valor</th>
+				<th>Status</th>
+				<th>Descrição</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for row in doc.installments %}
+			<tr>
+				<td>{{ row.idx }}</td>
+				<td>{{ frappe.utils.formatdate(row.due_date) if row.due_date else "—" }}</td>
+				<td class="text-right">{{ frappe.utils.fmt_money(row.amount) if row.amount else "—" }}</td>
+				<td>{{ row.status or "—" }}</td>
+				<td>{{ row.description or "—" }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% endif %}
+
+	{% if doc.amendments %}
+	<h2>Aditivos</h2>
+	<table class="data">
+		<thead>
+			<tr>
+				<th>Data</th>
+				<th>Tipo</th>
+				<th class="text-right">Valor</th>
+				<th>Descrição</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for row in doc.amendments %}
+			<tr>
+				<td>{{ frappe.utils.formatdate(row.amendment_date) if row.amendment_date else "—" }}</td>
+				<td>{{ row.amendment_type or "—" }}</td>
+				<td class="text-right">{{ frappe.utils.fmt_money(row.amount) if row.amount else "—" }}</td>
+				<td>{{ row.description or "—" }}</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% endif %}
+
+	{% if settings.bank_name or settings.bank_account or settings.bank_pix %}
+	<div class="bank-box">
+		<strong>Dados bancários para pagamento</strong>
+		<div class="grid" style="margin-top: 8px;">
+			{% if settings.bank_name %}
+			<div class="grid-row">
+				<div class="grid-label">Banco</div>
+				<div class="grid-value">{{ settings.bank_name }}</div>
+			</div>
+			{% endif %}
+			{% if settings.bank_agency %}
+			<div class="grid-row">
+				<div class="grid-label">Agência</div>
+				<div class="grid-value">{{ settings.bank_agency }}</div>
+			</div>
+			{% endif %}
+			{% if settings.bank_account %}
+			<div class="grid-row">
+				<div class="grid-label">Conta</div>
+				<div class="grid-value">{{ settings.bank_account }}</div>
+			</div>
+			{% endif %}
+			{% if settings.bank_pix %}
+			<div class="grid-row">
+				<div class="grid-label">PIX</div>
+				<div class="grid-value">{{ settings.bank_pix }}</div>
+			</div>
+			{% endif %}
+		</div>
+	</div>
+	{% endif %}
+
+	{% if doc.observations %}
+	<h2>Observações</h2>
+	<div class="obs">{{ doc.observations }}</div>
+	{% endif %}
+</div>

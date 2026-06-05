@@ -1,0 +1,162 @@
+{% set settings = frappe.get_doc("Engineering Settings") %}
+{% set customer_name = frappe.db.get_value("Customer", doc.customer, "customer_name") or doc.customer %}
+{% set project_title = frappe.db.get_value("Construction Project", doc.project, "title") or doc.project %}
+{% set contract_title = frappe.db.get_value("Engineering Contract", doc.contract, "title") if doc.contract else None %}
+{% set received = doc.status == "Recebido" %}
+{% set display_amount = doc.received_amount if received and doc.received_amount else doc.amount %}
+<style>
+	.eng-print { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 11pt; color: #222; line-height: 1.45; }
+	.eng-print h1 { font-size: 18pt; margin: 0 0 4px; font-weight: 600; }
+	.eng-print h2 { font-size: 12pt; margin: 20px 0 8px; padding-bottom: 4px; border-bottom: 1px solid #ccc; text-transform: uppercase; letter-spacing: 0.04em; }
+	.eng-print .header { display: table; width: 100%; margin-bottom: 24px; border-bottom: 2px solid #333; padding-bottom: 12px; }
+	.eng-print .header-logo { display: table-cell; width: 120px; vertical-align: middle; }
+	.eng-print .header-logo img { max-height: 70px; max-width: 110px; }
+	.eng-print .header-info { display: table-cell; vertical-align: middle; padding-left: 16px; }
+	.eng-print .header-meta { display: table-cell; vertical-align: middle; text-align: right; font-size: 10pt; color: #555; }
+	.eng-print .doc-title { text-align: center; margin: 16px 0 24px; }
+	.eng-print .doc-title h1 { font-size: 16pt; text-transform: uppercase; }
+	.eng-print .amount-box { text-align: center; margin: 24px 0; padding: 20px; border: 2px solid {% if received %}#2e7d32{% else %}#e65100{% endif %}; background: {% if received %}#f1f8e9{% else %}#fff3e0{% endif %}; }
+	.eng-print .amount-label { font-size: 10pt; text-transform: uppercase; letter-spacing: 0.08em; color: #555; }
+	.eng-print .amount-value { font-size: 22pt; font-weight: 700; margin-top: 6px; color: {% if received %}#1b5e20{% else %}#bf360c{% endif %}; }
+	.eng-print .status-badge { display: inline-block; padding: 4px 12px; border-radius: 4px; font-size: 10pt; font-weight: 600; background: {% if received %}#c8e6c9{% else %}#ffe0b2{% endif %}; }
+	.eng-print .grid { display: table; width: 100%; margin-bottom: 8px; }
+	.eng-print .grid-row { display: table-row; }
+	.eng-print .grid-label { display: table-cell; width: 32%; padding: 4px 8px 4px 0; font-weight: 600; color: #444; vertical-align: top; }
+	.eng-print .grid-value { display: table-cell; padding: 4px 0; vertical-align: top; }
+	.eng-print .muted { color: #666; font-size: 10pt; }
+	.eng-print .pending-note { margin-top: 16px; padding: 12px; border-left: 4px solid #e65100; background: #fff8e1; font-size: 10pt; }
+	@media print {
+		.eng-print { font-size: 10pt; }
+		.eng-print .amount-box { page-break-inside: avoid; }
+	}
+</style>
+
+<div class="eng-print">
+	<div class="header">
+		{% if settings.company_logo %}
+		<div class="header-logo">
+			<img src="{{ settings.company_logo }}" alt="Logo">
+		</div>
+		{% endif %}
+		<div class="header-info">
+			<h1>{{ settings.company_name or "Escritório de Engenharia" }}</h1>
+			{% if settings.company_crea %}
+			<div class="muted">CREA {{ settings.company_crea }}</div>
+			{% endif %}
+		</div>
+		<div class="header-meta">
+			<div><strong>Recibo:</strong> {{ doc.name }}</div>
+			<div><strong>Emissão:</strong> {{ frappe.utils.formatdate(frappe.utils.today()) }}</div>
+		</div>
+	</div>
+
+	<div class="doc-title">
+		<h1>{% if received %}Recibo de Pagamento{% else %}Comprovante de Cobrança{% endif %}</h1>
+		<div class="muted">{{ doc.title or doc.name }}</div>
+		<div style="margin-top: 8px;"><span class="status-badge">{{ doc.status }}</span></div>
+	</div>
+
+	<div class="amount-box">
+		<div class="amount-label">{% if received %}Valor recebido{% else %}Valor{% endif %}</div>
+		<div class="amount-value">{{ frappe.utils.fmt_money(display_amount) if display_amount else "—" }}</div>
+		{% if received and doc.received_date %}
+		<div class="muted" style="margin-top: 8px;">Recebido em {{ frappe.utils.formatdate(doc.received_date) }}</div>
+		{% elif not received and doc.due_date %}
+		<div class="muted" style="margin-top: 8px;">Vencimento: {{ frappe.utils.formatdate(doc.due_date) }}</div>
+		{% endif %}
+	</div>
+
+	{% if not received %}
+	<div class="pending-note">
+		<strong>Pagamento pendente.</strong>
+		Este documento não constitui quitação. Aguardando confirmação de recebimento
+		{% if doc.due_date %} até {{ frappe.utils.formatdate(doc.due_date) }}{% endif %}.
+	</div>
+	{% endif %}
+
+	<h2>Dados do Pagamento</h2>
+	<div class="grid">
+		<div class="grid-row">
+			<div class="grid-label">Cliente</div>
+			<div class="grid-value">{{ customer_name }}</div>
+		</div>
+		<div class="grid-row">
+			<div class="grid-label">Obra</div>
+			<div class="grid-value">{{ project_title }}</div>
+		</div>
+		{% if doc.contract %}
+		<div class="grid-row">
+			<div class="grid-label">Contrato</div>
+			<div class="grid-value">{{ contract_title or doc.contract }}</div>
+		</div>
+		{% endif %}
+		{% if doc.installment_number %}
+		<div class="grid-row">
+			<div class="grid-label">Nº parcela</div>
+			<div class="grid-value">{{ doc.installment_number }}</div>
+		</div>
+		{% endif %}
+		{% if doc.origin_type %}
+		<div class="grid-row">
+			<div class="grid-label">Origem</div>
+			<div class="grid-value">{{ doc.origin_type }}</div>
+		</div>
+		{% endif %}
+		{% if doc.description %}
+		<div class="grid-row">
+			<div class="grid-label">Descrição</div>
+			<div class="grid-value">{{ doc.description }}</div>
+		</div>
+		{% endif %}
+		<div class="grid-row">
+			<div class="grid-label">Vencimento</div>
+			<div class="grid-value">{{ frappe.utils.formatdate(doc.due_date) if doc.due_date else "—" }}</div>
+		</div>
+		{% if doc.received_date %}
+		<div class="grid-row">
+			<div class="grid-label">Data de recebimento</div>
+			<div class="grid-value">{{ frappe.utils.formatdate(doc.received_date) }}</div>
+		</div>
+		{% endif %}
+		{% if doc.nf_number %}
+		<div class="grid-row">
+			<div class="grid-label">Nota fiscal</div>
+			<div class="grid-value">{{ doc.nf_number }}</div>
+		</div>
+		{% endif %}
+		{% if doc.bank_account %}
+		<div class="grid-row">
+			<div class="grid-label">Conta bancária</div>
+			<div class="grid-value">{{ doc.bank_account }}</div>
+		</div>
+		{% elif settings.bank_name or settings.bank_account %}
+		<div class="grid-row">
+			<div class="grid-label">Dados bancários</div>
+			<div class="grid-value">
+				{% if settings.bank_name %}{{ settings.bank_name }}{% endif %}
+				{% if settings.bank_agency %} — Ag. {{ settings.bank_agency }}{% endif %}
+				{% if settings.bank_account %} — C/C {{ settings.bank_account }}{% endif %}
+				{% if settings.bank_pix %}<br>PIX: {{ settings.bank_pix }}{% endif %}
+			</div>
+		</div>
+		{% endif %}
+		{% if doc.late_fee %}
+		<div class="grid-row">
+			<div class="grid-label">Juros / multa</div>
+			<div class="grid-value">{{ doc.get_formatted("late_fee") }}</div>
+		</div>
+		{% endif %}
+	</div>
+
+	{% if doc.notes %}
+	<h2>Observações</h2>
+	<div class="muted">{{ doc.notes }}</div>
+	{% endif %}
+
+	{% if received %}
+	<div style="margin-top: 40px; text-align: center; font-size: 10pt; color: #555;">
+		Recebemos de <strong>{{ customer_name }}</strong> a quantia acima referente a pagamento da obra
+		<strong>{{ project_title }}</strong>.
+	</div>
+	{% endif %}
+</div>
