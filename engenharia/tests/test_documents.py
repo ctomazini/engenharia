@@ -10,6 +10,7 @@ from engenharia.documents import (
 	generate_project_documents,
 	get_available_kits,
 	get_available_templates,
+	get_document_placeholder_keys,
 	get_placeholder_reference,
 )
 from engenharia.tests.test_setup import (
@@ -23,6 +24,12 @@ from engenharia.tests.test_setup import (
 def _ensure_engineering_settings(company_name="Escritório Teste Engenharia"):
 	settings = frappe.get_single("Engineering Settings")
 	settings.company_name = company_name
+	settings.company_cnpj = "11222333000181"
+	settings.company_crea = "123456/D-SP"
+	settings.bank_name = "Banco Teste"
+	settings.bank_agency = "0001"
+	settings.bank_account = "12345-6"
+	settings.bank_pix = "teste@example.com"
 	settings.save(ignore_permissions=True)
 	return settings
 
@@ -113,16 +120,41 @@ class TestDocuments(FrappeTestCase):
 			address_street="Av Obra",
 			address_number="50",
 			city="Campinas",
+			address_uf="SP",
+			responsible_engineer="Eng. Teste",
+			crea_number="999999/D-SP",
 		)
-		create_test_engineering_contract(project=project.name, base_value=25000, current_value=25000)
+		create_test_engineering_contract(
+			project=project.name,
+			base_value=25000,
+			current_value=25000,
+			adjustment_index="IPCA",
+			installment_count=5,
+		)
 
 		context = _build_context(project.name)
 		self.assertEqual(context["company_name"], "Escritório Teste Engenharia")
+		self.assertEqual(context["company_cnpj"], "11222333000181")
+		self.assertEqual(context["bank_pix"], "teste@example.com")
 		self.assertEqual(context["customer_name"], customer.customer_name)
 		self.assertEqual(context["nome"], customer.customer_name)
 		self.assertEqual(context["project"], project.name)
+		self.assertEqual(context["project_address_uf"], "SP")
+		self.assertEqual(context["project_responsible_engineer"], "Eng. Teste")
 		self.assertEqual(context["contract_value"], 25000)
+		self.assertEqual(context["contract_adjustment_index"], "IPCA")
+		self.assertEqual(context["contract_installment_count"], 5)
 		self.assertIn("today", context)
+
+	def test_placeholder_reference_matches_context(self):
+		_ensure_engineering_settings()
+		customer = create_test_customer(customer_name=_uid("Cliente Placeholder"))
+		project = create_test_construction_project(customer=customer.name)
+		create_test_engineering_contract(project=project.name, base_value=1000, current_value=1000)
+
+		context = _build_context(project.name)
+		missing = get_document_placeholder_keys() - set(context.keys())
+		self.assertFalse(missing, f"Placeholders ausentes no contexto: {sorted(missing)}")
 
 	def test_get_available_kits_with_templates(self):
 		template_name = _create_test_document_template()
