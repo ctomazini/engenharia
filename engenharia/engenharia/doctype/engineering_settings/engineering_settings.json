@@ -6,6 +6,7 @@
  "engine": "InnoDB",
  "field_order": [
   "company_name",
+  "company_cnpj",
   "company_crea",
   "company_logo",
   "default_notify_days",
@@ -22,6 +23,11 @@
    "fieldtype": "Data",
    "label": "Nome do Escritório",
    "reqd": 1
+  },
+  {
+   "fieldname": "company_cnpj",
+   "fieldtype": "Data",
+   "label": "CNPJ da Empresa"
   },
   {
    "fieldname": "company_crea",

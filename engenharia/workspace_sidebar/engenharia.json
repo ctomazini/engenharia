@@ -39,6 +39,7 @@
   {"child": 1, "collapsible": 0, "icon": "landmark", "indent": 0, "keep_closed": 0, "label": "Órgãos Públicos", "link_to": "Public Agency", "link_type": "DocType", "show_arrow": 0, "type": "Link"},
   {"child": 1, "collapsible": 0, "icon": "ruler", "indent": 0, "keep_closed": 0, "label": "Itens Técnicos", "link_to": "Technical Item", "link_type": "DocType", "show_arrow": 0, "type": "Link"},
   {"child": 0, "collapsible": 1, "icon": "settings", "indent": 0, "keep_closed": 1, "label": "Administração", "link_type": "DocType", "show_arrow": 0, "type": "Section Break"},
+  {"child": 1, "collapsible": 0, "icon": "building-2", "indent": 0, "keep_closed": 0, "label": "Configurações do Escritório", "link_to": "Engineering Settings", "link_type": "DocType", "show_arrow": 0, "type": "Link"},
   {"child": 1, "collapsible": 0, "icon": "users", "indent": 0, "keep_closed": 0, "label": "Usuários", "link_to": "User", "link_type": "DocType", "show_arrow": 0, "type": "Link"},
   {"child": 1, "collapsible": 0, "icon": "user-plus", "indent": 0, "keep_closed": 0, "label": "Novo Usuário", "link_type": "URL", "show_arrow": 0, "type": "Link", "url": "/app/user/new"}
  ],

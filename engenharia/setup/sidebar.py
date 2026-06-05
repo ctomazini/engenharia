@@ -38,6 +38,7 @@ SIDEBAR_LINK_ORDER = (
 	("Órgãos Públicos", "Public Agency", "DocType"),
 	("Itens Técnicos", "Technical Item", "DocType"),
 	# Administração
+	("Configurações do Escritório", "Engineering Settings", "DocType"),
 	("Usuários", "User", "DocType"),
 	("Novo Usuário", "/app/user/new", "URL"),
 )
