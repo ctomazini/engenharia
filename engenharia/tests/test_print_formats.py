@@ -75,4 +75,5 @@ class TestPrintFormats(FrappeTestCase):
 		)
 		self.assertIn("Orçamento da Obra", html)
 		self.assertIn(project.name, html)
-		self.assertIn("Itens do Projeto", html)
+		self.assertIn("Itens do Orçamento", html)
+		self.assertIn("Revisão", html)

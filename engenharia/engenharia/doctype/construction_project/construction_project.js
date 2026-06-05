@@ -11,6 +11,11 @@ frappe.ui.form.on("Construction Project", {
 		if (!frm.is_new()) {
 			eng_refresh_spec_rollup(frm);
 			eng_add_hub_create_buttons(frm);
+			frm.add_custom_button(
+				__("Nova revisão de orçamento"),
+				() => eng_create_budget_revision(frm),
+				__("Orçamento")
+			);
 			frm.add_custom_button(__("Gerar Documentos"), () => eng_open_generate_documents_dialog(frm), __(
 				"Documentos"
 			));
@@ -45,6 +50,32 @@ function eng_add_hub_create_buttons(frm) {
 		__("+ Etapa"),
 		() => frappe.new_doc("Project Stage", { project: hub.project }),
 		__("Criar")
+	);
+}
+
+function eng_create_budget_revision(frm) {
+	frappe.confirm(
+		__(
+			"Criar nova revisão de orçamento? A revisão vigente será arquivada com o total atual e uma nova revisão vazia será aberta."
+		),
+		() => {
+			frappe.call({
+				method: "engenharia.engenharia.doctype.construction_project.construction_project.create_budget_revision",
+				args: { project: frm.doc.name },
+				freeze: true,
+				freeze_message: __("Criando revisão..."),
+				callback(r) {
+					const data = r.message || {};
+					if (data.revision_number) {
+						frappe.show_alert({
+							message: __("Revisão {0} criada", [data.revision_number]),
+							indicator: "green",
+						});
+						frm.reload_doc();
+					}
+				},
+			});
+		}
 	);
 }
 

@@ -1,5 +1,6 @@
 import frappe
 from frappe.model.document import Document
+from frappe.utils import flt, today
 
 
 @frappe.whitelist()
@@ -52,10 +53,54 @@ def create_project_item(
 	return doc.name
 
 
+@frappe.whitelist()
+def create_budget_revision(project: str) -> dict:
+	frappe.has_permission("Construction Project", "write", doc=project, throw=True)
+
+	doc = frappe.get_doc("Construction Project", project)
+	current_total = flt(doc.spec_project_total)
+
+	for row in doc.budget_revisions or []:
+		if row.status == "Vigente":
+			row.total_amount = current_total
+			row.status = "Supersedida"
+
+	new_revision = int(doc.budget_revision or 1) + 1
+	doc.budget_revision = new_revision
+	doc.append(
+		"budget_revisions",
+		{
+			"revision_number": new_revision,
+			"revision_date": today(),
+			"total_amount": 0,
+			"status": "Vigente",
+		},
+	)
+	doc.save()
+
+	return {"revision_number": new_revision}
+
+
 class ConstructionProject(Document):
 	def validate(self):
 		self._compose_title()
 		self._sync_physical_progress()
+		self._seed_initial_budget_revision()
+
+	def _seed_initial_budget_revision(self) -> None:
+		if self.budget_revisions:
+			return
+
+		self.budget_revision = self.budget_revision or 1
+		self.append(
+			"budget_revisions",
+			{
+				"revision_number": self.budget_revision,
+				"revision_date": today(),
+				"total_amount": 0,
+				"status": "Vigente",
+			},
+		)
 
 	def _sync_physical_progress(self):
 		from engenharia.project_progress import calculate_physical_progress

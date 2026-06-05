@@ -35,6 +35,10 @@
   "art_number",
   "property_registration",
   "gps_coordinates",
+  "sec_budget",
+  "budget_revision",
+  "default_bdi_percent",
+  "budget_revisions",
   "sec_specs",
   "specs_help",
   "spec_preview_panel",
@@ -190,6 +194,30 @@
    "fieldname": "gps_coordinates",
    "fieldtype": "Data",
    "label": "Coordenadas GPS"
+  },
+  {
+   "fieldname": "sec_budget",
+   "fieldtype": "Section Break",
+   "label": "Or\u00e7amento"
+  },
+  {
+   "default": "1",
+   "fieldname": "budget_revision",
+   "fieldtype": "Int",
+   "label": "Revis\u00e3o vigente",
+   "read_only": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "default_bdi_percent",
+   "fieldtype": "Percent",
+   "label": "BDI padr\u00e3o %"
+  },
+  {
+   "fieldname": "budget_revisions",
+   "fieldtype": "Table",
+   "label": "Revis\u00f5es de or\u00e7amento",
+   "options": "Project Budget Revision"
   },
   {
    "fieldname": "sec_specs",

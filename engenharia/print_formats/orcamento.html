@@ -1,6 +1,7 @@
 {% set settings = frappe.get_doc("Engineering Settings") %}
 {% set customer_name = frappe.db.get_value("Customer", doc.customer, "customer_name") or doc.customer %}
-{% set project_items = frappe.get_all("Project Item", filters={"project": doc.name}, fields=["name", "title", "technical_item", "instance_label", "quantity", "total_value"], order_by="creation asc", limit_page_length=500) %}
+{% set current_revision = doc.budget_revision or 1 %}
+{% set project_items = frappe.get_all("Project Item", filters={"project": doc.name, "budget_revision": current_revision}, fields=["name", "title", "technical_item", "instance_label", "quantity", "unit", "direct_cost", "bdi_percent", "total_value"], order_by="creation asc", limit_page_length=500) %}
 <style>
 	.eng-print { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 11pt; color: #222; line-height: 1.45; }
 	.eng-print h1 { font-size: 18pt; margin: 0 0 4px; font-weight: 600; }
@@ -45,6 +46,7 @@
 		</div>
 		<div class="header-meta">
 			<div><strong>Obra:</strong> {{ doc.name }}</div>
+			<div><strong>Revisão:</strong> {{ current_revision }}</div>
 			<div><strong>Emissão:</strong> {{ frappe.utils.formatdate(frappe.utils.today()) }}</div>
 			{% if doc.status %}
 			<div><strong>Status:</strong> {{ doc.status }}</div>
@@ -54,7 +56,7 @@
 
 	<div class="doc-title">
 		<h1>Orçamento da Obra</h1>
-		<div class="muted">{{ doc.title or doc.name }}</div>
+		<div class="muted">{{ doc.title or doc.name }} — Revisão {{ current_revision }}</div>
 	</div>
 
 	<h2>Dados da Obra</h2>
@@ -82,6 +84,12 @@
 		<div class="grid-row">
 			<div class="grid-label">Área construída</div>
 			<div class="grid-value">{{ doc.construction_area }} m²</div>
+		</div>
+		{% endif %}
+		{% if doc.default_bdi_percent %}
+		<div class="grid-row">
+			<div class="grid-label">BDI padrão</div>
+			<div class="grid-value">{{ doc.default_bdi_percent }}%</div>
 		</div>
 		{% endif %}
 	</div>
@@ -138,14 +146,17 @@
 	{% endif %}
 
 	{% if project_items %}
-	<h2>Itens do Projeto</h2>
+	<h2>Itens do Orçamento (Revisão {{ current_revision }})</h2>
 	<table class="data">
 		<thead>
 			<tr>
-				<th style="width: 5%;">#</th>
+				<th style="width: 4%;">#</th>
 				<th>Item técnico</th>
 				<th>Identificação</th>
 				<th class="text-right">Qtd.</th>
+				<th>Un.</th>
+				<th class="text-right">Custo direto</th>
+				<th class="text-right">BDI %</th>
 				<th class="text-right">Valor total</th>
 			</tr>
 		</thead>
@@ -156,6 +167,9 @@
 				<td>{{ item.technical_item }}</td>
 				<td>{{ item.instance_label or item.title or "—" }}</td>
 				<td class="text-right">{{ item.quantity or 1 }}</td>
+				<td>{{ item.unit or "—" }}</td>
+				<td class="text-right">{{ frappe.utils.fmt_money(item.direct_cost) if item.direct_cost else "—" }}</td>
+				<td class="text-right">{{ item.bdi_percent or 0 }}%</td>
 				<td class="text-right">{{ frappe.utils.fmt_money(item.total_value) if item.total_value else "—" }}</td>
 			</tr>
 			{% endfor %}
@@ -165,7 +179,7 @@
 
 	{% if doc.spec_project_total %}
 	<div class="total-box">
-		<div class="total-label">Total das especificações</div>
+		<div class="total-label">Total do orçamento (revisão {{ current_revision }})</div>
 		<div class="total-value">{{ doc.get_formatted("spec_project_total") }}</div>
 	</div>
 	{% endif %}

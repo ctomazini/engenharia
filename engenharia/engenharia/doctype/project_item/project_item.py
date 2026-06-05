@@ -36,13 +36,21 @@ def get_parameter_template(technical_item: str) -> list[dict]:
 	return build_parameter_rows_from_template(technical_item)
 
 
+PRICING_MODE_FORMULA = "Fórmula"
+PRICING_MODE_COMPOSITION = "Composição de custos"
+
+
 class ProjectItem(Document):
 	def validate(self):
 		self.ensure_parameters_from_template()
 		self.clean_incomplete_rows()
 		self.validate_inputs()
 		self.compute_outputs()
+		self.compute_pricing()
 		self.compose_title()
+
+	def before_insert(self):
+		self._apply_project_budget_defaults()
 
 	def after_insert(self):
 		on_project_item_change(self)
@@ -77,6 +85,9 @@ class ProjectItem(Document):
 		if self.flags.get("ignore_required_parameters"):
 			return
 
+		if self.pricing_mode == PRICING_MODE_COMPOSITION and not self.parameter_values:
+			return
+
 		if not self.parameter_values:
 			frappe.throw(
 				_("Nenhum parâmetro carregado. Escolha o item técnico ou use Recarregar parâmetros."),
@@ -95,7 +106,14 @@ class ProjectItem(Document):
 			)
 
 	def compute_outputs(self) -> None:
+		if not self.technical_item:
+			return
+
 		template = frappe.get_doc("Technical Item", self.technical_item)
+		if not template.outputs:
+			self.set("computed_outputs", [])
+			return
+
 		numeric_values = {
 			row.field_key: flt(row.value)
 			for row in (self.parameter_values or [])
@@ -109,7 +127,7 @@ class ProjectItem(Document):
 		)
 
 		self.set("computed_outputs", [])
-		self.total_value = 0
+		formula_total = 0
 		for out in sorted(template.outputs or [], key=lambda row: row.sort_order or 0):
 			formula = (out.formula or "").strip()
 			try:
@@ -137,7 +155,45 @@ class ProjectItem(Document):
 				},
 			)
 			if role in VALUE_OUTPUT_ROLES:
-				self.total_value = val
+				formula_total = val
+
+		if self.pricing_mode == PRICING_MODE_FORMULA:
+			self.total_value = formula_total
+
+	def compute_pricing(self) -> None:
+		bdi_factor = 1 + flt(self.bdi_percent) / 100
+
+		if self.pricing_mode == PRICING_MODE_COMPOSITION:
+			direct = 0
+			for row in self.cost_components or []:
+				row.amount = flt(row.quantity) * flt(row.unit_cost)
+				direct += flt(row.amount)
+			if not direct:
+				direct = flt(self.quantity or 1) * flt(self.unit_price)
+		else:
+			direct = flt(self.total_value)
+
+		self.direct_cost = direct
+		self.total_value = direct * bdi_factor
+
+	def _apply_project_budget_defaults(self) -> None:
+		if not self.project:
+			return
+
+		project = frappe.db.get_value(
+			"Construction Project",
+			self.project,
+			["budget_revision", "default_bdi_percent"],
+			as_dict=True,
+		)
+		if not project:
+			return
+
+		if not self.budget_revision:
+			self.budget_revision = project.budget_revision or 1
+
+		if flt(self.bdi_percent) == 0 and flt(project.default_bdi_percent):
+			self.bdi_percent = project.default_bdi_percent
 
 	def compose_title(self) -> None:
 		title_out = next(

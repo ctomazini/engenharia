@@ -5,7 +5,7 @@ from __future__ import annotations
 import html
 
 import frappe
-from frappe.utils import cstr, flt
+from frappe.utils import cint, cstr, flt
 
 from engenharia.formula_roles import PREVIEW_OUTPUT_ROLES
 
@@ -16,12 +16,17 @@ def on_project_item_change(doc, method=None):
 	recompute_construction_project_specs(doc.project)
 
 
+def _current_budget_revision(project: str) -> int:
+	return cint(frappe.db.get_value("Construction Project", project, "budget_revision")) or 1
+
+
 def recompute_construction_project_specs(project: str) -> None:
 	frappe.has_permission("Construction Project", "read", doc=project, throw=True)
 
+	current_revision = _current_budget_revision(project)
 	items = frappe.get_all(
 		"Project Item",
-		filters={"project": project},
+		filters={"project": project, "budget_revision": current_revision},
 		fields=["total_value"],
 		limit_page_length=500,
 	)
@@ -35,13 +40,27 @@ def recompute_construction_project_specs(project: str) -> None:
 		update_modified=False,
 	)
 
+	frappe.db.set_value(
+		"Project Budget Revision",
+		{
+			"parent": project,
+			"parenttype": "Construction Project",
+			"revision_number": current_revision,
+			"status": "Vigente",
+		},
+		"total_amount",
+		project_total,
+		update_modified=False,
+	)
+
 
 def build_spec_preview_html(project: str) -> str:
 	frappe.has_permission("Construction Project", "read", doc=project, throw=True)
 
+	current_revision = _current_budget_revision(project)
 	items = frappe.get_all(
 		"Project Item",
-		filters={"project": project},
+		filters={"project": project, "budget_revision": current_revision},
 		fields=["name", "title"],
 		limit_page_length=500,
 	)

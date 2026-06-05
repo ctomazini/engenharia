@@ -13,10 +13,18 @@
   "instance_label",
   "stage",
   "quantity",
+  "unit",
+  "pricing_mode",
+  "budget_revision",
+  "bdi_percent",
+  "direct_cost",
   "total_value",
   "title",
   "sec_parameters",
   "parameter_values",
+  "sec_cost_composition",
+  "unit_price",
+  "cost_components",
   "sec_results",
   "computed_outputs"
  ],
@@ -63,6 +71,39 @@
    "label": "Quantidade"
   },
   {
+   "fetch_from": "technical_item.default_unit",
+   "fieldname": "unit",
+   "fieldtype": "Data",
+   "label": "Unidade"
+  },
+  {
+   "default": "F\u00f3rmula",
+   "fieldname": "pricing_mode",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Modo de precifica\u00e7\u00e3o",
+   "options": "F\u00f3rmula\nComposi\u00e7\u00e3o de custos"
+  },
+  {
+   "default": "1",
+   "fieldname": "budget_revision",
+   "fieldtype": "Int",
+   "in_standard_filter": 1,
+   "label": "Revis\u00e3o do or\u00e7amento"
+  },
+  {
+   "default": "0",
+   "fieldname": "bdi_percent",
+   "fieldtype": "Percent",
+   "label": "BDI %"
+  },
+  {
+   "fieldname": "direct_cost",
+   "fieldtype": "Currency",
+   "label": "Custo direto",
+   "read_only": 1
+  },
+  {
    "fieldname": "total_value",
    "fieldtype": "Currency",
    "in_list_view": 1,
@@ -89,6 +130,25 @@
    "options": "Project Item Parameter",
    "cannot_add_rows": 1,
    "cannot_delete_rows": 1
+  },
+  {
+   "depends_on": "eval:doc.pricing_mode=='Composi\u00e7\u00e3o de custos'",
+   "fieldname": "sec_cost_composition",
+   "fieldtype": "Section Break",
+   "label": "Composi\u00e7\u00e3o de custos"
+  },
+  {
+   "depends_on": "eval:doc.pricing_mode=='Composi\u00e7\u00e3o de custos'",
+   "fieldname": "unit_price",
+   "fieldtype": "Currency",
+   "label": "Pre\u00e7o unit\u00e1rio"
+  },
+  {
+   "depends_on": "eval:doc.pricing_mode=='Composi\u00e7\u00e3o de custos'",
+   "fieldname": "cost_components",
+   "fieldtype": "Table",
+   "label": "Componentes de custo",
+   "options": "Project Item Cost Component"
   },
   {
    "fieldname": "sec_results",
