@@ -12,7 +12,12 @@ fixtures = [
 	},
 	{
 		"dt": "Notification",
-		"filters": [["name", "in", ["Engenharia - Prazo vencendo"]]],
+		"filters": [["name", "in", [
+			"Engenharia - Prazo vencendo",
+			"Engenharia - Parcela vencida",
+			"Engenharia - Protocolo expirando",
+			"Engenharia - Tarefa atrasada",
+		]]],
 	},
 	{
 		"dt": "Custom Field",
