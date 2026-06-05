@@ -8,6 +8,7 @@ USER_PERMISSIONS = {
 	"write": 1,
 	"create": 1,
 	"delete": 0,
+	"import": 1,
 	"export": 1,
 	"print": 1,
 	"email": 1,
@@ -25,6 +26,7 @@ PERM_PROPERTIES = (
 	"write",
 	"create",
 	"delete",
+	"import",
 	"export",
 	"print",
 	"email",
@@ -43,10 +45,9 @@ def _role_has_permissions(doctype: str, role: str) -> bool:
 
 
 def _ensure_role_on_doctype(doctype: str, role: str, permissions: dict):
-	if _role_has_permissions(doctype, role):
-		return
+	if not _role_has_permissions(doctype, role):
+		add_permission(doctype, role, permlevel=0)
 
-	add_permission(doctype, role, permlevel=0)
 	for prop in PERM_PROPERTIES:
 		if prop in permissions:
 			update_permission_property(doctype, role, 0, prop, permissions[prop])
