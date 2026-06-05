@@ -16,9 +16,68 @@
     "receiver_by_document_field": "assigned_to"
    },
    {
-    "receiver_by_document_field": "owner"
+    "receiver_by_role": "Engenharia User"
    }
   ],
-  "subject": "Prazo vencendo: {{ doc.description }} - {{ doc.project }}"
+  "subject": "Prazo em 3 dias: {{ doc.description }} - {{ doc.project }}"
+ },
+ {
+  "channel": "System Notification",
+  "condition": "doc.status == \"Vencido\"",
+  "doctype": "Notification",
+  "document_type": "Payment",
+  "enabled": 1,
+  "event": "Value Change",
+  "message": "<p>A parcela {{ doc.name }} ({{ doc.title }}) venceu em {{ frappe.utils.formatdate(doc.due_date) }}.</p>",
+  "message_type": "Markdown",
+  "module": "Engenharia",
+  "name": "Engenharia - Parcela vencida",
+  "recipients": [
+   {
+    "receiver_by_role": "Engenharia Manager"
+   }
+  ],
+  "subject": "Parcela vencida: {{ doc.title }}",
+  "value_changed": "status"
+ },
+ {
+  "channel": "System Notification",
+  "condition": "doc.status in (\"Aprovado\", \"Em análise\")",
+  "date_changed": "expiry_date",
+  "days_in_advance": 30,
+  "doctype": "Notification",
+  "document_type": "Permit",
+  "enabled": 1,
+  "event": "Days Before",
+  "message": "<p>O protocolo {{ doc.permit_type }} ({{ doc.name }}) da obra {{ doc.project }} expira em {{ frappe.utils.formatdate(doc.expiry_date) }}.</p>",
+  "message_type": "Markdown",
+  "module": "Engenharia",
+  "name": "Engenharia - Protocolo expirando",
+  "recipients": [
+   {
+    "receiver_by_role": "Engenharia Manager"
+   }
+  ],
+  "subject": "Protocolo expira em 30 dias: {{ doc.permit_type }}"
+ },
+ {
+  "channel": "System Notification",
+  "condition": "doc.status in (\"A fazer\", \"Fazendo\")",
+  "date_changed": "due_date",
+  "days_in_advance": 1,
+  "doctype": "Notification",
+  "document_type": "Task",
+  "enabled": 1,
+  "event": "Days After",
+  "message": "<p>A tarefa {{ doc.subject }} da obra {{ doc.project or \"—\" }} está atrasada (vencimento {{ frappe.utils.formatdate(doc.due_date) }}).</p>",
+  "message_type": "Markdown",
+  "module": "Engenharia",
+  "name": "Engenharia - Tarefa atrasada",
+  "recipients": [
+   {
+    "receiver_by_document_field": "assigned_to"
+   }
+  ],
+  "subject": "Tarefa atrasada: {{ doc.subject }}"
  }
 ]
