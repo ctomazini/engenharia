@@ -18,7 +18,9 @@ from engenharia.tests.test_setup import (
 	create_test_construction_project,
 	create_test_customer,
 	create_test_engineering_contract,
+	create_test_supplier,
 )
+from engenharia.tests.test_subcontract import create_test_subcontract
 
 
 def _ensure_engineering_settings(company_name="Escritório Teste Engenharia"):
@@ -96,6 +98,7 @@ class TestDocuments(FrappeTestCase):
 		self.assertIn("Escritório", groups)
 		self.assertIn("Cliente", groups)
 		self.assertIn("Obra", groups)
+		self.assertIn("Subcontratos (obra)", groups)
 
 	def test_build_context_company_and_customer(self):
 		_ensure_engineering_settings()
@@ -154,6 +157,32 @@ class TestDocuments(FrappeTestCase):
 		context = _build_context(project.name)
 		missing = get_document_placeholder_keys() - set(context.keys())
 		self.assertFalse(missing, f"Placeholders ausentes no contexto: {sorted(missing)}")
+
+	def test_build_context_subcontracts(self):
+		_ensure_engineering_settings()
+		project = create_test_construction_project()
+		supplier = create_test_supplier(supplier_name=_uid("João Pedreiro")).name
+		create_test_subcontract(
+			project=project.name,
+			supplier=supplier,
+			total_value=5000,
+			payments=[
+				{"payment_date": "2026-01-15", "amount": 2000, "payment_method": "PIX"},
+				{"payment_date": "2026-02-10", "amount": 3000, "payment_method": "TED"},
+			],
+		)
+
+		context = _build_context(project.name)
+		self.assertEqual(context["subcontract_count"], 1)
+		self.assertEqual(context["subcontract_total_value"], 5000)
+		self.assertEqual(context["subcontract_total_paid"], 5000)
+		self.assertEqual(context["subcontract_outstanding"], 0)
+		self.assertEqual(len(context["subcontracts"]), 1)
+		row = context["subcontracts"][0]
+		self.assertEqual(row["total_value"], 5000)
+		self.assertEqual(len(row["payments"]), 2)
+		self.assertEqual(row["payments"][0]["amount"], 2000)
+		self.assertEqual(row["payments"][0]["payment_method"], "PIX")
 
 	def test_get_available_kits_with_templates(self):
 		template_name = _create_test_document_template()

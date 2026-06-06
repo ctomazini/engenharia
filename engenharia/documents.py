@@ -95,6 +95,61 @@ PLACEHOLDER_REFERENCE = [
 		],
 	},
 	{
+		"grupo": "Subcontratos (obra)",
+		"items": [
+			{"placeholder": "subcontract_count", "label": "Quantidade de subcontratos"},
+			{"placeholder": "subcontract_total_value", "label": "Valor total acordado (R$)"},
+			{"placeholder": "subcontract_total_value_fmt", "label": "Valor total acordado (formatado)"},
+			{"placeholder": "subcontract_total_paid", "label": "Total já pago a prestadores (R$)"},
+			{"placeholder": "subcontract_total_paid_fmt", "label": "Total já pago (formatado)"},
+			{"placeholder": "subcontract_outstanding", "label": "Saldo a pagar a prestadores (R$)"},
+			{"placeholder": "subcontract_outstanding_fmt", "label": "Saldo a pagar (formatado)"},
+			{
+				"placeholder": "subcontracts",
+				"label": "Lista de subcontratos (use {% for s in subcontracts %})",
+			},
+		],
+	},
+	{
+		"grupo": "Subcontrato (item do loop)",
+		"condicional": True,
+		"items": [
+			{"placeholder": "name", "label": "Código do subcontrato", "loop_only": True, "loop_var": "s"},
+			{"placeholder": "title", "label": "Título do subcontrato", "loop_only": True, "loop_var": "s"},
+			{"placeholder": "supplier_name", "label": "Nome do prestador", "loop_only": True, "loop_var": "s"},
+			{"placeholder": "supplier_cnpj", "label": "CNPJ do prestador", "loop_only": True, "loop_var": "s"},
+			{"placeholder": "description", "label": "Descrição do serviço", "loop_only": True, "loop_var": "s"},
+			{"placeholder": "total_value", "label": "Valor acordado (R$)", "loop_only": True, "loop_var": "s"},
+			{"placeholder": "total_value_fmt", "label": "Valor acordado (formatado)", "loop_only": True, "loop_var": "s"},
+			{"placeholder": "total_paid", "label": "Total pago (R$)", "loop_only": True, "loop_var": "s"},
+			{"placeholder": "total_paid_fmt", "label": "Total pago (formatado)", "loop_only": True, "loop_var": "s"},
+			{"placeholder": "outstanding", "label": "Saldo a pagar (R$)", "loop_only": True, "loop_var": "s"},
+			{"placeholder": "outstanding_fmt", "label": "Saldo a pagar (formatado)", "loop_only": True, "loop_var": "s"},
+			{"placeholder": "status", "label": "Status", "loop_only": True, "loop_var": "s"},
+			{"placeholder": "cost_category", "label": "Categoria de custo", "loop_only": True, "loop_var": "s"},
+			{"placeholder": "amendment_remarks", "label": "Observações de aditivo", "loop_only": True, "loop_var": "s"},
+			{
+				"placeholder": "payments",
+				"label": "Parcelas pagas (use {% for p in s.payments %})",
+				"loop_only": True,
+				"loop_var": "s",
+			},
+		],
+	},
+	{
+		"grupo": "Pagamento de subcontrato (item do loop)",
+		"condicional": True,
+		"items": [
+			{"placeholder": "payment_date", "label": "Data do pagamento", "loop_only": True, "loop_var": "p"},
+			{"placeholder": "payment_date_fmt", "label": "Data do pagamento (formatada)", "loop_only": True, "loop_var": "p"},
+			{"placeholder": "amount", "label": "Valor pago (R$)", "loop_only": True, "loop_var": "p"},
+			{"placeholder": "amount_fmt", "label": "Valor pago (formatado)", "loop_only": True, "loop_var": "p"},
+			{"placeholder": "payment_method", "label": "Forma de pagamento", "loop_only": True, "loop_var": "p"},
+			{"placeholder": "reference", "label": "Referência / comprovante", "loop_only": True, "loop_var": "p"},
+			{"placeholder": "remarks", "label": "Observações", "loop_only": True, "loop_var": "p"},
+		],
+	},
+	{
 		"grupo": "Contrato",
 		"condicional": True,
 		"items": [
@@ -217,6 +272,8 @@ def get_document_placeholder_keys() -> set[str]:
 	keys = set()
 	for block in PLACEHOLDER_REFERENCE:
 		for item in block.get("items") or []:
+			if item.get("loop_only"):
+				continue
 			keys.add(item["placeholder"])
 			if item.get("alias"):
 				keys.add(item["alias"])
@@ -379,6 +436,103 @@ def _get_project_context(project) -> dict:
 	}
 
 
+def _get_subcontract_payment_row(payment) -> dict:
+	amount = flt(payment.amount)
+	return {
+		"payment_date": payment.payment_date or "",
+		"payment_date_fmt": _fmt_date(payment.payment_date),
+		"amount": amount,
+		"amount_fmt": _fmt_currency(amount),
+		"payment_method": payment.payment_method or "",
+		"reference": payment.reference or "",
+		"remarks": payment.remarks or "",
+	}
+
+
+def _get_subcontracts_context(project_name: str) -> dict:
+	rows = frappe.get_all(
+		"Subcontract",
+		filters={"project": project_name, "status": ["!=", "Cancelled"]},
+		fields=[
+			"name",
+			"title",
+			"supplier",
+			"description",
+			"total_value",
+			"total_paid",
+			"outstanding",
+			"status",
+			"cost_category",
+			"amendment_remarks",
+		],
+		order_by="creation asc",
+		limit=100,
+	)
+	supplier_names = {}
+	supplier_cnpjs = {}
+	if rows:
+		suppliers = frappe.get_all(
+			"Supplier",
+			filters={"name": ["in", [row.supplier for row in rows if row.supplier]]},
+			fields=["name", "supplier_name", "cnpj"],
+			limit=100,
+		)
+		supplier_names = {row.name: row.supplier_name for row in suppliers}
+		supplier_cnpjs = {row.name: row.cnpj or "" for row in suppliers}
+
+	subcontracts = []
+	total_value = 0.0
+	total_paid = 0.0
+	outstanding = 0.0
+
+	for row in rows:
+		payment_rows = frappe.get_all(
+			"Subcontract Payment",
+			filters={"parent": row.name},
+			fields=["payment_date", "amount", "payment_method", "reference", "remarks"],
+			order_by="payment_date asc, idx asc",
+			limit=50,
+		)
+		row_total = flt(row.total_value)
+		row_paid = flt(row.total_paid)
+		row_outstanding = flt(row.outstanding)
+		total_value += row_total
+		total_paid += row_paid
+		outstanding += row_outstanding
+
+		subcontracts.append(
+			{
+				"name": row.name,
+				"title": row.title or row.name,
+				"supplier": row.supplier or "",
+				"supplier_name": supplier_names.get(row.supplier, row.supplier or ""),
+				"supplier_cnpj": supplier_cnpjs.get(row.supplier, ""),
+				"description": row.description or "",
+				"total_value": row_total,
+				"total_value_fmt": _fmt_currency(row_total),
+				"total_paid": row_paid,
+				"total_paid_fmt": _fmt_currency(row_paid),
+				"outstanding": row_outstanding,
+				"outstanding_fmt": _fmt_currency(row_outstanding),
+				"status": row.status or "",
+				"cost_category": row.cost_category or "",
+				"amendment_remarks": row.amendment_remarks or "",
+				"payments": [_get_subcontract_payment_row(payment) for payment in payment_rows],
+			}
+		)
+
+	return {
+		"subcontract_count": len(subcontracts),
+		"subcontract_total_value": total_value,
+		"subcontract_total_value_fmt": _fmt_currency(total_value),
+		"subcontract_total_paid": total_paid,
+		"subcontract_total_paid_fmt": _fmt_currency(total_paid),
+		"subcontract_outstanding": outstanding,
+		"subcontract_outstanding_fmt": _fmt_currency(outstanding),
+		"subcontracts": subcontracts,
+	}
+
+
 def _get_contract_context(contract) -> dict:
 	if not contract:
 		return {
@@ -443,6 +597,7 @@ def _build_context(project_name: str) -> dict:
 	context.update(_get_customer_context(customer, addr, contact))
 	context.update(_get_project_context(project))
 	context.update(_get_contract_context(contract))
+	context.update(_get_subcontracts_context(project.name))
 	context.update(
 		{
 			"today": formatdate(today()),

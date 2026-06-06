@@ -31,10 +31,18 @@ function eng_render_placeholder_reference(blocks) {
 		html += "<thead><tr><th>Placeholder</th><th>Label</th><th>Alias legado</th></tr></thead><tbody>";
 
 		(block.items || []).forEach((item) => {
+			const loopVar = item.loop_var ? `${item.loop_var}.` : "";
+			const loopBadge = item.loop_only
+				? ` <span class="indicator-pill blue">${frappe.utils.escape_html(
+						`{% for ${item.loop_var || "item"} in ... %}`
+				  )}</span>`
+				: "";
 			html +=
 				"<tr><td><code>{{ " +
-				frappe.utils.escape_html(item.placeholder) +
-				" }}</code></td>";
+				frappe.utils.escape_html(loopVar + item.placeholder) +
+				" }}</code>" +
+				loopBadge +
+				"</td>";
 			html += "<td>" + frappe.utils.escape_html(item.label || "") + "</td>";
 			html +=
 				"<td>" +

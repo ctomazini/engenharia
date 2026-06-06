@@ -49,6 +49,7 @@ O **Painel de Obras** reúne indicadores e atalhos do dia a dia.
 | **Agenda / Timeline** | Prazos, tarefas e (Manager) vencimentos financeiros no período |
 | **Zona financeira** *(somente Manager)* | Saúde operacional, KPIs (a receber, vencido, custos do mês…), gráficos e listas de parcelas/despesas |
 | **Obras ativas / Medições** | Resumo operacional de obras em andamento e últimas medições |
+| **Subcontratos** *(Manager, acordeão)* | Saldo a pagar a prestadores — expanda para ver KPIs e lista |
 | **Comissões** *(Manager, acordeão)* | KPIs e lista de comissões — expanda a seção no rodapé para ver detalhes |
 
 ### Diferença Manager vs User
@@ -234,6 +235,8 @@ No painel, o Manager pode marcar pagamento como recebido (atalho na lista).
 
 ### 6.2 Custos de Obra
 
+Lançamentos **avulsos** (NF única, compra pontual). Para contratar um prestador com valor acordado e parcelas, use **Subcontratos** (seção 6.3).
+
 | Campo | O que preencher |
 |---|---|
 | Obra | Onde o custo foi incorrido |
@@ -242,13 +245,32 @@ No painel, o Manager pode marcar pagamento como recebido (atalho na lista).
 | Valor | Montante em reais |
 | Descrição | Detalhe do que foi comprado ou contratado |
 
-### 6.3 Despesas Reembolsáveis
+### 6.3 Subcontratos
+
+Controle de **pagamentos a prestadores** (pedreiro, eletricista, etc.) com valor total acordado e parcelas.
+
+| Campo | O que preencher |
+|---|---|
+| Obra | Obra onde o serviço será executado |
+| Prestador | Fornecedor cadastrado (ex.: João Pedreiro) |
+| Valor Total | Valor acordado do serviço (editável — registre o motivo em Observações de aditivo) |
+| Pagamentos Efetuados | Cada parcela paga: data, valor, forma e comprovante |
+| Saldo a Pagar | Calculado automaticamente (Total − Pago) |
+| Status | Aberta / Parcial / Paga / Cancelada |
+
+**Exemplo:** João cobrou R$ 5.000 pelo reboco — registre R$ 2.000 em janeiro e R$ 3.000 em fevereiro na tabela de pagamentos. O saldo zera e o status vira **Paga**.
+
+Na **Obra → Conexões** e no cadastro do **Fornecedor** você vê todos os subcontratos vinculados. No painel *(Manager)*, a seção **Subcontratos** mostra quanto ainda falta pagar.
+
+*(Engenharia User: somente leitura.)*
+
+### 6.4 Despesas Reembolsáveis
 
 Despesas pagas pelo escritório que o **cliente deve devolver**. Fluxo separado dos custos de obra.
 
 Status típico: **A reembolsar** → reembolsado via pagamento vinculado.
 
-### 6.4 Comissões
+### 6.5 Comissões
 
 | Campo | O que preencher |
 |---|---|
@@ -338,7 +360,29 @@ Status incluem deferido, indeferido, cancelado — eventos de calendário são a
 
 ### 10.1 Modelos de Documento
 
-Cadastre modelos Word (.docx) com **placeholders** (ex.: `{customer_name}`, `{project_address}`).
+Cadastre modelos Word (.docx) com **placeholders** no formato `{{ nome_do_campo }}` (ex.: `{{ customer_name }}`, `{{ project_address_full }}`).
+
+No formulário do template, use o botão **Ver Placeholders** para a lista completa. Grupos disponíveis: Escritório, Cliente, Obra, Contrato, **Subcontratos** e Data.
+
+**Subcontratos na obra** (totais agregados):
+
+| Placeholder | Conteúdo |
+|---|---|
+| `subcontract_count` | Quantidade de subcontratos |
+| `subcontract_total_value` / `_fmt` | Valor total acordado com prestadores |
+| `subcontract_total_paid` / `_fmt` | Total já pago |
+| `subcontract_outstanding` / `_fmt` | Saldo a pagar |
+
+**Lista detalhada** (loop no Word):
+
+```
+{% for s in subcontracts %}
+  {{ s.supplier_name }} — {{ s.total_value_fmt }} — saldo {{ s.outstanding_fmt }}
+  {% for p in s.payments %}
+    {{ p.payment_date_fmt }}: {{ p.amount_fmt }} ({{ p.payment_method }})
+  {% endfor %}
+{% endfor %}
+```
 
 Tipos: contrato, proposta, memorial, etc.
 
