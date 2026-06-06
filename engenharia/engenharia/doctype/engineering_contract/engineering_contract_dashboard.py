@@ -6,6 +6,9 @@ def get_data():
 		"internal_links": {
 			"Construction Project": "project",
 		},
+		"non_standard_fieldnames": {
+			"Payment": "contract",
+		},
 		"transactions": [
 			{
 				"label": _("Obra"),

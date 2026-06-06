@@ -181,12 +181,7 @@
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [
-  {
-   "link_doctype": "Construction Project",
-   "link_fieldname": "project"
-  }
- ],
+ "links": [],
  "modified": "2026-06-02 17:59:07.024142",
  "modified_by": "Administrator",
  "module": "Engenharia",

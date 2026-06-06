@@ -162,16 +162,7 @@
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [
-  {
-   "link_doctype": "Construction Project",
-   "link_fieldname": "project"
-  },
-  {
-   "link_doctype": "Supplier",
-   "link_fieldname": "supplier"
-  }
- ],
+ "links": [],
  "modified": "2026-06-06 00:00:00",
  "modified_by": "Administrator",
  "module": "Engenharia",

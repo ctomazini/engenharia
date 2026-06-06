@@ -67,16 +67,7 @@
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [
-  {
-   "link_doctype": "Subcontract",
-   "link_fieldname": "supplier"
-  },
-  {
-   "link_doctype": "Work Cost",
-   "link_fieldname": "supplier"
-  }
- ],
+ "links": [],
  "modified": "2026-06-02 17:59:08.236623",
  "modified_by": "Administrator",
  "module": "Engenharia",
