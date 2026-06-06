@@ -21,49 +21,56 @@
    "in_list_view": 1,
    "label": "Etapa",
    "options": "Project Stage",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Etapa da obra sendo medida."
   },
   {
    "fieldname": "stage_description",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Descrição da etapa",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Descrição da etapa (preenchida automaticamente)."
   },
   {
    "fieldname": "previous_pct",
    "fieldtype": "Percent",
    "in_list_view": 1,
    "label": "% Anterior",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Percentual acumulado na medição anterior."
   },
   {
    "fieldname": "current_pct",
    "fieldtype": "Percent",
    "in_list_view": 1,
    "label": "% Atual",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Percentual acumulado atual desta etapa."
   },
   {
    "fieldname": "increment_pct",
    "fieldtype": "Percent",
    "in_list_view": 1,
    "label": "Incremento %",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Incremento percentual desta medição. Calculado automaticamente."
   },
   {
    "fetch_from": "project_stage.stage_value",
    "fieldname": "stage_value",
    "fieldtype": "Currency",
    "label": "Valor da etapa",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Valor orçado da etapa. Herdado da etapa vinculada."
   },
   {
    "fieldname": "measured_value",
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Valor medido",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Valor medido no período (incremento × valor da etapa)."
   }
  ],
  "index_web_pages_for_search": 1,

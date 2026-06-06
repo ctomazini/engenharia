@@ -18,14 +18,16 @@
    "in_standard_filter": 1,
    "label": "Nome da Etapa",
    "reqd": 1,
-   "unique": 1
+   "unique": 1,
+   "description": "Nome único da etapa no catálogo (ex.: Fundação, Estrutura)."
   },
   {
    "default": "0",
    "fieldname": "default_order",
    "fieldtype": "Int",
    "in_list_view": 1,
-   "label": "Ordem Padrão"
+   "label": "Ordem Padrão",
+   "description": "Ordem padrão de exibição ao criar etapas na obra."
   }
  ],
  "index_web_pages_for_search": 1,

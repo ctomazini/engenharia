@@ -39,7 +39,8 @@
    "allow_in_quick_entry": 1,
    "fieldname": "title",
    "fieldtype": "Data",
-   "label": "Título"
+   "label": "Título",
+   "description": "Título automático do registro de horas."
   },
   {
    "allow_in_quick_entry": 1,
@@ -48,7 +49,8 @@
    "in_list_view": 1,
    "label": "Obra",
    "options": "Construction Project",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Obra onde a atividade foi realizada."
   },
   {
    "fetch_from": "project.customer",
@@ -56,7 +58,8 @@
    "fieldtype": "Link",
    "label": "Cliente",
    "options": "Customer",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Preenchido automaticamente a partir da obra."
   },
   {
    "fieldname": "column_break_info",
@@ -69,13 +72,15 @@
    "fieldtype": "Date",
    "in_list_view": 1,
    "label": "Data",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Data da atividade."
   },
   {
    "fieldname": "assigned_to",
    "fieldtype": "Link",
    "label": "Responsável",
-   "options": "User"
+   "options": "User",
+   "description": "Profissional que registrou ou executou a atividade."
   },
   {
    "fieldname": "time_section",
@@ -85,12 +90,14 @@
   {
    "fieldname": "start_time",
    "fieldtype": "Time",
-   "label": "Hora Início"
+   "label": "Hora Início",
+   "description": "Hora de início (usado pelo timer)."
   },
   {
    "fieldname": "end_time",
    "fieldtype": "Time",
-   "label": "Hora Fim"
+   "label": "Hora Fim",
+   "description": "Hora de término (usado pelo timer)."
   },
   {
    "fieldname": "column_break_time",
@@ -107,7 +114,8 @@
    "fieldname": "duration_hours",
    "fieldtype": "Float",
    "label": "Duração (horas)",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Duração convertida em horas. Calculada automaticamente."
   },
   {
    "fieldname": "activity_section",
@@ -120,24 +128,28 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Atividade",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Descrição da atividade realizada."
   },
   {
    "fieldname": "category",
    "fieldtype": "Select",
    "label": "Categoria",
-   "options": "Projeto\nVisita de Obra\nReunião\nDeslocamento\nProjeto Técnico\nAdministrativo\nOutro"
+   "options": "Projeto\nVisita de Obra\nReunião\nDeslocamento\nProjeto Técnico\nAdministrativo\nOutro",
+   "description": "Classificação: Visita de Obra, Reunião, Projeto Técnico, etc."
   },
   {
    "fieldname": "details",
    "fieldtype": "Small Text",
-   "label": "Detalhes"
+   "label": "Detalhes",
+   "description": "Detalhes adicionais sobre a atividade."
   },
   {
    "default": "1",
    "fieldname": "billable",
    "fieldtype": "Check",
-   "label": "Cobrável"
+   "label": "Cobrável",
+   "description": "Marque se o tempo é cobrável do cliente."
   },
   {
    "fieldname": "timer_section",

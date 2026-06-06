@@ -18,7 +18,8 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Chave",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Chave usada nas fórmulas e referências. Sem espaços ou acentos."
   },
   {
    "bold": 1,
@@ -26,7 +27,8 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Rótulo",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Nome exibido do resultado (ex.: Volume, Custo Total)."
   },
   {
    "description": "Define como o sistema usa este resultado. 'Valor do item' é usado no orçamento da obra. Os demais são informativos.",
@@ -40,20 +42,23 @@
    "fieldname": "unit",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Unidade"
+   "label": "Unidade",
+   "description": "Unidade do resultado (m³, R$, etc.)."
   },
   {
    "fieldname": "formula",
    "fieldtype": "Small Text",
    "in_list_view": 1,
    "label": "Fórmula",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Expressão matemática usando as chaves dos parâmetros. Ex.: comprimento * largura * altura"
   },
   {
    "default": "1",
    "fieldname": "sort_order",
    "fieldtype": "Int",
-   "label": "Ordem"
+   "label": "Ordem",
+   "description": "Ordem de cálculo. Resultados anteriores podem ser usados nos seguintes."
   }
  ],
  "index_web_pages_for_search": 1,

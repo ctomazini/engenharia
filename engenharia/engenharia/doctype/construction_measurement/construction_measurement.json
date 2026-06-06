@@ -31,7 +31,8 @@
    "in_standard_filter": 1,
    "label": "Obra",
    "options": "Construction Project",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Obra medida."
   },
   {
    "fetch_from": "project.customer",
@@ -42,13 +43,15 @@
    "label": "Cliente",
    "options": "Customer",
    "read_only": 1,
-   "reqd": 1
+   "reqd": 1,
+   "description": "Preenchido automaticamente a partir da obra."
   },
   {
    "fieldname": "title",
    "fieldtype": "Data",
    "label": "Título",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Título automático da medição."
   },
   {
    "fieldname": "col_break_1",
@@ -60,18 +63,21 @@
    "fieldtype": "Date",
    "in_list_view": 1,
    "label": "Data da medição",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Data em que a medição foi realizada em campo."
   },
   {
    "fieldname": "measurement_number",
    "fieldtype": "Int",
    "in_list_view": 1,
-   "label": "Medição Nº"
+   "label": "Medição Nº",
+   "description": "Número sequencial da medição na obra."
   },
   {
    "fieldname": "reference_period",
    "fieldtype": "Data",
-   "label": "Período de referência"
+   "label": "Período de referência",
+   "description": "Período de referência (ex.: Março/2026)."
   },
   {
    "default": "Rascunho",
@@ -80,7 +86,8 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "Rascunho\nAprovada\nContestada"
+   "options": "Rascunho\nAprovada\nContestada",
+   "description": "Rascunho, Aprovada ou Contestada."
   },
   {
    "fieldname": "sec_items",
@@ -92,7 +99,8 @@
    "fieldtype": "Table",
    "label": "Itens",
    "options": "Construction Measurement Item",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Etapas medidas com percentual de avanço no período."
   },
   {
    "fieldname": "sec_totals",
@@ -104,7 +112,8 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Total medido",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Valor total medido. Calculado a partir dos itens."
   },
   {
    "fieldname": "col_break_2",
@@ -113,12 +122,14 @@
   {
    "fieldname": "observations",
    "fieldtype": "Text Editor",
-   "label": "Observações"
+   "label": "Observações",
+   "description": "Observações sobre a medição."
   },
   {
    "fieldname": "attachment",
    "fieldtype": "Attach",
-   "label": "Anexo"
+   "label": "Anexo",
+   "description": "Planilha ou relatório de medição anexado."
   }
  ],
  "index_web_pages_for_search": 1,

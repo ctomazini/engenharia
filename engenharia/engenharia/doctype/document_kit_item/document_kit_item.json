@@ -16,14 +16,16 @@
    "in_list_view": 1,
    "label": "Modelo de documento",
    "options": "Document Template",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Modelo de documento incluído no kit."
   },
   {
    "default": "0",
    "fieldname": "sort_order",
    "fieldtype": "Int",
    "in_list_view": 1,
-   "label": "Ordem"
+   "label": "Ordem",
+   "description": "Ordem de exibição e geração no kit."
   }
  ],
  "index_web_pages_for_search": 1,

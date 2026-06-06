@@ -36,7 +36,8 @@
    "in_standard_filter": 1,
    "label": "Obra",
    "options": "Construction Project",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Obra vinculada a este protocolo."
   },
   {
    "fetch_from": "project.customer",
@@ -47,13 +48,15 @@
    "label": "Cliente",
    "options": "Customer",
    "read_only": 1,
-   "reqd": 1
+   "reqd": 1,
+   "description": "Preenchido automaticamente a partir da obra."
   },
   {
    "fieldname": "title",
    "fieldtype": "Data",
    "label": "Título",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Título automático do protocolo."
   },
   {
    "fieldname": "column_break_info",
@@ -66,20 +69,23 @@
    "in_standard_filter": 1,
    "label": "Tipo de Protocolo",
    "options": "Permit Type",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Tipo de alvará ou protocolo (cadastro de Tipos de Alvará)."
   },
   {
    "fieldname": "permit_number",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Número do Protocolo"
+   "label": "Número do Protocolo",
+   "description": "Número do protocolo ou alvará emitido pelo órgão."
   },
   {
    "fieldname": "public_agency",
    "fieldtype": "Link",
    "in_standard_filter": 1,
    "label": "Órgão Público",
-   "options": "Public Agency"
+   "options": "Public Agency",
+   "description": "Órgão onde o protocolo foi registrado."
   },
   {
    "default": "Pendente",
@@ -88,7 +94,8 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "Pendente\nEm análise\nAprovado\nIndeferido\nVencido\nCancelado"
+   "options": "Pendente\nEm análise\nAprovado\nIndeferido\nVencido\nCancelado",
+   "description": "Situação junto ao órgão: Pendente, Em análise, Aprovado, etc."
   },
   {
    "fieldname": "dates_section",
@@ -99,13 +106,15 @@
    "fieldname": "protocol_date",
    "fieldtype": "Date",
    "in_list_view": 1,
-   "label": "Data do Protocolo"
+   "label": "Data do Protocolo",
+   "description": "Data de protocolo ou emissão."
   },
   {
    "fieldname": "expiry_date",
    "fieldtype": "Date",
    "in_list_view": 1,
-   "label": "Data de Validade"
+   "label": "Data de Validade",
+   "description": "Data de validade. Gera evento no calendário para controle."
   },
   {
    "fieldname": "column_break_dates",
@@ -114,7 +123,8 @@
   {
    "fieldname": "document",
    "fieldtype": "Attach",
-   "label": "Documento"
+   "label": "Documento",
+   "description": "Documento digital do alvará ou protocolo."
   },
   {
    "depends_on": "eval:doc.permit_type && (doc.permit_type.includes('ART') || doc.permit_type.includes('RRT'))",
@@ -126,13 +136,15 @@
    "depends_on": "eval:doc.permit_type && (doc.permit_type.includes('ART') || doc.permit_type.includes('RRT'))",
    "fieldname": "art_rrt_number",
    "fieldtype": "Data",
-   "label": "Nº ART/RRT"
+   "label": "Nº ART/RRT",
+   "description": "Número da ART ou RRT (obrigatório para tipos ART/RRT)."
   },
   {
    "depends_on": "eval:doc.permit_type && (doc.permit_type.includes('ART') || doc.permit_type.includes('RRT'))",
    "fieldname": "crea_cau_number",
    "fieldtype": "Data",
-   "label": "CREA/CAU do Responsável"
+   "label": "CREA/CAU do Responsável",
+   "description": "Registro CREA/CAU do profissional responsável."
   },
   {
    "depends_on": "eval:doc.permit_type && (doc.permit_type.includes('ART') || doc.permit_type.includes('RRT'))",
@@ -143,25 +155,29 @@
    "depends_on": "eval:doc.permit_type && (doc.permit_type.includes('ART') || doc.permit_type.includes('RRT'))",
    "fieldname": "responsible_professional",
    "fieldtype": "Data",
-   "label": "Profissional Responsável"
+   "label": "Profissional Responsável",
+   "description": "Nome do profissional responsável técnico."
   },
   {
    "depends_on": "eval:doc.permit_type && (doc.permit_type.includes('ART') || doc.permit_type.includes('RRT'))",
    "fieldname": "art_validity_date",
    "fieldtype": "Date",
-   "label": "Validade"
+   "label": "Validade",
+   "description": "Data de validade da ART/RRT."
   },
   {
    "depends_on": "eval:doc.permit_type && (doc.permit_type.includes('ART') || doc.permit_type.includes('RRT'))",
    "fieldname": "art_fee",
    "fieldtype": "Currency",
-   "label": "Taxa Paga"
+   "label": "Taxa Paga",
+   "description": "Valor da taxa paga pela ART/RRT."
   },
   {
    "depends_on": "eval:doc.permit_type && (doc.permit_type.includes('ART') || doc.permit_type.includes('RRT'))",
    "fieldname": "art_fee_receipt",
    "fieldtype": "Attach",
-   "label": "Comprovante da Taxa"
+   "label": "Comprovante da Taxa",
+   "description": "Comprovante do pagamento da taxa."
   }
  ],
  "index_web_pages_for_search": 1,

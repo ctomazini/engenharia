@@ -24,19 +24,22 @@
    "label": "Modelo",
    "options": "Technical Item",
    "read_only": 1,
-   "reqd": 1
+   "reqd": 1,
+   "description": "Modelo técnico de referência (legado)."
   },
   {
    "fieldname": "instance_label",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Identificação"
+   "label": "Identificação",
+   "description": "Identificação da instância na obra."
   },
   {
    "fieldname": "stage",
    "fieldtype": "Link",
    "label": "Etapa / Pavimento",
-   "options": "Project Stage"
+   "options": "Project Stage",
+   "description": "Etapa vinculada (opcional)."
   },
   {
    "fieldname": "field_key",
@@ -44,34 +47,39 @@
    "hidden": 1,
    "label": "Chave",
    "read_only": 1,
-   "reqd": 1
+   "reqd": 1,
+   "description": "Chave do parâmetro."
   },
   {
    "fieldname": "label",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Campo",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Nome do campo."
   },
   {
    "fieldname": "value",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Valor"
+   "label": "Valor",
+   "description": "Valor informado."
   },
   {
    "fieldname": "unit",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Unidade",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Unidade de medida."
   },
   {
    "fieldname": "data_type",
    "fieldtype": "Data",
    "hidden": 1,
    "label": "Tipo de Dado",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Tipo do dado."
   },
   {
    "default": "0",
@@ -79,12 +87,14 @@
    "fieldtype": "Check",
    "hidden": 1,
    "label": "Obrigatório",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Indica se o campo é obrigatório."
   },
   {
    "fieldname": "remarks",
    "fieldtype": "Small Text",
-   "label": "Observações"
+   "label": "Observações",
+   "description": "Observações sobre o parâmetro."
   }
  ],
  "index_web_pages_for_search": 1,

@@ -42,7 +42,8 @@
    "in_standard_filter": 1,
    "label": "Tipo de Pessoa",
    "options": "Pessoa Física\nPessoa Jurídica",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Pessoa Física ou Pessoa Jurídica. Define quais documentos são obrigatórios."
   },
   {
    "allow_in_quick_entry": 1,
@@ -51,13 +52,15 @@
    "fieldtype": "Data",
    "in_global_search": 1,
    "label": "Nome / Razão Social",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Nome completo (PF) ou razão social (PJ)."
   },
   {
    "depends_on": "eval:doc.person_type=='Pessoa Jurídica'",
    "fieldname": "trade_name",
    "fieldtype": "Data",
-   "label": "Nome Fantasia"
+   "label": "Nome Fantasia",
+   "description": "Nome fantasia da empresa (apenas pessoa jurídica)."
   },
   {
    "fieldname": "col_break_1",
@@ -70,13 +73,15 @@
    "fieldtype": "Data",
    "label": "CPF",
    "mandatory_depends_on": "eval:doc.person_type=='Pessoa Física'",
-   "unique": 1
+   "unique": 1,
+   "description": "CPF do cliente. Apenas dígitos, validado automaticamente. Obrigatório para pessoa física."
   },
   {
    "depends_on": "eval:doc.person_type=='Pessoa Física'",
    "fieldname": "rg",
    "fieldtype": "Data",
-   "label": "RG"
+   "label": "RG",
+   "description": "Documento de identidade (pessoa física)."
   },
   {
    "allow_in_quick_entry": 1,
@@ -85,7 +90,8 @@
    "fieldtype": "Data",
    "label": "CNPJ",
    "mandatory_depends_on": "eval:doc.person_type=='Pessoa Jurídica'",
-   "unique": 1
+   "unique": 1,
+   "description": "CNPJ do cliente. Apenas dígitos, validado automaticamente. Obrigatório para pessoa jurídica."
   },
   {
    "depends_on": "eval:doc.person_type=='Pessoa Física'",
@@ -97,18 +103,21 @@
    "default": "Brasileira",
    "fieldname": "nationality",
    "fieldtype": "Data",
-   "label": "Nacionalidade"
+   "label": "Nacionalidade",
+   "description": "Nacionalidade do cliente (pessoa física)."
   },
   {
    "fieldname": "marital_status",
    "fieldtype": "Select",
    "label": "Estado Civil",
-   "options": "\nSolteiro(a)\nCasado(a)\nDivorciado(a)\nViúvo(a)\nUnião Estável"
+   "options": "\nSolteiro(a)\nCasado(a)\nDivorciado(a)\nViúvo(a)\nUnião Estável",
+   "description": "Estado civil (pessoa física)."
   },
   {
    "fieldname": "profession",
    "fieldtype": "Data",
-   "label": "Profissão"
+   "label": "Profissão",
+   "description": "Profissão declarada (pessoa física)."
   },
   {
    "depends_on": "eval:doc.person_type=='Pessoa Jurídica'",
@@ -120,12 +129,14 @@
    "bold": 1,
    "fieldname": "legal_representative",
    "fieldtype": "Data",
-   "label": "Representante Legal"
+   "label": "Representante Legal",
+   "description": "Nome do representante legal (pessoa jurídica)."
   },
   {
    "fieldname": "legal_representative_cpf",
    "fieldtype": "Data",
-   "label": "CPF do Representante"
+   "label": "CPF do Representante",
+   "description": "CPF do representante legal, com validação automática."
   },
   {
    "fieldname": "col_break_pj",
@@ -134,13 +145,15 @@
   {
    "fieldname": "legal_representative_role",
    "fieldtype": "Data",
-   "label": "Cargo"
+   "label": "Cargo",
+   "description": "Cargo do representante legal na empresa."
   },
   {
    "default": "Brasileira",
    "fieldname": "legal_representative_nationality",
    "fieldtype": "Data",
-   "label": "Nacionalidade do Representante"
+   "label": "Nacionalidade do Representante",
+   "description": "Nacionalidade do representante legal."
   },
   {
    "fieldname": "sec_contacts",
@@ -151,7 +164,8 @@
    "fieldname": "contacts",
    "fieldtype": "Table",
    "label": "Contatos",
-   "options": "Customer Contact"
+   "options": "Customer Contact",
+   "description": "Telefones e e-mails de contato do cliente."
   },
   {
    "fieldname": "sec_addresses",
@@ -162,7 +176,8 @@
    "fieldname": "addresses",
    "fieldtype": "Table",
    "label": "Endereços",
-   "options": "Customer Address"
+   "options": "Customer Address",
+   "description": "Endereços do cliente. O principal é usado em documentos gerados."
   },
   {
    "collapsible": 1,
@@ -173,7 +188,8 @@
   {
    "fieldname": "observations",
    "fieldtype": "Text Editor",
-   "label": "Observações"
+   "label": "Observações",
+   "description": "Anotações internas sobre o cliente."
   }
  ],
  "index_web_pages_for_search": 1,

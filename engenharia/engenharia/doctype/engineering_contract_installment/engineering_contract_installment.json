@@ -24,18 +24,21 @@
    "fieldtype": "Date",
    "in_list_view": 1,
    "label": "Vencimento",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Data de vencimento da parcela."
   },
   {
    "fieldname": "amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Valor"
+   "label": "Valor",
+   "description": "Valor previsto da parcela."
   },
   {
    "fieldname": "received_amount",
    "fieldtype": "Currency",
-   "label": "Valor Recebido"
+   "label": "Valor Recebido",
+   "description": "Valor efetivamente recebido (quando quitada)."
   },
   {
    "default": "Pendente",
@@ -44,33 +47,39 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "Pendente\nVencido\nRecebido\nCancelado"
+   "options": "Pendente\nVencido\nRecebido\nCancelado",
+   "description": "Pendente, Vencido, Recebido ou Cancelado. Sincronizado com o pagamento vinculado."
   },
   {
    "fieldname": "description",
    "fieldtype": "Small Text",
    "in_list_view": 1,
-   "label": "Descrição"
+   "label": "Descrição",
+   "description": "Descrição exibida na parcela e no pagamento gerado."
   },
   {
    "fieldname": "receipt_date",
    "fieldtype": "Date",
-   "label": "Data de Recebimento"
+   "label": "Data de Recebimento",
+   "description": "Data em que o pagamento foi recebido."
   },
   {
    "fieldname": "nf_number",
    "fieldtype": "Data",
-   "label": "Nº Nota Fiscal"
+   "label": "Nº Nota Fiscal",
+   "description": "Número da nota fiscal vinculada ao recebimento."
   },
   {
    "fieldname": "bank_account",
    "fieldtype": "Data",
-   "label": "Conta Bancária"
+   "label": "Conta Bancária",
+   "description": "Conta bancária utilizada no recebimento."
   },
   {
    "fieldname": "late_fee",
    "fieldtype": "Currency",
-   "label": "Juros/Multa"
+   "label": "Juros/Multa",
+   "description": "Juros ou multa cobrados por atraso."
   },
   {
    "fieldname": "installment_origin_id",
@@ -78,7 +87,8 @@
    "hidden": 1,
    "label": "ID de Origem",
    "no_copy": 1,
-   "read_only": 1
+   "read_only": 1,
+   "description": "Identificador interno para sincronização com pagamentos. Gerado automaticamente."
   },
   {
    "fieldname": "payment",
@@ -87,7 +97,8 @@
    "label": "Pagamento",
    "no_copy": 1,
    "options": "Payment",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Pagamento vinculado a esta parcela. Preenchido pela sincronização automática."
   }
  ],
  "index_web_pages_for_search": 1,

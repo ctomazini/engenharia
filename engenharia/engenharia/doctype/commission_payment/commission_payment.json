@@ -18,31 +18,36 @@
    "fieldtype": "Date",
    "in_list_view": 1,
    "label": "Data do Pagamento",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Data em que o pagamento foi recebido."
   },
   {
    "fieldname": "amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Valor",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Valor recebido neste pagamento."
   },
   {
    "fieldname": "reference",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Referência"
+   "label": "Referência",
+   "description": "Referência do comprovante: PIX, TED, NF ou outro."
   },
   {
    "fieldname": "receipt",
    "fieldtype": "Attach",
-   "label": "Comprovante"
+   "label": "Comprovante",
+   "description": "Anexe o comprovante de pagamento (imagem ou PDF)."
   },
   {
    "fieldname": "remarks",
    "fieldtype": "Small Text",
    "in_list_view": 1,
-   "label": "Observações"
+   "label": "Observações",
+   "description": "Observações sobre este pagamento."
   }
  ],
  "index_web_pages_for_search": 1,

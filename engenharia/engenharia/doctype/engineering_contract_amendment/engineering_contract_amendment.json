@@ -17,7 +17,8 @@
    "fieldtype": "Date",
    "in_list_view": 1,
    "label": "Data",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Data de assinatura ou registro do aditivo."
   },
   {
    "fieldname": "amendment_type",
@@ -25,20 +26,23 @@
    "in_list_view": 1,
    "label": "Tipo",
    "options": "Adição\nRedução",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Adição (aumenta o valor) ou Redução (diminui o valor)."
   },
   {
    "fieldname": "amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Valor",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Valor do aditivo em reais."
   },
   {
    "fieldname": "description",
    "fieldtype": "Small Text",
    "in_list_view": 1,
-   "label": "Descrição"
+   "label": "Descrição",
+   "description": "Descrição do motivo ou escopo do aditivo."
   }
  ],
  "index_web_pages_for_search": 1,

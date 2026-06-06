@@ -19,7 +19,8 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Chave",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Chave usada nas fórmulas (ex.: comprimento). Sem espaços ou acentos."
   },
   {
    "bold": 1,
@@ -27,13 +28,15 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Rótulo",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Nome exibido ao usuário (ex.: Comprimento)."
   },
   {
    "fieldname": "unit",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Unidade"
+   "label": "Unidade",
+   "description": "Unidade de medida do parâmetro (opcional)."
   },
   {
    "default": "Número",
@@ -42,7 +45,8 @@
    "in_list_view": 1,
    "label": "Tipo de Dado",
    "options": "Número\nTexto\nSim-Não",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Tipo do valor: Número, Texto ou Sim-Não."
   },
   {
    "description": "Valor sugerido ao criar o item na obra (editável).",
@@ -54,13 +58,15 @@
    "default": "0",
    "fieldname": "required",
    "fieldtype": "Check",
-   "label": "Obrigatório"
+   "label": "Obrigatório",
+   "description": "Marque se o parâmetro deve ser obrigatório na obra."
   },
   {
    "default": "1",
    "fieldname": "sort_order",
    "fieldtype": "Int",
-   "label": "Ordem"
+   "label": "Ordem",
+   "description": "Ordem de exibição do parâmetro no formulário."
   }
  ],
  "index_web_pages_for_search": 1,

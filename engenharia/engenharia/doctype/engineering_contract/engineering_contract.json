@@ -40,7 +40,8 @@
    "in_standard_filter": 1,
    "label": "Obra",
    "options": "Construction Project",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Obra vinculada a este contrato. O cliente é preenchido automaticamente."
   },
   {
    "fetch_from": "project.customer",
@@ -50,14 +51,16 @@
    "label": "Cliente",
    "options": "Customer",
    "read_only": 1,
-   "reqd": 1
+   "reqd": 1,
+   "description": "Preenchido automaticamente a partir da obra selecionada."
   },
   {
    "fieldname": "title",
    "fieldtype": "Data",
    "in_global_search": 1,
    "label": "Título",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Título automático no formato ID — cliente."
   },
   {
    "fieldname": "col_break_1",
@@ -70,7 +73,8 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "Vigente\nEncerrado\nCancelado\nQuitado"
+   "options": "Vigente\nEncerrado\nCancelado\nQuitado",
+   "description": "Situação: Vigente, Encerrado, Cancelado ou Quitado."
   },
   {
    "fieldname": "sec_values",
@@ -81,13 +85,15 @@
    "fieldname": "base_value",
    "fieldtype": "Currency",
    "label": "Valor Base",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Valor original do contrato antes de aditivos."
   },
   {
    "fieldname": "current_value",
    "fieldtype": "Currency",
    "label": "Valor Atual",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Valor atual considerando aditivos. Calculado automaticamente."
   },
   {
    "fieldname": "col_break_2",
@@ -97,38 +103,45 @@
    "fieldname": "adjustment_index",
    "fieldtype": "Select",
    "label": "Índice de Reajuste",
-   "options": "\nINCC\nIPCA\nIGP-M\nNenhum"
+   "options": "\nINCC\nIPCA\nIGP-M\nNenhum",
+   "description": "Índice de reajuste contratual: INCC, IPCA, IGP-M ou Nenhum."
   },
   {
    "fieldname": "technical_retention_pct",
    "fieldtype": "Percent",
-   "label": "Retenção Técnica %"
+   "label": "Retenção Técnica %",
+   "description": "Percentual de retenção técnica sobre parcelas."
   },
   {
    "fieldname": "late_fee_pct",
    "fieldtype": "Percent",
-   "label": "Multa Mora %"
+   "label": "Multa Mora %",
+   "description": "Percentual de multa por atraso no pagamento."
   },
   {
    "fieldname": "daily_interest_pct",
    "fieldtype": "Float",
-   "label": "Juros Diários %"
+   "label": "Juros Diários %",
+   "description": "Juros diários aplicados após o vencimento."
   },
   {
    "fieldname": "installment_count",
    "fieldtype": "Int",
-   "label": "Número de Parcelas"
+   "label": "Número de Parcelas",
+   "description": "Quantidade de parcelas planejadas."
   },
   {
    "fieldname": "first_installment_date",
    "fieldtype": "Date",
-   "label": "Data da Primeira Parcela"
+   "label": "Data da Primeira Parcela",
+   "description": "Vencimento da primeira parcela."
   },
   {
    "fieldname": "installment_value",
    "fieldtype": "Currency",
    "label": "Valor da Parcela",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Valor médio por parcela. Calculado a partir do valor atual."
   },
   {
    "fieldname": "generate_installments",
@@ -144,7 +157,8 @@
    "fieldname": "installments",
    "fieldtype": "Table",
    "label": "Parcelas",
-   "options": "Engineering Contract Installment"
+   "options": "Engineering Contract Installment",
+   "description": "Parcelas do contrato. Ao salvar, o sistema gera ou atualiza os pagamentos correspondentes."
   },
   {
    "fieldname": "sec_amendments",
@@ -155,7 +169,8 @@
    "fieldname": "amendments",
    "fieldtype": "Table",
    "label": "Aditivos",
-   "options": "Engineering Contract Amendment"
+   "options": "Engineering Contract Amendment",
+   "description": "Aditivos contratuais (acréscimos ou reduções). Use o botão Aplicar Aditivo para recalcular parcelas."
   },
   {
    "fieldname": "apply_amendment",
@@ -171,7 +186,8 @@
   {
    "fieldname": "observations",
    "fieldtype": "Text Editor",
-   "label": "Observações"
+   "label": "Observações",
+   "description": "Observações contratuais e anotações internas."
   }
  ],
  "index_web_pages_for_search": 1,

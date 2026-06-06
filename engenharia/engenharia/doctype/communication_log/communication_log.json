@@ -31,14 +31,16 @@
    "allow_in_quick_entry": 1,
    "fieldname": "title",
    "fieldtype": "Data",
-   "label": "Título"
+   "label": "Título",
+   "description": "Título automático do registro."
   },
   {
    "fieldname": "project",
    "fieldtype": "Link",
    "in_standard_filter": 1,
    "label": "Obra",
-   "options": "Construction Project"
+   "options": "Construction Project",
+   "description": "Obra relacionada à comunicação (opcional)."
   },
   {
    "fetch_from": "project.customer",
@@ -48,7 +50,8 @@
    "label": "Cliente",
    "options": "Customer",
    "read_only": 1,
-   "reqd": 1
+   "reqd": 1,
+   "description": "Cliente envolvido na comunicação."
   },
   {
    "fieldname": "column_break_info",
@@ -60,14 +63,16 @@
    "fieldtype": "Datetime",
    "in_list_view": 1,
    "label": "Data",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Data e hora da comunicação."
   },
   {
    "fieldname": "communication_type",
    "fieldtype": "Select",
    "label": "Tipo",
    "options": "Telefone\nWhatsApp\nEmail\nReunião Presencial\nReunião Virtual\nOutro",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Canal: Telefone, WhatsApp, E-mail, Reunião Presencial, etc."
   },
   {
    "fieldname": "details_section",
@@ -79,12 +84,14 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Assunto",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Assunto principal da comunicação."
   },
   {
    "fieldname": "summary",
    "fieldtype": "Text Editor",
-   "label": "Resumo"
+   "label": "Resumo",
+   "description": "Resumo do que foi tratado."
   },
   {
    "collapsible": 1,
@@ -95,7 +102,8 @@
   {
    "fieldname": "next_steps",
    "fieldtype": "Small Text",
-   "label": "Próximos Passos"
+   "label": "Próximos Passos",
+   "description": "Próximos passos combinados (opcional)."
   },
   {
    "default": "0",
@@ -110,7 +118,8 @@
    "fieldtype": "Link",
    "label": "Tarefa Gerada",
    "options": "Task",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Tarefa gerada a partir desta comunicação (quando aplicável)."
   }
  ],
  "index_web_pages_for_search": 1,

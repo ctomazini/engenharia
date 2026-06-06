@@ -24,7 +24,8 @@
    "in_standard_filter": 1,
    "label": "Nome do Fornecedor",
    "reqd": 1,
-   "unique": 1
+   "unique": 1,
+   "description": "Nome ou razão social do fornecedor. Identificador único."
   },
   {
    "fieldname": "col_break_1",
@@ -34,7 +35,8 @@
    "fieldname": "cnpj",
    "fieldtype": "Data",
    "label": "CNPJ",
-   "unique": 1
+   "unique": 1,
+   "description": "CNPJ do fornecedor (opcional). Validado automaticamente."
   },
   {
    "fieldname": "category",
@@ -42,7 +44,8 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Categoria",
-   "options": "Material\nServiço\nMão de obra\nOutro"
+   "options": "Material\nServiço\nMão de obra\nOutro",
+   "description": "Ramo de atuação: Material, Serviço, Mão de obra ou Outro."
   },
   {
    "fieldname": "sec_contacts",
@@ -52,13 +55,15 @@
   {
    "fieldname": "phone",
    "fieldtype": "Data",
-   "label": "Telefone"
+   "label": "Telefone",
+   "description": "Telefone de contato."
   },
   {
    "fieldname": "email",
    "fieldtype": "Data",
    "label": "E-mail",
-   "options": "Email"
+   "options": "Email",
+   "description": "E-mail de contato."
   }
  ],
  "index_web_pages_for_search": 1,

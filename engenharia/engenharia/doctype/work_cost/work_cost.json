@@ -32,7 +32,8 @@
    "in_standard_filter": 1,
    "label": "Obra",
    "options": "Construction Project",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Obra onde este custo foi incorrido."
   },
   {
    "fetch_from": "project.customer",
@@ -43,13 +44,15 @@
    "in_standard_filter": 1,
    "label": "Cliente",
    "options": "Customer",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Preenchido automaticamente a partir da obra."
   },
   {
    "fieldname": "title",
    "fieldtype": "Data",
    "label": "Título",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Título automático do lançamento."
   },
   {
    "fieldname": "col_break_1",
@@ -61,7 +64,8 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Categoria de Custo",
-   "options": "Cost Category"
+   "options": "Cost Category",
+   "description": "Categoria: Materiais, Mão de obra, Equipamentos, etc."
   },
   {
    "fieldname": "supplier",
@@ -69,7 +73,8 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Fornecedor",
-   "options": "Supplier"
+   "options": "Supplier",
+   "description": "Fornecedor ou prestador de serviço (opcional)."
   },
   {
    "fieldname": "stage",
@@ -77,7 +82,8 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Etapa",
-   "options": "Project Stage"
+   "options": "Project Stage",
+   "description": "Etapa da obra onde o custo se aplica (opcional)."
   },
   {
    "fieldname": "sec_details",
@@ -88,30 +94,35 @@
    "fieldname": "description",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Descrição"
+   "label": "Descrição",
+   "description": "Detalhe do que foi comprado ou contratado."
   },
   {
    "fieldname": "nf_number",
    "fieldtype": "Data",
-   "label": "Nº Nota Fiscal"
+   "label": "Nº Nota Fiscal",
+   "description": "Número da nota fiscal do custo."
   },
   {
    "fieldname": "cost_center",
    "fieldtype": "Data",
-   "label": "Centro de Custo"
+   "label": "Centro de Custo",
+   "description": "Centro de custo contábil (opcional)."
   },
   {
    "fieldname": "amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Valor",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Valor do custo em reais."
   },
   {
    "fieldname": "date",
    "fieldtype": "Date",
    "in_list_view": 1,
-   "label": "Data"
+   "label": "Data",
+   "description": "Data do pagamento ou da nota fiscal."
   },
   {
    "fieldname": "col_break_2",
@@ -121,7 +132,8 @@
    "fieldname": "payment_method",
    "fieldtype": "Select",
    "label": "Forma de Pagamento",
-   "options": "\nPIX\nTED\nDinheiro\nCartão\nBoleto\nOutro"
+   "options": "\nPIX\nTED\nDinheiro\nCartão\nBoleto\nOutro",
+   "description": "Forma de pagamento: PIX, TED, Dinheiro, Cartão, Boleto ou Outro."
   },
   {
    "default": "Pendente",
@@ -130,12 +142,14 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "Pago\nPendente\nCancelado"
+   "options": "Pago\nPendente\nCancelado",
+   "description": "Pago, Pendente ou Cancelado."
   },
   {
    "fieldname": "receipt",
    "fieldtype": "Attach",
-   "label": "Comprovante"
+   "label": "Comprovante",
+   "description": "Comprovante ou nota fiscal anexada."
   }
  ],
  "index_web_pages_for_search": 1,

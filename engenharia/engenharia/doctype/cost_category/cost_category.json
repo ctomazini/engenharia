@@ -17,7 +17,8 @@
    "in_standard_filter": 1,
    "label": "Nome da Categoria",
    "reqd": 1,
-   "unique": 1
+   "unique": 1,
+   "description": "Nome único que identifica esta categoria no sistema."
   }
  ],
  "index_web_pages_for_search": 1,

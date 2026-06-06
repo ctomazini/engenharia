@@ -19,40 +19,46 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Descrição do insumo",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Descrição do insumo ou serviço na composição."
   },
   {
    "fieldname": "supplier",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Fornecedor",
-   "options": "Supplier"
+   "options": "Supplier",
+   "description": "Fornecedor do insumo (opcional)."
   },
   {
    "default": "1",
    "fieldname": "quantity",
    "fieldtype": "Float",
    "in_list_view": 1,
-   "label": "Quantidade"
+   "label": "Quantidade",
+   "description": "Quantidade do insumo."
   },
   {
    "fieldname": "unit",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Unidade"
+   "label": "Unidade",
+   "description": "Unidade de medida do insumo."
   },
   {
    "fieldname": "unit_cost",
    "fieldtype": "Currency",
    "in_list_view": 1,
-   "label": "Custo unitário"
+   "label": "Custo unitário",
+   "description": "Custo unitário do insumo."
   },
   {
    "fieldname": "amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Valor",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Valor total da linha (quantidade × custo unitário)."
   }
  ],
  "index_web_pages_for_search": 1,

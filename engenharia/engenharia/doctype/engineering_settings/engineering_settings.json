@@ -22,28 +22,33 @@
    "fieldname": "company_name",
    "fieldtype": "Data",
    "label": "Nome do Escritório",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Razão social do escritório. Usada em documentos gerados."
   },
   {
    "fieldname": "company_cnpj",
    "fieldtype": "Data",
-   "label": "CNPJ da Empresa"
+   "label": "CNPJ da Empresa",
+   "description": "CNPJ do escritório. Usado em contratos e documentos oficiais."
   },
   {
    "fieldname": "company_crea",
    "fieldtype": "Data",
-   "label": "CREA da Empresa"
+   "label": "CREA da Empresa",
+   "description": "Número de registro no CREA do escritório."
   },
   {
    "fieldname": "company_logo",
    "fieldtype": "Attach Image",
-   "label": "Logo do Escritório"
+   "label": "Logo do Escritório",
+   "description": "Logotipo exibido em documentos gerados (opcional)."
   },
   {
    "default": "3",
    "fieldname": "default_notify_days",
    "fieldtype": "Int",
-   "label": "Dias padrão de antecedência (prazos)"
+   "label": "Dias padrão de antecedência (prazos)",
+   "description": "Dias padrão de antecedência para alertas de prazos."
   },
   {
    "fieldname": "sec_bank",
@@ -53,12 +58,14 @@
   {
    "fieldname": "bank_name",
    "fieldtype": "Data",
-   "label": "Banco"
+   "label": "Banco",
+   "description": "Nome do banco para dados em propostas e recibos."
   },
   {
    "fieldname": "bank_agency",
    "fieldtype": "Data",
-   "label": "Agência"
+   "label": "Agência",
+   "description": "Agência bancária."
   },
   {
    "fieldname": "col_break_bank",
@@ -67,12 +74,14 @@
   {
    "fieldname": "bank_account",
    "fieldtype": "Data",
-   "label": "Conta"
+   "label": "Conta",
+   "description": "Número da conta corrente."
   },
   {
    "fieldname": "bank_pix",
    "fieldtype": "Data",
-   "label": "Chave PIX"
+   "label": "Chave PIX",
+   "description": "Chave PIX para recebimentos."
   }
  ],
  "issingle": 1,

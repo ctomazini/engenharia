@@ -23,19 +23,22 @@
    "in_list_view": 1,
    "label": "Nome do Template",
    "reqd": 1,
-   "unique": 1
+   "unique": 1,
+   "description": "Nome do modelo. Identificador único no catálogo."
   },
   {
    "fieldname": "document_type",
    "fieldtype": "Select",
    "in_standard_filter": 1,
    "label": "Tipo",
-   "options": "Contrato\nProposta\nRelatório\nOutro"
+   "options": "Contrato\nProposta\nRelatório\nOutro",
+   "description": "Tipo do documento: Contrato, Proposta, Relatório ou Outro."
   },
   {
    "fieldname": "description",
    "fieldtype": "Small Text",
-   "label": "Descrição"
+   "label": "Descrição",
+   "description": "Descrição do uso deste modelo."
   },
   {
    "fieldname": "col_break_1",
@@ -52,7 +55,8 @@
    "default": "1",
    "fieldname": "enabled",
    "fieldtype": "Check",
-   "label": "Habilitado"
+   "label": "Habilitado",
+   "description": "Desmarque para ocultar o modelo na geração de documentos."
   },
   {
    "fieldname": "sec_placeholders",

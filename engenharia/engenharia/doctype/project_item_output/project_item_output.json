@@ -17,35 +17,40 @@
    "fieldtype": "Data",
    "hidden": 1,
    "label": "Chave",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Chave interna do resultado calculado."
   },
   {
    "fieldname": "label",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Resultado",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Nome exibido do resultado (ex.: Volume, Total)."
   },
   {
    "fieldname": "role",
    "fieldtype": "Data",
    "hidden": 1,
    "label": "Papel",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Papel do resultado no sistema (valor, volume, área, prévia)."
   },
   {
    "fieldname": "value",
    "fieldtype": "Float",
    "in_list_view": 1,
    "label": "Valor",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Valor calculado. Atualizado automaticamente ao salvar."
   },
   {
    "fieldname": "unit",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Unidade",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Unidade do resultado calculado."
   }
  ],
  "index_web_pages_for_search": 1,

@@ -20,7 +20,8 @@
    "in_standard_filter": 1,
    "label": "Nome do Órgão",
    "reqd": 1,
-   "unique": 1
+   "unique": 1,
+   "description": "Nome único do órgão público."
   },
   {
    "fieldname": "sphere",
@@ -29,14 +30,16 @@
    "in_standard_filter": 1,
    "label": "Esfera",
    "options": "Municipal\nEstadual\nFederal",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Esfera governamental: Municipal, Estadual ou Federal."
   },
   {
    "fieldname": "city",
    "fieldtype": "Data",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Cidade"
+   "label": "Cidade",
+   "description": "Cidade sede do órgão."
   }
  ],
  "index_web_pages_for_search": 1,

@@ -19,14 +19,16 @@
    "in_standard_filter": 1,
    "label": "Nome do tipo",
    "reqd": 1,
-   "unique": 1
+   "unique": 1,
+   "description": "Nome único do tipo de protocolo ou alvará."
   },
   {
    "default": "0",
    "fieldname": "is_art_rrt",
    "fieldtype": "Check",
    "in_list_view": 1,
-   "label": "ART/RRT"
+   "label": "ART/RRT",
+   "description": "Marque se este tipo exige número de ART/RRT no protocolo."
   }
  ],
  "index_web_pages_for_search": 1,

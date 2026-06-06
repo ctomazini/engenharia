@@ -57,14 +57,16 @@
    "in_standard_filter": 1,
    "label": "Cliente",
    "options": "Customer",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Cliente contratante desta obra."
   },
   {
    "fieldname": "title",
    "fieldtype": "Data",
    "in_global_search": 1,
    "label": "Título",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Título automático no formato ID — cliente/cidade. Atualizado ao salvar."
   },
   {
    "fieldname": "col_break_1",
@@ -75,7 +77,8 @@
    "fieldtype": "Select",
    "in_standard_filter": 1,
    "label": "Tipo de Obra",
-   "options": "Residencial\nComercial\nIndustrial\nInfraestrutura\nReforma\nOutro"
+   "options": "Residencial\nComercial\nIndustrial\nInfraestrutura\nReforma\nOutro",
+   "description": "Classificação da obra: Residencial, Comercial, Industrial, Infraestrutura, Reforma ou Outro."
   },
   {
    "default": "Orçamento",
@@ -84,7 +87,8 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "Orçamento\nEm andamento\nParalisada\nConcluída\nCancelada"
+   "options": "Orçamento\nEm andamento\nParalisada\nConcluída\nCancelada",
+   "description": "Situação atual: Orçamento, Em andamento, Paralisada, Concluída ou Cancelada."
   },
   {
    "fieldname": "sec_dates",
@@ -94,12 +98,14 @@
   {
    "fieldname": "start_date",
    "fieldtype": "Date",
-   "label": "Data de Início"
+   "label": "Data de Início",
+   "description": "Data de início prevista ou efetiva da obra."
   },
   {
    "fieldname": "expected_delivery",
    "fieldtype": "Date",
-   "label": "Previsão de Entrega"
+   "label": "Previsão de Entrega",
+   "description": "Data prevista para conclusão ou entrega da obra."
   },
   {
    "fieldname": "sec_address",
@@ -109,17 +115,20 @@
   {
    "fieldname": "address_cep",
    "fieldtype": "Data",
-   "label": "CEP"
+   "label": "CEP",
+   "description": "CEP do local da obra (apenas dígitos)."
   },
   {
    "fieldname": "address_street",
    "fieldtype": "Data",
-   "label": "Logradouro"
+   "label": "Logradouro",
+   "description": "Logradouro do endereço da obra."
   },
   {
    "fieldname": "address_number",
    "fieldtype": "Data",
-   "label": "Número"
+   "label": "Número",
+   "description": "Número do imóvel ou lote."
   },
   {
    "fieldname": "col_break_2",
@@ -128,19 +137,22 @@
   {
    "fieldname": "address_district",
    "fieldtype": "Data",
-   "label": "Bairro"
+   "label": "Bairro",
+   "description": "Bairro onde a obra será executada."
   },
   {
    "fieldname": "city",
    "fieldtype": "Data",
    "in_standard_filter": 1,
-   "label": "Cidade"
+   "label": "Cidade",
+   "description": "Município da obra. Entra no título automático do registro."
   },
   {
    "fieldname": "address_uf",
    "fieldtype": "Select",
    "label": "UF",
-   "options": "AC\nAL\nAM\nAP\nBA\nCE\nDF\nES\nGO\nMA\nMG\nMS\nMT\nPA\nPB\nPE\nPI\nPR\nRJ\nRN\nRO\nRR\nRS\nSC\nSE\nSP\nTO"
+   "options": "AC\nAL\nAM\nAP\nBA\nCE\nDF\nES\nGO\nMA\nMG\nMS\nMT\nPA\nPB\nPE\nPI\nPR\nRJ\nRN\nRO\nRR\nRS\nSC\nSE\nSP\nTO",
+   "description": "Unidade federativa (UF) do endereço da obra."
   },
   {
    "fieldname": "sec_details",
@@ -150,21 +162,24 @@
   {
    "fieldname": "construction_area",
    "fieldtype": "Float",
-   "label": "Área Construída (m²)"
+   "label": "Área Construída (m²)",
+   "description": "Área total construída em metros quadrados (m²)."
   },
   {
    "fieldname": "current_contract_value",
    "fieldtype": "Currency",
    "label": "Valor Atual do Contrato",
    "permlevel": 1,
-   "read_only": 1
+   "read_only": 1,
+   "description": "Soma dos valores vigentes dos contratos desta obra. Atualizado automaticamente. Visível apenas para Engenharia Manager."
   },
   {
    "fieldname": "commission_outstanding",
    "fieldtype": "Currency",
    "label": "Comissões a Receber",
    "permlevel": 1,
-   "read_only": 1
+   "read_only": 1,
+   "description": "Total de comissões a receber vinculadas a esta obra. Visível apenas para Engenharia Manager."
   },
   {
    "fieldname": "commission_summary_panel",
@@ -177,7 +192,8 @@
    "fieldname": "physical_progress",
    "fieldtype": "Percent",
    "label": "Avanço Físico Global",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Avanço físico global da obra (%). Calculado a partir das etapas e medições."
   },
   {
    "fieldname": "sec_technical",
@@ -187,12 +203,14 @@
   {
    "fieldname": "responsible_engineer",
    "fieldtype": "Data",
-   "label": "Responsável Técnico"
+   "label": "Responsável Técnico",
+   "description": "Nome do engenheiro responsável técnico pela obra."
   },
   {
    "fieldname": "crea_number",
    "fieldtype": "Data",
-   "label": "CREA do Responsável"
+   "label": "CREA do Responsável",
+   "description": "Número de registro no CREA do responsável técnico."
   },
   {
    "fieldname": "col_break_technical",
@@ -201,17 +219,20 @@
   {
    "fieldname": "art_number",
    "fieldtype": "Data",
-   "label": "Nº ART Principal"
+   "label": "Nº ART Principal",
+   "description": "Número da ART principal vinculada à obra."
   },
   {
    "fieldname": "property_registration",
    "fieldtype": "Data",
-   "label": "Matrícula do Imóvel"
+   "label": "Matrícula do Imóvel",
+   "description": "Matrícula do imóvel no cartório de registro."
   },
   {
    "fieldname": "gps_coordinates",
    "fieldtype": "Data",
-   "label": "Coordenadas GPS"
+   "label": "Coordenadas GPS",
+   "description": "Coordenadas geográficas do terreno (opcional)."
   },
   {
    "fieldname": "sec_budget",
@@ -225,21 +246,24 @@
    "fieldtype": "Int",
    "label": "Revisão vigente",
    "permlevel": 1,
-   "read_only": 1
+   "read_only": 1,
+   "description": "Número da revisão de orçamento vigente. Controla qual versão dos itens está ativa. Visível apenas para Engenharia Manager."
   },
   {
    "default": "0",
    "fieldname": "default_bdi_percent",
    "fieldtype": "Percent",
    "label": "BDI padrão %",
-   "permlevel": 1
+   "permlevel": 1,
+   "description": "Percentual de BDI padrão aplicado a novos itens do projeto. Visível apenas para Engenharia Manager."
   },
   {
    "fieldname": "budget_revisions",
    "fieldtype": "Table",
    "label": "Revisões de orçamento",
    "options": "Project Budget Revision",
-   "permlevel": 1
+   "permlevel": 1,
+   "description": "Histórico de revisões de orçamento com totais por versão. Visível apenas para Engenharia Manager."
   },
   {
    "fieldname": "sec_specs",
@@ -271,7 +295,8 @@
    "fieldtype": "Currency",
    "label": "Total especificações (obra)",
    "permlevel": 1,
-   "read_only": 1
+   "read_only": 1,
+   "description": "Soma dos valores dos itens técnicos na revisão vigente. Atualiza ao salvar itens. Visível apenas para Engenharia Manager."
   },
   {
    "collapsible": 1,
@@ -282,7 +307,8 @@
   {
    "fieldname": "observations",
    "fieldtype": "Text Editor",
-   "label": "Observações"
+   "label": "Observações",
+   "description": "Observações gerais sobre a obra."
   }
  ],
  "index_web_pages_for_search": 1,

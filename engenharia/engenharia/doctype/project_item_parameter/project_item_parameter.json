@@ -19,40 +19,46 @@
    "fieldtype": "Data",
    "hidden": 1,
    "label": "Chave",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Chave usada nas fórmulas (definida no item técnico)."
   },
   {
    "fieldname": "label",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Campo",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Nome exibido do parâmetro."
   },
   {
    "fieldname": "value",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Valor"
+   "label": "Valor",
+   "description": "Valor informado para esta obra."
   },
   {
    "fieldname": "unit",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Unidade",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Unidade de medida do parâmetro."
   },
   {
    "fieldname": "data_type",
    "fieldtype": "Data",
    "hidden": 1,
-   "label": "Tipo de Dado"
+   "label": "Tipo de Dado",
+   "description": "Tipo do valor: Número, Texto ou Sim-Não."
   },
   {
    "default": "0",
    "fieldname": "required",
    "fieldtype": "Check",
    "hidden": 1,
-   "label": "Obrigatório"
+   "label": "Obrigatório",
+   "description": "Indica se o parâmetro é obrigatório para calcular os resultados."
   }
  ],
  "index_web_pages_for_search": 1,

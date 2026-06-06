@@ -19,7 +19,8 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Nome",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Nome da pessoa de contato."
   },
   {
    "default": "Principal",
@@ -27,31 +28,36 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Tipo",
-   "options": "Principal\nConjuge\nResponsável\nOutro"
+   "options": "Principal\nConjuge\nResponsável\nOutro",
+   "description": "Relação com o cliente: Principal, Cônjuge, Responsável ou Outro."
   },
   {
    "fieldname": "phone",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Telefone"
+   "label": "Telefone",
+   "description": "Telefone fixo com DDD (10 dígitos)."
   },
   {
    "fieldname": "mobile",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Celular"
+   "label": "Celular",
+   "description": "Celular com DDD (11 dígitos)."
   },
   {
    "fieldname": "email",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "E-mail",
-   "options": "Email"
+   "options": "Email",
+   "description": "E-mail de contato. Armazenado em minúsculas."
   },
   {
    "fieldname": "notes",
    "fieldtype": "Small Text",
-   "label": "Observação"
+   "label": "Observação",
+   "description": "Observações sobre este contato."
   }
  ],
  "index_web_pages_for_search": 1,

@@ -31,7 +31,8 @@
    "in_standard_filter": 1,
    "label": "Obra",
    "options": "Construction Project",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Obra relacionada à despesa."
   },
   {
    "fetch_from": "project.customer",
@@ -42,13 +43,15 @@
    "label": "Cliente",
    "options": "Customer",
    "read_only": 1,
-   "reqd": 1
+   "reqd": 1,
+   "description": "Preenchido automaticamente a partir da obra."
   },
   {
    "fieldname": "title",
    "fieldtype": "Data",
    "label": "Título",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Título automático com ID e descrição."
   },
   {
    "fieldname": "col_break_1",
@@ -58,20 +61,23 @@
    "fieldname": "expense_category",
    "fieldtype": "Link",
    "label": "Categoria",
-   "options": "Cost Category"
+   "options": "Cost Category",
+   "description": "Categoria da despesa (mesmo cadastro de Categorias de Custo)."
   },
   {
    "fieldname": "supplier",
    "fieldtype": "Link",
    "label": "Fornecedor",
-   "options": "Supplier"
+   "options": "Supplier",
+   "description": "Fornecedor ou órgão que recebeu o pagamento (opcional)."
   },
   {
    "fieldname": "description",
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Descrição",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Descrição do que foi pago pelo escritório."
   },
   {
    "default": "A reembolsar",
@@ -80,14 +86,16 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "A reembolsar\nReembolsado\nCancelado"
+   "options": "A reembolsar\nReembolsado\nCancelado",
+   "description": "A reembolsar, Reembolsado ou Cancelado."
   },
   {
    "fieldname": "payment",
    "fieldtype": "Link",
    "label": "Pagamento",
    "options": "Payment",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Pagamento gerado para cobrança do cliente (quando aplicável)."
   },
   {
    "fieldname": "sec_values",
@@ -99,12 +107,14 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Valor",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Valor pago pelo escritório a ser reembolsado."
   },
   {
    "fieldname": "payment_date",
    "fieldtype": "Date",
-   "label": "Data do pagamento pelo escritório"
+   "label": "Data do pagamento pelo escritório",
+   "description": "Data em que o escritório realizou o pagamento."
   },
   {
    "fieldname": "col_break_2",
@@ -114,18 +124,21 @@
    "default": "1",
    "fieldname": "await_client_reimbursement",
    "fieldtype": "Check",
-   "label": "Cliente deve reembolsar"
+   "label": "Cliente deve reembolsar",
+   "description": "Marque quando o cliente ainda deve devolver o valor."
   },
   {
    "depends_on": "eval:doc.await_client_reimbursement==1",
    "fieldname": "client_reimbursed_date",
    "fieldtype": "Date",
-   "label": "Data do recebimento do cliente"
+   "label": "Data do recebimento do cliente",
+   "description": "Data em que o cliente efetuou o reembolso."
   },
   {
    "fieldname": "receipt",
    "fieldtype": "Attach",
-   "label": "Comprovante"
+   "label": "Comprovante",
+   "description": "Comprovante da despesa paga pelo escritório."
   }
  ],
  "index_web_pages_for_search": 1,

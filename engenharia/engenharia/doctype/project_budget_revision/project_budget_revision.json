@@ -17,32 +17,37 @@
    "fieldname": "revision_number",
    "fieldtype": "Int",
    "in_list_view": 1,
-   "label": "Revisão"
+   "label": "Revisão",
+   "description": "Número sequencial da revisão de orçamento."
   },
   {
    "fieldname": "revision_date",
    "fieldtype": "Date",
    "in_list_view": 1,
-   "label": "Data"
+   "label": "Data",
+   "description": "Data em que a revisão foi criada."
   },
   {
    "fieldname": "total_amount",
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Total",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Valor total do orçamento nesta revisão."
   },
   {
    "fieldname": "status",
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Status",
-   "options": "Rascunho\nVigente\nSupersedida"
+   "options": "Rascunho\nVigente\nSupersedida",
+   "description": "Vigente (ativa) ou Supersedida (histórico)."
   },
   {
    "fieldname": "notes",
    "fieldtype": "Small Text",
-   "label": "Observações"
+   "label": "Observações",
+   "description": "Observações sobre o motivo da revisão."
   }
  ],
  "index_web_pages_for_search": 1,

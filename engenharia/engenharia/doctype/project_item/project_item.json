@@ -41,7 +41,8 @@
    "in_standard_filter": 1,
    "label": "Obra",
    "options": "Construction Project",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Obra onde este item será utilizado."
   },
   {
    "fieldname": "technical_item",
@@ -50,31 +51,36 @@
    "in_standard_filter": 1,
    "label": "Item Técnico",
    "options": "Technical Item",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Modelo do catálogo técnico. Parâmetros e fórmulas são carregados automaticamente."
   },
   {
    "fieldname": "instance_label",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Identificação"
+   "label": "Identificação",
+   "description": "Rótulo para diferenciar instâncias (ex.: Pilar P1, Laje térreo)."
   },
   {
    "fieldname": "stage",
    "fieldtype": "Link",
    "label": "Etapa / Pavimento",
-   "options": "Project Stage"
+   "options": "Project Stage",
+   "description": "Etapa ou pavimento da obra (opcional)."
   },
   {
    "default": "1",
    "fieldname": "quantity",
    "fieldtype": "Int",
-   "label": "Quantidade"
+   "label": "Quantidade",
+   "description": "Quantidade de unidades deste item na obra."
   },
   {
    "fetch_from": "technical_item.default_unit",
    "fieldname": "unit",
    "fieldtype": "Data",
-   "label": "Unidade"
+   "label": "Unidade",
+   "description": "Unidade de medida herdada do item técnico."
   },
   {
    "default": "Fórmula",
@@ -82,40 +88,46 @@
    "fieldtype": "Select",
    "in_standard_filter": 1,
    "label": "Modo de precificação",
-   "options": "Fórmula\nComposição de custos"
+   "options": "Fórmula\nComposição de custos",
+   "description": "Fórmula (cálculo automático) ou Composição de custos (insumos detalhados)."
   },
   {
    "default": "1",
    "fieldname": "budget_revision",
    "fieldtype": "Int",
    "in_standard_filter": 1,
-   "label": "Revisão do orçamento"
+   "label": "Revisão do orçamento",
+   "description": "Revisão de orçamento à qual este item pertence."
   },
   {
    "default": "0",
    "fieldname": "bdi_percent",
    "fieldtype": "Percent",
-   "label": "BDI %"
+   "label": "BDI %",
+   "description": "Percentual de BDI aplicado neste item."
   },
   {
    "fieldname": "direct_cost",
    "fieldtype": "Currency",
    "label": "Custo direto",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Custo direto antes do BDI (modo composição)."
   },
   {
    "fieldname": "total_value",
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Valor total (R$)",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Valor total calculado pelas fórmulas ou composição. Atualiza ao salvar."
   },
   {
    "fieldname": "title",
    "fieldtype": "Data",
    "in_global_search": 1,
    "label": "Título",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Título automático com item, quantidade e resultado principal."
   },
   {
    "fieldname": "sec_parameters",
@@ -141,14 +153,16 @@
    "depends_on": "eval:doc.pricing_mode=='Composição de custos'",
    "fieldname": "unit_price",
    "fieldtype": "Currency",
-   "label": "Preço unitário"
+   "label": "Preço unitário",
+   "description": "Preço unitário calculado ou informado conforme o modo de precificação."
   },
   {
    "depends_on": "eval:doc.pricing_mode=='Composição de custos'",
    "fieldname": "cost_components",
    "fieldtype": "Table",
    "label": "Componentes de custo",
-   "options": "Project Item Cost Component"
+   "options": "Project Item Cost Component",
+   "description": "Insumos detalhados quando o modo é Composição de custos."
   },
   {
    "fieldname": "sec_results",
@@ -160,7 +174,8 @@
    "fieldtype": "Table",
    "label": "Resultados calculados",
    "options": "Project Item Output",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Resultados calculados automaticamente pelas fórmulas do item técnico."
   }
  ],
  "index_web_pages_for_search": 1,

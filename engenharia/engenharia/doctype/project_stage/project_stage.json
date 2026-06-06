@@ -28,7 +28,8 @@
    "in_standard_filter": 1,
    "label": "Obra",
    "options": "Construction Project",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Obra à qual esta etapa pertence."
   },
   {
    "fieldname": "stage_type",
@@ -37,7 +38,8 @@
    "in_standard_filter": 1,
    "label": "Tipo de Etapa",
    "options": "Stage Type",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Tipo de etapa do catálogo (Fundação, Estrutura, Alvenaria, etc.)."
   },
   {
    "fieldname": "col_break_1",
@@ -50,37 +52,43 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "Não iniciada\nEm andamento\nConcluída"
+   "options": "Não iniciada\nEm andamento\nConcluída",
+   "description": "Não iniciada, Em andamento ou Concluída."
   },
   {
    "fieldname": "progress",
    "fieldtype": "Percent",
    "in_list_view": 1,
-   "label": "Avanço"
+   "label": "Avanço",
+   "description": "Percentual de conclusão desta etapa (0 a 100)."
   },
   {
    "default": "1",
    "fieldname": "weight",
    "fieldtype": "Float",
-   "label": "Peso relativo"
+   "label": "Peso relativo",
+   "description": "Peso relativo da etapa no avanço físico global da obra."
   },
   {
    "fieldname": "stage_value",
    "fieldtype": "Currency",
-   "label": "Valor da etapa"
+   "label": "Valor da etapa",
+   "description": "Valor orçado ou medido para esta etapa."
   },
   {
    "fieldname": "order",
    "fieldtype": "Int",
    "in_list_view": 1,
-   "label": "Ordem"
+   "label": "Ordem",
+   "description": "Ordem de exibição e sequenciamento da etapa."
   },
   {
    "fieldname": "title",
    "fieldtype": "Data",
    "hidden": 1,
    "label": "Título",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Título automático da etapa."
   },
   {
    "fieldname": "sec_dates",
@@ -90,17 +98,20 @@
   {
    "fieldname": "start_date",
    "fieldtype": "Date",
-   "label": "Início"
+   "label": "Início",
+   "description": "Data de início prevista ou real."
   },
   {
    "fieldname": "expected_end",
    "fieldtype": "Date",
-   "label": "Previsão de Término"
+   "label": "Previsão de Término",
+   "description": "Data prevista de conclusão."
   },
   {
    "fieldname": "actual_end",
    "fieldtype": "Date",
-   "label": "Término Real"
+   "label": "Término Real",
+   "description": "Data real de conclusão da etapa."
   }
  ],
  "index_web_pages_for_search": 1,

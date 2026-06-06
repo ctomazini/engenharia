@@ -27,7 +27,8 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Obra",
-   "options": "Construction Project"
+   "options": "Construction Project",
+   "description": "Obra relacionada (opcional)."
   },
   {
    "fetch_from": "project.customer",
@@ -37,7 +38,8 @@
    "in_standard_filter": 1,
    "label": "Cliente",
    "options": "Customer",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Preenchido automaticamente a partir da obra."
   },
   {
    "fieldname": "stage",
@@ -45,7 +47,8 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Etapa",
-   "options": "Project Stage"
+   "options": "Project Stage",
+   "description": "Etapa da obra vinculada (opcional)."
   },
   {
    "fieldname": "col_break_1",
@@ -57,7 +60,8 @@
    "in_global_search": 1,
    "in_list_view": 1,
    "label": "Assunto",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Descrição curta da tarefa. Aparece como título na lista e no Kanban."
   },
   {
    "default": "A fazer",
@@ -66,7 +70,8 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "A fazer\nFazendo\nFeito\nCancelada"
+   "options": "A fazer\nFazendo\nFeito\nCancelada",
+   "description": "A fazer, Fazendo, Feito ou Cancelada."
   },
   {
    "default": "Média",
@@ -74,13 +79,15 @@
    "fieldtype": "Select",
    "in_standard_filter": 1,
    "label": "Prioridade",
-   "options": "Baixa\nMédia\nAlta"
+   "options": "Baixa\nMédia\nAlta",
+   "description": "Baixa, Média ou Alta."
   },
   {
    "fieldname": "due_date",
    "fieldtype": "Date",
    "in_list_view": 1,
-   "label": "Prazo"
+   "label": "Prazo",
+   "description": "Prazo para conclusão da tarefa (opcional)."
   },
   {
    "fieldname": "sec_details",
@@ -90,7 +97,8 @@
   {
    "fieldname": "description",
    "fieldtype": "Text Editor",
-   "label": "Descrição"
+   "label": "Descrição",
+   "description": "Detalhamento da tarefa e instruções."
   },
   {
    "fieldname": "col_break_2",
@@ -100,13 +108,15 @@
    "fieldname": "assigned_to",
    "fieldtype": "Link",
    "label": "Responsável",
-   "options": "User"
+   "options": "User",
+   "description": "Usuário responsável pela execução."
   },
   {
    "fieldname": "completed_on",
    "fieldtype": "Date",
    "label": "Concluída em",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Data de conclusão. Preenchida automaticamente ao marcar como Feito."
   }
  ],
  "index_web_pages_for_search": 1,

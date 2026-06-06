@@ -34,7 +34,8 @@
    "allow_in_quick_entry": 1,
    "fieldname": "title",
    "fieldtype": "Data",
-   "label": "Título"
+   "label": "Título",
+   "description": "Título automático do prazo."
   },
   {
    "allow_in_quick_entry": 1,
@@ -44,7 +45,8 @@
    "in_standard_filter": 1,
    "label": "Obra",
    "options": "Construction Project",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Obra vinculada ao prazo."
   },
   {
    "allow_in_quick_entry": 1,
@@ -54,7 +56,8 @@
    "in_list_view": 1,
    "label": "Cliente",
    "options": "Customer",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Preenchido automaticamente a partir da obra."
   },
   {
    "fieldname": "column_break_info",
@@ -66,7 +69,8 @@
    "fieldtype": "Date",
    "in_list_view": 1,
    "label": "Data do Prazo",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Data limite. O sistema alerta quando o prazo se aproxima ou vence."
   },
   {
    "default": "Pendente",
@@ -74,7 +78,8 @@
    "fieldtype": "Select",
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "Pendente\nConcluído\nVencido"
+   "options": "Pendente\nConcluído\nVencido",
+   "description": "Pendente, Concluído ou Vencido. Vencido é atualizado automaticamente."
   },
   {
    "default": "Projeto",
@@ -82,14 +87,16 @@
    "fieldtype": "Select",
    "in_standard_filter": 1,
    "label": "Tipo de Prazo",
-   "options": "Projeto\nCliente\nÓrgão\nOutro"
+   "options": "Projeto\nCliente\nÓrgão\nOutro",
+   "description": "Classificação: Projeto, Cliente, Órgão ou Outro."
   },
   {
    "depends_on": "eval:doc.deadline_type=='Órgão'",
    "fieldname": "public_agency",
    "fieldtype": "Link",
    "label": "Órgão Público",
-   "options": "Public Agency"
+   "options": "Public Agency",
+   "description": "Órgão público relacionado (prefeitura, CREA, etc.), quando aplicável."
   },
   {
    "fieldname": "details_section",
@@ -101,7 +108,8 @@
    "fieldname": "description",
    "fieldtype": "Small Text",
    "label": "Descrição",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Descrição do compromisso ou entrega esperada."
   },
   {
    "default": "Média",
@@ -109,7 +117,8 @@
    "fieldtype": "Select",
    "in_standard_filter": 1,
    "label": "Prioridade",
-   "options": "Alta\nMédia\nBaixa"
+   "options": "Alta\nMédia\nBaixa",
+   "description": "Alta, Média ou Baixa — usada em alertas e no painel."
   },
   {
    "fieldname": "column_break_det",
@@ -119,13 +128,15 @@
    "fieldname": "assigned_to",
    "fieldtype": "Link",
    "label": "Responsável",
-   "options": "User"
+   "options": "User",
+   "description": "Usuário responsável pelo cumprimento do prazo."
   },
   {
    "default": "3",
    "fieldname": "notify_days_before",
    "fieldtype": "Int",
-   "label": "Notificar com antecedência (dias)"
+   "label": "Notificar com antecedência (dias)",
+   "description": "Quantos dias antes do vencimento enviar notificação."
   },
   {
    "collapsible": 1,
@@ -136,7 +147,8 @@
   {
    "fieldname": "notes",
    "fieldtype": "Text Editor",
-   "label": "Observações"
+   "label": "Observações",
+   "description": "Observações adicionais sobre o prazo."
   }
  ],
  "index_web_pages_for_search": 1,

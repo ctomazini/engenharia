@@ -44,7 +44,8 @@
    "fieldname": "title",
    "fieldtype": "Data",
    "label": "Título",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Título automático com ID e descritor."
   },
   {
    "fieldname": "project",
@@ -53,7 +54,8 @@
    "label": "Obra",
    "options": "Construction Project",
    "reqd": 1,
-   "search_index": 1
+   "search_index": 1,
+   "description": "Obra vinculada. Preenchido automaticamente quando gerado a partir de contrato."
   },
   {
    "fetch_from": "project.customer",
@@ -65,7 +67,8 @@
    "options": "Customer",
    "read_only": 1,
    "reqd": 1,
-   "search_index": 1
+   "search_index": 1,
+   "description": "Preenchido automaticamente a partir da obra."
   },
   {
    "fieldname": "col_rel_1",
@@ -78,7 +81,8 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Origem",
-   "options": "Parcela do Contrato\nDespesa Reembolsável"
+   "options": "Parcela do Contrato\nDespesa Reembolsável",
+   "description": "Origem do recebível: Parcela do Contrato ou Despesa Reembolsável."
   },
   {
    "fieldname": "contract",
@@ -87,18 +91,21 @@
    "label": "Contrato",
    "mandatory_depends_on": "eval:doc.origin_type=='Parcela do Contrato'",
    "options": "Engineering Contract",
-   "search_index": 1
+   "search_index": 1,
+   "description": "Contrato que originou este pagamento (quando aplicável)."
   },
   {
    "fieldname": "installment_number",
    "fieldtype": "Int",
-   "label": "Nº Parcela"
+   "label": "Nº Parcela",
+   "description": "Número sequencial da parcela no contrato."
   },
   {
    "bold": 1,
    "fieldname": "description",
    "fieldtype": "Small Text",
-   "label": "Descrição"
+   "label": "Descrição",
+   "description": "Descrição da parcela ou recebível."
   },
   {
    "fieldname": "sec_origin",
@@ -110,20 +117,23 @@
    "fieldtype": "Data",
    "label": "ID Origem",
    "read_only": 1,
-   "unique": 1
+   "unique": 1,
+   "description": "Identificador de sincronização com a parcela do contrato."
   },
   {
    "fieldname": "synced_at",
    "fieldtype": "Datetime",
    "label": "Sincronizado em",
-   "read_only": 1
+   "read_only": 1,
+   "description": "Data e hora da última sincronização automática com o contrato."
   },
   {
    "default": "0",
    "depends_on": "eval:doc.origin_type=='Parcela do Contrato'",
    "fieldname": "manual_override",
    "fieldtype": "Check",
-   "label": "Edição manual (não sincronizar)"
+   "label": "Edição manual (não sincronizar)",
+   "description": "Quando marcado, o sistema não sobrescreve este pagamento na sincronização."
   },
   {
    "fieldname": "sec_financial",
@@ -135,12 +145,14 @@
    "fieldtype": "Currency",
    "in_list_view": 1,
    "label": "Valor",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Valor da parcela ou recebível."
   },
   {
    "fieldname": "received_amount",
    "fieldtype": "Currency",
-   "label": "Valor Recebido"
+   "label": "Valor Recebido",
+   "description": "Valor efetivamente recebido."
   },
   {
    "fieldname": "col_fin_1",
@@ -153,12 +165,14 @@
    "in_standard_filter": 1,
    "label": "Vencimento",
    "reqd": 1,
-   "search_index": 1
+   "search_index": 1,
+   "description": "Data de vencimento."
   },
   {
    "fieldname": "received_date",
    "fieldtype": "Date",
-   "label": "Data de Recebimento"
+   "label": "Data de Recebimento",
+   "description": "Data em que o pagamento foi efetivamente recebido."
   },
   {
    "default": "Pendente",
@@ -169,7 +183,8 @@
    "label": "Status",
    "options": "Pendente\nVencido\nRecebido\nCancelado\nRenegociado",
    "reqd": 1,
-   "search_index": 1
+   "search_index": 1,
+   "description": "Pendente, Vencido (atualizado automaticamente), Recebido, Cancelado ou Renegociado."
   },
   {
    "fieldname": "sec_control",
@@ -179,27 +194,32 @@
   {
    "fieldname": "nf_number",
    "fieldtype": "Data",
-   "label": "Nº Nota Fiscal"
+   "label": "Nº Nota Fiscal",
+   "description": "Número da nota fiscal do recebimento."
   },
   {
    "fieldname": "bank_account",
    "fieldtype": "Data",
-   "label": "Conta Bancária"
+   "label": "Conta Bancária",
+   "description": "Conta bancária de destino."
   },
   {
    "fieldname": "late_fee",
    "fieldtype": "Currency",
-   "label": "Juros/Multa"
+   "label": "Juros/Multa",
+   "description": "Juros ou multa por atraso."
   },
   {
    "fieldname": "notes",
    "fieldtype": "Small Text",
-   "label": "Observações"
+   "label": "Observações",
+   "description": "Observações internas sobre o pagamento."
   },
   {
    "fieldname": "receipt",
    "fieldtype": "Attach",
-   "label": "Comprovante"
+   "label": "Comprovante",
+   "description": "Comprovante de recebimento anexado."
   }
  ],
  "index_web_pages_for_search": 1,

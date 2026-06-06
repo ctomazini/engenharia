@@ -22,13 +22,15 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Tipo",
-   "options": "Residencial\nComercial\nCorrespondência\nOutro"
+   "options": "Residencial\nComercial\nCorrespondência\nOutro",
+   "description": "Finalidade do endereço: Residencial, Comercial, Correspondência ou Outro."
   },
   {
    "fieldname": "cep",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "CEP"
+   "label": "CEP",
+   "description": "CEP do endereço (apenas dígitos)."
   },
   {
    "bold": 1,
@@ -36,41 +38,48 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Logradouro",
-   "reqd": 1
+   "reqd": 1,
+   "description": "Logradouro (rua, avenida, etc.)."
   },
   {
    "fieldname": "number",
    "fieldtype": "Data",
-   "label": "Número"
+   "label": "Número",
+   "description": "Número do imóvel."
   },
   {
    "fieldname": "complement",
    "fieldtype": "Data",
-   "label": "Complemento"
+   "label": "Complemento",
+   "description": "Complemento (apto, sala, bloco)."
   },
   {
    "fieldname": "district",
    "fieldtype": "Data",
-   "label": "Bairro"
+   "label": "Bairro",
+   "description": "Bairro."
   },
   {
    "fieldname": "city",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Cidade"
+   "label": "Cidade",
+   "description": "Cidade."
   },
   {
    "fieldname": "state",
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Estado",
-   "options": "\nAC\nAL\nAP\nAM\nBA\nCE\nDF\nES\nGO\nMA\nMT\nMS\nMG\nPA\nPB\nPR\nPE\nPI\nRJ\nRN\nRS\nRO\nRR\nSC\nSP\nSE\nTO"
+   "options": "\nAC\nAL\nAP\nAM\nBA\nCE\nDF\nES\nGO\nMA\nMT\nMS\nMG\nPA\nPB\nPR\nPE\nPI\nRJ\nRN\nRS\nRO\nRR\nSC\nSP\nSE\nTO",
+   "description": "UF (sigla de dois caracteres)."
   },
   {
    "default": "0",
    "fieldname": "is_primary",
    "fieldtype": "Check",
-   "label": "Endereço Principal"
+   "label": "Endereço Principal",
+   "description": "Marque o endereço principal usado em documentos e propostas."
   }
  ],
  "index_web_pages_for_search": 1,
