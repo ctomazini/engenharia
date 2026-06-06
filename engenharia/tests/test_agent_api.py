@@ -31,6 +31,78 @@ class TestAgentApi(FrappeTestCase):
 		self.assertGreaterEqual(result["total"], 300)
 		self.assertTrue(result["categories"])
 
+	def test_get_project_summary_redacts_financial_for_user(self):
+		from engenharia.setup.roles import seed_roles
+
+		seed_roles()
+		project = create_test_construction_project(status="Em andamento")
+		create_test_work_cost(project=project.name, amount=500)
+
+		user_email = f"agent_user_{frappe.generate_hash(length=6)}@example.com"
+		if not frappe.db.exists("User", user_email):
+			frappe.get_doc(
+				{
+					"doctype": "User",
+					"email": user_email,
+					"first_name": "Agent",
+					"last_name": "User",
+					"send_welcome_email": 0,
+				}
+			).insert(ignore_permissions=True)
+		frappe.get_doc(
+			{
+				"doctype": "Has Role",
+				"parent": user_email,
+				"parenttype": "User",
+				"parentfield": "roles",
+				"role": "Engenharia User",
+			}
+		).insert(ignore_permissions=True)
+
+		frappe.set_user(user_email)
+		try:
+			summary = get_project_summary(project.name)
+			self.assertNotIn("total_costs", summary)
+			self.assertNotIn("contract_value", summary)
+			self.assertNotIn("margin", summary)
+		finally:
+			frappe.set_user("Administrator")
+
+	def test_get_costs_by_category_requires_manager(self):
+		from engenharia.setup.roles import seed_roles
+		from frappe.exceptions import PermissionError
+
+		seed_roles()
+		project = create_test_construction_project()
+
+		user_email = f"agent_user2_{frappe.generate_hash(length=6)}@example.com"
+		if not frappe.db.exists("User", user_email):
+			frappe.get_doc(
+				{
+					"doctype": "User",
+					"email": user_email,
+					"first_name": "Agent",
+					"last_name": "User2",
+					"send_welcome_email": 0,
+				}
+			).insert(ignore_permissions=True)
+		frappe.get_doc(
+			{
+				"doctype": "Has Role",
+				"parent": user_email,
+				"parenttype": "User",
+				"parentfield": "roles",
+				"role": "Engenharia User",
+			}
+		).insert(ignore_permissions=True)
+
+		frappe.set_user(user_email)
+		try:
+			with self.assertRaises(PermissionError):
+				get_costs_by_category(project.name)
+		finally:
+			frappe.set_user("Administrator")
+
 	def test_permission_denied_without_access(self):
 		user_email = f"agent_no_perm_{frappe.generate_hash(length=6)}@example.com"
 		if not frappe.db.exists("User", user_email):
