@@ -19,6 +19,14 @@ frappe.ui.form.on("Subcontract", {
 	},
 
 	refresh(frm) {
+		if (frm.doc.funded_by === "Cliente") {
+			frm.set_df_property(
+				"funded_by",
+				"description",
+				__("O cliente paga o prestador direto — este subcontrato não entra no fluxo de caixa do escritório.")
+			);
+		}
+
 		frm.set_indicator_formatter("status", (doc) => {
 			const map = {
 				Open: "orange",

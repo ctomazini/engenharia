@@ -116,6 +116,7 @@ DESCRIPTIONS: dict[str, dict[str, str]] = {
 		"project": "Obra onde o serviço do prestador será executado.",
 		"customer": "Preenchido automaticamente a partir da obra.",
 		"supplier": "Fornecedor ou prestador contratado (ex.: pedreiro, eletricista).",
+		"funded_by": "Escritório: entra no seu fluxo de caixa. Cliente: só registro — o cliente paga o prestador direto.",
 		"cost_category": "Categoria para relatórios: Mão de obra, Materiais, etc.",
 		"stage": "Etapa da obra onde o serviço se aplica (opcional).",
 		"description": "Detalhe do serviço contratado (ex.: reboco do bloco A).",

@@ -95,8 +95,10 @@ def execute(filters=None):
 		if row.funded_by == FUNDED_BY_OFFICE:
 			firm_cost_by_project[row.project] = firm_cost_by_project.get(row.project, 0) + flt(row.amount)
 
-	for project, paid in get_subcontract_paid_totals_by_project().items():
+	for project, paid in get_subcontract_paid_totals_by_project(office_funded_only=False).items():
 		cost_by_project[project] = cost_by_project.get(project, 0) + flt(paid)
+
+	for project, paid in get_subcontract_paid_totals_by_project(office_funded_only=True).items():
 		firm_cost_by_project[project] = firm_cost_by_project.get(project, 0) + flt(paid)
 
 	reimbursable_by_project = {}

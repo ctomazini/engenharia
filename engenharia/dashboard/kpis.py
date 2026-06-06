@@ -2,7 +2,11 @@ import frappe
 from frappe.utils import add_days, flt, get_first_day, get_last_day, today
 
 from engenharia.dashboard._helpers import LIST_LIMIT_MAX
-from engenharia.work_costs import office_cash_flow_filters
+from engenharia.work_costs import (
+	get_firm_month_outflows,
+	office_cash_flow_filters,
+	office_subcontract_filters,
+)
 
 
 def _sum_amount(rows, field="amount"):
@@ -97,21 +101,17 @@ def build_kpis(hoje, period_end, month_start, month_end, include_financial=True)
 		fields=["amount"],
 		limit=LIST_LIMIT_MAX,
 	)
-	month_costs = frappe.get_all(
-		"Work Cost",
-		filters=office_cash_flow_filters(
-			{
-				"status": ["!=", "Cancelado"],
-				"date": ["between", [month_start, month_end]],
-			}
-		),
-		fields=["amount"],
-		limit=LIST_LIMIT_MAX,
-	)
+	firm_month_outflows = get_firm_month_outflows(month_start, month_end)
 	pending_work_cost_rows = frappe.get_all(
 		"Work Cost",
 		filters=office_cash_flow_filters({"status": "Pendente"}),
 		fields=["amount"],
+		limit=LIST_LIMIT_MAX,
+	)
+	pending_subcontract_rows = frappe.get_all(
+		"Subcontract",
+		filters=office_subcontract_filters({"status": ["in", ["Open", "Partially Paid"]]}),
+		fields=["outstanding"],
 		limit=LIST_LIMIT_MAX,
 	)
 
@@ -147,8 +147,8 @@ def build_kpis(hoje, period_end, month_start, month_end, include_financial=True)
 				"amount": _sum_amount(reimbursable),
 			},
 			"month_costs": {
-				"count": len(month_costs),
-				"amount": _sum_amount(month_costs),
+				"count": firm_month_outflows["count"],
+				"amount": firm_month_outflows["amount"],
 			},
 			"received_month": {
 				"count": len(received_month),

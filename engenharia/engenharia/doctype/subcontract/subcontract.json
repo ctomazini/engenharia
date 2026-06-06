@@ -12,6 +12,7 @@
   "customer",
   "supplier",
   "col_break_1",
+  "funded_by",
   "cost_category",
   "stage",
   "description",
@@ -68,6 +69,17 @@
   {
    "fieldname": "col_break_1",
    "fieldtype": "Column Break"
+  },
+  {
+   "default": "Escritório",
+   "fieldname": "funded_by",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Quem arca",
+   "options": "Escritório\nCliente",
+   "reqd": 1,
+   "description": "Escritório: entra no seu fluxo de caixa. Cliente: só registro — o cliente paga o prestador direto."
   },
   {
    "fieldname": "cost_category",

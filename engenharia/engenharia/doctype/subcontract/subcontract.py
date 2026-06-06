@@ -4,10 +4,14 @@ from frappe.model.document import Document
 from frappe.utils import flt, fmt_money
 
 from engenharia.titles import apply_title_post_insert, recompose_title
+from engenharia.work_costs import FUNDED_BY_OFFICE
 
 
 class Subcontract(Document):
 	def validate(self):
+		if not self.funded_by:
+			self.funded_by = FUNDED_BY_OFFICE
+
 		if not self.is_new() and frappe.db.get_value(self.doctype, self.name, "status") == "Cancelled":
 			frappe.throw(_("Subcontrato cancelado não pode ser alterado."))
 

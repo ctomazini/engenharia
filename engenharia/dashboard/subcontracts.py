@@ -3,10 +3,11 @@ from frappe.query_builder import functions as fn
 from frappe.utils import flt
 
 from engenharia.dashboard._helpers import _project_lookup
+from engenharia.work_costs import FUNDED_BY_OFFICE
 
 
 def get_subcontract_kpis() -> dict:
-	"""KPIs agregados de subcontratos (pagamentos a prestadores)."""
+	"""KPIs agregados de subcontratos pagos pelo escritório."""
 	Subcontract = frappe.qb.DocType("Subcontract")
 	result = (
 		frappe.qb.from_(Subcontract)
@@ -16,6 +17,7 @@ def get_subcontract_kpis() -> dict:
 			fn.Sum(Subcontract.outstanding).as_("total_outstanding"),
 		)
 		.where(Subcontract.status != "Cancelled")
+		.where(Subcontract.funded_by == FUNDED_BY_OFFICE)
 	).run(as_dict=True)[0]
 
 	return {
@@ -26,10 +28,13 @@ def get_subcontract_kpis() -> dict:
 
 
 def get_pending_subcontracts(limit: int = 10) -> list[dict]:
-	"""Subcontratos com saldo a pagar."""
+	"""Subcontratos do escritório com saldo a pagar."""
 	rows = frappe.get_all(
 		"Subcontract",
-		filters={"status": ["in", ["Open", "Partially Paid"]]},
+		filters={
+			"status": ["in", ["Open", "Partially Paid"]],
+			"funded_by": FUNDED_BY_OFFICE,
+		},
 		fields=[
 			"name",
 			"title",

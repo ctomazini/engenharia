@@ -7,7 +7,10 @@ from engenharia.dashboard._helpers import (
 	_customer_name_lookup,
 	_project_lookup,
 )
-from engenharia.work_costs import office_cash_flow_filters
+from engenharia.work_costs import (
+	get_subcontract_payments_by_category_month,
+	office_cash_flow_filters,
+)
 
 _CHART_TONES = ("info", "warning", "danger", "success", "neutral")
 
@@ -28,6 +31,9 @@ def _build_cost_composition_chart(month_start, month_end):
 	for row in rows:
 		key = row.cost_category or _("Sem categoria")
 		totals[key] = totals.get(key, 0) + flt(row.amount)
+
+	for key, amount in get_subcontract_payments_by_category_month(month_start, month_end).items():
+		totals[key] = totals.get(key, 0) + flt(amount)
 
 	if not totals:
 		return []
@@ -118,7 +124,7 @@ def build_financial(hoje, period_end, kpis, month_start=None, month_end=None):
 			"saida": {
 				"label": _("Saídas do mês"),
 				"amount": month_costs,
-				"detail": _("custos de obra lançados no mês"),
+				"detail": _("custos de obra e subcontratos pagos pelo escritório no mês"),
 				"tone": "info",
 			},
 		},

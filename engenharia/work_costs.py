@@ -13,7 +13,15 @@ FUNDED_BY_CLIENT = "Cliente"
 
 
 def office_cash_flow_filters(extra=None):
-	"""Filtros para custos que saem do caixa do escritório."""
+	"""Filtros para custos que saem do caixa do escritório (Work Cost)."""
+	filters = {"funded_by": FUNDED_BY_OFFICE}
+	if extra:
+		filters.update(extra)
+	return filters
+
+
+def office_subcontract_filters(extra=None):
+	"""Filtros para subcontratos pagos pelo escritório."""
 	filters = {"funded_by": FUNDED_BY_OFFICE}
 	if extra:
 		filters.update(extra)
@@ -28,6 +36,83 @@ def get_firm_work_cost_total(project=None, statuses=None):
 		limit=500,
 	)
 	return sum(flt(row.amount) for row in rows)
+
+
+def get_firm_subcontract_payments_month(month_start, month_end):
+	"""Total pago em subcontratos do escritório no mês."""
+	result = frappe.db.sql(
+		"""
+		select coalesce(sum(sp.amount), 0)
+		from `tabSubcontract Payment` sp
+		inner join `tabSubcontract` sc on sc.name = sp.parent
+		where sc.funded_by = %s
+		  and sc.status != 'Cancelled'
+		  and sp.payment_date between %s and %s
+		""",
+		(FUNDED_BY_OFFICE, month_start, month_end),
+	)
+	return flt(result[0][0] if result else 0)
+
+
+def get_firm_subcontract_payment_count_month(month_start, month_end):
+	result = frappe.db.sql(
+		"""
+		select count(sp.name)
+		from `tabSubcontract Payment` sp
+		inner join `tabSubcontract` sc on sc.name = sp.parent
+		where sc.funded_by = %s
+		  and sc.status != 'Cancelled'
+		  and sp.payment_date between %s and %s
+		""",
+		(FUNDED_BY_OFFICE, month_start, month_end),
+	)
+	return int(result[0][0] if result else 0)
+
+
+def get_subcontract_payments_by_category_month(month_start, month_end):
+	"""Pagamentos de subcontrato do escritório agrupados por categoria de custo."""
+	rows = frappe.db.sql(
+		"""
+		select sc.cost_category, coalesce(sum(sp.amount), 0) as amount
+		from `tabSubcontract Payment` sp
+		inner join `tabSubcontract` sc on sc.name = sp.parent
+		where sc.funded_by = %s
+		  and sc.status != 'Cancelled'
+		  and sp.payment_date between %s and %s
+		group by sc.cost_category
+		""",
+		(FUNDED_BY_OFFICE, month_start, month_end),
+		as_dict=True,
+	)
+	totals: dict[str, float] = {}
+	for row in rows:
+		key = row.cost_category or _("Sem categoria")
+		totals[key] = flt(row.amount)
+	return totals
+
+
+def get_firm_month_outflows(month_start, month_end):
+	"""Saídas do escritório no mês: Work Cost + pagamentos de subcontrato."""
+	work_rows = frappe.get_all(
+		"Work Cost",
+		filters=office_cash_flow_filters(
+			{
+				"status": ["!=", "Cancelado"],
+				"date": ["between", [month_start, month_end]],
+			}
+		),
+		fields=["amount"],
+		limit=500,
+	)
+	work_amount = sum(flt(row.amount) for row in work_rows)
+	sub_amount = get_firm_subcontract_payments_month(month_start, month_end)
+	sub_count = get_firm_subcontract_payment_count_month(month_start, month_end)
+	return {
+		"amount": work_amount + sub_amount,
+		"count": len(work_rows) + sub_count,
+		"work_cost_amount": work_amount,
+		"subcontract_amount": sub_amount,
+	}
 
 
 def _base_filters(project=None, statuses=None):
@@ -52,9 +137,11 @@ def get_work_cost_totals_by_stage(project=None, statuses=None):
 	return _aggregate_by_field("stage", project=project, statuses=statuses)
 
 
-def get_subcontract_paid_totals_by_project(project=None):
+def get_subcontract_paid_totals_by_project(project=None, office_funded_only=False):
 	"""Retorna total_paid de Subcontract agrupado por obra (status != Cancelled)."""
 	filters = {"status": ["!=", "Cancelled"]}
+	if office_funded_only:
+		filters["funded_by"] = FUNDED_BY_OFFICE
 	if project:
 		filters["project"] = project
 	rows = frappe.get_all(
@@ -72,7 +159,7 @@ def get_subcontract_paid_totals_by_project(project=None):
 
 
 def get_combined_project_cost(project):
-	"""Custos pagos na obra: Work Cost (Pago) + Subcontract.total_paid."""
+	"""Custos na obra: Work Cost (Pago) + Subcontract.total_paid (todos os financiadores)."""
 	work_rows = frappe.get_all(
 		"Work Cost",
 		filters={"project": project, "status": "Pago"},
@@ -90,13 +177,16 @@ def get_combined_project_cost(project):
 	return work_total + sub_total
 
 
-def get_subcontract_outstanding_total():
-	"""Saldo total a pagar a prestadores (subcontratos não cancelados)."""
+def get_subcontract_outstanding_total(office_funded_only=True):
+	"""Saldo a pagar a prestadores (subcontratos não cancelados)."""
+	conditions = "status != 'Cancelled'"
+	if office_funded_only:
+		conditions += f" and funded_by = {frappe.db.escape(FUNDED_BY_OFFICE)}"
 	result = frappe.db.sql(
-		"""
+		f"""
 		select coalesce(sum(outstanding), 0)
 		from `tabSubcontract`
-		where status != 'Cancelled'
+		where {conditions}
 		"""
 	)
 	return flt(result[0][0] if result else 0)

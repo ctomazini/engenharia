@@ -2,7 +2,7 @@ import frappe
 from frappe import _
 from frappe.utils import add_months, flt, get_first_day, get_last_day, getdate, today
 
-from engenharia.work_costs import office_cash_flow_filters
+from engenharia.work_costs import FUNDED_BY_OFFICE, office_cash_flow_filters
 
 
 def execute(filters=None):
@@ -66,10 +66,10 @@ def execute(filters=None):
 		parent = frappe.db.get_value(
 			"Subcontract",
 			row.parent,
-			["name", "title", "description", "status"],
+			["name", "title", "description", "status", "funded_by"],
 			as_dict=True,
 		)
-		if not parent or parent.status == "Cancelled":
+		if not parent or parent.status == "Cancelled" or parent.funded_by != FUNDED_BY_OFFICE:
 			continue
 		transactions.append(
 			{

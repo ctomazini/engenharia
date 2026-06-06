@@ -1,14 +1,16 @@
 import frappe
 from frappe.exceptions import ValidationError
 from frappe.tests.utils import FrappeTestCase
-from frappe.utils import flt
+from frappe.utils import flt, get_first_day, get_last_day, today
 
+from engenharia.dashboard.kpis import build_kpis
 from engenharia.tests.test_setup import (
 	_uid,
 	create_test_construction_project,
 	create_test_cost_category,
 	create_test_supplier,
 )
+from engenharia.work_costs import FUNDED_BY_CLIENT, FUNDED_BY_OFFICE, get_subcontract_outstanding_total
 
 
 def create_test_subcontract(project=None, supplier=None, **kwargs):
@@ -31,6 +33,35 @@ def create_test_subcontract(project=None, supplier=None, **kwargs):
 class TestSubcontract(FrappeTestCase):
 	def tearDown(self):
 		frappe.db.rollback()
+
+	def test_default_funded_by_office(self):
+		doc = create_test_subcontract(total_value=5000)
+		self.assertEqual(doc.funded_by, FUNDED_BY_OFFICE)
+
+	def test_client_funded_excluded_from_cash_flow_kpis(self):
+		project = create_test_construction_project().name
+		hoje = today()
+		month_start = get_first_day(hoje)
+		month_end = get_last_day(hoje)
+		period_end = frappe.utils.add_days(hoje, 7)
+		before = build_kpis(hoje, period_end, month_start, month_end)
+
+		create_test_subcontract(
+			project=project,
+			total_value=5000,
+			funded_by=FUNDED_BY_CLIENT,
+			payments=[{"payment_date": hoje, "amount": 2000}],
+		)
+		after_client = build_kpis(hoje, period_end, month_start, month_end)
+		self.assertEqual(after_client["month_costs"]["amount"], before["month_costs"]["amount"])
+
+		outstanding_before = get_subcontract_outstanding_total()
+		create_test_subcontract(
+			project=project,
+			total_value=3000,
+			funded_by=FUNDED_BY_OFFICE,
+		)
+		self.assertEqual(get_subcontract_outstanding_total(), outstanding_before + 3000)
 
 	def test_create_subcontract(self):
 		doc = create_test_subcontract(total_value=5000)
