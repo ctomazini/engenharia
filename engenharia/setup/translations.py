@@ -34,6 +34,8 @@ DOCTYPE_LABELS = {
 	"Engineering Contract Amendment": "Aditivo Contratual",
 	"Construction Measurement": "Boletim de Medição",
 	"Construction Measurement Item": "Item do Boletim",
+	"Commission": "Comissão",
+	"Commission Payment": "Pagamento de Comissão",
 }
 
 

@@ -23,6 +23,7 @@ SIDEBAR_LINK_ORDER = (
 	# Financeiro
 	("Contratos", "Engineering Contract", "DocType"),
 	("Pagamentos", "Payment", "DocType"),
+	("Comissões", "Commission", "DocType"),
 	("Templates de Documento", "Document Template", "DocType"),
 	("Kits de Documentos", "Document Kit", "DocType"),
 	# Relatórios

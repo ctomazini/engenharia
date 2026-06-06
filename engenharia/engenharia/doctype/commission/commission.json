@@ -1,0 +1,182 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:COMM-{####}",
+ "creation": "2026-06-05 00:00:00",
+ "custom": 0,
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sec_details",
+  "construction_project",
+  "commission_type",
+  "supplier_name",
+  "supplier_tax_id",
+  "description",
+  "title",
+  "sec_values",
+  "total_value",
+  "total_paid",
+  "outstanding",
+  "sec_status",
+  "status",
+  "sec_payments",
+  "payments"
+ ],
+ "fields": [
+  {
+   "fieldname": "sec_details",
+   "fieldtype": "Section Break",
+   "label": "Detalhes"
+  },
+  {
+   "fieldname": "construction_project",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Projeto",
+   "options": "Construction Project",
+   "reqd": 1
+  },
+  {
+   "default": "Pr\u00e9-Moldado",
+   "fieldname": "commission_type",
+   "fieldtype": "Select",
+   "in_standard_filter": 1,
+   "label": "Tipo de Comiss\u00e3o",
+   "options": "Pr\u00e9-Moldado\nOutro",
+   "reqd": 1
+  },
+  {
+   "fieldname": "supplier_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Fornecedor",
+   "reqd": 1
+  },
+  {
+   "fieldname": "supplier_tax_id",
+   "fieldtype": "Data",
+   "label": "CNPJ do Fornecedor"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Descri\u00e7\u00e3o"
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "T\u00edtulo",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sec_values",
+   "fieldtype": "Section Break",
+   "label": "Valores"
+  },
+  {
+   "fieldname": "total_value",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Valor Total",
+   "reqd": 1
+  },
+  {
+   "fieldname": "total_paid",
+   "fieldtype": "Currency",
+   "label": "Total Pago",
+   "read_only": 1
+  },
+  {
+   "fieldname": "outstanding",
+   "fieldtype": "Currency",
+   "label": "Saldo a Receber",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sec_status",
+   "fieldtype": "Section Break",
+   "label": "Status"
+  },
+  {
+   "default": "Open",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Open\nPartially Paid\nPaid\nCancelled",
+   "read_only": 1
+  },
+  {
+   "fieldname": "sec_payments",
+   "fieldtype": "Section Break",
+   "label": "Pagamentos"
+  },
+  {
+   "fieldname": "payments",
+   "fieldtype": "Table",
+   "label": "Pagamentos Recebidos",
+   "options": "Commission Payment"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [
+  {
+   "link_doctype": "Construction Project",
+   "link_fieldname": "construction_project"
+  }
+ ],
+ "modified": "2026-06-05 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Engenharia",
+ "name": "Commission",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Engenharia User",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Engenharia Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "supplier_name,construction_project,status",
+ "show_title_field_in_link": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "title",
+ "track_changes": 1
+}
