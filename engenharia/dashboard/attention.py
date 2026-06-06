@@ -103,7 +103,10 @@ def build_attention_tiles(hoje, period_end, period_days, kpis, financeiro, inclu
 			"orange",
 			"receipt",
 			_("Custos pendentes"),
-			{"doctype": "Work Cost", "filters": [["status", "=", "Pendente"]]},
+			{
+				"doctype": "Work Cost",
+				"filters": [["status", "=", "Pendente"], ["funded_by", "=", "Escritório"]],
+			},
 			meta_currency=flt(pending_work_costs.get("amount")),
 			pulse=True,
 		)

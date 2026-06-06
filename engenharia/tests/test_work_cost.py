@@ -1,7 +1,9 @@
 import frappe
 from frappe.exceptions import ValidationError
 from frappe.tests.utils import FrappeTestCase
+from frappe.utils import get_first_day, get_last_day, today
 
+from engenharia.dashboard.kpis import build_kpis
 from engenharia.tests.test_setup import (
 	create_test_construction_project,
 	create_test_cost_category,
@@ -10,6 +12,8 @@ from engenharia.tests.test_setup import (
 	create_test_work_cost,
 )
 from engenharia.work_costs import (
+	FUNDED_BY_CLIENT,
+	FUNDED_BY_OFFICE,
 	get_work_cost_totals_by_category,
 	get_work_cost_totals_by_stage,
 	get_work_cost_totals_by_supplier,
@@ -19,6 +23,26 @@ from engenharia.work_costs import (
 class TestWorkCost(FrappeTestCase):
 	def tearDown(self):
 		frappe.db.rollback()
+
+	def test_default_funded_by_office(self):
+		cost = create_test_work_cost(amount=100)
+		self.assertEqual(cost.funded_by, FUNDED_BY_OFFICE)
+
+	def test_client_funded_excluded_from_month_kpis(self):
+		project = create_test_construction_project().name
+		hoje = today()
+		month_start = get_first_day(hoje)
+		month_end = get_last_day(hoje)
+		period_end = frappe.utils.add_days(hoje, 7)
+		before = build_kpis(hoje, period_end, month_start, month_end)
+
+		create_test_work_cost(project=project, amount=3000, funded_by=FUNDED_BY_CLIENT)
+		after_client = build_kpis(hoje, period_end, month_start, month_end)
+		self.assertEqual(after_client["month_costs"]["amount"], before["month_costs"]["amount"])
+
+		create_test_work_cost(project=project, amount=1000, funded_by=FUNDED_BY_OFFICE)
+		after_office = build_kpis(hoje, period_end, month_start, month_end)
+		self.assertEqual(after_office["month_costs"]["amount"], before["month_costs"]["amount"] + 1000)
 
 	def test_crud(self):
 		cost = create_test_work_cost(amount=2500)

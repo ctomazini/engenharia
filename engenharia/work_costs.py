@@ -8,6 +8,26 @@ from frappe.utils import flt
 
 DEFAULT_STATUSES = ("Pago",)
 UNCLASSIFIED = "Sem classificação"
+FUNDED_BY_OFFICE = "Escritório"
+FUNDED_BY_CLIENT = "Cliente"
+
+
+def office_cash_flow_filters(extra=None):
+	"""Filtros para custos que saem do caixa do escritório."""
+	filters = {"funded_by": FUNDED_BY_OFFICE}
+	if extra:
+		filters.update(extra)
+	return filters
+
+
+def get_firm_work_cost_total(project=None, statuses=None):
+	rows = frappe.get_all(
+		"Work Cost",
+		filters=office_cash_flow_filters(_base_filters(project=project, statuses=statuses)),
+		fields=["amount"],
+		limit=500,
+	)
+	return sum(flt(row.amount) for row in rows)
 
 
 def _base_filters(project=None, statuses=None):

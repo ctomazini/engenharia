@@ -2,7 +2,7 @@ import frappe
 from frappe import _
 from frappe.utils import flt
 
-from engenharia.work_costs import get_subcontract_paid_totals_by_project
+from engenharia.work_costs import FUNDED_BY_OFFICE, get_subcontract_paid_totals_by_project
 
 
 def execute(filters=None):
@@ -82,18 +82,22 @@ def execute(filters=None):
 		)
 
 	cost_by_project = {}
+	firm_cost_by_project = {}
 	for row in frappe.get_all(
 		"Work Cost",
 		filters={"status": "Pago"},
-		fields=["project", "amount"],
+		fields=["project", "amount", "funded_by"],
 		limit=0,
 	):
 		if not row.project:
 			continue
 		cost_by_project[row.project] = cost_by_project.get(row.project, 0) + flt(row.amount)
+		if row.funded_by == FUNDED_BY_OFFICE:
+			firm_cost_by_project[row.project] = firm_cost_by_project.get(row.project, 0) + flt(row.amount)
 
 	for project, paid in get_subcontract_paid_totals_by_project().items():
 		cost_by_project[project] = cost_by_project.get(project, 0) + flt(paid)
+		firm_cost_by_project[project] = firm_cost_by_project.get(project, 0) + flt(paid)
 
 	reimbursable_by_project = {}
 	for row in frappe.get_all(
@@ -119,9 +123,10 @@ def execute(filters=None):
 		contract_value = flt(contract_by_project.get(project))
 		received_revenue = flt(received_by_project.get(project))
 		total_cost = flt(cost_by_project.get(project))
+		firm_cost = flt(firm_cost_by_project.get(project))
 		reimbursable_expense = flt(reimbursable_by_project.get(project))
 		contractual_margin = contract_value - total_cost
-		realized_margin = received_revenue - total_cost - reimbursable_expense
+		realized_margin = received_revenue - firm_cost - reimbursable_expense
 		received_percent = (received_revenue / contract_value * 100) if contract_value else 0
 		data.append(
 			{

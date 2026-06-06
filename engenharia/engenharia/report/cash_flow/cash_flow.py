@@ -2,6 +2,8 @@ import frappe
 from frappe import _
 from frappe.utils import add_months, flt, get_first_day, get_last_day, getdate, today
 
+from engenharia.work_costs import office_cash_flow_filters
+
 
 def execute(filters=None):
 	filters = frappe._dict(filters or {})
@@ -37,7 +39,9 @@ def execute(filters=None):
 
 	for row in frappe.get_all(
 		"Work Cost",
-		filters={"status": "Pago", "date": ["between", [start, end]]},
+		filters=office_cash_flow_filters(
+			{"status": "Pago", "date": ["between", [start, end]]}
+		),
 		fields=["name", "description", "date", "amount"],
 		order_by="date asc",
 		limit=0,

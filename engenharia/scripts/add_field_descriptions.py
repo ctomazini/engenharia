@@ -188,6 +188,7 @@ DESCRIPTIONS: dict[str, dict[str, str]] = {
 		"cost_center": "Centro de custo contábil (opcional).",
 		"amount": "Valor do custo em reais.",
 		"date": "Data do pagamento ou da nota fiscal.",
+		"funded_by": "Escritório: entra no seu fluxo de caixa. Cliente: só registro — quem paga é o cliente.",
 		"payment_method": "Forma de pagamento: PIX, TED, Dinheiro, Cartão, Boleto ou Outro.",
 		"status": "Pago, Pendente ou Cancelado.",
 		"receipt": "Comprovante ou nota fiscal anexada.",

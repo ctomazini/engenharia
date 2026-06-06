@@ -2,6 +2,7 @@ import frappe
 from frappe.utils import add_days, flt, get_first_day, get_last_day, today
 
 from engenharia.dashboard._helpers import LIST_LIMIT_MAX
+from engenharia.work_costs import office_cash_flow_filters
 
 
 def _sum_amount(rows, field="amount"):
@@ -98,16 +99,18 @@ def build_kpis(hoje, period_end, month_start, month_end, include_financial=True)
 	)
 	month_costs = frappe.get_all(
 		"Work Cost",
-		filters={
-			"status": ["!=", "Cancelado"],
-			"date": ["between", [month_start, month_end]],
-		},
+		filters=office_cash_flow_filters(
+			{
+				"status": ["!=", "Cancelado"],
+				"date": ["between", [month_start, month_end]],
+			}
+		),
 		fields=["amount"],
 		limit=LIST_LIMIT_MAX,
 	)
 	pending_work_cost_rows = frappe.get_all(
 		"Work Cost",
-		filters={"status": "Pendente"},
+		filters=office_cash_flow_filters({"status": "Pendente"}),
 		fields=["amount"],
 		limit=LIST_LIMIT_MAX,
 	)

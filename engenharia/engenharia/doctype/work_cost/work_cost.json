@@ -20,6 +20,7 @@
   "amount",
   "date",
   "col_break_2",
+  "funded_by",
   "payment_method",
   "status",
   "receipt"
@@ -127,6 +128,17 @@
   {
    "fieldname": "col_break_2",
    "fieldtype": "Column Break"
+  },
+  {
+   "default": "Escritório",
+   "fieldname": "funded_by",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Quem arca",
+   "options": "Escritório\nCliente",
+   "reqd": 1,
+   "description": "Escritório: entra no seu fluxo de caixa. Cliente: só registro administrativo — o cliente paga direto."
   },
   {
    "fieldname": "payment_method",
