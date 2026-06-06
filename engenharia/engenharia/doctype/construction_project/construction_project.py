@@ -2,6 +2,8 @@ import frappe
 from frappe.model.document import Document
 from frappe.utils import flt, today
 
+from engenharia.titles import apply_title_post_insert, recompose_title
+
 
 @frappe.whitelist()
 def get_technical_items_for_select() -> list[dict]:
@@ -83,7 +85,7 @@ def create_budget_revision(project: str) -> dict:
 
 class ConstructionProject(Document):
 	def validate(self):
-		self._compose_title()
+		recompose_title(self)
 		self._sync_physical_progress()
 		self._seed_initial_budget_revision()
 
@@ -110,12 +112,5 @@ class ConstructionProject(Document):
 			return
 		self.physical_progress = calculate_physical_progress(self.name)
 
-	def _compose_title(self):
-		from engenharia.titles import recompose_title
-
-		recompose_title(self)
-
 	def after_insert(self):
-		from engenharia.titles import apply_title_post_insert
-
 		apply_title_post_insert(self)
