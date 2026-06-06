@@ -130,7 +130,7 @@ importable_doctypes = [
 # before_install = "engenharia.install.before_install"
 after_install = "engenharia.setup.install.after_install"
 after_migrate = [
-	"engenharia.setup.install.ensure_engenharia_roles",
+	"engenharia.setup.roles.seed_roles",
 	"engenharia.setup.install.ensure_event_custom_fields",
 	"engenharia.setup.permissions.ensure_engenharia_permissions",
 	"engenharia.setup.seed.ensure_seed_data",

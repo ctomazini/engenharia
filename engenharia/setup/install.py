@@ -36,11 +36,9 @@ def ensure_event_custom_fields():
 
 
 def _ensure_roles():
-	for role in ["Engenharia User", "Engenharia Manager"]:
-		if not frappe.db.exists("Role", role):
-			frappe.get_doc({"doctype": "Role", "role_name": role, "is_custom": 1}).insert(
-				ignore_permissions=True  # setup: cria roles durante install
-			)
+	from engenharia.setup.roles import seed_roles
+
+	seed_roles()
 
 
 def after_install():
