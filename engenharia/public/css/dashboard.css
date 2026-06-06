@@ -1774,3 +1774,41 @@
 	}
 }
 
+.eng-dash-operational-duo {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--padding-md, 1rem);
+	margin-bottom: var(--padding-md, 1rem);
+}
+
+.eng-dash-kpi-grid--3 {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.eng-dash-progress {
+	height: 6px;
+	background: var(--bg-light-gray, #f3f3f3);
+	border-radius: 3px;
+	overflow: hidden;
+	margin-bottom: 2px;
+}
+
+.eng-dash-progress__bar {
+	height: 100%;
+	background: var(--primary, #2491ef);
+}
+
+.eng-dash-active-projects tbody tr {
+	cursor: pointer;
+}
+
+.eng-spec-summary-table tbody tr.eng-spec-row {
+	cursor: pointer;
+}
+
+@media (max-width: 991px) {
+	.eng-dash-operational-duo {
+		grid-template-columns: 1fr;
+	}
+}
+

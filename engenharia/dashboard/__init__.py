@@ -4,10 +4,12 @@ from frappe.utils import add_days, cint, get_first_day, get_last_day, today
 
 from engenharia.dashboard import agenda as dashboard_agenda
 from engenharia.dashboard import attention as dashboard_attention
+from engenharia.dashboard import commissions as dashboard_commissions
 from engenharia.dashboard import deadlines as dashboard_deadlines
 from engenharia.dashboard import financial as dashboard_financial
 from engenharia.dashboard import health as dashboard_health
 from engenharia.dashboard import kpis as dashboard_kpis
+from engenharia.dashboard import operational as dashboard_operational
 from engenharia.dashboard import timeline as dashboard_timeline
 from engenharia.dashboard._helpers import (
 	LIST_LIMIT_MAX,
@@ -109,6 +111,11 @@ def get(
 		"tasks": {"showing": min(tasks_cap, len(tasks_all)), "total": len(tasks_all)},
 	}
 
+	operational_cap = _list_cap(list_limits, "operational")
+	measurements_cap = _list_cap(list_limits, "measurements")
+	measurements_all = dashboard_operational.get_recent_measurements(LIST_LIMIT_MAX)
+	active_projects_all = dashboard_operational.get_active_projects_enriched(LIST_LIMIT_MAX)
+
 	payload = {
 		"period_days": period_days,
 		"periodo_dias": period_days,
@@ -134,9 +141,15 @@ def get(
 		"prazos": deadlines_all[:deadlines_cap],
 		"tarefas": tasks_all[:tasks_cap],
 		"is_manager": is_manager,
+		"recent_measurements": measurements_all[:measurements_cap],
+		"active_projects": active_projects_all[:operational_cap],
 	}
 
 	if is_manager:
+		commission_kpis = dashboard_commissions.get_commission_kpis()
+		pending_commissions = dashboard_commissions.get_pending_commissions(LIST_LIMIT_MAX)
+		commissions_cap = _list_cap(list_limits, "commissions")
+		kpis.update(commission_kpis)
 		payload.update(
 			{
 				"financeiro": financeiro,
@@ -144,6 +157,8 @@ def get(
 				"pagamentos": payments_all[:payments_cap],
 				"despesas_pendentes": despesas_all[:despesas_cap],
 				"total_despesas_mes": total_despesas_mes,
+				"commission_kpis": commission_kpis,
+				"pending_commissions": pending_commissions[:commissions_cap],
 			}
 		)
 

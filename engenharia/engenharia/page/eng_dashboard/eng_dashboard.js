@@ -45,6 +45,8 @@ const ENG_DASH_ASSETS = [
 	"/assets/engenharia/js/dashboard/financial.js",
 	"/assets/engenharia/js/dashboard/lists.js",
 	"/assets/engenharia/js/dashboard/timeline.js",
+	"/assets/engenharia/js/dashboard/commissions.js",
+	"/assets/engenharia/js/dashboard/operational.js",
 ];
 
 function eng_dashboard_load(page) {
@@ -86,6 +88,7 @@ engenharia.dashboard.render_dashboard = function ($container, data, page) {
 	const $attention = $('<div class="eng-dash-zona-critica"></div>').appendTo($content);
 	const $actions = $('<div class="eng-dash-actions-host"></div>').appendTo($content);
 	const $agenda = $('<div class="eng-dash-agenda-host"></div>').appendTo($content);
+	const $operational = $('<div class="eng-dash-zona-operacional"></div>').appendTo($content);
 	const $financeZone = $('<div class="eng-dash-zona-financeira"></div>').appendTo($content);
 	const $financeHead = $('<div class="eng-dash-finance-head"></div>').appendTo($financeZone);
 	const $health = $('<div></div>').appendTo($financeHead);
@@ -98,11 +101,14 @@ engenharia.dashboard.render_dashboard = function ($container, data, page) {
 	engenharia.dashboard.quick_actions.render($actions);
 	engenharia.dashboard.attention.render($attention, data);
 	engenharia.dashboard.timeline.render($agenda, data, page);
+	engenharia.dashboard.operational.render($operational, data);
 
 	if (data.is_manager) {
 		engenharia.dashboard.health.render($health, data);
 		engenharia.dashboard.kpis.render($kpis, data);
 		engenharia.dashboard.financial.render($fin, data, page);
+		const $commissions = $('<div class="eng-dash-commissions-host"></div>').appendTo($financeZone);
+		engenharia.dashboard.commissions.render($commissions, data);
 		engenharia.dashboard.lists.render_duo($lists, data, page);
 	} else {
 		$financeZone.remove();
