@@ -8,7 +8,6 @@
  "engine": "InnoDB",
  "field_order": [
   "template_name",
-  "title",
   "document_type",
   "description",
   "col_break_1",
@@ -27,23 +26,16 @@
    "unique": 1
   },
   {
-   "fieldname": "title",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "T\u00edtulo",
-   "reqd": 1
-  },
-  {
    "fieldname": "document_type",
    "fieldtype": "Select",
    "in_standard_filter": 1,
    "label": "Tipo",
-   "options": "Contrato\nProposta\nRelat\u00f3rio\nOutro"
+   "options": "Contrato\nProposta\nRelatório\nOutro"
   },
   {
    "fieldname": "description",
    "fieldtype": "Small Text",
-   "label": "Descri\u00e7\u00e3o"
+   "label": "Descrição"
   },
   {
    "fieldname": "col_break_1",
@@ -65,12 +57,12 @@
   {
    "fieldname": "sec_placeholders",
    "fieldtype": "Section Break",
-   "label": "Placeholders Dispon\u00edveis"
+   "label": "Placeholders Disponíveis"
   },
   {
    "fieldname": "view_placeholders",
    "fieldtype": "Button",
-   "label": "Ver Placeholders Dispon\u00edveis",
+   "label": "Ver Placeholders Disponíveis",
    "description": "Lista completa de placeholders para usar nos templates .docx"
   }
  ],
@@ -84,46 +76,45 @@
  "owner": "Administrator",
  "permissions": [
   {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
    "role": "System Manager",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
    "read": 1,
-   "report": 1,
-   "role": "Engenharia User",
-   "share": 1,
-   "write": 1
-  },
-  {
+   "write": 1,
    "create": 1,
    "delete": 1,
-   "email": 1,
    "export": 1,
    "print": 1,
-   "read": 1,
-   "report": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
    "role": "Engenharia Manager",
-   "share": 1,
-   "write": 1
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "import": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "share": 1
+  },
+  {
+   "role": "Engenharia User",
+   "read": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1
   }
  ],
  "quick_entry": 1,
  "row_format": "Dynamic",
- "search_fields": "template_name,title,document_type",
+ "search_fields": "template_name,document_type",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "title_field": "title",
+ "show_title_field_in_link": 1,
+ "title_field": "template_name",
  "track_changes": 1
 }

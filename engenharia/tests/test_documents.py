@@ -62,7 +62,6 @@ def _create_test_document_template(paragraph="Doc test {{ customer_name }}"):
 			{
 				"doctype": "Document Template",
 				"template_name": _uid("Template Doc"),
-				"title": _uid("Template Doc Title"),
 				"document_type": "Contrato",
 				"document_file": file_doc.file_url,
 				"enabled": 1,

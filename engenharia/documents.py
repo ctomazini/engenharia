@@ -146,7 +146,7 @@ def generate_project_documents(project_name: str, template_names) -> dict:
 			generated.append(
 				{
 					"template": template_name,
-					"title": template_doc.title,
+					"title": template_doc.template_name,
 					"file_name": result["file_name"],
 					"file_url": result["file_url"],
 				}
@@ -169,8 +169,8 @@ def get_available_templates() -> list[dict]:
 	return frappe.get_all(
 		"Document Template",
 		filters={"enabled": 1},
-		fields=["name", "title", "document_type", "description"],
-		order_by="title asc",
+		fields=["name", "template_name", "document_type", "description"],
+		order_by="template_name asc",
 		limit_page_length=100,
 	)
 

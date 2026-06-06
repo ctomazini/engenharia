@@ -36,7 +36,6 @@ def _create_test_document_template():
 			{
 				"doctype": "Document Template",
 				"template_name": _uid("Template Kit"),
-				"title": _uid("Template Kit Title"),
 				"document_type": "Contrato",
 				"document_file": file_doc.file_url,
 				"enabled": 1,

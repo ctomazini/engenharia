@@ -242,7 +242,7 @@ function eng_mount_generate_documents_dialog(frm, templates, kits) {
 				frappe.utils.escape_html(doc_type) +
 				"</div>";
 			grouped[doc_type].forEach((tpl) => {
-				const label = tpl.title || tpl.name;
+				const label = tpl.template_name || tpl.name;
 				checklist_html +=
 					'<p style="margin:4px 0 4px 12px;">' +
 					'<label class="checkbox">' +
