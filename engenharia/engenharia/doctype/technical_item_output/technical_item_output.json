@@ -29,12 +29,12 @@
    "reqd": 1
   },
   {
-   "description": "Vazio = resultado local. volume = título do item; value = valor total (R$) no item e soma na obra; preview = prévia na obra; area = área total (deferido).",
+   "description": "Define como o sistema usa este resultado. 'Valor do item' é usado no orçamento da obra. Os demais são informativos.",
    "fieldname": "role",
    "fieldtype": "Select",
    "in_list_view": 1,
-   "label": "Papel",
-   "options": "\nvolume\nvalue\npreview\narea"
+   "label": "Papel do Resultado",
+   "options": "\nvalue\nvolume\narea\npreview"
   },
   {
    "fieldname": "unit",
