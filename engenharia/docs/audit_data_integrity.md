@@ -63,9 +63,11 @@ Commission.payments (child)
 
 | DocType | Rollup | Teste |
 |---|---|---|
-| Work Cost | Totais por categoria via `work_costs.py` | test_work_cost |
+| Work Cost | Totais por categoria via `work_costs.py`; `funded_by` separa caixa do escritório vs registro do cliente | test_work_cost |
 | Reimbursable Expense | Sync Payment filho | test_reimbursable_expense |
 | Payment | Status Vencido/Pendente/Recebido | test_payment, scheduler |
+
+**Work Cost `funded_by`:** `Escritório` entra em KPIs, fluxo de caixa, composição do painel e margem realizada; `Cliente` permanece na obra e relatórios analíticos, mas é excluído do caixa do escritório via `office_cash_flow_filters()` em `work_costs.py`.
 
 ---
 

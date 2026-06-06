@@ -1,8 +1,7 @@
 # Seção 4 — Verificação do Painel (Dashboard)
 
 **Page:** `eng-dashboard` (`engenharia/engenharia/page/eng_dashboard/`)  
-**Backend:** `engenharia/dashboard/` · **Facade:** `dashboard_api.py`  
-**Nota:** Prompt referencia `painel_eng/` — **não existe**; implementação atual é `eng_dashboard`.
+**Backend:** `engenharia/dashboard/` · **Facade:** `dashboard_api.py`
 
 ---
 
@@ -13,28 +12,28 @@
 | Módulo | Função |
 |---|---|
 | `__init__.py` | Orquestrador `get()` |
-| `kpis.py` | KPIs agregados |
-| `financial.py` | Fluxo, gráficos, pagamentos pendentes |
+| `kpis.py` | KPIs agregados (`month_costs` só `funded_by=Escritório`) |
+| `financial.py` | Fluxo mensal fixo, composição por categoria, pagamentos pendentes no período |
 | `deadlines.py` | Prazos, alertas, centro_atencao |
 | `attention.py` | Tiles de ação imediata |
 | `health.py` | Score operacional |
 | `timeline.py` | Tarefas, comunicações, horas |
-| `agenda.py` | Timeline unificada |
+| `agenda.py` | Timeline operacional (prazos + tarefas; **sem pagamentos**) |
+| `operational.py` | Obras ativas enriquecidas |
 | `_helpers.py` | Caps, normalização, `user_is_engenharia_manager()` |
 
-### Queries principais (todas com LIMIT via `LIST_LIMIT_MAX=100` ou cap explícito)
+### Queries principais (LIMIT via `LIST_LIMIT_MAX=100` ou cap explícito)
 
 | Origem | DocType(s) | Limit |
 |---|---|---|
-| kpis (manager) | Payment, Work Cost, Reimbursable Expense, Engineering Contract | 100 |
+| kpis (manager) | Payment, Work Cost (`funded_by=Escritório`), Reimbursable Expense, Engineering Contract | 100 |
 | kpis (operacional) | Construction Project, Deadline, Task, Permit, Customer | count/get_all capped |
-| financial | Payment, Reimbursable Expense | 100 |
+| financial | Payment (período), Work Cost (mês, escritório) | 100 |
 | deadlines | Deadline | list_cap (5–15) |
 | timeline | Task, Communication Log, Time Log | 100 |
+| operational | Construction Project | list_cap `operational` |
 
 **N+1:** Evitado em lookups de cliente/projeto via dict batch em `_helpers.py`. ✅
-
-**Tempo estimado (50 projetos / 200 medições / 100 contratos):** 🟡 **2–8 s** para Manager (múltiplos get_all Payment/Work Cost). User operacional: **< 2 s** (sem queries financeiras).
 
 ### Role check `is_manager`
 
@@ -44,17 +43,17 @@ user_is_engenharia_manager() → Engenharia Manager | System Manager | Administr
 
 **Engenharia User — chaves OMITIDAS do payload:**
 - `financeiro`, `parcelas`, `pagamentos`, `despesas_pendentes`, `total_despesas_mes`
-- KPIs financeiros: `amount_receivable`, `amount_overdue`, `amount_reimbursable`, `month_costs`, `received_*`, `active_contracts`, `spec_project_total`, etc.
-- Tiles financeiros em `atencao` (parcelas vencidas, custos pendentes)
-- Pagamentos na agenda/timeline
+- KPIs financeiros: `amount_receivable`, `amount_overdue`, `amount_reimbursable`, `month_costs`, `received_*`, etc.
+- Tiles financeiros em `atencao` (parcelas vencidas, custos pendentes do escritório)
 
-**Chaves SEMPRE presentes:** `kpis` (operacional), `deadlines`, `tarefas`, `timeline`, `horas_*`, `is_manager`, `alertas`, `atencao` (sem tiles financeiros).
+**Chaves SEMPRE presentes:** `kpis` (operacional), `deadlines`, `tarefas`, `timeline`/`agenda`, `horas_*`, `active_projects`, `is_manager`, `atencao`.
 
 | Verificação | Status |
 |---|---|
 | User não recebe `financeiro` | ✅ test_permissions |
 | Manager recebe financeiro completo | ✅ |
-| `agent_api.get_project_summary` ainda expõe financeiro a User com read no projeto | 🟡 Gap separado (Seção 7) |
+| Agenda sem pagamentos (todos os perfis) | ✅ `build_agenda` + filtro JS |
+| `month_costs` exclui `funded_by=Cliente` | ✅ test_work_cost |
 
 ---
 
@@ -62,44 +61,46 @@ user_is_engenharia_manager() → Engenharia Manager | System Manager | Administr
 
 **Shell:** `eng_dashboard.js` → módulos em `public/js/dashboard/`
 
-| Componente | Role Manager | Role User |
+| Componente | Manager | User |
 |---|---|---|
-| Hero + filtros | ✅ | ✅ |
-| Attention tiles | Todos | Sem tiles financeiros |
-| Timeline/agenda | Com pagamentos | Sem pagamentos |
-| Zona financeira (health, kpis, financial, lists) | ✅ Renderiza | ✅ `$financeZone.remove()` — sem espaço vazio |
-| CSS cores | `dashboard.css` usa CSS vars | ✅ |
-| Hex hardcoded | Fallback `#fff` apenas | 🟢 Baixo |
+| Hero + filtros período | ✅ | ✅ |
+| Zona atenção + próximos compromissos (50/50) | ✅ | ✅ |
+| Agenda / timeline | Prazos e tarefas | Idem |
+| Obras ativas (lista `op-row`, filtro linhas) | ✅ | ✅ |
+| Zona financeira | ✅ | Removida (`$financeZone.remove()`) |
+| Comissões (acordeão) | ✅ | Oculto |
+| Subcontratos (acordeão) | ❌ Removido | — |
 
-**Responsividade:** CSS grid em `dashboard.css` — 🟡 não auditado em browser <768px; layout provavelmente empilha (verificar manualmente).
+**Módulos JS:** `hero`, `attention`, `next_event`, `timeline`, `operational`, `health`, `kpis`, `financial`, `lists`, `commissions`, `utils`, `filters`, `quick_actions`.
 
-**Links clicáveis:** Tiles usam `deep_link: {doctype, filters}` — ✅ padrão pagamento/deadline/task.
+**Financeiro (Manager):**
+- `fluxo.entrada` / `fluxo.saida` = mês corrente fixo (`fixed_to_month: true`)
+- `grafico` = donut por categoria de custo (cores por `tone`)
+- Filtros 5/10/15: delegação em `utils.bind_list_limits` → `eng_dashboard_refresh_list_sections` (sem reload total)
+
+**CSS:** `dashboard.css` — CSS vars, grid responsivo, cards `eng-dash-atencao-card` espelhados em compromissos.
 
 ---
 
-## 4.3 Dados de teste no site dev
+## 4.3 Payload — diferenças recentes
 
-**Estado atual `engenharia.local` (consulta 2026-06-06):**
-
-| Entidade | Quantidade | Nota |
+| Item | Antes | Agora |
 |---|---|---|
-| Construction Project | 1 (Orçamento) | Insuficiente para cenário 3 projetos |
-| Commission | 1 | OK parcial |
-| Deadline | 1 | Insuficiente |
-| Task | 2 | OK parcial |
-| Engineering Contract | (não contado) | — |
-
-**Recomendação:** Criar dataset mínimo do prompt (3 projetos, 2 contratos, 3 deadlines, etc.) para smoke visual — **não executado nesta auditoria** (somente leitura).
-
----
-
-## Inconsistências
-
-1. 🟡 Nome da page `eng-dashboard` vs prompt `painel_eng` — documentação desatualizada.
-2. 🟡 `limit_page_length` deprecated em kpis/financial.
-3. 🟡 `mark_payment_received` exposto no dashboard sem role check na facade.
-4. 🟢 Frontend remove zona financeira inteira para User — UX limpa.
+| Subcontratos no painel | Acordeão + KPI | Apenas KPI `subcontract_outstanding` |
+| Medições recentes | Seção no painel | Removida |
+| Agenda | Incluía pagamentos (Manager) | Só operacional |
+| Entradas × saídas | A receber total vs custos | Entradas/saídas **do mês** fixas |
+| Composição custos | Fatia única azul | Fatias por **Cost Category** |
+| Work Cost no caixa | Todos os lançamentos | Só `funded_by=Escritório` |
 
 ---
 
-*Auditoria somente leitura.*
+## Inconsistências conhecidas
+
+1. 🟡 `limit_page_length` deprecated em kpis/financial (v17).
+2. 🟡 Responsividade <768px — verificar manualmente em browser.
+3. 🟢 Frontend remove zona financeira inteira para User — UX limpa.
+
+---
+
+*Atualizado 2026-06-06.*

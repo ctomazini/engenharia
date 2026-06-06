@@ -61,7 +61,7 @@ DocTypes `custom: 0` expõem CRUD REST automaticamente com permissões DocPerm.
 | Prazos vencendo semana | 🟡 REST GET Deadline filters | Sem whitelist dedicado |
 | Criar medição | ✅ REST POST | — |
 | Consultar saldo contrato | 🟡 `get_project_summary` | Expõe financeiro — role issue |
-| Registrar Work Cost | ✅ Manager REST | User bloqueado |
+| Registrar Work Cost | ✅ Manager REST (`funded_by` Escritório/Cliente) | User bloqueado |
 | Timer Time Log | ✅ whitelisted | — |
 
 ---

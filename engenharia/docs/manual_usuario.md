@@ -45,11 +45,10 @@ O **Painel de Obras** reúne indicadores e atalhos do dia a dia.
 |---|---|
 | **Cabeçalho / Hero** | Data, período selecionado (7, 15 ou 30 dias), resumo de urgência |
 | **Filtros** | Alterar janela de tempo e limites das listas |
-| **Atenção imediata** | Tiles clicáveis: prazos críticos, tarefas atrasadas, protocolos (Manager também vê parcelas vencidas e custos pendentes) |
-| **Agenda / Timeline** | Prazos, tarefas e (Manager) vencimentos financeiros no período |
-| **Zona financeira** *(somente Manager)* | Saúde operacional, KPIs (a receber, vencido, custos do mês…), gráficos e listas de parcelas/despesas |
-| **Obras ativas / Medições** | Resumo operacional de obras em andamento e últimas medições |
-| **Subcontratos** *(Manager, acordeão)* | Saldo a pagar a prestadores — expanda para ver KPIs e lista |
+| **Zona de atenção + Próximos compromissos** | Duas colunas lado a lado: tiles de ação imediata e os dois compromissos mais urgentes (prazos, tarefas etc.) |
+| **Agenda / Timeline** | Prazos, tarefas e compromissos operacionais no período (sem pagamentos) |
+| **Zona financeira** *(somente Manager)* | Saúde operacional, KPIs, entradas×saídas do mês, composição de custos, listas de parcelas/despesas |
+| **Obras ativas** | Lista com filtros de linhas (5/10/15), cores por status e prazo — largura total |
 | **Comissões** *(Manager, acordeão)* | KPIs e lista de comissões — expanda a seção no rodapé para ver detalhes |
 
 ### Diferença Manager vs User
@@ -57,10 +56,24 @@ O **Painel de Obras** reúne indicadores e atalhos do dia a dia.
 - **Manager** vê KPIs financeiros, gráficos de fluxo e listas de pagamentos.
 - **User** vê apenas indicadores operacionais (prazos, tarefas, protocolos, horas). A seção financeira **não aparece** — não há mensagem de “acesso negado”, a área simplesmente não é exibida.
 
+### Agenda e compromissos
+
+- A **agenda** e os **próximos compromissos** mostram apenas itens operacionais: prazos, tarefas e protocolos. **Pagamentos não aparecem** nessas áreas (ficam nas listas financeiras).
+- Os filtros **5 / 10 / 15 linhas** nas listas (agenda, obras ativas, parcelas etc.) atualizam só aquela seção, sem recarregar o painel inteiro.
+
+### Financeiro no painel *(Manager)*
+
+| Bloco | O que mostra |
+|---|---|
+| **KPIs** | A receber, vencido, a reembolsar, a pagar (prestadores/subcontratos), custos do mês, margem |
+| **Entradas do mês × saídas do mês** | Valores **fixos do mês corrente** — **não mudam** ao alterar o filtro de 7/15/30 dias. Entradas = recebimentos confirmados; saídas = custos de obra pagos pelo **escritório** |
+| **Composição de custos** | Donut com fatias por **categoria de custo** (Materiais, Mão de obra etc.) — só custos do escritório no mês |
+| **Subcontratos (KPI)** | O card *A pagar (prestadores)* resume saldo de subcontratos; não há mais seção acordeão de subcontratos no painel |
+
 ### Dicas
 
 - Clique em um tile ou linha da agenda para ir direto à lista filtrada do registro correspondente.
-- Use **↺ Atualizar** no canto superior para recarregar os dados.
+- Use **↺ Atualizar** no canto superior para recarregar todos os dados do painel.
 
 ---
 
@@ -240,10 +253,14 @@ Lançamentos **avulsos** (NF única, compra pontual). Para contratar um prestado
 | Campo | O que preencher |
 |---|---|
 | Obra | Onde o custo foi incorrido |
+| **Quem arca** | **Escritório** (padrão): você paga e o valor entra no seu fluxo de caixa, painel e relatório de fluxo. **Cliente**: só registro administrativo — o cliente paga direto ao fornecedor e o valor **não** entra no seu caixa |
 | Categoria de Custo | Materiais, Mão de obra, Equipamentos, etc. |
 | Fornecedor / Etapa | Opcionais — refinam relatórios |
 | Valor | Montante em reais |
 | Descrição | Detalhe do que foi comprado ou contratado |
+| Status | Pago, Pendente ou Cancelado |
+
+**Quando usar Cliente:** você administra a obra mas o dono da obra paga o material, o pedreiro ou a NF diretamente. O lançamento continua visível na obra e nos relatórios por categoria, porém é ignorado em custos do mês, margem realizada e fluxo de caixa do escritório.
 
 ### 6.3 Subcontratos
 
@@ -260,7 +277,7 @@ Controle de **pagamentos a prestadores** (pedreiro, eletricista, etc.) com valor
 
 **Exemplo:** João cobrou R$ 5.000 pelo reboco — registre R$ 2.000 em janeiro e R$ 3.000 em fevereiro na tabela de pagamentos. O saldo zera e o status vira **Paga**.
 
-Na **Obra → Conexões** e no cadastro do **Fornecedor** você vê todos os subcontratos vinculados. No painel *(Manager)*, a seção **Subcontratos** mostra quanto ainda falta pagar.
+Na **Obra → Conexões** e no cadastro do **Fornecedor** você vê todos os subcontratos vinculados. No painel *(Manager)*, o KPI **A pagar (prestadores)** resume o saldo pendente de subcontratos.
 
 *(Engenharia User: somente leitura.)*
 

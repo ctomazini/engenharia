@@ -89,7 +89,7 @@ Project Specification: child legado (istable, deprecated)
 | Commission | construction_project | Construction Project | — | ✅ Sim (exclui Cancelada) | OK |
 | Engineering Contract | project | Construction Project | customer ← project.customer | ❌ | 🟡 Sem filtro status |
 | Payment | project | Construction Project | customer ← project.customer | ❌ | OK |
-| Work Cost | project | Construction Project | customer ← project.customer | ❌ | OK |
+| Work Cost | project | Construction Project | customer ← project.customer; `funded_by` Escritório/Cliente | ❌ | OK |
 | Task | project | Construction Project | customer ← project.customer | ❌ | OK |
 | Project Item | technical_item | Technical Item | unit ← technical_item.default_unit | ❌ | OK |
 | Project Item | stage | Project Stage | — | ❌ | 🟡 Poderia filtrar por project |

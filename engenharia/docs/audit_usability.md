@@ -92,8 +92,9 @@ Legenda: ✅ OK · 🟡 Atenção · 🔴 Problema
 ### Fluxo 5: Despesas de obra
 
 1. **Work Cost** — lançamento ✅  
-2. Categoria/fornecedor via Link ✅  
-3. Manager only ✅  
+2. Campo **Quem arca** (`funded_by`): Escritório (fluxo de caixa) vs Cliente (só administração) ✅  
+3. Categoria/fornecedor via Link ✅  
+4. Manager only (write) ✅  
 
 ### Fluxo 6: Controle de contratos
 
