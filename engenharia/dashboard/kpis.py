@@ -55,13 +55,13 @@ def build_kpis(hoje, period_end, month_start, month_end, include_financial=True)
 		"Payment",
 		filters={"status": "Pendente"},
 		fields=["amount"],
-		limit_page_length=LIST_LIMIT_MAX,
+		limit=LIST_LIMIT_MAX,
 	)
 	overdue_payments = frappe.get_all(
 		"Payment",
 		filters={"status": "Vencido"},
 		fields=["amount"],
-		limit_page_length=LIST_LIMIT_MAX,
+		limit=LIST_LIMIT_MAX,
 	)
 	period_pending = frappe.get_all(
 		"Payment",
@@ -70,7 +70,7 @@ def build_kpis(hoje, period_end, month_start, month_end, include_financial=True)
 			"due_date": ["between", [hoje, period_end]],
 		},
 		fields=["amount"],
-		limit_page_length=LIST_LIMIT_MAX,
+		limit=LIST_LIMIT_MAX,
 	)
 	received_month = frappe.get_all(
 		"Payment",
@@ -79,7 +79,7 @@ def build_kpis(hoje, period_end, month_start, month_end, include_financial=True)
 			"received_date": ["between", [month_start, month_end]],
 		},
 		fields=["received_amount", "amount"],
-		limit_page_length=LIST_LIMIT_MAX,
+		limit=LIST_LIMIT_MAX,
 	)
 	received_period = frappe.get_all(
 		"Payment",
@@ -88,13 +88,13 @@ def build_kpis(hoje, period_end, month_start, month_end, include_financial=True)
 			"received_date": ["between", [hoje, period_end]],
 		},
 		fields=["received_amount", "amount"],
-		limit_page_length=LIST_LIMIT_MAX,
+		limit=LIST_LIMIT_MAX,
 	)
 	reimbursable = frappe.get_all(
 		"Reimbursable Expense",
 		filters={"status": "A reembolsar"},
 		fields=["amount"],
-		limit_page_length=LIST_LIMIT_MAX,
+		limit=LIST_LIMIT_MAX,
 	)
 	month_costs = frappe.get_all(
 		"Work Cost",
@@ -103,13 +103,13 @@ def build_kpis(hoje, period_end, month_start, month_end, include_financial=True)
 			"date": ["between", [month_start, month_end]],
 		},
 		fields=["amount"],
-		limit_page_length=LIST_LIMIT_MAX,
+		limit=LIST_LIMIT_MAX,
 	)
 	pending_work_cost_rows = frappe.get_all(
 		"Work Cost",
 		filters={"status": "Pendente"},
 		fields=["amount"],
-		limit_page_length=LIST_LIMIT_MAX,
+		limit=LIST_LIMIT_MAX,
 	)
 
 	receivable_amount = _sum_amount(pending_payments) + _sum_amount(overdue_payments)
@@ -124,7 +124,7 @@ def build_kpis(hoje, period_end, month_start, month_end, include_financial=True)
 	spec_total_rows = frappe.get_all(
 		"Project Item",
 		fields=["total_value"],
-		limit_page_length=LIST_LIMIT_MAX,
+		limit=LIST_LIMIT_MAX,
 	)
 	spec_project_total = sum(flt(r.total_value) for r in spec_total_rows)
 

@@ -13,7 +13,7 @@ def get_technical_items_for_select() -> list[dict]:
 		"Technical Item",
 		fields=["name", "item_name", "category"],
 		order_by="item_name asc",
-		limit_page_length=100,
+		limit=100,
 	)
 	result: list[dict] = []
 	for item in items:

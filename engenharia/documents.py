@@ -171,7 +171,7 @@ def get_available_templates() -> list[dict]:
 		filters={"enabled": 1},
 		fields=["name", "template_name", "document_type", "description"],
 		order_by="template_name asc",
-		limit_page_length=100,
+		limit=100,
 	)
 
 
@@ -184,7 +184,7 @@ def get_available_kits() -> list[dict]:
 		fields=["name", "kit_name", "description"],
 		filters={"enabled": 1},
 		order_by="kit_name asc",
-		limit_page_length=100,
+		limit=100,
 	)
 	if not kits:
 		return kits
@@ -195,7 +195,7 @@ def get_available_kits() -> list[dict]:
 		filters={"parent": ["in", kit_names]},
 		fields=["parent", "document_template", "sort_order"],
 		order_by="parent asc, sort_order asc, idx asc",
-		limit_page_length=500,
+		limit=500,
 	)
 	templates_by_kit = {name: [] for name in kit_names}
 	for row in item_rows:

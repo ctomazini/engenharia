@@ -1,7 +1,7 @@
 {% set settings = frappe.get_doc("Engineering Settings") %}
 {% set customer_name = frappe.db.get_value("Customer", doc.customer, "customer_name") or doc.customer %}
 {% set current_revision = doc.budget_revision or 1 %}
-{% set project_items = frappe.get_all("Project Item", filters={"project": doc.name, "budget_revision": current_revision}, fields=["name", "title", "technical_item", "instance_label", "quantity", "unit", "direct_cost", "bdi_percent", "total_value"], order_by="creation asc", limit_page_length=500) %}
+{% set project_items = frappe.get_all("Project Item", filters={"project": doc.name, "budget_revision": current_revision}, fields=["name", "title", "technical_item", "instance_label", "quantity", "unit", "direct_cost", "bdi_percent", "total_value"], order_by="creation asc", limit=500) %}
 <style>
 	.eng-print { font-family: "Helvetica Neue", Arial, sans-serif; font-size: 11pt; color: #222; line-height: 1.45; }
 	.eng-print h1 { font-size: 18pt; margin: 0 0 4px; font-weight: 600; }

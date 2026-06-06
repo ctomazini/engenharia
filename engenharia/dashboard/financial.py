@@ -26,7 +26,7 @@ def build_financial(hoje, period_end, kpis):
 			"status",
 		],
 		order_by="due_date asc",
-		limit_page_length=LIST_LIMIT_MAX,
+		limit=LIST_LIMIT_MAX,
 	)
 	project_map = _project_lookup([p.project for p in pending if p.project])
 	customer_map = _customer_name_lookup(
@@ -91,7 +91,7 @@ def get_pending_reimbursables(limit):
 		filters={"status": "A reembolsar"},
 		fields=["name", "title", "project", "customer", "amount", "payment_date", "status"],
 		order_by="payment_date asc",
-		limit_page_length=limit,
+		limit=limit,
 	)
 	project_map = _project_lookup([r.project for r in rows if r.project])
 	customer_map = _customer_name_lookup([r.customer for r in rows if r.customer])
@@ -111,7 +111,7 @@ def get_total_reimbursables_month(month_start, month_end):
 			"payment_date": ["between", [month_start, month_end]],
 		},
 		fields=["amount"],
-		limit_page_length=LIST_LIMIT_MAX,
+		limit=LIST_LIMIT_MAX,
 	)
 	return sum(flt(r.amount) for r in rows)
 

@@ -69,7 +69,7 @@ def check_overdue_installments():
 		"Payment",
 		filters={"due_date": ["<", hoje], "status": "Pendente", "manual_override": 0},
 		fields=["name", "installment_origin_id"],
-		limit_page_length=500,
+		limit=500,
 	)
 	for row in payments:
 		frappe.db.set_value("Payment", row.name, "status", "Vencido", update_modified=False)
@@ -80,7 +80,7 @@ def check_overdue_installments():
 		"Engineering Contract Installment",
 		filters={"due_date": ["<", hoje], "status": "Pendente"},
 		pluck="name",
-		limit_page_length=500,
+		limit=500,
 	)
 	for name in installments:
 		frappe.db.set_value(

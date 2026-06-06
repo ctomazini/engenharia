@@ -387,8 +387,7 @@ def bulk_delete_payments(names):
 
 @frappe.whitelist()
 def cancel_contract_payment(payment_name: str) -> dict:
-	if not frappe.has_permission("Payment", "write"):
-		frappe.throw(_("Sem permissão"), frappe.PermissionError)
+	frappe.has_permission("Payment", "write", doc=payment_name, throw=True)
 
 	payment = frappe.get_doc("Payment", payment_name)
 	if not is_contract_installment_payment(payment):

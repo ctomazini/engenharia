@@ -62,7 +62,7 @@ def execute(filters=None):
 		"Engineering Contract",
 		filters={"status": ["in", ["Vigente", "Quitado"]]},
 		fields=["project", "current_value"],
-		limit_page_length=0,
+		limit=0,
 	):
 		contract_by_project[row.project] = contract_by_project.get(row.project, 0) + flt(row.current_value)
 
@@ -71,7 +71,7 @@ def execute(filters=None):
 		"Payment",
 		filters={"status": "Recebido"},
 		fields=["project", "received_amount", "amount"],
-		limit_page_length=0,
+		limit=0,
 	):
 		if not row.project:
 			continue
@@ -84,7 +84,7 @@ def execute(filters=None):
 		"Work Cost",
 		filters={"status": ["!=", "Cancelado"]},
 		fields=["project", "amount"],
-		limit_page_length=0,
+		limit=0,
 	):
 		cost_by_project[row.project] = cost_by_project.get(row.project, 0) + flt(row.amount)
 
@@ -93,13 +93,13 @@ def execute(filters=None):
 		"Reimbursable Expense",
 		filters={"status": ["!=", "Cancelado"]},
 		fields=["project", "amount"],
-		limit_page_length=0,
+		limit=0,
 	):
 		reimbursable_by_project[row.project] = reimbursable_by_project.get(row.project, 0) + flt(row.amount)
 
 	project_titles = {
 		p.name: p.title
-		for p in frappe.get_all("Construction Project", fields=["name", "title"], limit_page_length=0)
+		for p in frappe.get_all("Construction Project", fields=["name", "title"], limit=0)
 	}
 	projects = (
 		set(contract_by_project)

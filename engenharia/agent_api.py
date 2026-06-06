@@ -4,8 +4,19 @@ import frappe
 from frappe import _
 from frappe.utils import flt, today
 
+from engenharia.dashboard._helpers import user_is_engenharia_manager
 from engenharia.titles import get_customer_name
 from engenharia.work_costs import get_work_cost_totals_by_category
+
+_FINANCIAL_SUMMARY_KEYS = (
+	"contract_value",
+	"contract_status",
+	"amount_receivable",
+	"pending_payments_count",
+	"amount_reimbursable",
+	"total_costs",
+	"margin",
+)
 
 ACTIVE_PROJECT_STATUSES = ("Orçamento", "Em andamento", "Paralisada")
 
@@ -76,7 +87,7 @@ def get_project_summary(project: str) -> dict:
 	contract_value = flt(contract[0].current_value) if contract else 0
 	total_costs = sum(flt(row.amount) for row in costs)
 
-	return {
+	data = {
 		"project": doc.name,
 		"title": doc.title or doc.name,
 		"customer": doc.customer,
@@ -94,10 +105,18 @@ def get_project_summary(project: str) -> dict:
 		"upcoming_deadlines": deadlines,
 	}
 
+	if not user_is_engenharia_manager():
+		for key in _FINANCIAL_SUMMARY_KEYS:
+			data.pop(key, None)
+
+	return data
+
 
 @frappe.whitelist()
 def get_costs_by_category(project: str) -> dict:
 	frappe.has_permission("Construction Project", "read", doc=project, throw=True)
+	if not user_is_engenharia_manager():
+		frappe.throw(_("Sem permissão"), frappe.PermissionError)
 	frappe.has_permission("Work Cost", "read", throw=True)
 
 	totals = get_work_cost_totals_by_category(project=project)

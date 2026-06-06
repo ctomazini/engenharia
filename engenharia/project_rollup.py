@@ -28,7 +28,7 @@ def recompute_construction_project_specs(project: str) -> None:
 		"Project Item",
 		filters={"project": project, "budget_revision": current_revision},
 		fields=["total_value"],
-		limit_page_length=500,
+		limit=500,
 	)
 	project_total = sum(flt(row.total_value) for row in items)
 
@@ -62,7 +62,7 @@ def build_spec_preview_html(project: str) -> str:
 		"Project Item",
 		filters={"project": project, "budget_revision": current_revision},
 		fields=["name", "title"],
-		limit_page_length=500,
+		limit=500,
 	)
 	if not items:
 		return ""
@@ -72,7 +72,7 @@ def build_spec_preview_html(project: str) -> str:
 		"Project Item Output",
 		filters={"parent": ["in", item_names], "role": ["in", list(PREVIEW_OUTPUT_ROLES)]},
 		fields=["parent", "label", "value", "unit", "role"],
-		limit_page_length=2000,
+		limit=2000,
 	)
 	item_by_name = {row.name: row for row in items}
 	preview_lines: list[str] = []

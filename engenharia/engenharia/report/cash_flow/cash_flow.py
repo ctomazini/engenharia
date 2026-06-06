@@ -23,7 +23,7 @@ def execute(filters=None):
 		filters={"status": "Recebido", "received_date": ["between", [start, end]]},
 		fields=["name", "description", "received_date", "received_amount", "amount"],
 		order_by="received_date asc",
-		limit_page_length=0,
+		limit=0,
 	):
 		transactions.append(
 			{
@@ -40,7 +40,7 @@ def execute(filters=None):
 		filters={"status": "Pago", "date": ["between", [start, end]]},
 		fields=["name", "description", "date", "amount"],
 		order_by="date asc",
-		limit_page_length=0,
+		limit=0,
 	):
 		transactions.append(
 			{
@@ -60,7 +60,7 @@ def execute(filters=None):
 		},
 		fields=["name", "description", "payment_date", "amount"],
 		order_by="payment_date asc",
-		limit_page_length=0,
+		limit=0,
 	):
 		transactions.append(
 			{

@@ -19,7 +19,7 @@ def execute():
 		return
 
 	known_types = set(DEFAULT_PERMIT_TYPES)
-	for row in frappe.get_all("Permit", fields=["name", "permit_type"], limit_page_length=0):
+	for row in frappe.get_all("Permit", fields=["name", "permit_type"], limit=0):
 		value = (row.permit_type or "").strip()
 		if not value:
 			continue

@@ -20,7 +20,8 @@ from engenharia.dashboard._helpers import (
 
 def get(
 	limit_start=0,
-	limit_page_length=20,
+	limit=None,
+	limit_page_length=None,
 	period_days=7,
 	periodo_dias=None,
 	list_limit=5,
@@ -30,7 +31,7 @@ def get(
 		frappe.throw(_("Sem permissão"), frappe.PermissionError)
 
 	limit_start = cint(limit_start)
-	limit_page_length = min(cint(limit_page_length or 20), 100)
+	effective_limit = min(cint(limit or limit_page_length or 20), 100)
 	period_days = _normalize_period_days(periodo_dias if periodo_dias is not None else period_days)
 	list_limits = _normalize_list_limits(list_limits, list_limit)
 

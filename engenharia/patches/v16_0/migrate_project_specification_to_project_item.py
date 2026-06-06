@@ -27,7 +27,7 @@ def execute():
 			"data_type",
 			"required",
 		],
-		limit_page_length=0,
+		limit=0,
 	)
 	if not rows:
 		return

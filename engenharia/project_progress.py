@@ -11,7 +11,7 @@ def calculate_physical_progress(project: str) -> float:
 		"Project Stage",
 		filters={"project": project},
 		fields=["progress", "weight"],
-		limit_page_length=500,
+		limit=500,
 	)
 	if not stages:
 		return 0

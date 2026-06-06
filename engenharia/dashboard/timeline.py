@@ -107,6 +107,6 @@ def get_hours_period(hoje, period_end):
 		"Time Log",
 		filters={"log_date": ["between", [hoje, period_end]]},
 		fields=["duration_minutes"],
-		limit_page_length=LIST_LIMIT_MAX,
+		limit=LIST_LIMIT_MAX,
 	)
 	return round(sum(flt(r.duration_minutes or 0) for r in rows) / 60, 1)
