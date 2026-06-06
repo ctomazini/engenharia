@@ -3,7 +3,7 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import add_days, today
 
-from engenharia.titles import apply_title_post_insert, recompose_title_if_empty
+from engenharia.titles import apply_title_post_insert, recompose_title
 
 
 class CommunicationLog(Document):
@@ -22,7 +22,7 @@ class CommunicationLog(Document):
 		self._create_linked_task()
 
 	def _compose_title(self):
-		recompose_title_if_empty(self)
+		recompose_title(self)
 
 	def _create_linked_task(self):
 		"""Cria Tarefa de follow-up uma única vez, se solicitado."""
