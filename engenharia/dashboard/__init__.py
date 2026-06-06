@@ -5,6 +5,7 @@ from frappe.utils import add_days, cint, get_first_day, get_last_day, today
 from engenharia.dashboard import agenda as dashboard_agenda
 from engenharia.dashboard import attention as dashboard_attention
 from engenharia.dashboard import commissions as dashboard_commissions
+from engenharia.dashboard import subcontracts as dashboard_subcontracts
 from engenharia.dashboard import deadlines as dashboard_deadlines
 from engenharia.dashboard import financial as dashboard_financial
 from engenharia.dashboard import health as dashboard_health
@@ -148,7 +149,11 @@ def get(
 	if is_manager:
 		commission_kpis = dashboard_commissions.get_commission_kpis()
 		pending_commissions = dashboard_commissions.get_pending_commissions(LIST_LIMIT_MAX)
+		subcontract_kpis = dashboard_subcontracts.get_subcontract_kpis()
+		pending_subcontracts = dashboard_subcontracts.get_pending_subcontracts(LIST_LIMIT_MAX)
 		commissions_cap = _list_cap(list_limits, "commissions")
+		subcontracts_cap = _list_cap(list_limits, "subcontracts")
+		kpis.update(subcontract_kpis)
 		payload.update(
 			{
 				"financeiro": financeiro,
@@ -158,6 +163,8 @@ def get(
 				"total_despesas_mes": total_despesas_mes,
 				"commission_kpis": commission_kpis,
 				"pending_commissions": pending_commissions[:commissions_cap],
+				"subcontract_kpis": subcontract_kpis,
+				"pending_subcontracts": pending_subcontracts[:subcontracts_cap],
 			}
 		)
 

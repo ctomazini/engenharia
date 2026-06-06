@@ -31,6 +31,13 @@ engenharia.dashboard.kpis = {
 				icon: "wallet",
 			},
 			{
+				label: __("A pagar (prestadores)"),
+				value: kpis.subcontract_outstanding || 0,
+				sub: __("subcontratos em aberto"),
+				tone: "orange",
+				icon: "hard-hat",
+			},
+			{
 				label: __("Custos do mês"),
 				value: kpis.month_costs?.amount || 0,
 				sub: `${kpis.month_costs?.count || 0} ${__("lançamentos")}`,
