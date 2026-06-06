@@ -48,7 +48,7 @@ def get(
 		hoje, period_end, month_start, month_end, include_financial=is_manager
 	)
 	financeiro = (
-		dashboard_financial.build_financial(hoje, period_end, kpis)
+		dashboard_financial.build_financial(hoje, period_end, kpis, month_start, month_end)
 		if is_manager
 		else {}
 	)
@@ -79,9 +79,7 @@ def get(
 	despesas_all = (
 		dashboard_financial.get_pending_reimbursables(LIST_LIMIT_MAX) if is_manager else []
 	)
-	agenda_full = dashboard_agenda.build_agenda(
-		hoje, period_end, deadlines_all, tasks_all, payments_all if is_manager else None
-	)
+	agenda_full = dashboard_agenda.build_agenda(hoje, period_end, deadlines_all, tasks_all)
 	agenda_days = dashboard_agenda.build_day_strip(hoje, period_days, agenda_full)
 	previsto_periodo = financeiro.get("previsto_periodo") or {"count": 0, "valor": 0}
 	agenda_summary = {
@@ -99,6 +97,9 @@ def get(
 		else 0
 	)
 
+	operational_cap = _list_cap(list_limits, "operational")
+	active_projects_all = dashboard_operational.get_active_projects_enriched(LIST_LIMIT_MAX)
+
 	list_meta = {
 		"timeline": {"showing": min(timeline_cap, len(agenda_full)), "total": len(agenda_full)},
 		"pagamentos": {"showing": min(payments_cap, len(payments_all)), "total": len(payments_all)},
@@ -110,12 +111,11 @@ def get(
 		},
 		"deadlines": {"showing": min(deadlines_cap, len(deadlines_all)), "total": len(deadlines_all)},
 		"tasks": {"showing": min(tasks_cap, len(tasks_all)), "total": len(tasks_all)},
+		"operational": {
+			"showing": min(operational_cap, len(active_projects_all)),
+			"total": len(active_projects_all),
+		},
 	}
-
-	operational_cap = _list_cap(list_limits, "operational")
-	measurements_cap = _list_cap(list_limits, "measurements")
-	measurements_all = dashboard_operational.get_recent_measurements(LIST_LIMIT_MAX)
-	active_projects_all = dashboard_operational.get_active_projects_enriched(LIST_LIMIT_MAX)
 
 	payload = {
 		"period_days": period_days,
@@ -142,7 +142,6 @@ def get(
 		"prazos": deadlines_all[:deadlines_cap],
 		"tarefas": tasks_all[:tasks_cap],
 		"is_manager": is_manager,
-		"recent_measurements": measurements_all[:measurements_cap],
 		"active_projects": active_projects_all[:operational_cap],
 	}
 
@@ -150,9 +149,7 @@ def get(
 		commission_kpis = dashboard_commissions.get_commission_kpis()
 		pending_commissions = dashboard_commissions.get_pending_commissions(LIST_LIMIT_MAX)
 		subcontract_kpis = dashboard_subcontracts.get_subcontract_kpis()
-		pending_subcontracts = dashboard_subcontracts.get_pending_subcontracts(LIST_LIMIT_MAX)
 		commissions_cap = _list_cap(list_limits, "commissions")
-		subcontracts_cap = _list_cap(list_limits, "subcontracts")
 		kpis.update(subcontract_kpis)
 		payload.update(
 			{
@@ -163,8 +160,6 @@ def get(
 				"total_despesas_mes": total_despesas_mes,
 				"commission_kpis": commission_kpis,
 				"pending_commissions": pending_commissions[:commissions_cap],
-				"subcontract_kpis": subcontract_kpis,
-				"pending_subcontracts": pending_subcontracts[:subcontracts_cap],
 			}
 		)
 

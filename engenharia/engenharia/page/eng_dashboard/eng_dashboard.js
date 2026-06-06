@@ -17,6 +17,7 @@ frappe.pages["eng-dashboard"].on_page_load = function (wrapper) {
 		comunicacoes: 5,
 		deadlines: 5,
 		tasks: 5,
+		operational: 5,
 	};
 	frappe.pages["eng-dashboard"].page = page;
 
@@ -40,13 +41,13 @@ const ENG_DASH_ASSETS = [
 	"/assets/engenharia/js/dashboard/quick_actions.js",
 	"/assets/engenharia/js/dashboard/hero.js",
 	"/assets/engenharia/js/dashboard/attention.js",
+	"/assets/engenharia/js/dashboard/next_event.js",
 	"/assets/engenharia/js/dashboard/health.js",
 	"/assets/engenharia/js/dashboard/kpis.js",
 	"/assets/engenharia/js/dashboard/financial.js",
 	"/assets/engenharia/js/dashboard/lists.js",
 	"/assets/engenharia/js/dashboard/timeline.js",
 	"/assets/engenharia/js/dashboard/commissions.js",
-	"/assets/engenharia/js/dashboard/subcontracts.js",
 	"/assets/engenharia/js/dashboard/operational.js",
 ];
 
@@ -78,6 +79,56 @@ function eng_dashboard_load(page) {
 	});
 }
 
+function eng_dashboard_bind_list_limits_once(page) {
+	if (page.eng_dash_list_limits_bound || !engenharia.dashboard?.utils?.bind_list_limits) {
+		return;
+	}
+	page.eng_dash_list_limits_bound = true;
+	engenharia.dashboard.utils.bind_list_limits(
+		page.$container,
+		page,
+		eng_dashboard_refresh_list_sections
+	);
+}
+
+function eng_dashboard_refresh_list_sections(page) {
+	const $agenda = page.$container.find(".eng-dash-agenda-host");
+	const $lists = page.$container.find(".eng-dash-lists-host");
+	const $operational = page.$container.find(".eng-dash-operational-host");
+	if (!$agenda.length && !$lists.length && !$operational.length) return;
+
+	if (!page.eng_dash_list_limits) {
+		page.eng_dash_list_limits = engenharia.dashboard?.utils?.default_list_limits?.() || {};
+	}
+
+	frappe
+		.xcall("engenharia.dashboard_api.get_dashboard_data", {
+			period_days: page.period_days,
+			list_limits: page.eng_dash_list_limits,
+		})
+		.then((data) => {
+			page.eng_dash_data = data;
+			if ($agenda.length) {
+				$agenda.empty();
+				engenharia.dashboard.timeline.render($agenda, data, page);
+			}
+			if ($lists.length) {
+				$lists.empty();
+				engenharia.dashboard.lists.render_duo($lists, data, page);
+			}
+			if ($operational.length) {
+				$operational.empty();
+				engenharia.dashboard.operational.render($operational, data, page);
+			}
+		})
+		.catch(() => {
+			frappe.show_alert({
+				message: __("Não foi possível atualizar as listas."),
+				indicator: "red",
+			});
+		});
+}
+
 frappe.provide("engenharia.dashboard");
 
 engenharia.dashboard.render_dashboard = function ($container, data, page) {
@@ -86,21 +137,24 @@ engenharia.dashboard.render_dashboard = function ($container, data, page) {
 
 	const $hero = $('<div class="eng-dash-hero-wrap eng-dash-priority-high"></div>').appendTo($content);
 	const $filters = $('<div class="eng-dash-filters-wrap"></div>').appendTo($content);
-	const $attention = $('<div class="eng-dash-zona-critica"></div>').appendTo($content);
+	const $attentionRow = $('<div class="eng-dash-attention-duo"></div>').appendTo($content);
+	const $attention = $('<div class="eng-dash-zona-critica"></div>').appendTo($attentionRow);
+	const $nextEvent = $('<div class="eng-dash-next-event-host"></div>').appendTo($attentionRow);
 	const $actions = $('<div class="eng-dash-actions-host"></div>').appendTo($content);
 	const $agenda = $('<div class="eng-dash-agenda-host"></div>').appendTo($content);
-	const $operational = $('<div class="eng-dash-zona-operacional"></div>').appendTo($content);
+	const $operational = $('<div class="eng-dash-zona-operacional eng-dash-operational-host"></div>').appendTo($content);
 	const $financeZone = $('<div class="eng-dash-zona-financeira"></div>').appendTo($content);
 	const $financeHead = $('<div class="eng-dash-finance-head"></div>').appendTo($financeZone);
 	const $health = $('<div></div>').appendTo($financeHead);
 	const $kpis = $('<div></div>').appendTo($financeHead);
 	const $fin = $('<div></div>').appendTo($financeZone);
-	const $lists = $('<div></div>').appendTo($content);
+	const $lists = $('<div class="eng-dash-lists-host"></div>').appendTo($content);
 
 	engenharia.dashboard.hero.render($hero, data);
 	engenharia.dashboard.filters.render($filters, data, page);
 	engenharia.dashboard.quick_actions.render($actions);
 	engenharia.dashboard.attention.render($attention, data);
+	engenharia.dashboard.next_event.render($nextEvent, data);
 	engenharia.dashboard.timeline.render($agenda, data, page);
 	engenharia.dashboard.operational.render($operational, data);
 
@@ -109,16 +163,14 @@ engenharia.dashboard.render_dashboard = function ($container, data, page) {
 		engenharia.dashboard.kpis.render($kpis, data);
 		engenharia.dashboard.financial.render($fin, data, page);
 		engenharia.dashboard.lists.render_duo($lists, data, page);
-		const $subcontracts = $('<div class="eng-dash-subcontracts-host"></div>').appendTo($content);
-		engenharia.dashboard.subcontracts.render($subcontracts, data);
 		const $commissions = $('<div class="eng-dash-commissions-host"></div>').appendTo($content);
 		engenharia.dashboard.commissions.render($commissions, data);
 	} else {
 		$financeZone.remove();
 	}
 
+	eng_dashboard_bind_list_limits_once(page);
 	engenharia.dashboard.filters.bind($content, page, eng_dashboard_load);
-	engenharia.dashboard.utils.bind_list_limits($content, page, eng_dashboard_load);
 	engenharia.dashboard.hero.bind($content);
 	engenharia.dashboard.quick_actions.bind($content);
 	engenharia.dashboard.attention.bind($content);

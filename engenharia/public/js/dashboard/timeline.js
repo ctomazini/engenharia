@@ -2,7 +2,7 @@ frappe.provide("engenharia.dashboard");
 
 engenharia.dashboard.timeline = {
 	render(container, data, page) {
-		const items = data.agenda || data.timeline || [];
+		const items = (data.agenda || data.timeline || []).filter((row) => row.type !== "payment");
 		const period = data.periodo_dias || data.period_days || 7;
 		const meta = (data.list_meta || {}).timeline;
 		const summary = data.agenda_summary || {};
@@ -18,13 +18,7 @@ engenharia.dashboard.timeline = {
 					? __("1 evento nos próximos {0} dias", [period])
 					: __("{0} eventos nos próximos {1} dias", [summary.total_events || 0, period]);
 
-		const periodReceivable =
-			summary.period_receivable_amount != null
-				? `${__("A receber (no período)")}: ${utils.fmt_currency(summary.period_receivable_amount, true)}`
-				: "";
-
 		const subParts = [eventLabel];
-		if (periodReceivable) subParts.push(periodReceivable);
 
 		const timelineHtml = items.length
 			? this._render_grouped_timeline(items, utils)
@@ -97,7 +91,6 @@ engenharia.dashboard.timeline = {
 					</div>
 					${row.subtitle ? `<div class="eng-dash-timeline-item__meta">${frappe.utils.escape_html(row.subtitle)}</div>` : ""}
 				</div>
-				${row.amount ? `<div class="eng-dash-timeline-item__amount">${utils.currency_html(row.amount, { alignEnd: true })}</div>` : ""}
 			</button>`;
 	},
 };

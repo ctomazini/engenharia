@@ -71,6 +71,7 @@ engenharia.dashboard.utils = {
 			comunicacoes: 5,
 			deadlines: 5,
 			tasks: 5,
+			operational: 5,
 		};
 	},
 
@@ -147,7 +148,8 @@ engenharia.dashboard.utils = {
 	},
 
 	bind_list_limits($root, page, reload_fn) {
-		$root.find(".eng-dash-linhas-btn").on("click", function () {
+		$root.off("click.engDashListLimits", ".eng-dash-linhas-btn");
+		$root.on("click.engDashListLimits", ".eng-dash-linhas-btn", function () {
 			const key = $(this).attr("data-list-key");
 			const limit = cint($(this).attr("data-list-limit"));
 			if (!page.eng_dash_list_limits) {

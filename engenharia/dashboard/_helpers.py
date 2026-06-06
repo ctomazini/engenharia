@@ -10,6 +10,7 @@ DEFAULT_LIST_LIMIT_KEYS = (
 	"comunicacoes",
 	"deadlines",
 	"tasks",
+	"operational",
 )
 
 

@@ -61,12 +61,17 @@ class TestDashboard(FrappeTestCase):
 		self.assertIn("fluxo", payload["financeiro"])
 		self.assertIn("taxa_recebimento", payload["financeiro"])
 		self.assertIsInstance(payload["financeiro"]["grafico"], list)
-		self.assertLessEqual(len(payload["financeiro"]["grafico"]), 2)
 		for row in payload["financeiro"]["grafico"]:
 			self.assertIn("valor", row)
+			self.assertIn("tone", row)
 			self.assertNotIn("<div", str(row.get("valor", "")))
-		self.assertIn("entrada", payload["financeiro"]["fluxo"])
-		self.assertIn("saida", payload["financeiro"]["fluxo"])
+		fluxo = payload["financeiro"]["fluxo"]
+		self.assertIn("entrada", fluxo)
+		self.assertIn("saida", fluxo)
+		self.assertTrue(fluxo.get("fixed_to_month"))
+		self.assertIn("month_label", fluxo)
+		self.assertIn("amount", fluxo["entrada"])
+		self.assertIn("amount", fluxo["saida"])
 
 	def test_attention_tiles_shape(self):
 		hoje = frappe.utils.today()
@@ -103,13 +108,40 @@ class TestDashboard(FrappeTestCase):
 		self.assertGreaterEqual(health["score"], 0)
 		self.assertLessEqual(health["score"], 100)
 
+	def test_cost_composition_by_category(self):
+		from engenharia.tests.test_setup import create_test_cost_category, create_test_work_cost
+
+		project = create_test_construction_project(status="Em andamento")
+		cat_a = create_test_cost_category().name
+		cat_b = create_test_cost_category().name
+		hoje = frappe.utils.today()
+		create_test_work_cost(project=project.name, amount=800, cost_category=cat_a, status="Pago")
+		create_test_work_cost(project=project.name, amount=200, cost_category=cat_b, status="Pago")
+
+		hoje = frappe.utils.today()
+		period_end = frappe.utils.add_days(hoje, 7)
+		month_start = frappe.utils.get_first_day(hoje)
+		month_end = frappe.utils.get_last_day(hoje)
+		kpis = dashboard_kpis.build_kpis(hoje, period_end, month_start, month_end)
+		fin = dashboard_financial.build_financial(hoje, period_end, kpis, month_start, month_end)
+
+		self.assertGreaterEqual(len(fin["grafico"]), 2)
+		tones = {row["tone"] for row in fin["grafico"]}
+		self.assertGreater(len(tones), 1)
+
+	def test_agenda_excludes_payments(self):
+		hoje = frappe.utils.today()
+		period_end = frappe.utils.add_days(hoje, 7)
+		agenda = dashboard_agenda.build_agenda(hoje, period_end, [], [])
+		for row in agenda:
+			self.assertNotEqual(row.get("type"), "payment")
+
 	def test_agenda_modules(self):
 		hoje = frappe.utils.today()
 		period_end = frappe.utils.add_days(hoje, 7)
 		deadlines = dashboard_deadlines.get_deadlines(hoje, period_end, 20)
 		tasks = []
-		payments = []
-		agenda = dashboard_agenda.build_agenda(hoje, period_end, deadlines, tasks, payments)
+		agenda = dashboard_agenda.build_agenda(hoje, period_end, deadlines, tasks)
 		strip = dashboard_agenda.build_day_strip(hoje, 7, agenda)
 
 		self.assertIsInstance(agenda, list)
