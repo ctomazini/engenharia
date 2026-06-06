@@ -9,6 +9,7 @@
   "payment_date",
   "amount",
   "reference",
+  "receipt",
   "remarks"
  ],
  "fields": [
@@ -30,13 +31,18 @@
    "fieldname": "reference",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Refer\u00eancia"
+   "label": "Referência"
+  },
+  {
+   "fieldname": "receipt",
+   "fieldtype": "Attach",
+   "label": "Comprovante"
   },
   {
    "fieldname": "remarks",
    "fieldtype": "Small Text",
    "in_list_view": 1,
-   "label": "Observa\u00e7\u00f5es"
+   "label": "Observações"
   }
  ],
  "index_web_pages_for_search": 1,
