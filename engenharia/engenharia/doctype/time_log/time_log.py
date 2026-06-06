@@ -3,7 +3,7 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import now_datetime, time_diff_in_seconds
 
-from engenharia.titles import apply_title_post_insert, recompose_title_if_empty
+from engenharia.titles import apply_title_post_insert, recompose_title
 
 
 class TimeLog(Document):
@@ -32,7 +32,7 @@ class TimeLog(Document):
 		apply_title_post_insert(self)
 
 	def _compose_title(self):
-		recompose_title_if_empty(self)
+		recompose_title(self)
 
 	@frappe.whitelist()
 	def start_timer(self):

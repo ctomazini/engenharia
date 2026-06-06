@@ -33,10 +33,9 @@ class TestTimeLog(FrappeTestCase):
 
 	def test_composed_title(self):
 		project = create_test_construction_project()
-		customer_name = frappe.db.get_value("Customer", project.customer, "customer_name")
 		log = create_test_time_log(project=project.name, activity="Reunião")
 		self.assertIn(log.name, log.title)
-		self.assertIn(customer_name, log.title)
+		self.assertIn("Reunião", log.title)
 
 	def test_duration_from_start_end(self):
 		log = frappe.get_doc(
