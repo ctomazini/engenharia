@@ -14,6 +14,7 @@
   "weight",
   "stage_value",
   "order",
+  "title",
   "sec_dates",
   "start_date",
   "expected_end",
@@ -43,19 +44,19 @@
    "fieldtype": "Column Break"
   },
   {
-   "default": "N\u00e3o iniciada",
+   "default": "Não iniciada",
    "fieldname": "status",
    "fieldtype": "Select",
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "N\u00e3o iniciada\nEm andamento\nConclu\u00edda"
+   "options": "Não iniciada\nEm andamento\nConcluída"
   },
   {
    "fieldname": "progress",
    "fieldtype": "Percent",
    "in_list_view": 1,
-   "label": "Avan\u00e7o"
+   "label": "Avanço"
   },
   {
    "default": "1",
@@ -75,6 +76,13 @@
    "label": "Ordem"
   },
   {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Título",
+   "read_only": 1
+  },
+  {
    "fieldname": "sec_dates",
    "fieldtype": "Section Break",
    "label": "Datas"
@@ -82,17 +90,17 @@
   {
    "fieldname": "start_date",
    "fieldtype": "Date",
-   "label": "In\u00edcio"
+   "label": "Início"
   },
   {
    "fieldname": "expected_end",
    "fieldtype": "Date",
-   "label": "Previs\u00e3o de T\u00e9rmino"
+   "label": "Previsão de Término"
   },
   {
    "fieldname": "actual_end",
    "fieldtype": "Date",
-   "label": "T\u00e9rmino Real"
+   "label": "Término Real"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -105,44 +113,48 @@
  "owner": "Administrator",
  "permissions": [
   {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
    "role": "System Manager",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
    "read": 1,
-   "report": 1,
-   "role": "Engenharia User",
-   "share": 1,
-   "write": 1
-  },
-  {
+   "write": 1,
    "create": 1,
    "delete": 1,
-   "email": 1,
    "export": 1,
    "print": 1,
-   "read": 1,
-   "report": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
    "role": "Engenharia Manager",
-   "share": 1,
-   "write": 1
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "import": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "share": 1
+  },
+  {
+   "role": "Engenharia User",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "import": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "share": 1
   }
  ],
  "row_format": "Dynamic",
  "search_fields": "project,stage_type,status",
+ "show_title_field_in_link": 1,
  "sort_field": "order",
  "sort_order": "ASC",
  "states": [],
+ "title_field": "title",
  "track_changes": 1
 }

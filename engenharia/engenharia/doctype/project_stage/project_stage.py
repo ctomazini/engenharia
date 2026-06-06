@@ -3,6 +3,8 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt
 
+from engenharia.titles import apply_title_post_insert, recompose_title
+
 
 class ProjectStage(Document):
 	def validate(self):
@@ -12,3 +14,7 @@ class ProjectStage(Document):
 			self.progress = 100
 		if self.status == "Não iniciada" and flt(self.progress) > 0:
 			self.progress = 0
+		recompose_title(self)
+
+	def after_insert(self):
+		apply_title_post_insert(self)
