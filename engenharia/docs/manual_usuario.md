@@ -48,6 +48,8 @@ O **Painel de Obras** reúne indicadores e atalhos do dia a dia.
 | **Atenção imediata** | Tiles clicáveis: prazos críticos, tarefas atrasadas, protocolos (Manager também vê parcelas vencidas e custos pendentes) |
 | **Agenda / Timeline** | Prazos, tarefas e (Manager) vencimentos financeiros no período |
 | **Zona financeira** *(somente Manager)* | Saúde operacional, KPIs (a receber, vencido, custos do mês…), gráficos e listas de parcelas/despesas |
+| **Obras ativas / Medições** | Resumo operacional de obras em andamento e últimas medições |
+| **Comissões** *(Manager, acordeão)* | KPIs e lista de comissões — expanda a seção no rodapé para ver detalhes |
 
 ### Diferença Manager vs User
 
@@ -73,9 +75,13 @@ Cadastros devem ser criados **antes** ou **conforme** a necessidade nas obras. N
 
 **Campos importantes:**
 
-- **Nome / Razão social** — identificação principal
-- **CPF ou CNPJ** — validados automaticamente (apenas dígitos)
-- **Contatos** e **Endereços** — tabelas na ficha do cliente
+| Campo | O que preencher |
+|---|---|
+| Tipo de Pessoa | Pessoa Física ou Jurídica — define documentos obrigatórios |
+| Nome / Razão social | Nome completo (PF) ou razão social (PJ) |
+| CPF / CNPJ | Apenas dígitos; validação automática |
+| Contatos | Telefones e e-mails na tabela inferior |
+| Endereços | Logradouro, CEP, cidade; marque o principal |
 
 **Dica:** Um cliente pode ter várias obras vinculadas.
 
@@ -83,7 +89,11 @@ Cadastros devem ser criados **antes** ou **conforme** a necessidade nas obras. N
 
 **O que é:** empresas ou profissionais que prestam serviço ou vendem material.
 
-**Campos:** Nome do fornecedor, CNPJ (opcional), categoria.
+| Campo | O que preencher |
+|---|---|
+| Nome do Fornecedor | Razão social ou nome — identificador único |
+| CNPJ | Opcional; validado automaticamente |
+| Categoria | Material, Serviço, Mão de obra ou Outro |
 
 ### 3.3 Tipos de Etapa
 
@@ -131,13 +141,18 @@ O sistema gera um código automático (ex.: `PROJ-2026-0042`) e um **título** c
 
 ### Campos importantes
 
-| Campo (label) | Observação |
+| Campo | O que preencher |
 |---|---|
+| Cliente | Contratante da obra (obrigatório) |
+| Tipo de Obra | Residencial, Comercial, Industrial, etc. |
 | Status | Orçamento → Em andamento → Concluída / Paralisada / Cancelada |
-| Área construída | Metragem em m² |
-| Avanço físico global | Calculado a partir das etapas |
-| Orçamento / Revisão vigente | *(Manager)* controle de revisões de orçamento |
+| Data de Início / Previsão de Entrega | Cronograma previsto da obra |
+| Cidade / UF | Entram no título automático da obra |
+| Área construída | Metragem total em m² |
+| Avanço físico global | Calculado das etapas e medições (somente leitura) |
+| Revisão vigente | *(Manager)* versão ativa do orçamento |
 | Total especificações | *(Manager)* soma automática dos itens do projeto |
+| Comissões a receber | *(Manager)* agregado das comissões abertas |
 
 **Engenharia User** não vê a seção de orçamento nem totais financeiros agregados no projeto.
 
@@ -171,6 +186,16 @@ No projeto, use a aba **Conexões** para abrir contratos, pagamentos, custos, co
 2. Selecione a **Obra** — o **Cliente** é preenchido automaticamente.
 3. Informe valores e status **Vigente**.
 
+### Campos importantes
+
+| Campo | O que preencher |
+|---|---|
+| Obra | Vincula o contrato; cliente é preenchido automaticamente |
+| Valor Base | Valor original antes de aditivos |
+| Valor Atual | Calculado com aditivos (somente leitura) |
+| Status | Vigente, Encerrado, Cancelado ou Quitado |
+| Parcelas | Datas e valores; gera pagamentos ao salvar |
+
 ### Parcelas
 
 Na tabela **Parcelas**, defina datas de vencimento e valores. Ao salvar o contrato, o sistema **gera ou atualiza** registros de **Pagamento** correspondentes.
@@ -197,15 +222,25 @@ Registre alterações contratuais na tabela de **Aditivos**. Use o botão **Apli
 
 Recebíveis de contrato e fluxos derivados. Cada parcela gera um pagamento rastreável.
 
-**Status comuns:** Pendente, Vencido, Recebido, Cancelado.
+| Campo | O que preencher |
+|---|---|
+| Obra / Cliente | Preenchidos automaticamente a partir do contrato |
+| Vencimento | Data limite da parcela |
+| Valor | Valor da parcela ou recebível |
+| Status | Pendente, Vencido, Recebido ou Cancelado |
+| Data de Recebimento | Quando o pagamento foi efetivamente recebido |
 
 No painel, o Manager pode marcar pagamento como recebido (atalho na lista).
 
 ### 6.2 Custos de Obra
 
-Lançamento de despesas da obra por **categoria**, **fornecedor** e **etapa**.
-
-Use para relatórios de margem e custo por categoria.
+| Campo | O que preencher |
+|---|---|
+| Obra | Onde o custo foi incorrido |
+| Categoria de Custo | Materiais, Mão de obra, Equipamentos, etc. |
+| Fornecedor / Etapa | Opcionais — refinam relatórios |
+| Valor | Montante em reais |
+| Descrição | Detalhe do que foi comprado ou contratado |
 
 ### 6.3 Despesas Reembolsáveis
 
@@ -214,6 +249,15 @@ Despesas pagas pelo escritório que o **cliente deve devolver**. Fluxo separado 
 Status típico: **A reembolsar** → reembolsado via pagamento vinculado.
 
 ### 6.4 Comissões
+
+| Campo | O que preencher |
+|---|---|
+| Obra | Obra que gerou a comissão |
+| Tipo | Pré-Moldado ou Outro |
+| Fornecedor | Empresa que paga a comissão |
+| Valor Total | Valor acordado |
+| Pagamentos | Cada recebimento com data, valor e comprovante |
+| Saldo a receber | Calculado automaticamente |
 
 Registro de comissões a receber (ex.: pré-moldado, parceiro).
 
@@ -245,7 +289,13 @@ Registro de comissões a receber (ex.: pré-moldado, parceiro).
 
 **O que é:** compromissos com data limite — especialmente relacionados a **órgãos públicos** (protocolos, licenças) ou obrigações contratuais.
 
-**Campos:** Obra, descrição, data de vencimento, status, órgão (quando aplicável).
+| Campo | O que preencher |
+|---|---|
+| Obra | Obra vinculada ao compromisso |
+| Descrição | O que deve ser entregue ou protocolado |
+| Data do Prazo | Data limite — gera alertas automáticos |
+| Status | Pendente, Concluído ou Vencido |
+| Órgão Público | Prefeitura, CREA, etc., quando aplicável |
 
 **Calendário:** ao salvar, um evento aparece no **Calendário** do Frappe. Se o administrador configurou **Google Calendar**, o evento pode sincronizar.
 
@@ -253,7 +303,14 @@ Registro de comissões a receber (ex.: pré-moldado, parceiro).
 
 **O que é:** ações internas da equipe (ligar cliente, revisar projeto, visita técnica).
 
-**Campos:** Assunto, obra, responsável, prioridade, data limite, status (A fazer / Fazendo / Concluída).
+| Campo | O que preencher |
+|---|---|
+| Assunto | Título curto da tarefa |
+| Obra | Vínculo opcional com a obra |
+| Prioridade | Baixa, Média ou Alta |
+| Prazo | Data limite opcional |
+| Status | A fazer, Fazendo, Feito ou Cancelada |
+| Responsável | Usuário encarregado da tarefa |
 
 **Timer:** use o registro de **Horas** ou o timer global para cronometrar atividades.
 
