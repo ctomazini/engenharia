@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:COMM-{####}",
+ "autoname": "format:CMSN-{YYYY}-{####}",
  "creation": "2026-06-05 00:00:00",
  "custom": 0,
  "doctype": "DocType",
@@ -124,12 +124,7 @@
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [
-  {
-   "link_doctype": "Construction Project",
-   "link_fieldname": "construction_project"
-  }
- ],
+ "links": [],
  "modified": "2026-06-05 00:00:00",
  "modified_by": "Administrator",
  "module": "Engenharia",
@@ -150,20 +145,10 @@
   },
   {
    "create": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Engenharia User",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
    "delete": 1,
    "email": 1,
    "export": 1,
+   "import": 1,
    "print": 1,
    "read": 1,
    "report": 1,

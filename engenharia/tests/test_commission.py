@@ -63,11 +63,9 @@ class TestCommission(FrappeTestCase):
 			)
 
 	def test_title_composition(self):
-		project = create_test_construction_project()
-		project_title = frappe.db.get_value("Construction Project", project.name, "title")
-		doc = create_test_commission(project=project.name, supplier_name="PréMold Ltda", total_value=8000)
+		doc = create_test_commission(project=create_test_construction_project().name, supplier_name="PréMold Ltda", total_value=8000)
+		self.assertIn(doc.name, doc.title)
 		self.assertIn("PréMold Ltda", doc.title)
-		self.assertIn(project_title, doc.title)
 
 	def test_sync_project_commission_outstanding(self):
 		if not frappe.get_meta("Construction Project").has_field("commission_outstanding"):
@@ -84,3 +82,14 @@ class TestCommission(FrappeTestCase):
 		sync_project_commission_outstanding(project.name)
 		total = flt(frappe.db.get_value("Construction Project", project.name, "commission_outstanding"))
 		self.assertEqual(total, 13000)
+
+	def test_open_count_linked_project(self):
+		from frappe.desk.notifications import get_open_count
+
+		project = create_test_construction_project()
+		doc = create_test_commission(project=project.name, total_value=5000)
+		result = get_open_count("Commission", doc.name, '["Construction Project"]')
+		internal = result["count"]["internal_links_found"]
+		self.assertEqual(len(internal), 1)
+		self.assertEqual(internal[0]["doctype"], "Construction Project")
+		self.assertEqual(internal[0]["names"], [project.name])

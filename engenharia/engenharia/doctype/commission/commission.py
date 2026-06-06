@@ -4,6 +4,7 @@ from frappe.model.document import Document
 from frappe.query_builder.functions import Coalesce, Sum
 from frappe.utils import flt, fmt_money
 
+from engenharia.titles import apply_title_post_insert, recompose_title
 from engenharia.validators import validar_cnpj
 
 
@@ -39,7 +40,10 @@ class Commission(Document):
 		self._validate_total_value()
 		self.compute_totals()
 		self.update_status()
-		self.compose_title()
+		recompose_title(self)
+
+	def after_insert(self):
+		apply_title_post_insert(self)
 
 	def on_update(self):
 		sync_project_commission_outstanding(self.construction_project)
@@ -78,9 +82,3 @@ class Commission(Document):
 		else:
 			self.status = "Paid"
 
-	def compose_title(self):
-		project_title = (
-			frappe.db.get_value("Construction Project", self.construction_project, "title")
-			or self.construction_project
-		)
-		self.title = f"{self.supplier_name} - {project_title}"
