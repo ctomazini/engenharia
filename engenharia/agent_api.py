@@ -6,7 +6,7 @@ from frappe.utils import flt, today
 
 from engenharia.dashboard._helpers import user_is_engenharia_manager
 from engenharia.titles import get_customer_name
-from engenharia.work_costs import get_work_cost_totals_by_category
+from engenharia.work_costs import get_combined_project_cost, get_work_cost_totals_by_category
 
 _FINANCIAL_SUMMARY_KEYS = (
 	"contract_value",
@@ -70,12 +70,7 @@ def get_project_summary(project: str) -> dict:
 		fields=["amount"],
 		limit=100,
 	)
-	costs = frappe.get_all(
-		"Work Cost",
-		filters={"project": project, "status": ["!=", "Cancelado"]},
-		fields=["amount"],
-		limit=500,
-	)
+	total_costs = get_combined_project_cost(project)
 	deadlines = frappe.get_all(
 		"Deadline",
 		filters={"project": project, "status": "Pendente", "due_date": [">=", today()]},
@@ -85,7 +80,6 @@ def get_project_summary(project: str) -> dict:
 	)
 
 	contract_value = flt(contract[0].current_value) if contract else 0
-	total_costs = sum(flt(row.amount) for row in costs)
 
 	data = {
 		"project": doc.name,

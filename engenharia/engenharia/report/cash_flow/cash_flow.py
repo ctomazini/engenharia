@@ -53,6 +53,31 @@ def execute(filters=None):
 		)
 
 	for row in frappe.get_all(
+		"Subcontract Payment",
+		filters={"payment_date": ["between", [start, end]]},
+		fields=["parent", "payment_date", "amount"],
+		order_by="payment_date asc",
+		limit=0,
+	):
+		parent = frappe.db.get_value(
+			"Subcontract",
+			row.parent,
+			["name", "title", "description", "status"],
+			as_dict=True,
+		)
+		if not parent or parent.status == "Cancelled":
+			continue
+		transactions.append(
+			{
+				"date": row.payment_date,
+				"type": _("Saída"),
+				"description": parent.title or parent.description or parent.name,
+				"inflow": 0,
+				"outflow": flt(row.amount),
+			}
+		)
+
+	for row in frappe.get_all(
 		"Reimbursable Expense",
 		filters={
 			"status": ["!=", "Cancelado"],

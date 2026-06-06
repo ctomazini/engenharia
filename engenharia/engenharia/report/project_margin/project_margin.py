@@ -2,6 +2,8 @@ import frappe
 from frappe import _
 from frappe.utils import flt
 
+from engenharia.work_costs import get_subcontract_paid_totals_by_project
+
 
 def execute(filters=None):
 	columns = [
@@ -82,11 +84,16 @@ def execute(filters=None):
 	cost_by_project = {}
 	for row in frappe.get_all(
 		"Work Cost",
-		filters={"status": ["!=", "Cancelado"]},
+		filters={"status": "Pago"},
 		fields=["project", "amount"],
 		limit=0,
 	):
+		if not row.project:
+			continue
 		cost_by_project[row.project] = cost_by_project.get(row.project, 0) + flt(row.amount)
+
+	for project, paid in get_subcontract_paid_totals_by_project().items():
+		cost_by_project[project] = cost_by_project.get(project, 0) + flt(paid)
 
 	reimbursable_by_project = {}
 	for row in frappe.get_all(
