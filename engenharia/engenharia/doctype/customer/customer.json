@@ -41,7 +41,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Tipo de Pessoa",
-   "options": "Pessoa F\u00edsica\nPessoa Jur\u00eddica",
+   "options": "Pessoa Física\nPessoa Jurídica",
    "reqd": 1
   },
   {
@@ -50,11 +50,11 @@
    "fieldname": "customer_name",
    "fieldtype": "Data",
    "in_global_search": 1,
-   "label": "Nome / Raz\u00e3o Social",
+   "label": "Nome / Razão Social",
    "reqd": 1
   },
   {
-   "depends_on": "eval:doc.person_type=='Pessoa Jur\u00eddica'",
+   "depends_on": "eval:doc.person_type=='Pessoa Jurídica'",
    "fieldname": "trade_name",
    "fieldtype": "Data",
    "label": "Nome Fantasia"
@@ -65,30 +65,30 @@
   },
   {
    "allow_in_quick_entry": 1,
-   "depends_on": "eval:doc.person_type=='Pessoa F\u00edsica'",
+   "depends_on": "eval:doc.person_type=='Pessoa Física'",
    "fieldname": "cpf",
    "fieldtype": "Data",
    "label": "CPF",
-   "mandatory_depends_on": "eval:doc.person_type=='Pessoa F\u00edsica'",
+   "mandatory_depends_on": "eval:doc.person_type=='Pessoa Física'",
    "unique": 1
   },
   {
-   "depends_on": "eval:doc.person_type=='Pessoa F\u00edsica'",
+   "depends_on": "eval:doc.person_type=='Pessoa Física'",
    "fieldname": "rg",
    "fieldtype": "Data",
    "label": "RG"
   },
   {
    "allow_in_quick_entry": 1,
-   "depends_on": "eval:doc.person_type=='Pessoa Jur\u00eddica'",
+   "depends_on": "eval:doc.person_type=='Pessoa Jurídica'",
    "fieldname": "cnpj",
    "fieldtype": "Data",
    "label": "CNPJ",
-   "mandatory_depends_on": "eval:doc.person_type=='Pessoa Jur\u00eddica'",
+   "mandatory_depends_on": "eval:doc.person_type=='Pessoa Jurídica'",
    "unique": 1
   },
   {
-   "depends_on": "eval:doc.person_type=='Pessoa F\u00edsica'",
+   "depends_on": "eval:doc.person_type=='Pessoa Física'",
    "fieldname": "sec_pf",
    "fieldtype": "Section Break",
    "label": "Dados Pessoais"
@@ -103,15 +103,15 @@
    "fieldname": "marital_status",
    "fieldtype": "Select",
    "label": "Estado Civil",
-   "options": "\nSolteiro(a)\nCasado(a)\nDivorciado(a)\nVi\u00favo(a)\nUni\u00e3o Est\u00e1vel"
+   "options": "\nSolteiro(a)\nCasado(a)\nDivorciado(a)\nViúvo(a)\nUnião Estável"
   },
   {
    "fieldname": "profession",
    "fieldtype": "Data",
-   "label": "Profiss\u00e3o"
+   "label": "Profissão"
   },
   {
-   "depends_on": "eval:doc.person_type=='Pessoa Jur\u00eddica'",
+   "depends_on": "eval:doc.person_type=='Pessoa Jurídica'",
    "fieldname": "sec_pj",
    "fieldtype": "Section Break",
    "label": "Dados da Empresa"
@@ -156,24 +156,24 @@
   {
    "fieldname": "sec_addresses",
    "fieldtype": "Section Break",
-   "label": "Endere\u00e7os"
+   "label": "Endereços"
   },
   {
    "fieldname": "addresses",
    "fieldtype": "Table",
-   "label": "Endere\u00e7os",
+   "label": "Endereços",
    "options": "Customer Address"
   },
   {
    "collapsible": 1,
    "fieldname": "sec_obs",
    "fieldtype": "Section Break",
-   "label": "Observa\u00e7\u00f5es"
+   "label": "Observações"
   },
   {
    "fieldname": "observations",
    "fieldtype": "Text Editor",
-   "label": "Observa\u00e7\u00f5es"
+   "label": "Observações"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -193,42 +193,44 @@
  "modified_by": "Administrator",
  "module": "Engenharia",
  "name": "Customer",
- "naming_rule": "Expression",
+ "naming_rule": "Expression (old style)",
  "owner": "Administrator",
  "permissions": [
   {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
    "role": "System Manager",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
    "read": 1,
-   "report": 1,
-   "role": "Engenharia User",
-   "share": 1,
-   "write": 1
-  },
-  {
+   "write": 1,
    "create": 1,
    "delete": 1,
-   "email": 1,
    "export": 1,
    "print": 1,
-   "read": 1,
-   "report": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
    "role": "Engenharia Manager",
-   "share": 1,
-   "write": 1
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "import": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "share": 1
+  },
+  {
+   "role": "Engenharia User",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "import": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "share": 1
   }
  ],
  "quick_entry": 1,
