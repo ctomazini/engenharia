@@ -10,6 +10,8 @@ frappe.ui.form.on("Construction Project", {
 
 		if (!frm.is_new()) {
 			eng_refresh_spec_rollup(frm);
+			eng_refresh_spec_items_summary(frm);
+			eng_refresh_commission_summary(frm);
 			eng_add_hub_create_buttons(frm);
 			frm.add_custom_button(
 				__("Nova revisão de orçamento"),
@@ -19,6 +21,23 @@ frappe.ui.form.on("Construction Project", {
 			frm.add_custom_button(__("Gerar Documentos"), () => eng_open_generate_documents_dialog(frm), __(
 				"Documentos"
 			));
+
+			if (frm.fields_dict.spec_items_summary_panel) {
+				frm.fields_dict.spec_items_summary_panel.$wrapper
+					.off("click", ".eng-spec-refresh")
+					.on("click", ".eng-spec-refresh", () => {
+						eng_refresh_spec_items_summary(frm);
+						eng_refresh_spec_rollup(frm);
+					});
+				frm.fields_dict.spec_items_summary_panel.$wrapper
+					.off("click", ".eng-spec-row")
+					.on("click", ".eng-spec-row", function () {
+						const name = $(this).attr("data-name");
+						if (name) {
+							frappe.set_route("Form", "Project Item", name);
+						}
+					});
+			}
 		}
 	},
 });
@@ -94,6 +113,124 @@ function eng_refresh_spec_rollup(frm) {
 			if (data.project_total != null) {
 				frm.set_value("spec_project_total", data.project_total);
 			}
+		},
+	});
+}
+
+function eng_refresh_spec_items_summary(frm) {
+	if (!frm.fields_dict.spec_items_summary_panel) {
+		return;
+	}
+
+	frappe.call({
+		method: "engenharia.project_rollup.get_project_items_summary",
+		args: { project: frm.doc.name },
+		callback(r) {
+			const data = r.message || {};
+			const items = data.items || [];
+			const $panel = frm.fields_dict.spec_items_summary_panel.$wrapper;
+			$panel.html(eng_render_spec_items_table(frm, items, data.project_total));
+		},
+	});
+}
+
+function eng_render_spec_items_table(frm, items, projectTotal) {
+	const fmt = (value) => format_currency(value || 0, frappe.defaults.get_default("currency") || "BRL");
+
+	let html = `
+		<div class="eng-spec-summary">
+			<div class="d-flex justify-content-between align-items-center mb-2">
+				<strong>${__("Especificações da Obra")}</strong>
+				<button type="button" class="btn btn-xs btn-default eng-spec-refresh">${__("Atualizar")}</button>
+			</div>`;
+
+	if (!items.length) {
+		html += `<p class="text-muted">${__("Nenhum item técnico vinculado a esta obra.")}</p></div>`;
+		return html;
+	}
+
+	html += `
+		<div class="table-responsive">
+			<table class="table table-bordered table-sm eng-spec-summary-table">
+				<thead>
+					<tr>
+						<th>${__("Item")}</th>
+						<th>${__("Qtd")}</th>
+						<th>${__("Unid")}</th>
+						<th>${__("Parâmetros")}</th>
+						<th class="text-right">${__("Valor Unit.")}</th>
+						<th class="text-right">${__("Total")}</th>
+					</tr>
+				</thead>
+				<tbody>`;
+
+	items.forEach((item) => {
+		const label = frappe.utils.escape_html(item.instance_label || item.technical_item || item.title);
+		const params = frappe.utils.escape_html(
+			[item.params_summary, item.outputs_summary].filter(Boolean).join(" · ")
+		);
+		html += `
+			<tr class="eng-spec-row" data-name="${frappe.utils.escape_html(item.name)}">
+				<td>${label}</td>
+				<td>${frappe.utils.escape_html(String(item.quantity || 1))}</td>
+				<td>${frappe.utils.escape_html(item.unit || "")}</td>
+				<td class="text-muted small">${params || "—"}</td>
+				<td class="text-right">${item.unit_price ? fmt(item.unit_price) : "—"}</td>
+				<td class="text-right">${fmt(item.total_value)}</td>
+			</tr>`;
+	});
+
+	html += `
+				</tbody>
+				<tfoot>
+					<tr>
+						<th colspan="5" class="text-right">${__("TOTAL OBRA")}</th>
+						<th class="text-right">${fmt(projectTotal)}</th>
+					</tr>
+				</tfoot>
+			</table>
+		</div>
+	</div>`;
+
+	return html;
+}
+
+function eng_refresh_commission_summary(frm) {
+	if (!frm.fields_dict.commission_summary_panel) {
+		return;
+	}
+
+	frappe.call({
+		method: "engenharia.project_rollup.get_project_commission_summary",
+		args: { project: frm.doc.name },
+		callback(r) {
+			const data = r.message || {};
+			const $panel = frm.fields_dict.commission_summary_panel.$wrapper;
+			if (!data.count) {
+				$panel.html(`<p class="text-muted">${__("Nenhuma comissão vinculada a esta obra.")}</p>`);
+				return;
+			}
+			const fmt = (value) =>
+				format_currency(value || 0, frappe.defaults.get_default("currency") || "BRL");
+			const activeLabel =
+				data.active_count === 1
+					? __("1 comissão ativa")
+					: __("{0} comissões ativas", [data.active_count]);
+			$panel.html(`
+				<div class="eng-commission-summary">
+					<a href="#" class="eng-commission-link">
+						${__(
+							"Comissões: {0} recebido de {1} ({2})",
+							[fmt(data.total_paid), fmt(data.total_value), activeLabel]
+						)}
+					</a>
+				</div>`);
+			$panel.find(".eng-commission-link").on("click", (e) => {
+				e.preventDefault();
+				frappe.set_route("List", "Commission", {
+					construction_project: frm.doc.name,
+				});
+			});
 		},
 	});
 }

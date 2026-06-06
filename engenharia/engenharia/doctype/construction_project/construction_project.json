@@ -28,6 +28,7 @@
   "construction_area",
   "current_contract_value",
   "commission_outstanding",
+  "commission_summary_panel",
   "physical_progress",
   "sec_technical",
   "responsible_engineer",
@@ -43,6 +44,7 @@
   "sec_specs",
   "specs_help",
   "spec_preview_panel",
+  "spec_items_summary_panel",
   "spec_project_total",
   "sec_obs",
   "observations"
@@ -61,7 +63,7 @@
    "fieldname": "title",
    "fieldtype": "Data",
    "in_global_search": 1,
-   "label": "T\u00edtulo",
+   "label": "Título",
    "read_only": 1
   },
   {
@@ -76,13 +78,13 @@
    "options": "Residencial\nComercial\nIndustrial\nInfraestrutura\nReforma\nOutro"
   },
   {
-   "default": "Or\u00e7amento",
+   "default": "Orçamento",
    "fieldname": "status",
    "fieldtype": "Select",
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "Or\u00e7amento\nEm andamento\nParalisada\nConclu\u00edda\nCancelada"
+   "options": "Orçamento\nEm andamento\nParalisada\nConcluída\nCancelada"
   },
   {
    "fieldname": "sec_dates",
@@ -92,17 +94,17 @@
   {
    "fieldname": "start_date",
    "fieldtype": "Date",
-   "label": "Data de In\u00edcio"
+   "label": "Data de Início"
   },
   {
    "fieldname": "expected_delivery",
    "fieldtype": "Date",
-   "label": "Previs\u00e3o de Entrega"
+   "label": "Previsão de Entrega"
   },
   {
    "fieldname": "sec_address",
    "fieldtype": "Section Break",
-   "label": "Endere\u00e7o da Obra"
+   "label": "Endereço da Obra"
   },
   {
    "fieldname": "address_cep",
@@ -117,7 +119,7 @@
   {
    "fieldname": "address_number",
    "fieldtype": "Data",
-   "label": "N\u00famero"
+   "label": "Número"
   },
   {
    "fieldname": "col_break_2",
@@ -148,7 +150,7 @@
   {
    "fieldname": "construction_area",
    "fieldtype": "Float",
-   "label": "\u00c1rea Constru\u00edda (m\u00b2)"
+   "label": "Área Construída (m²)"
   },
   {
    "fieldname": "current_contract_value",
@@ -160,30 +162,37 @@
   {
    "fieldname": "commission_outstanding",
    "fieldtype": "Currency",
-   "label": "Comiss\u00f5es a Receber",
+   "label": "Comissões a Receber",
    "permlevel": 1,
    "read_only": 1
   },
   {
+   "fieldname": "commission_summary_panel",
+   "fieldtype": "HTML",
+   "label": "Resumo de comissões",
+   "options": "<p class=\"text-muted\">Carregando comissões...</p>",
+   "permlevel": 1
+  },
+  {
    "fieldname": "physical_progress",
    "fieldtype": "Percent",
-   "label": "Avan\u00e7o F\u00edsico Global",
+   "label": "Avanço Físico Global",
    "read_only": 1
   },
   {
    "fieldname": "sec_technical",
    "fieldtype": "Section Break",
-   "label": "Responsabilidade T\u00e9cnica"
+   "label": "Responsabilidade Técnica"
   },
   {
    "fieldname": "responsible_engineer",
    "fieldtype": "Data",
-   "label": "Respons\u00e1vel T\u00e9cnico"
+   "label": "Responsável Técnico"
   },
   {
    "fieldname": "crea_number",
    "fieldtype": "Data",
-   "label": "CREA do Respons\u00e1vel"
+   "label": "CREA do Responsável"
   },
   {
    "fieldname": "col_break_technical",
@@ -192,12 +201,12 @@
   {
    "fieldname": "art_number",
    "fieldtype": "Data",
-   "label": "N\u00ba ART Principal"
+   "label": "Nº ART Principal"
   },
   {
    "fieldname": "property_registration",
    "fieldtype": "Data",
-   "label": "Matr\u00edcula do Im\u00f3vel"
+   "label": "Matrícula do Imóvel"
   },
   {
    "fieldname": "gps_coordinates",
@@ -207,14 +216,14 @@
   {
    "fieldname": "sec_budget",
    "fieldtype": "Section Break",
-   "label": "Or\u00e7amento",
+   "label": "Orçamento",
    "permlevel": 1
   },
   {
    "default": "1",
    "fieldname": "budget_revision",
    "fieldtype": "Int",
-   "label": "Revis\u00e3o vigente",
+   "label": "Revisão vigente",
    "permlevel": 1,
    "read_only": 1
   },
@@ -222,38 +231,45 @@
    "default": "0",
    "fieldname": "default_bdi_percent",
    "fieldtype": "Percent",
-   "label": "BDI padr\u00e3o %",
+   "label": "BDI padrão %",
    "permlevel": 1
   },
   {
    "fieldname": "budget_revisions",
    "fieldtype": "Table",
-   "label": "Revis\u00f5es de or\u00e7amento",
+   "label": "Revisões de orçamento",
    "options": "Project Budget Revision",
    "permlevel": 1
   },
   {
    "fieldname": "sec_specs",
    "fieldtype": "Section Break",
-   "label": "Especifica\u00e7\u00f5es T\u00e9cnicas"
+   "label": "Especificações Técnicas"
   },
   {
    "fieldname": "specs_help",
    "fieldtype": "HTML",
-   "label": "Itens t\u00e9cnicos",
-   "options": "<p class=\"text-muted\">Use <b>Adicionar especifica\u00e7\u00e3o</b>, os bot\u00f5es <b>Criar</b> ou a aba <b>Conex\u00f5es</b> para ver e incluir registros ligados \u00e0 obra.</p>"
+   "label": "Itens técnicos",
+   "options": "<p class=\"text-muted\">Use <b>Adicionar especificação</b>, os botões <b>Criar</b> ou a aba <b>Conexões</b> para ver e incluir registros ligados à obra.</p>"
   },
   {
    "fieldname": "spec_preview_panel",
    "fieldtype": "HTML",
-   "label": "Pr\u00e9via das especifica\u00e7\u00f5es",
-   "options": "<p class=\"text-muted\">Carregando pr\u00e9via...</p>",
+   "label": "Prévia das especificações",
+   "options": "<p class=\"text-muted\">Carregando prévia...</p>",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "spec_items_summary_panel",
+   "fieldtype": "HTML",
+   "label": "Especificações da Obra",
+   "options": "<p class=\"text-muted\">Carregando especificações...</p>",
    "permlevel": 1
   },
   {
    "fieldname": "spec_project_total",
    "fieldtype": "Currency",
-   "label": "Total especifica\u00e7\u00f5es (obra)",
+   "label": "Total especificações (obra)",
    "permlevel": 1,
    "read_only": 1
   },
@@ -261,12 +277,12 @@
    "collapsible": 1,
    "fieldname": "sec_obs",
    "fieldtype": "Section Break",
-   "label": "Observa\u00e7\u00f5es"
+   "label": "Observações"
   },
   {
    "fieldname": "observations",
    "fieldtype": "Text Editor",
-   "label": "Observa\u00e7\u00f5es"
+   "label": "Observações"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -391,5 +407,6 @@
  "sort_order": "DESC",
  "states": [],
  "title_field": "title",
- "track_changes": 1
+ "track_changes": 1,
+ "custom": 0
 }
