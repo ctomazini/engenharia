@@ -175,7 +175,17 @@
   }
  ],
  "index_web_pages_for_search": 1,
- "links": [],
+ "links": [
+  {
+   "link_doctype": "Construction Project",
+   "link_fieldname": "project"
+  },
+  {
+   "group": "Pagamentos",
+   "link_doctype": "Payment",
+   "link_fieldname": "contract"
+  }
+ ],
  "modified": "2026-06-02 17:59:11.338530",
  "modified_by": "Administrator",
  "module": "Engenharia",
@@ -215,5 +225,6 @@
  "sort_order": "DESC",
  "states": [],
  "title_field": "title",
- "track_changes": 1
+ "track_changes": 1,
+ "custom": 0
 }

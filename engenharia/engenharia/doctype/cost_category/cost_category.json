@@ -70,5 +70,6 @@
  "sort_order": "ASC",
  "states": [],
  "title_field": "category_name",
- "track_changes": 1
+ "track_changes": 1,
+ "custom": 0
 }
