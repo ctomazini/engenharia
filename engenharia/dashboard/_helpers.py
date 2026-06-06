@@ -69,3 +69,8 @@ def _normalize_list_limits(list_limits=None, list_limit=None):
 def _list_cap(list_limits, key):
 	val = list_limits.get(key, 5)
 	return LIST_LIMIT_MAX if not val else min(val, LIST_LIMIT_MAX)
+
+
+def user_is_engenharia_manager():
+	roles = set(frappe.get_roles())
+	return bool(roles & {"Engenharia Manager", "System Manager", "Administrator"})

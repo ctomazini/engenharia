@@ -8,7 +8,49 @@ def _sum_amount(rows, field="amount"):
 	return sum(flt(getattr(r, field, 0)) for r in rows)
 
 
-def build_kpis(hoje, period_end, month_start, month_end):
+def build_kpis(hoje, period_end, month_start, month_end, include_financial=True):
+	active_projects = frappe.db.count(
+		"Construction Project", {"status": ["in", ["Orçamento", "Em andamento"]]}
+	)
+	urgent_deadlines = frappe.db.count(
+		"Deadline",
+		{
+			"status": "Pendente",
+			"due_date": ["between", [hoje, add_days(hoje, 3)]],
+		},
+	)
+	overdue_deadlines = frappe.db.count("Deadline", {"status": "Pendente", "due_date": ["<", hoje]})
+	open_tasks = frappe.db.count("Task", {"status": ["in", ["A fazer", "Fazendo"]]})
+	late_tasks = frappe.db.count(
+		"Task",
+		{
+			"status": ["in", ["A fazer", "Fazendo"]],
+			"due_date": ["<", hoje],
+		},
+	)
+	permits_today = frappe.db.count(
+		"Permit",
+		{"protocol_date": hoje, "status": ["not in", ["Cancelado"]]},
+	)
+	permits_tomorrow = frappe.db.count(
+		"Permit",
+		{"protocol_date": add_days(hoje, 1), "status": ["not in", ["Cancelado"]]},
+	)
+
+	result = {
+		"active_projects": active_projects,
+		"urgent_deadlines": urgent_deadlines,
+		"overdue_deadlines": overdue_deadlines,
+		"open_tasks": open_tasks,
+		"late_tasks": late_tasks,
+		"permits_today": permits_today,
+		"permits_tomorrow": permits_tomorrow,
+		"total_customers": frappe.db.count("Customer"),
+	}
+
+	if not include_financial:
+		return result
+
 	pending_payments = frappe.get_all(
 		"Payment",
 		filters={"status": "Pendente"},
@@ -63,35 +105,6 @@ def build_kpis(hoje, period_end, month_start, month_end):
 		fields=["amount"],
 		limit_page_length=LIST_LIMIT_MAX,
 	)
-
-	active_projects = frappe.db.count(
-		"Construction Project", {"status": ["in", ["Orçamento", "Em andamento"]]}
-	)
-	active_contracts = frappe.db.count("Engineering Contract", {"status": "Vigente"})
-	urgent_deadlines = frappe.db.count(
-		"Deadline",
-		{
-			"status": "Pendente",
-			"due_date": ["between", [hoje, add_days(hoje, 3)]],
-		},
-	)
-	overdue_deadlines = frappe.db.count("Deadline", {"status": "Pendente", "due_date": ["<", hoje]})
-	open_tasks = frappe.db.count("Task", {"status": ["in", ["A fazer", "Fazendo"]]})
-	late_tasks = frappe.db.count(
-		"Task",
-		{
-			"status": ["in", ["A fazer", "Fazendo"]],
-			"due_date": ["<", hoje],
-		},
-	)
-	permits_today = frappe.db.count(
-		"Permit",
-		{"protocol_date": hoje, "status": ["not in", ["Cancelado"]]},
-	)
-	permits_tomorrow = frappe.db.count(
-		"Permit",
-		{"protocol_date": add_days(hoje, 1), "status": ["not in", ["Cancelado"]]},
-	)
 	pending_work_cost_rows = frappe.get_all(
 		"Work Cost",
 		filters={"status": "Pendente"},
@@ -107,6 +120,7 @@ def build_kpis(hoje, period_end, month_start, month_end):
 	base_taxa = overdue_amount + received_month_amount + period_pending_amount
 	taxa_recebimento = round((received_month_amount / base_taxa) * 100, 1) if base_taxa else 100
 
+	active_contracts = frappe.db.count("Engineering Contract", {"status": "Vigente"})
 	spec_total_rows = frappe.get_all(
 		"Project Item",
 		fields=["total_value"],
@@ -114,60 +128,56 @@ def build_kpis(hoje, period_end, month_start, month_end):
 	)
 	spec_project_total = sum(flt(r.total_value) for r in spec_total_rows)
 
-	return {
-		"active_projects": active_projects,
-		"active_contracts": active_contracts,
-		"amount_receivable": {
-			"count": len(pending_payments) + len(overdue_payments),
-			"amount": receivable_amount,
-		},
-		"amount_overdue": {
-			"count": len(overdue_payments),
-			"amount": overdue_amount,
-		},
-		"amount_reimbursable": {
-			"count": len(reimbursable),
-			"amount": _sum_amount(reimbursable),
-		},
-		"month_costs": {
-			"count": len(month_costs),
-			"amount": _sum_amount(month_costs),
-		},
-		"received_month": {
-			"count": len(received_month),
-			"amount": received_month_amount,
-		},
-		"received_period": {
-			"count": len(received_period),
-			"amount": received_period_amount,
-		},
-		"parcelas_vencidas": {
-			"count": len(overdue_payments),
-			"valor": overdue_amount,
-		},
-		"previsto_periodo": {
-			"count": len(period_pending),
-			"valor": period_pending_amount,
-		},
-		"taxa_recebimento": taxa_recebimento,
-		"urgent_deadlines": urgent_deadlines,
-		"overdue_deadlines": overdue_deadlines,
-		"open_tasks": open_tasks,
-		"late_tasks": late_tasks,
-		"permits_today": permits_today,
-		"permits_tomorrow": permits_tomorrow,
-		"pending_work_costs": {
-			"count": len(pending_work_cost_rows),
-			"amount": _sum_amount(pending_work_cost_rows),
-		},
-		"total_customers": frappe.db.count("Customer"),
-		"spec_project_total": spec_project_total,
-	}
+	result.update(
+		{
+			"active_contracts": active_contracts,
+			"amount_receivable": {
+				"count": len(pending_payments) + len(overdue_payments),
+				"amount": receivable_amount,
+			},
+			"amount_overdue": {
+				"count": len(overdue_payments),
+				"amount": overdue_amount,
+			},
+			"amount_reimbursable": {
+				"count": len(reimbursable),
+				"amount": _sum_amount(reimbursable),
+			},
+			"month_costs": {
+				"count": len(month_costs),
+				"amount": _sum_amount(month_costs),
+			},
+			"received_month": {
+				"count": len(received_month),
+				"amount": received_month_amount,
+			},
+			"received_period": {
+				"count": len(received_period),
+				"amount": received_period_amount,
+			},
+			"parcelas_vencidas": {
+				"count": len(overdue_payments),
+				"valor": overdue_amount,
+			},
+			"previsto_periodo": {
+				"count": len(period_pending),
+				"valor": period_pending_amount,
+			},
+			"taxa_recebimento": taxa_recebimento,
+			"pending_work_costs": {
+				"count": len(pending_work_cost_rows),
+				"amount": _sum_amount(pending_work_cost_rows),
+			},
+			"spec_project_total": spec_project_total,
+		}
+	)
+	return result
 
 
 def build_summary(hoje, kpis, period_days):
+	overdue_count = (kpis.get("amount_overdue") or {}).get("count") or 0
 	return {
 		"date_label": frappe.utils.formatdate(hoje, "EEEE, d 'de' MMMM"),
 		"period_days": period_days,
-		"urgency": "high" if kpis["amount_overdue"]["count"] or kpis["urgent_deadlines"] else "normal",
+		"urgency": "high" if overdue_count or kpis.get("urgent_deadlines") else "normal",
 	}

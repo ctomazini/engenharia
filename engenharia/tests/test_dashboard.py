@@ -54,6 +54,7 @@ class TestDashboard(FrappeTestCase):
 		payload = get_dashboard_data()
 		for key in CONTRACT_KEYS:
 			self.assertIn(key, payload, msg=f"missing key {key}")
+		self.assertTrue(payload.get("is_manager"))
 
 		self.assertEqual(payload["period_days"], payload["periodo_dias"])
 		self.assertIn("grafico", payload["financeiro"])

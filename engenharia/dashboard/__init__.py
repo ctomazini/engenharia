@@ -14,6 +14,7 @@ from engenharia.dashboard._helpers import (
 	_list_cap,
 	_normalize_list_limits,
 	_normalize_period_days,
+	user_is_engenharia_manager,
 )
 
 
@@ -37,14 +38,27 @@ def get(
 	period_end = add_days(hoje, period_days)
 	month_start = get_first_day(hoje)
 	month_end = get_last_day(hoje)
+	is_manager = user_is_engenharia_manager()
 
-	kpis = dashboard_kpis.build_kpis(hoje, period_end, month_start, month_end)
-	financeiro = dashboard_financial.build_financial(hoje, period_end, kpis)
+	kpis = dashboard_kpis.build_kpis(
+		hoje, period_end, month_start, month_end, include_financial=is_manager
+	)
+	financeiro = (
+		dashboard_financial.build_financial(hoje, period_end, kpis)
+		if is_manager
+		else {}
+	)
 	resumo = dashboard_kpis.build_summary(hoje, kpis, period_days)
 	alertas = dashboard_deadlines.build_alerts(hoje, period_end)
-	centro_atencao = dashboard_deadlines.build_centro_atencao(hoje, period_end, kpis, financeiro)
-	atencao = dashboard_attention.build_attention_tiles(hoje, period_end, period_days, kpis, financeiro)
-	saude_operacional = dashboard_health.build_operational_health(kpis, centro_atencao, financeiro)
+	centro_atencao = dashboard_deadlines.build_centro_atencao(
+		hoje, period_end, kpis, financeiro, include_financial=is_manager
+	)
+	atencao = dashboard_attention.build_attention_tiles(
+		hoje, period_end, period_days, kpis, financeiro, include_financial=is_manager
+	)
+	saude_operacional = dashboard_health.build_operational_health(
+		kpis, centro_atencao, financeiro, include_financial=is_manager
+	)
 
 	deadlines_cap = _list_cap(list_limits, "deadlines")
 	tasks_cap = _list_cap(list_limits, "tasks")
@@ -56,22 +70,30 @@ def get(
 
 	deadlines_all = dashboard_deadlines.get_deadlines(hoje, period_end, LIST_LIMIT_MAX)
 	tasks_all = dashboard_timeline.get_tasks(hoje, LIST_LIMIT_MAX)
-	payments_all = financeiro.get("pending_payments") or []
+	payments_all = financeiro.get("pending_payments") or [] if is_manager else []
 	parcelas_all = payments_all
-	despesas_all = dashboard_financial.get_pending_reimbursables(LIST_LIMIT_MAX)
-	agenda_full = dashboard_agenda.build_agenda(hoje, period_end, deadlines_all, tasks_all, payments_all)
+	despesas_all = (
+		dashboard_financial.get_pending_reimbursables(LIST_LIMIT_MAX) if is_manager else []
+	)
+	agenda_full = dashboard_agenda.build_agenda(
+		hoje, period_end, deadlines_all, tasks_all, payments_all if is_manager else None
+	)
 	agenda_days = dashboard_agenda.build_day_strip(hoje, period_days, agenda_full)
 	previsto_periodo = financeiro.get("previsto_periodo") or {"count": 0, "valor": 0}
 	agenda_summary = {
 		"total_events": len(agenda_full),
-		"period_receivable_count": previsto_periodo.get("count") or 0,
-		"period_receivable_amount": previsto_periodo.get("valor") or 0,
+		"period_receivable_count": previsto_periodo.get("count") or 0 if is_manager else 0,
+		"period_receivable_amount": previsto_periodo.get("valor") or 0 if is_manager else 0,
 	}
 	comunicacoes_all = dashboard_timeline.get_recent_communications(LIST_LIMIT_MAX)
 
 	horas_semana = dashboard_timeline.get_hours_summary(hoje)
 	horas_periodo = dashboard_timeline.get_hours_period(hoje, period_end)
-	total_despesas_mes = dashboard_financial.get_total_reimbursables_month(month_start, month_end)
+	total_despesas_mes = (
+		dashboard_financial.get_total_reimbursables_month(month_start, month_end)
+		if is_manager
+		else 0
+	)
 
 	list_meta = {
 		"timeline": {"showing": min(timeline_cap, len(agenda_full)), "total": len(agenda_full)},
@@ -86,7 +108,7 @@ def get(
 		"tasks": {"showing": min(tasks_cap, len(tasks_all)), "total": len(tasks_all)},
 	}
 
-	return {
+	payload = {
 		"period_days": period_days,
 		"periodo_dias": period_days,
 		"list_limit": list_limits.get("timeline", 5),
@@ -94,7 +116,6 @@ def get(
 		"list_meta": list_meta,
 		"kpis": kpis,
 		"resumo": resumo,
-		"financeiro": financeiro,
 		"alertas": alertas,
 		"centro_atencao": centro_atencao,
 		"atencao": atencao,
@@ -103,10 +124,6 @@ def get(
 		"agenda_summary": agenda_summary,
 		"timeline": agenda_full[:timeline_cap],
 		"agenda": agenda_full[:timeline_cap],
-		"parcelas": parcelas_all[:parcelas_cap],
-		"pagamentos": payments_all[:payments_cap],
-		"despesas_pendentes": despesas_all[:despesas_cap],
-		"total_despesas_mes": total_despesas_mes,
 		"comunicacoes_pendentes": comunicacoes_all[:comunicacoes_cap],
 		"ultimas_comunicacoes": comunicacoes_all[:comunicacoes_cap],
 		"horas_semana": horas_semana,
@@ -115,4 +132,18 @@ def get(
 		"deadlines": deadlines_all[:deadlines_cap],
 		"prazos": deadlines_all[:deadlines_cap],
 		"tarefas": tasks_all[:tasks_cap],
+		"is_manager": is_manager,
 	}
+
+	if is_manager:
+		payload.update(
+			{
+				"financeiro": financeiro,
+				"parcelas": parcelas_all[:parcelas_cap],
+				"pagamentos": payments_all[:payments_cap],
+				"despesas_pendentes": despesas_all[:despesas_cap],
+				"total_despesas_mes": total_despesas_mes,
+			}
+		)
+
+	return payload

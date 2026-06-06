@@ -58,7 +58,7 @@ def _protocolos_tile(permits_hoje, permits_amanha, hoje, tomorrow):
 	)
 
 
-def build_attention_tiles(hoje, period_end, period_days, kpis, financeiro):
+def build_attention_tiles(hoje, period_end, period_days, kpis, financeiro, include_financial=True):
 	del period_end, period_days, financeiro
 
 	tomorrow = add_days(hoje, 1)
@@ -95,7 +95,7 @@ def build_attention_tiles(hoje, period_end, period_days, kpis, financeiro):
 			meta_currency=flt(parcelas_vencidas.get("valor")),
 			pulse=True,
 		)
-		if cint(parcelas_vencidas.get("count") or 0)
+		if include_financial and cint(parcelas_vencidas.get("count") or 0)
 		else None,
 		_protocolos_tile(permits_hoje, permits_amanha, hoje, tomorrow),
 		_tile(
@@ -107,7 +107,7 @@ def build_attention_tiles(hoje, period_end, period_days, kpis, financeiro):
 			meta_currency=flt(pending_work_costs.get("amount")),
 			pulse=True,
 		)
-		if cint(pending_work_costs.get("count") or 0)
+		if include_financial and cint(pending_work_costs.get("count") or 0)
 		else None,
 	]
 

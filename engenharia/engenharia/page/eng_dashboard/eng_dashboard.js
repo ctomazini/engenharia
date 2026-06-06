@@ -98,10 +98,15 @@ engenharia.dashboard.render_dashboard = function ($container, data, page) {
 	engenharia.dashboard.quick_actions.render($actions);
 	engenharia.dashboard.attention.render($attention, data);
 	engenharia.dashboard.timeline.render($agenda, data, page);
-	engenharia.dashboard.health.render($health, data);
-	engenharia.dashboard.kpis.render($kpis, data);
-	engenharia.dashboard.financial.render($fin, data, page);
-	engenharia.dashboard.lists.render_duo($lists, data, page);
+
+	if (data.is_manager) {
+		engenharia.dashboard.health.render($health, data);
+		engenharia.dashboard.kpis.render($kpis, data);
+		engenharia.dashboard.financial.render($fin, data, page);
+		engenharia.dashboard.lists.render_duo($lists, data, page);
+	} else {
+		$financeZone.remove();
+	}
 
 	engenharia.dashboard.filters.bind($content, page, eng_dashboard_load);
 	engenharia.dashboard.utils.bind_list_limits($content, page, eng_dashboard_load);

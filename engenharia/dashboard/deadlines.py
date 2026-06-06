@@ -76,7 +76,7 @@ def get_deadlines(hoje, period_end, limit):
 	return rows
 
 
-def build_centro_atencao(hoje, period_end, kpis, financeiro):
+def build_centro_atencao(hoje, period_end, kpis, financeiro, include_financial=True):
 	previsto = (
 		financeiro.get("previsto_periodo")
 		or financeiro.get("previsto_semana")
@@ -85,19 +85,27 @@ def build_centro_atencao(hoje, period_end, kpis, financeiro):
 			"valor": 0,
 		}
 	)
-	return {
+	result = {
 		"prazos_vencidos": kpis.get("overdue_deadlines") or 0,
 		"prazos_proximos_3d": kpis.get("urgent_deadlines") or 0,
 		"tarefas_atrasadas": kpis.get("late_tasks") or 0,
 		"tarefas_pendentes": kpis.get("open_tasks") or 0,
-		"parcelas_vencidas": kpis.get("parcelas_vencidas") or {"count": 0, "valor": 0},
-		"pagamentos_periodo": previsto,
-		"recebimentos_periodo": kpis.get("received_period") or {"count": 0, "valor": 0},
-		"contratos_ativos": kpis.get("active_contracts") or 0,
 		"obras_ativas": kpis.get("active_projects") or 0,
-		"taxa_recebimento": kpis.get("taxa_recebimento") or 0,
 		"total_clientes": kpis.get("total_customers") or 0,
-		"spec_project_total": kpis.get("spec_project_total") or 0,
-		"custos_mes": kpis.get("month_costs") or {"count": 0, "amount": 0},
-		"a_reembolsar": kpis.get("amount_reimbursable") or {"count": 0, "amount": 0},
 	}
+	if not include_financial:
+		return result
+
+	result.update(
+		{
+			"parcelas_vencidas": kpis.get("parcelas_vencidas") or {"count": 0, "valor": 0},
+			"pagamentos_periodo": previsto,
+			"recebimentos_periodo": kpis.get("received_period") or {"count": 0, "valor": 0},
+			"contratos_ativos": kpis.get("active_contracts") or 0,
+			"taxa_recebimento": kpis.get("taxa_recebimento") or 0,
+			"spec_project_total": kpis.get("spec_project_total") or 0,
+			"custos_mes": kpis.get("month_costs") or {"count": 0, "amount": 0},
+			"a_reembolsar": kpis.get("amount_reimbursable") or {"count": 0, "amount": 0},
+		}
+	)
+	return result
