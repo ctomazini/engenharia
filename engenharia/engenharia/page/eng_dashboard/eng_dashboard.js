@@ -169,6 +169,11 @@ engenharia.dashboard.render_dashboard = function ($container, data, page) {
 		$financeZone.remove();
 	}
 
+	$content.children().addClass("eng-dashboard-section");
+	$content
+		.find(".eng-dash-section, .eng-dash-centro, .eng-dash-saude, .eng-dash-kpi, .eng-dash-fluxo-card")
+		.addClass("eng-dashboard-card");
+
 	eng_dashboard_bind_list_limits_once(page);
 	engenharia.dashboard.filters.bind($content, page, eng_dashboard_load);
 	engenharia.dashboard.hero.bind($content);

@@ -1,6 +1,16 @@
 frappe.provide("engenharia.dashboard");
 
 engenharia.dashboard.utils = {
+	truncate_with_title(text, maxLen = 30) {
+		const raw = String(text || "");
+		const escaped = frappe.utils.escape_html(raw);
+		if (raw.length <= maxLen) {
+			return escaped;
+		}
+		const short = frappe.utils.escape_html(raw.slice(0, maxLen).trim()) + "…";
+		return `<span class="eng-dashboard-truncate" title="${escaped}">${short}</span>`;
+	},
+
 	fmt_currency(val, plain) {
 		if (plain) {
 			return format_currency(val || 0, "BRL");

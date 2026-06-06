@@ -1849,16 +1849,18 @@
 }
 
 .eng-dash-progress {
-	height: 6px;
-	background: var(--bg-light-gray, #f3f3f3);
-	border-radius: 3px;
+	height: 7px;
+	min-height: 7px;
+	background: color-mix(in srgb, var(--border-color) 60%, transparent);
+	border-radius: 4px;
 	overflow: hidden;
 	margin-bottom: 2px;
 }
 
 .eng-dash-progress__bar {
 	height: 100%;
-	background: var(--primary, #2491ef);
+	background: var(--primary);
+	border-radius: 4px;
 }
 
 .eng-dash-commissions-host {
@@ -1936,6 +1938,345 @@
 @media (max-width: 991px) {
 	.eng-dash-attention-duo {
 		grid-template-columns: 1fr;
+	}
+}
+
+/* ── eng-dashboard polish ── */
+
+.eng-dash-root {
+	--section-gap: 2rem;
+}
+
+.eng-dash-content > .eng-dashboard-section {
+	margin-bottom: var(--section-gap);
+}
+
+.eng-dash-content > .eng-dashboard-section:last-child {
+	margin-bottom: 0;
+}
+
+.eng-dashboard-section > .eng-dash-section,
+.eng-dashboard-section > .eng-dash-centro,
+.eng-dashboard-section > .eng-dash-duo {
+	margin-bottom: 0;
+}
+
+.eng-dashboard-card {
+	border: 1px solid var(--border-color);
+	border-radius: 12px;
+	padding: 1.25rem;
+	background: var(--card-bg);
+	box-shadow: var(--eng-dash-shadow-soft);
+}
+
+.eng-dash-duo .eng-dashboard-card.eng-dash-section {
+	padding: 1.25rem;
+}
+
+/* Typography scale */
+.eng-dash-section-title,
+.eng-dashboard-section-title {
+	margin: 0 0 0.375rem;
+	font-size: var(--text-lg);
+	font-weight: 600;
+	color: var(--text-color);
+	text-transform: none;
+	letter-spacing: -0.01em;
+	line-height: 1.35;
+}
+
+.eng-dash-section-sub,
+.eng-dashboard-section-sub {
+	margin: 0;
+	font-size: var(--text-xs);
+	font-weight: 400;
+	color: var(--text-muted);
+	line-height: 1.45;
+}
+
+.eng-dash-atencao-subtitle {
+	font-size: var(--text-xs) !important;
+	font-weight: 400 !important;
+	color: var(--text-muted) !important;
+	margin-top: 0 !important;
+}
+
+.eng-dash-kpi__label,
+.eng-dash-fluxo-card__label,
+.eng-dashboard-card-label {
+	font-size: var(--text-xs);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--text-muted);
+	line-height: 1.35;
+}
+
+.eng-dash-kpi__value,
+.eng-dash-fluxo-card__value,
+.eng-dashboard-main-value {
+	font-size: var(--text-xl);
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	line-height: 1.25;
+}
+
+.eng-dash-kpi__sub,
+.eng-dashboard-aux,
+.eng-dash-fluxo-card__detail {
+	font-size: var(--text-xs);
+	font-weight: 400;
+	color: var(--text-muted);
+	line-height: 1.45;
+}
+
+.eng-dash-section-head {
+	margin-bottom: 1rem;
+}
+
+.eng-dash-section-head > div:first-child {
+	min-width: 0;
+}
+
+.eng-dash-section-head .eng-dash-linhas-wrap {
+	margin-left: auto;
+	flex-shrink: 0;
+}
+
+/* Line filters */
+.eng-dash-linhas-btn.active {
+	background: var(--primary);
+	border-color: var(--primary);
+	color: var(--white, var(--fg-color));
+	font-weight: 600;
+}
+
+.eng-dash-linhas-btn:not(.active) {
+	color: var(--text-muted);
+}
+
+/* Zona de Atenção + Próximos compromissos */
+.eng-dashboard-atencao-body {
+	flex: 1;
+	min-width: 0;
+}
+
+.eng-dash-next-event-host .eng-dash-atencao-meta {
+	display: block;
+	overflow: visible;
+	-webkit-line-clamp: unset;
+	word-break: break-word;
+}
+
+.eng-dash-compromisso-card .eng-dash-atencao-meta {
+	word-break: break-word;
+}
+
+/* Agenda timeline */
+.eng-dash-timeline--visual,
+.eng-dash-timeline-day__events {
+	overflow: visible;
+}
+
+.eng-dash-timeline-item {
+	align-items: flex-start;
+	overflow: visible;
+}
+
+.eng-dash-timeline-item__body {
+	min-width: 0;
+	overflow: visible;
+}
+
+.eng-dash-timeline-item__title,
+.eng-dash-timeline-item__meta {
+	word-break: break-word;
+	overflow: visible;
+}
+
+.eng-dash-timeline-item__marker {
+	align-self: flex-start;
+	margin-top: 0.45em;
+}
+
+.eng-dash-timeline-item__icon {
+	align-self: flex-start;
+	margin-top: 0.1em;
+}
+
+/* Obras Ativas */
+.eng-dashboard-op-side {
+	text-align: right;
+	align-items: flex-end;
+}
+
+.eng-dashboard-op-side .indicator-pill {
+	min-width: fit-content;
+	white-space: nowrap;
+}
+
+.eng-dashboard-op-deadline {
+	display: block;
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.eng-dash-op-row--overdue {
+	border-radius: 10px;
+	padding: 12px 16px;
+}
+
+.eng-dash-op-row--pending {
+	border-radius: 10px;
+	padding: 12px 16px;
+}
+
+.eng-dashboard-progress {
+	min-height: 7px;
+}
+
+/* Saúde Operacional */
+.eng-dash-saude.eng-dashboard-card {
+	padding: 1.25rem;
+}
+
+.eng-dash-saude__body {
+	min-height: 120px;
+	align-items: center;
+}
+
+.eng-dash-saude-breakdown {
+	font-size: var(--text-sm);
+	line-height: 1.6;
+}
+
+.eng-dash-saude-row {
+	font-size: var(--text-sm);
+	line-height: 1.6;
+}
+
+.eng-dash-kpi-grid {
+	gap: 1rem;
+}
+
+.eng-dash-kpi__icon .icon {
+	width: 1.25rem;
+	height: 1.25rem;
+}
+
+.eng-dash-kpi__icon {
+	color: var(--text-muted);
+}
+
+.eng-dash-kpi--red .eng-dash-kpi__icon {
+	color: var(--red-500);
+}
+
+.eng-dash-kpi--red .eng-dash-kpi__value {
+	color: var(--red-600);
+}
+
+.eng-dash-kpi__sub {
+	white-space: normal;
+	overflow: visible;
+	text-overflow: unset;
+}
+
+/* Entradas × Saídas */
+.eng-dash-fluxo-pair {
+	align-items: center;
+}
+
+.eng-dashboard-fluxo-vs {
+	align-self: center;
+	font-size: var(--text-xs);
+	font-weight: 400;
+	color: var(--text-muted);
+}
+
+#eng-dash-financeiro > .eng-dash-section-sub {
+	margin-bottom: 1rem;
+}
+
+.eng-dash-finance-donut-wrap {
+	min-height: 240px;
+}
+
+.eng-dash-finance-donut-wrap .chart-legend,
+.eng-dash-finance-donut-wrap .graph-legend {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 6px;
+	max-width: 100%;
+	font-size: var(--text-xs);
+	line-height: 1.5;
+}
+
+.eng-dash-finance-donut-wrap .chart-legend .legend-item,
+.eng-dash-finance-donut-wrap .graph-legend .legend-item {
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.eng-dash-finance-grid .eng-dash-section-sub {
+	font-size: var(--text-xs);
+	font-weight: 400;
+}
+
+/* Parcelas / Reembolsos */
+.eng-dash-duo {
+	gap: 1rem;
+}
+
+.eng-dash-duo .eng-dash-section {
+	margin-bottom: 0;
+}
+
+.eng-dashboard-btn-receive.eng-dash-op-cta {
+	background: var(--green-500) !important;
+	border-color: var(--green-500) !important;
+	color: var(--white, var(--fg-color)) !important;
+}
+
+.eng-dashboard-btn-receive.eng-dash-op-cta:hover {
+	background: var(--green-600) !important;
+	border-color: var(--green-600) !important;
+}
+
+.eng-dash-op-row-wrap {
+	margin-bottom: 10px;
+}
+
+.eng-dash-op-row-wrap .eng-dash-op-row {
+	margin-bottom: 0;
+}
+
+@media (max-width: 1366px) {
+	.eng-dash-root {
+		padding: 12px 12px 48px;
+	}
+
+	.eng-dash-attention-duo {
+		gap: 1rem;
+	}
+
+	.eng-dash-kpi-grid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	.eng-dash-finance-head {
+		grid-template-columns: minmax(220px, 280px) 1fr;
+	}
+}
+
+@media (min-width: 1920px) {
+	.eng-dash-root {
+		max-width: 1400px;
 	}
 }
 

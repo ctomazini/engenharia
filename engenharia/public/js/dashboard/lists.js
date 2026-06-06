@@ -28,7 +28,7 @@ engenharia.dashboard.lists = {
 					</button>
 					${
 						p.status === "Pendente" || p.status === "Vencido"
-							? `<button type="button" class="btn btn-xs btn-default eng-dash-op-cta" data-mark-payment="${frappe.utils.escape_html(p.name)}">${__("Receber")}</button>`
+							? `<button type="button" class="btn btn-xs btn-primary eng-dashboard-btn-receive eng-dash-op-cta" data-mark-payment="${frappe.utils.escape_html(p.name)}">${__("Receber")}</button>`
 							: ""
 					}
 				</div>`;

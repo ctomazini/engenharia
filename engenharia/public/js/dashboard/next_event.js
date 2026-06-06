@@ -44,7 +44,7 @@ engenharia.dashboard.next_event = {
 		return `
 			<button type="button" class="eng-dash-atencao-card eng-dash-compromisso-card tone-${tone}" data-doctype="${frappe.utils.escape_html(item.doctype)}" data-name="${frappe.utils.escape_html(item.docname)}">
 				<div class="eng-dash-atencao-icon">${utils.icon(item.icon || "calendar")}</div>
-				<div class="eng-dash-atencao-body">
+				<div class="eng-dash-atencao-body eng-dashboard-atencao-body">
 					<div class="eng-dash-atencao-count">${frappe.utils.escape_html(headline)}</div>
 					<div class="eng-dash-atencao-label">${frappe.utils.escape_html(typeLabel)}</div>
 					<div class="eng-dash-atencao-meta">${frappe.utils.escape_html(metaParts.filter(Boolean).join(" · "))}</div>

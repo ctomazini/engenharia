@@ -73,7 +73,7 @@ engenharia.dashboard.financial = {
 							<div class="eng-dash-fluxo-card__value">${utils.currency_html(entrada.amount || 0)}</div>
 							${entrada.detail ? `<div class="eng-dash-fluxo-card__detail">${frappe.utils.escape_html(entrada.detail)}</div>` : ""}
 						</div>
-						<div class="eng-dash-fluxo-vs">${__("vs")}</div>
+						<div class="eng-dash-fluxo-vs eng-dashboard-fluxo-vs">${__("vs")}</div>
 						<div class="eng-dash-fluxo-card eng-dash-fluxo-card--${saida.tone || "info"}">
 							<div class="eng-dash-fluxo-card__label">${frappe.utils.escape_html(saida.label || __("Saídas do mês"))}</div>
 							<div class="eng-dash-fluxo-card__value">${utils.currency_html(saida.amount || 0)}</div>

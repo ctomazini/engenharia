@@ -21,15 +21,15 @@ engenharia.dashboard.operational = {
 						<div class="eng-dash-op-row__title">${frappe.utils.escape_html(row.title || row.name)}</div>
 						<div class="eng-dash-op-row__sub">${frappe.utils.escape_html(row.customer_name || "")}</div>
 					</div>
-					<div class="eng-dash-op-side">
+					<div class="eng-dash-op-side eng-dashboard-op-side">
 						<div class="eng-dash-op-progress">
-							<div class="eng-dash-progress">
+							<div class="eng-dash-progress eng-dashboard-progress">
 								<div class="eng-dash-progress__bar" style="width:${barWidth}%"></div>
 							</div>
-							<span class="small text-muted">${barWidth}%</span>
+							<span class="eng-dashboard-aux">${barWidth}%</span>
 						</div>
 						${this._status_pill(row.status)}
-						<div class="small ${row.next_deadline_overdue ? "text-danger" : "text-muted"}">${frappe.utils.escape_html(row.next_deadline || __("Sem prazo"))}</div>
+						<div class="eng-dashboard-op-deadline small ${row.next_deadline_overdue ? "text-danger" : "text-muted"}">${utils.truncate_with_title(row.next_deadline || __("Sem prazo"), 30)}</div>
 					</div>
 				</button>`;
 					})

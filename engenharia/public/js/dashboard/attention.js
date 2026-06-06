@@ -24,7 +24,7 @@ engenharia.dashboard.attention = {
 					return `
 					<button type="button" class="eng-dash-atencao-card tone-${tile.tone}${pulse}" data-atencao-index="${index}">
 						<div class="eng-dash-atencao-icon">${utils.icon(tile.icon || "alert-circle")}</div>
-						<div class="eng-dash-atencao-body">
+						<div class="eng-dash-atencao-body eng-dashboard-atencao-body">
 							<div class="eng-dash-atencao-count">${frappe.utils.escape_html(String(tile.count))}</div>
 							<div class="eng-dash-atencao-label">${frappe.utils.escape_html(tile.label || "")}</div>
 							${meta ? `<div class="eng-dash-atencao-meta">${meta}</div>` : ""}
