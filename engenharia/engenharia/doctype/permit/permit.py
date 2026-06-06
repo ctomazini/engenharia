@@ -2,7 +2,7 @@ import frappe
 from frappe import _
 from frappe.model.document import Document
 
-from engenharia.titles import apply_title_post_insert, recompose_title_if_empty
+from engenharia.titles import apply_title_post_insert, recompose_title
 
 
 def permit_type_requires_art_rrt(permit_type: str | None) -> bool:
@@ -30,4 +30,4 @@ class Permit(Document):
 		apply_title_post_insert(self)
 
 	def _compose_title(self):
-		recompose_title_if_empty(self)
+		recompose_title(self)

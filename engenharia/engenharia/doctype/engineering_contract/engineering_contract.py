@@ -3,7 +3,7 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import add_months, flt, getdate, today
 
-from engenharia.titles import apply_title_post_insert, recompose_title_if_empty
+from engenharia.titles import apply_title_post_insert, recompose_title
 
 
 class EngineeringContract(Document):
@@ -29,7 +29,7 @@ class EngineeringContract(Document):
 			sync_project_contract_value(self.project, exclude_contract=self.name)
 
 	def _compose_title(self):
-		recompose_title_if_empty(self)
+		recompose_title(self)
 
 	def _calculate_current_value(self):
 		base = flt(self.base_value)

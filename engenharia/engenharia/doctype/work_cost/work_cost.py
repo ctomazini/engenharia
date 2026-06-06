@@ -3,7 +3,7 @@ from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt
 
-from engenharia.titles import apply_title_post_insert, recompose_title_if_empty
+from engenharia.titles import apply_title_post_insert, recompose_title
 
 
 class WorkCost(Document):
@@ -23,4 +23,4 @@ class WorkCost(Document):
 		apply_title_post_insert(self, use_description=True)
 
 	def _compose_title(self):
-		recompose_title_if_empty(self, use_description=True)
+		recompose_title(self, use_description=True)

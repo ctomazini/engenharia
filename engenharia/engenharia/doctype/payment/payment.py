@@ -4,7 +4,7 @@ from frappe.model.document import Document
 from frappe.utils import flt
 
 from engenharia.financial import ORIGIN_CONTRACT_INSTALLMENT, ORIGIN_REIMBURSABLE
-from engenharia.titles import apply_title_post_insert, recompose_title_if_empty
+from engenharia.titles import apply_title_post_insert, recompose_title
 
 
 class Payment(Document):
@@ -55,7 +55,7 @@ class Payment(Document):
 		apply_title_post_insert(self)
 
 	def _compose_title(self):
-		recompose_title_if_empty(self)
+		recompose_title(self)
 
 	def before_save(self):
 		if self.is_new() and self.status == "Cancelado":
