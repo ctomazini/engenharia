@@ -27,6 +27,7 @@
   "sec_details",
   "construction_area",
   "current_contract_value",
+  "commission_outstanding",
   "physical_progress",
   "sec_technical",
   "responsible_engineer",
@@ -156,6 +157,12 @@
    "read_only": 1
   },
   {
+   "fieldname": "commission_outstanding",
+   "fieldtype": "Currency",
+   "label": "Comiss\u00f5es a Receber",
+   "read_only": 1
+  },
+  {
    "fieldname": "physical_progress",
    "fieldtype": "Percent",
    "label": "Avan\u00e7o F\u00edsico Global",
@@ -275,6 +282,11 @@
    "group": "Financeiro",
    "link_doctype": "Reimbursable Expense",
    "link_fieldname": "project"
+  },
+  {
+   "group": "Financeiro",
+   "link_doctype": "Commission",
+   "link_fieldname": "construction_project"
   },
   {
    "group": "Agenda",
