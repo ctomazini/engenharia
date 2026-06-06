@@ -27,6 +27,7 @@ CREATION_ORDER = [
 	"Project Item",
 	"Engineering Contract",
 	"Commission",
+	"Subcontract",
 	"Work Cost",
 	"Payment",
 	"Reimbursable Expense",
@@ -45,6 +46,7 @@ DEMO_MARKER_FIELDS: dict[str, str] = {
 	"Construction Project": "observations",
 	"Engineering Contract": "observations",
 	"Commission": "description",
+	"Subcontract": "description",
 	"Work Cost": "description",
 	"Reimbursable Expense": "description",
 	"Deadline": "description",
@@ -83,6 +85,7 @@ def setup() -> None:
 		_seed_project_items()
 		_seed_engineering_contracts()
 		_seed_commissions()
+		_seed_subcontracts()
 		_seed_work_costs()
 		_seed_reimbursable_expenses()
 		_seed_permits()
@@ -127,7 +130,8 @@ def verify() -> None:
 		"Stage Type": 6,
 		"Permit Type": 5,
 		"Public Agency": 5,
-		"Supplier": 5,
+		"Supplier": 6,
+		"Subcontract": 2,
 		"Technical Item": 5,
 		"Customer": 6,
 		"Construction Project": 6,
@@ -182,6 +186,22 @@ def verify() -> None:
 		expected = flt(row.total_value) - flt(row.total_paid)
 		if abs(flt(row.outstanding) - expected) > 0.02:
 			errors.append(f"❌ Commission {name}: outstanding inconsistente")
+
+	for sub_key in ("s1", "s2"):
+		name = _refs.get(f"subcontract_{sub_key}")
+		if not name:
+			continue
+		row = frappe.db.get_value(
+			"Subcontract",
+			name,
+			["total_value", "total_paid", "outstanding"],
+			as_dict=True,
+		)
+		if not row:
+			continue
+		expected = flt(row.total_value) - flt(row.total_paid)
+		if abs(flt(row.outstanding) - expected) > 0.02:
+			errors.append(f"❌ Subcontract {name}: outstanding inconsistente")
 
 	if errors:
 		frappe.log_error("\n".join(errors), "Demo Data Verification Failed")
@@ -459,6 +479,7 @@ def _seed_suppliers() -> None:
 		("Elétrica Luminar Ltda", 3, "Material"),
 		("Hidráulica Central EIRELI", 4, "Material"),
 		("Pré-Moldados Gaúcho Ltda", 5, "Material"),
+		("João Pedreiro ME", 6, "Mão de obra"),
 	]
 	for name, seed, category in specs:
 		full = _demo_name(name)
@@ -1101,10 +1122,55 @@ def _seed_commissions() -> None:
 		_refs[f"commission_{spec['key']}"] = doc.name
 
 
+def _seed_subcontracts() -> None:
+	mao_obra = _refs.get("cost_Mão de Obra") or _refs.get("cost_Mão de obra")
+	if not mao_obra:
+		mao_obra = frappe.db.get_value("Cost Category", {"category_name": ["like", f"%{DEMO_MARKER}%Mão%"]})
+	specs = [
+		{
+			"key": "s1",
+			"project": "p1",
+			"supplier": "João Pedreiro ME",
+			"total_value": 5000.00,
+			"description": "Reboco e assentamento de blocos — área social",
+			"payments": [
+				{"payment_date": "2026-01-15", "amount": 2000.00, "payment_method": "PIX", "reference": "PIX-JAN"},
+				{"payment_date": "2026-02-10", "amount": 3000.00, "payment_method": "TED", "reference": "TED-FEV"},
+			],
+		},
+		{
+			"key": "s2",
+			"project": "p2",
+			"supplier": "Concreteira Vale dos Sinos Ltda",
+			"total_value": 12000.00,
+			"description": "Equipe de concretagem — laje térreo",
+			"payments": [
+				{"payment_date": "2026-03-05", "amount": 4000.00, "payment_method": "PIX", "reference": "PIX-0305"},
+			],
+		},
+	]
+
+	for spec in specs:
+		doc = _insert(
+			{
+				"doctype": "Subcontract",
+				"project": _refs[f"project_{spec['project']}"],
+				"supplier": _refs[f"supplier_{spec['supplier']}"],
+				"cost_category": mao_obra,
+				"description": f"{DEMO_MARKER} {spec['description']}",
+				"total_value": spec["total_value"],
+				"payments": [
+					{**p, "doctype": "Subcontract Payment"} for p in spec["payments"]
+				],
+			}
+		)
+		_refs[f"subcontract_{spec['key']}"] = doc.name
+
+
 def _seed_work_costs() -> None:
 	specs = [
 		("p1", "Materiais", "Cimento CP-II 50kg (40 sacos)", 1680.00),
-		("p1", "Mão de Obra", "Pedreiro - Março/2026", 4500.00),
+		("p1", "Mão de Obra", "Servente - Março/2026", 1800.00),
 		("p2", "Materiais", "Concreto usinado FCK30 - 1ª etapa (16m³)", 7200.00),
 		("p2", "Equipamentos", "Locação betoneira 400L - 30 dias", 1800.00),
 		("p5", "Materiais", "Aço CA-50 10mm - 1ª remessa", 48500.00),

@@ -40,6 +40,7 @@ Referência de roles: `advocacia/advocacia/setup/install.py`.
 | Obra | Construction Project |
 | Contrato de Obra | Engineering Contract |
 | Custo da Obra | Work Cost |
+| Subcontrato / Prestador | Subcontract |
 | Aditivo | Contract Amendment |
 | Despesa Reembolsável | Reimbursable Expense |
 | Item Técnico | Technical Item |
@@ -280,7 +281,8 @@ after_migrate = [
 ```
 Construction Project (hub)
     ├── Engineering Contract (+ Contract Amendment child)
-    ├── Work Cost (cost_category, supplier, stage Links)
+    ├── Work Cost (cost_category, supplier, stage Links) — lançamento avulso
+    ├── Subcontract (+ Subcontract Payment child) — contrato com prestador
     ├── Reimbursable Expense
     ├── Project Specification (child: Technical Item + value + unit)
     ├── Deadline / Permit
@@ -301,13 +303,19 @@ Construction Project (hub)
 
 ### 7.3 Custos
 
-`Work Cost` por lançamento com:
+`Work Cost` por lançamento avulso com:
 
 - `cost_category` → Cost Category  
 - `supplier` → Supplier  
 - `stage` → Project Stage  
 
 Habilita relatórios por categoria / fornecedor / etapa / total.
+
+`Subcontract` para contratos com prestador (valor acordado + parcelas):
+
+- `total_value`, `total_paid`, `outstanding`, child `Subcontract Payment`  
+- Margem: leitura dupla — `Work Cost` (Pago) + `Subcontract.total_paid` (sem sync entre DocTypes)  
+- Aditivo: edição direta de `total_value` + `amendment_remarks`
 
 ### 7.4 Administração de obra
 

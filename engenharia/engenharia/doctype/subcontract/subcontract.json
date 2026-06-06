@@ -1,0 +1,223 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:SUBC-{YYYY}-{####}",
+ "creation": "2026-06-06 00:00:00",
+ "custom": 0,
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "sec_details",
+  "project",
+  "customer",
+  "supplier",
+  "col_break_1",
+  "cost_category",
+  "stage",
+  "description",
+  "title",
+  "sec_values",
+  "total_value",
+  "total_paid",
+  "outstanding",
+  "sec_status",
+  "status",
+  "amendment_remarks",
+  "sec_payments",
+  "payments"
+ ],
+ "fields": [
+  {
+   "fieldname": "sec_details",
+   "fieldtype": "Section Break",
+   "label": "Detalhes"
+  },
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Obra",
+   "options": "Construction Project",
+   "reqd": 1,
+   "search_index": 1,
+   "description": "Obra onde o serviço do prestador será executado."
+  },
+  {
+   "fetch_from": "project.customer",
+   "fetch_if_empty": 1,
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Cliente",
+   "options": "Customer",
+   "read_only": 1,
+   "description": "Preenchido automaticamente a partir da obra."
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Prestador",
+   "options": "Supplier",
+   "reqd": 1,
+   "description": "Fornecedor ou prestador de serviço contratado (ex.: pedreiro, eletricista)."
+  },
+  {
+   "fieldname": "col_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "cost_category",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Categoria de Custo",
+   "options": "Cost Category",
+   "description": "Categoria para relatórios: Mão de obra, Materiais, etc."
+  },
+  {
+   "fieldname": "stage",
+   "fieldtype": "Link",
+   "in_standard_filter": 1,
+   "label": "Etapa",
+   "options": "Project Stage",
+   "description": "Etapa da obra onde o serviço se aplica (opcional)."
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Descrição do Serviço",
+   "description": "Detalhe do serviço contratado (ex.: reboco do bloco A)."
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Título",
+   "read_only": 1,
+   "description": "Título automático com ID e nome do prestador."
+  },
+  {
+   "fieldname": "sec_values",
+   "fieldtype": "Section Break",
+   "label": "Valores"
+  },
+  {
+   "fieldname": "total_value",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Valor Total",
+   "reqd": 1,
+   "description": "Valor total acordado com o prestador. Pode ser ajustado; registre o motivo em Observações de aditivo."
+  },
+  {
+   "fieldname": "total_paid",
+   "fieldtype": "Currency",
+   "label": "Total Pago",
+   "read_only": 1,
+   "description": "Soma dos pagamentos registrados abaixo. Calculado automaticamente."
+  },
+  {
+   "fieldname": "outstanding",
+   "fieldtype": "Currency",
+   "label": "Saldo a Pagar",
+   "read_only": 1,
+   "description": "Quanto ainda falta pagar (Valor Total menos Total Pago). Calculado automaticamente."
+  },
+  {
+   "fieldname": "sec_status",
+   "fieldtype": "Section Break",
+   "label": "Status"
+  },
+  {
+   "default": "Open",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Open\nPartially Paid\nPaid\nCancelled",
+   "read_only": 1,
+   "description": "Atualiza sozinho: Aberta, Parcial, Paga ou Cancelada (manual)."
+  },
+  {
+   "fieldname": "amendment_remarks",
+   "fieldtype": "Small Text",
+   "label": "Observações de Aditivo",
+   "description": "Registre aqui o motivo quando alterar o Valor Total acordado."
+  },
+  {
+   "fieldname": "sec_payments",
+   "fieldtype": "Section Break",
+   "label": "Pagamentos"
+  },
+  {
+   "fieldname": "payments",
+   "fieldtype": "Table",
+   "label": "Pagamentos Efetuados",
+   "options": "Subcontract Payment",
+   "description": "Registre cada pagamento ao prestador com data, valor e comprovante."
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [
+  {
+   "link_doctype": "Construction Project",
+   "link_fieldname": "project"
+  },
+  {
+   "link_doctype": "Supplier",
+   "link_fieldname": "supplier"
+  }
+ ],
+ "modified": "2026-06-06 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Engenharia",
+ "name": "Subcontract",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "import": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Engenharia Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Engenharia User",
+   "share": 1
+  }
+ ],
+ "search_fields": "title,project,supplier,description,status",
+ "show_title_field_in_link": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "title",
+ "track_changes": 1
+}

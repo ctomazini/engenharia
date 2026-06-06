@@ -51,6 +51,16 @@ class TestEngenhariaPermissions(FrappeTestCase):
 		frappe.set_user(user)
 		self.assertFalse(frappe.has_permission("Payment", "read"))
 
+	def test_engenharia_user_can_read_subcontract(self):
+		user = _create_user_with_role("Engenharia User")
+		frappe.set_user(user)
+		self.assertTrue(frappe.has_permission("Subcontract", "read"))
+
+	def test_engenharia_user_cannot_write_subcontract(self):
+		user = _create_user_with_role("Engenharia User")
+		frappe.set_user(user)
+		self.assertFalse(frappe.has_permission("Subcontract", "write"))
+
 	def test_engenharia_user_can_read_construction_project(self):
 		user = _create_user_with_role("Engenharia User")
 		frappe.set_user(user)

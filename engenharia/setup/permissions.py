@@ -79,9 +79,12 @@ FINANCIAL_DOCTYPES = frozenset(
 		"Payment",
 		"Project Specification",
 		"Reimbursable Expense",
+		"Subcontract",
 		"Work Cost",
 	}
 )
+
+USER_READ_FINANCIAL = frozenset({"Subcontract"})
 
 CATALOG_DOCTYPES = frozenset(
 	{
@@ -170,6 +173,8 @@ def _apply_doctype_perms(doctype: str):
 
 	if doctype in FINANCIAL_DOCTYPES:
 		_upsert_custom_docperm(doctype, ROLE_MANAGER, 0, MANAGER_FULL)
+		if doctype in USER_READ_FINANCIAL:
+			_upsert_custom_docperm(doctype, ROLE_USER, 0, USER_READ)
 	elif doctype in CATALOG_DOCTYPES:
 		_upsert_custom_docperm(doctype, ROLE_MANAGER, 0, MANAGER_FULL)
 		_upsert_custom_docperm(doctype, ROLE_USER, 0, USER_READ)

@@ -339,6 +339,11 @@
    "link_fieldname": "construction_project"
   },
   {
+   "group": "Financeiro",
+   "link_doctype": "Subcontract",
+   "link_fieldname": "project"
+  },
+  {
    "group": "Agenda",
    "link_doctype": "Deadline",
    "link_fieldname": "project"

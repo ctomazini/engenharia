@@ -36,6 +36,11 @@ def _resolve_descriptor(doc, use_description=False):
 		if supplier_name:
 			return supplier_name
 
+	if doc.doctype == "Subcontract":
+		supplier = getattr(doc, "supplier", None)
+		if supplier:
+			return frappe.db.get_value("Supplier", supplier, "supplier_name") or supplier
+
 	if doc.doctype == "Project Stage":
 		stage_type = getattr(doc, "stage_type", None)
 		if stage_type:
