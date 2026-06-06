@@ -6,6 +6,7 @@ from frappe.utils import cstr, flt
 from engenharia.formula_roles import TITLE_OUTPUT_ROLES, VALUE_OUTPUT_ROLES
 from engenharia.formulas import build_formula_eval_context, safe_eval_formula, validate_parameter_row
 from engenharia.project_rollup import on_project_item_change
+from engenharia.titles import apply_title_post_insert, recompose_title
 
 
 def build_parameter_rows_from_template(technical_item: str) -> list[dict]:
@@ -40,6 +41,20 @@ PRICING_MODE_FORMULA = "Fórmula"
 PRICING_MODE_COMPOSITION = "Composição de custos"
 
 
+def build_project_item_descriptor(doc) -> str:
+	title_out = next(
+		(o for o in (doc.computed_outputs or []) if (o.role or "") in TITLE_OUTPUT_ROLES),
+		None,
+	)
+	mult = "\u00d7"
+	base = f"{doc.technical_item} {mult}{doc.quantity or 1}"
+	if title_out and title_out.value is not None:
+		unit = title_out.unit or ""
+		return f"{base} — {flt(title_out.value):.2f} {unit}".strip()
+	instance = (doc.instance_label or "").strip()
+	return f"{base} — {instance}" if instance else base
+
+
 class ProjectItem(Document):
 	def validate(self):
 		self.ensure_parameters_from_template()
@@ -47,12 +62,13 @@ class ProjectItem(Document):
 		self.validate_inputs()
 		self.compute_outputs()
 		self.compute_pricing()
-		self.compose_title()
+		recompose_title(self)
 
 	def before_insert(self):
 		self._apply_project_budget_defaults()
 
 	def after_insert(self):
+		apply_title_post_insert(self)
 		on_project_item_change(self)
 
 	def on_update(self):
@@ -194,17 +210,3 @@ class ProjectItem(Document):
 
 		if flt(self.bdi_percent) == 0 and flt(project.default_bdi_percent):
 			self.bdi_percent = project.default_bdi_percent
-
-	def compose_title(self) -> None:
-		title_out = next(
-			(o for o in (self.computed_outputs or []) if (o.role or "") in TITLE_OUTPUT_ROLES),
-			None,
-		)
-		mult = "\u00d7"
-		base = f"{self.technical_item} {mult}{self.quantity or 1}"
-		if title_out and title_out.value is not None:
-			unit = title_out.unit or ""
-			self.title = f"{base} — {flt(title_out.value):.2f} {unit}".strip()
-		else:
-			instance = (self.instance_label or "").strip()
-			self.title = f"{base} — {instance}" if instance else base
