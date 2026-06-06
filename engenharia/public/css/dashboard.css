@@ -1798,6 +1798,66 @@
 	background: var(--primary, #2491ef);
 }
 
+.eng-dash-commissions-host {
+	margin-top: var(--padding-md, 1rem);
+}
+
+.eng-dash-commissions-accordion {
+	display: block;
+	background: var(--card-bg);
+	border: 1px solid var(--border-color);
+	border-radius: 12px;
+	margin-bottom: 16px;
+	overflow: hidden;
+}
+
+.eng-dash-commissions-accordion__summary {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 14px 16px;
+	cursor: pointer;
+	list-style: none;
+	user-select: none;
+	font-weight: 600;
+	color: var(--text-color);
+}
+
+.eng-dash-commissions-accordion__summary::-webkit-details-marker {
+	display: none;
+}
+
+.eng-dash-commissions-accordion__summary::before {
+	content: "▸";
+	display: inline-block;
+	margin-right: 10px;
+	color: var(--text-muted);
+	transition: transform 0.15s ease;
+}
+
+.eng-dash-commissions-accordion[open] .eng-dash-commissions-accordion__summary::before {
+	transform: rotate(90deg);
+}
+
+.eng-dash-commissions-accordion__summary:hover {
+	background: var(--bg-light-gray);
+}
+
+.eng-dash-commissions-accordion__hint {
+	font-size: 12px;
+	font-weight: 400;
+}
+
+.eng-dash-commissions-accordion[open] .eng-dash-commissions-accordion__hint {
+	display: none;
+}
+
+.eng-dash-commissions-accordion__body {
+	padding: 0 16px 16px;
+	border-top: 1px solid var(--border-color);
+}
+
 .eng-dash-active-projects tbody tr {
 	cursor: pointer;
 }

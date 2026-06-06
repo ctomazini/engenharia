@@ -149,7 +149,6 @@ def get(
 		commission_kpis = dashboard_commissions.get_commission_kpis()
 		pending_commissions = dashboard_commissions.get_pending_commissions(LIST_LIMIT_MAX)
 		commissions_cap = _list_cap(list_limits, "commissions")
-		kpis.update(commission_kpis)
 		payload.update(
 			{
 				"financeiro": financeiro,

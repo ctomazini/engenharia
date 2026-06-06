@@ -2,7 +2,7 @@ frappe.provide("engenharia.dashboard");
 
 engenharia.dashboard.commissions = {
 	render(container, data) {
-		const kpis = data.commission_kpis || data.kpis || {};
+		const kpis = data.commission_kpis || {};
 		const rows = data.pending_commissions || [];
 		const utils = engenharia.dashboard.utils;
 
@@ -38,16 +38,23 @@ engenharia.dashboard.commissions = {
 					.join("")
 			: utils.render_empty(__("Nenhuma comissão pendente ✓"), "check-circle");
 
+		// <details> sem atributo open = fechado por padrão (nativo, não depende de JS/CSS de collapse)
 		container.html(`
-			<section class="eng-dash-section" id="eng-dash-commissions">
-				<h3 class="eng-dash-section-title">${__("Comissões")}</h3>
-				<div class="eng-dash-kpi-grid eng-dash-kpi-grid--3">${kpiHtml}</div>
-				<h4 class="eng-dash-section-sub mt-3">${__("Comissões Pendentes")}</h4>
-				${listHtml}
-			</section>
+			<details class="eng-dash-commissions-accordion" id="eng-dash-commissions">
+				<summary class="eng-dash-commissions-accordion__summary">
+					<span class="eng-dash-commissions-accordion__title">${__("Comissões")}</span>
+					<span class="eng-dash-commissions-accordion__hint text-muted">${__("Clique para expandir")}</span>
+				</summary>
+				<div class="eng-dash-commissions-accordion__body">
+					<div class="eng-dash-kpi-grid eng-dash-kpi-grid--3">${kpiHtml}</div>
+					<h4 class="eng-dash-section-sub mt-3">${__("Comissões Pendentes")}</h4>
+					${listHtml}
+				</div>
+			</details>
 		`);
 
-		container.find(".eng-dash-op-row[data-doctype]").on("click", function () {
+		container.find(".eng-dash-op-row[data-doctype]").on("click", function (e) {
+			e.preventDefault();
 			const doctype = $(this).data("doctype");
 			const name = $(this).data("name");
 			if (doctype && name) {

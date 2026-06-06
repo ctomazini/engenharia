@@ -107,9 +107,9 @@ engenharia.dashboard.render_dashboard = function ($container, data, page) {
 		engenharia.dashboard.health.render($health, data);
 		engenharia.dashboard.kpis.render($kpis, data);
 		engenharia.dashboard.financial.render($fin, data, page);
-		const $commissions = $('<div class="eng-dash-commissions-host"></div>').appendTo($financeZone);
-		engenharia.dashboard.commissions.render($commissions, data);
 		engenharia.dashboard.lists.render_duo($lists, data, page);
+		const $commissions = $('<div class="eng-dash-commissions-host"></div>').appendTo($content);
+		engenharia.dashboard.commissions.render($commissions, data);
 	} else {
 		$financeZone.remove();
 	}
