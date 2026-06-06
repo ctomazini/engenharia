@@ -65,3 +65,14 @@ class TestWorkCost(FrappeTestCase):
 		create_test_work_cost(project=project, amount=1200, stage=stage, status="Pago")
 		totals = get_work_cost_totals_by_stage(project=project)
 		self.assertEqual(totals[stage], 1200)
+
+	def test_open_count_linked_project(self):
+		from frappe.desk.notifications import get_open_count
+
+		project = create_test_construction_project()
+		cost = create_test_work_cost(project=project.name, amount=500)
+		result = get_open_count("Work Cost", cost.name, '["Construction Project"]')
+		internal = result["count"]["internal_links_found"]
+		self.assertEqual(len(internal), 1)
+		self.assertEqual(internal[0]["doctype"], "Construction Project")
+		self.assertEqual(internal[0]["names"], [project.name])
