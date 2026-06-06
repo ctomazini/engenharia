@@ -22,7 +22,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Tipo",
-   "options": "Residencial\nComercial\nCorrespond\u00eancia\nOutro"
+   "options": "Residencial\nComercial\nCorrespondência\nOutro"
   },
   {
    "fieldname": "cep",
@@ -41,7 +41,7 @@
   {
    "fieldname": "number",
    "fieldtype": "Data",
-   "label": "N\u00famero"
+   "label": "Número"
   },
   {
    "fieldname": "complement",
@@ -70,7 +70,7 @@
    "default": "0",
    "fieldname": "is_primary",
    "fieldtype": "Check",
-   "label": "Endere\u00e7o Principal"
+   "label": "Endereço Principal"
   }
  ],
  "index_web_pages_for_search": 1,

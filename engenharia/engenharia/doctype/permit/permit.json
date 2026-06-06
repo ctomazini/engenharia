@@ -52,7 +52,7 @@
   {
    "fieldname": "title",
    "fieldtype": "Data",
-   "label": "T\u00edtulo",
+   "label": "Título",
    "read_only": 1
   },
   {
@@ -72,13 +72,13 @@
    "fieldname": "permit_number",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "N\u00famero do Protocolo"
+   "label": "Número do Protocolo"
   },
   {
    "fieldname": "public_agency",
    "fieldtype": "Link",
    "in_standard_filter": 1,
-   "label": "\u00d3rg\u00e3o P\u00fablico",
+   "label": "Órgão Público",
    "options": "Public Agency"
   },
   {
@@ -88,7 +88,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "Pendente\nEm an\u00e1lise\nAprovado\nIndeferido\nVencido\nCancelado"
+   "options": "Pendente\nEm análise\nAprovado\nIndeferido\nVencido\nCancelado"
   },
   {
    "fieldname": "dates_section",
@@ -120,19 +120,19 @@
    "depends_on": "eval:doc.permit_type && (doc.permit_type.includes('ART') || doc.permit_type.includes('RRT'))",
    "fieldname": "sec_art_rrt",
    "fieldtype": "Section Break",
-   "label": "Responsabilidade T\u00e9cnica"
+   "label": "Responsabilidade Técnica"
   },
   {
    "depends_on": "eval:doc.permit_type && (doc.permit_type.includes('ART') || doc.permit_type.includes('RRT'))",
    "fieldname": "art_rrt_number",
    "fieldtype": "Data",
-   "label": "N\u00ba ART/RRT"
+   "label": "Nº ART/RRT"
   },
   {
    "depends_on": "eval:doc.permit_type && (doc.permit_type.includes('ART') || doc.permit_type.includes('RRT'))",
    "fieldname": "crea_cau_number",
    "fieldtype": "Data",
-   "label": "CREA/CAU do Respons\u00e1vel"
+   "label": "CREA/CAU do Responsável"
   },
   {
    "depends_on": "eval:doc.permit_type && (doc.permit_type.includes('ART') || doc.permit_type.includes('RRT'))",
@@ -143,7 +143,7 @@
    "depends_on": "eval:doc.permit_type && (doc.permit_type.includes('ART') || doc.permit_type.includes('RRT'))",
    "fieldname": "responsible_professional",
    "fieldtype": "Data",
-   "label": "Profissional Respons\u00e1vel"
+   "label": "Profissional Responsável"
   },
   {
    "depends_on": "eval:doc.permit_type && (doc.permit_type.includes('ART') || doc.permit_type.includes('RRT'))",
@@ -174,38 +174,40 @@
  "owner": "Administrator",
  "permissions": [
   {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
    "role": "System Manager",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
    "read": 1,
-   "report": 1,
-   "role": "Engenharia User",
-   "share": 1,
-   "write": 1
-  },
-  {
+   "write": 1,
    "create": 1,
    "delete": 1,
-   "email": 1,
    "export": 1,
    "print": 1,
-   "read": 1,
-   "report": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
    "role": "Engenharia Manager",
-   "share": 1,
-   "write": 1
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "import": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "share": 1
+  },
+  {
+   "role": "Engenharia User",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "import": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "share": 1
   }
  ],
  "row_format": "Dynamic",

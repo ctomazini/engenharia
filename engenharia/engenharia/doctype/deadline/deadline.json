@@ -28,13 +28,13 @@
   {
    "fieldname": "info_section",
    "fieldtype": "Section Break",
-   "label": "Informa\u00e7\u00f5es"
+   "label": "Informações"
   },
   {
    "allow_in_quick_entry": 1,
    "fieldname": "title",
    "fieldtype": "Data",
-   "label": "T\u00edtulo"
+   "label": "Título"
   },
   {
    "allow_in_quick_entry": 1,
@@ -74,7 +74,7 @@
    "fieldtype": "Select",
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "Pendente\nConclu\u00eddo\nVencido"
+   "options": "Pendente\nConcluído\nVencido"
   },
   {
    "default": "Projeto",
@@ -82,13 +82,13 @@
    "fieldtype": "Select",
    "in_standard_filter": 1,
    "label": "Tipo de Prazo",
-   "options": "Projeto\nCliente\n\u00d3rg\u00e3o\nOutro"
+   "options": "Projeto\nCliente\nÓrgão\nOutro"
   },
   {
-   "depends_on": "eval:doc.deadline_type=='\u00d3rg\u00e3o'",
+   "depends_on": "eval:doc.deadline_type=='Órgão'",
    "fieldname": "public_agency",
    "fieldtype": "Link",
-   "label": "\u00d3rg\u00e3o P\u00fablico",
+   "label": "Órgão Público",
    "options": "Public Agency"
   },
   {
@@ -100,16 +100,16 @@
    "allow_in_quick_entry": 1,
    "fieldname": "description",
    "fieldtype": "Small Text",
-   "label": "Descri\u00e7\u00e3o",
+   "label": "Descrição",
    "reqd": 1
   },
   {
-   "default": "M\u00e9dia",
+   "default": "Média",
    "fieldname": "priority",
    "fieldtype": "Select",
    "in_standard_filter": 1,
    "label": "Prioridade",
-   "options": "Alta\nM\u00e9dia\nBaixa"
+   "options": "Alta\nMédia\nBaixa"
   },
   {
    "fieldname": "column_break_det",
@@ -118,25 +118,25 @@
   {
    "fieldname": "assigned_to",
    "fieldtype": "Link",
-   "label": "Respons\u00e1vel",
+   "label": "Responsável",
    "options": "User"
   },
   {
    "default": "3",
    "fieldname": "notify_days_before",
    "fieldtype": "Int",
-   "label": "Notificar com anteced\u00eancia (dias)"
+   "label": "Notificar com antecedência (dias)"
   },
   {
    "collapsible": 1,
    "fieldname": "notes_section",
    "fieldtype": "Section Break",
-   "label": "Observa\u00e7\u00f5es"
+   "label": "Observações"
   },
   {
    "fieldname": "notes",
    "fieldtype": "Text Editor",
-   "label": "Observa\u00e7\u00f5es"
+   "label": "Observações"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -149,38 +149,40 @@
  "owner": "Administrator",
  "permissions": [
   {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
    "role": "System Manager",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
    "read": 1,
-   "report": 1,
-   "role": "Engenharia User",
-   "share": 1,
-   "write": 1
-  },
-  {
+   "write": 1,
    "create": 1,
    "delete": 1,
-   "email": 1,
    "export": 1,
    "print": 1,
-   "read": 1,
-   "report": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
    "role": "Engenharia Manager",
-   "share": 1,
-   "write": 1
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "import": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "share": 1
+  },
+  {
+   "role": "Engenharia User",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "import": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "share": 1
   }
  ],
  "quick_entry": 1,
@@ -196,7 +198,7 @@
   },
   {
    "color": "Green",
-   "title": "Conclu\u00eddo"
+   "title": "Concluído"
   },
   {
    "color": "Red",

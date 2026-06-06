@@ -84,30 +84,27 @@
  "owner": "Administrator",
  "permissions": [
   {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
    "create": 1,
    "delete": 1,
-   "email": 1,
+   "export": 1,
    "print": 1,
-   "read": 1,
-   "role": "System Manager",
-   "share": 1,
-   "write": 1
+   "email": 1,
+   "share": 1
   },
   {
-   "create": 1,
-   "delete": 0,
-   "email": 1,
-   "print": 1,
-   "read": 1,
    "role": "Engenharia Manager",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "email": 1,
-   "print": 1,
    "read": 1,
-   "role": "Engenharia User",
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "import": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
    "share": 1
   }
  ],

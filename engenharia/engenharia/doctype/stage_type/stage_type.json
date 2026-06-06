@@ -25,7 +25,7 @@
    "fieldname": "default_order",
    "fieldtype": "Int",
    "in_list_view": 1,
-   "label": "Ordem Padr\u00e3o"
+   "label": "Ordem Padrão"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -38,38 +38,36 @@
  "owner": "Administrator",
  "permissions": [
   {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
    "role": "System Manager",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
    "read": 1,
-   "report": 1,
-   "role": "Engenharia User",
-   "share": 1,
-   "write": 1
-  },
-  {
+   "write": 1,
    "create": 1,
    "delete": 1,
-   "email": 1,
    "export": 1,
    "print": 1,
-   "read": 1,
-   "report": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
    "role": "Engenharia Manager",
-   "share": 1,
-   "write": 1
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "import": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "share": 1
+  },
+  {
+   "role": "Engenharia User",
+   "read": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1
   }
  ],
  "quick_entry": 1,

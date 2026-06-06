@@ -33,13 +33,13 @@
   {
    "fieldname": "info_section",
    "fieldtype": "Section Break",
-   "label": "Informa\u00e7\u00f5es"
+   "label": "Informações"
   },
   {
    "allow_in_quick_entry": 1,
    "fieldname": "title",
    "fieldtype": "Data",
-   "label": "T\u00edtulo"
+   "label": "Título"
   },
   {
    "allow_in_quick_entry": 1,
@@ -74,7 +74,7 @@
   {
    "fieldname": "assigned_to",
    "fieldtype": "Link",
-   "label": "Respons\u00e1vel",
+   "label": "Responsável",
    "options": "User"
   },
   {
@@ -85,7 +85,7 @@
   {
    "fieldname": "start_time",
    "fieldtype": "Time",
-   "label": "Hora In\u00edcio"
+   "label": "Hora Início"
   },
   {
    "fieldname": "end_time",
@@ -98,15 +98,15 @@
   },
   {
    "default": "0",
-   "description": "Preenchido ao parar o timer ou informando in\u00edcio/fim manualmente",
+   "description": "Preenchido ao parar o timer ou informando início/fim manualmente",
    "fieldname": "duration_minutes",
    "fieldtype": "Int",
-   "label": "Dura\u00e7\u00e3o (min)"
+   "label": "Duração (min)"
   },
   {
    "fieldname": "duration_hours",
    "fieldtype": "Float",
-   "label": "Dura\u00e7\u00e3o (horas)",
+   "label": "Duração (horas)",
    "read_only": 1
   },
   {
@@ -126,7 +126,7 @@
    "fieldname": "category",
    "fieldtype": "Select",
    "label": "Categoria",
-   "options": "Projeto\nVisita de Obra\nReuni\u00e3o\nDeslocamento\nProjeto T\u00e9cnico\nAdministrativo\nOutro"
+   "options": "Projeto\nVisita de Obra\nReunião\nDeslocamento\nProjeto Técnico\nAdministrativo\nOutro"
   },
   {
    "fieldname": "details",
@@ -137,7 +137,7 @@
    "default": "1",
    "fieldname": "billable",
    "fieldtype": "Check",
-   "label": "Cobr\u00e1vel"
+   "label": "Cobrável"
   },
   {
    "fieldname": "timer_section",
@@ -151,11 +151,11 @@
    "label": "Tempo Decorrido"
   },
   {
-   "description": "Timestamp server-side do in\u00edcio",
+   "description": "Timestamp server-side do início",
    "fieldname": "timer_started_at",
    "fieldtype": "Datetime",
    "hidden": 1,
-   "label": "In\u00edcio do Timer",
+   "label": "Início do Timer",
    "read_only": 1
   },
   {
@@ -178,38 +178,40 @@
  "owner": "Administrator",
  "permissions": [
   {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
    "role": "System Manager",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
    "read": 1,
-   "report": 1,
-   "role": "Engenharia User",
-   "share": 1,
-   "write": 1
-  },
-  {
+   "write": 1,
    "create": 1,
    "delete": 1,
-   "email": 1,
    "export": 1,
    "print": 1,
-   "read": 1,
-   "report": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
    "role": "Engenharia Manager",
-   "share": 1,
-   "write": 1
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "import": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "share": 1
+  },
+  {
+   "role": "Engenharia User",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "import": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "share": 1
   }
  ],
  "quick_entry": 1,

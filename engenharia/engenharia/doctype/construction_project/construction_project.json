@@ -154,12 +154,14 @@
    "fieldname": "current_contract_value",
    "fieldtype": "Currency",
    "label": "Valor Atual do Contrato",
+   "permlevel": 1,
    "read_only": 1
   },
   {
    "fieldname": "commission_outstanding",
    "fieldtype": "Currency",
    "label": "Comiss\u00f5es a Receber",
+   "permlevel": 1,
    "read_only": 1
   },
   {
@@ -205,26 +207,30 @@
   {
    "fieldname": "sec_budget",
    "fieldtype": "Section Break",
-   "label": "Or\u00e7amento"
+   "label": "Or\u00e7amento",
+   "permlevel": 1
   },
   {
    "default": "1",
    "fieldname": "budget_revision",
    "fieldtype": "Int",
    "label": "Revis\u00e3o vigente",
+   "permlevel": 1,
    "read_only": 1
   },
   {
    "default": "0",
    "fieldname": "default_bdi_percent",
    "fieldtype": "Percent",
-   "label": "BDI padr\u00e3o %"
+   "label": "BDI padr\u00e3o %",
+   "permlevel": 1
   },
   {
    "fieldname": "budget_revisions",
    "fieldtype": "Table",
    "label": "Revis\u00f5es de or\u00e7amento",
-   "options": "Project Budget Revision"
+   "options": "Project Budget Revision",
+   "permlevel": 1
   },
   {
    "fieldname": "sec_specs",
@@ -241,12 +247,14 @@
    "fieldname": "spec_preview_panel",
    "fieldtype": "HTML",
    "label": "Pr\u00e9via das especifica\u00e7\u00f5es",
-   "options": "<p class=\"text-muted\">Carregando pr\u00e9via...</p>"
+   "options": "<p class=\"text-muted\">Carregando pr\u00e9via...</p>",
+   "permlevel": 1
   },
   {
    "fieldname": "spec_project_total",
    "fieldtype": "Currency",
    "label": "Total especifica\u00e7\u00f5es (obra)",
+   "permlevel": 1,
    "read_only": 1
   },
   {
@@ -344,24 +352,34 @@
   },
   {
    "create": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
-   "report": 1,
-   "role": "Engenharia User",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
    "delete": 1,
    "email": 1,
    "export": 1,
+   "import": 1,
+   "permlevel": 0,
    "print": 1,
    "read": 1,
    "report": 1,
    "role": "Engenharia Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "permlevel": 1,
+   "read": 1,
+   "role": "Engenharia Manager",
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "import": 1,
+   "permlevel": 0,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Engenharia User",
    "share": 1,
    "write": 1
   }

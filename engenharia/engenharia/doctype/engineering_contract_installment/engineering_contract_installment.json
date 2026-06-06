@@ -49,7 +49,7 @@
    "fieldname": "description",
    "fieldtype": "Small Text",
    "in_list_view": 1,
-   "label": "Descri\u00e7\u00e3o"
+   "label": "Descrição"
   },
   {
    "fieldname": "receipt_date",
@@ -59,12 +59,12 @@
   {
    "fieldname": "nf_number",
    "fieldtype": "Data",
-   "label": "N\u00ba Nota Fiscal"
+   "label": "Nº Nota Fiscal"
   },
   {
    "fieldname": "bank_account",
    "fieldtype": "Data",
-   "label": "Conta Banc\u00e1ria"
+   "label": "Conta Bancária"
   },
   {
    "fieldname": "late_fee",

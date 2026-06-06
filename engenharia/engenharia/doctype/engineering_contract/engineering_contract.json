@@ -56,7 +56,7 @@
    "fieldname": "title",
    "fieldtype": "Data",
    "in_global_search": 1,
-   "label": "T\u00edtulo",
+   "label": "Título",
    "read_only": 1
   },
   {
@@ -96,13 +96,13 @@
   {
    "fieldname": "adjustment_index",
    "fieldtype": "Select",
-   "label": "\u00cdndice de Reajuste",
+   "label": "Índice de Reajuste",
    "options": "\nINCC\nIPCA\nIGP-M\nNenhum"
   },
   {
    "fieldname": "technical_retention_pct",
    "fieldtype": "Percent",
-   "label": "Reten\u00e7\u00e3o T\u00e9cnica %"
+   "label": "Retenção Técnica %"
   },
   {
    "fieldname": "late_fee_pct",
@@ -112,12 +112,12 @@
   {
    "fieldname": "daily_interest_pct",
    "fieldtype": "Float",
-   "label": "Juros Di\u00e1rios %"
+   "label": "Juros Diários %"
   },
   {
    "fieldname": "installment_count",
    "fieldtype": "Int",
-   "label": "N\u00famero de Parcelas"
+   "label": "Número de Parcelas"
   },
   {
    "fieldname": "first_installment_date",
@@ -166,12 +166,12 @@
    "collapsible": 1,
    "fieldname": "sec_obs",
    "fieldtype": "Section Break",
-   "label": "Observa\u00e7\u00f5es"
+   "label": "Observações"
   },
   {
    "fieldname": "observations",
    "fieldtype": "Text Editor",
-   "label": "Observa\u00e7\u00f5es"
+   "label": "Observações"
   }
  ],
  "index_web_pages_for_search": 1,
@@ -184,38 +184,28 @@
  "owner": "Administrator",
  "permissions": [
   {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
    "role": "System Manager",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
    "read": 1,
-   "report": 1,
-   "role": "Engenharia User",
-   "share": 1,
-   "write": 1
-  },
-  {
+   "write": 1,
    "create": 1,
    "delete": 1,
-   "email": 1,
    "export": 1,
    "print": 1,
-   "read": 1,
-   "report": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
    "role": "Engenharia Manager",
-   "share": 1,
-   "write": 1
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "import": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "share": 1
   }
  ],
  "row_format": "Dynamic",

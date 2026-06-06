@@ -52,7 +52,7 @@
    "fieldname": "required",
    "fieldtype": "Check",
    "hidden": 1,
-   "label": "Obrigat\u00f3rio"
+   "label": "Obrigatório"
   }
  ],
  "index_web_pages_for_search": 1,

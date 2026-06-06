@@ -26,7 +26,7 @@
    "fieldname": "label",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "R\u00f3tulo",
+   "label": "Rótulo",
    "reqd": 1
   },
   {
@@ -36,25 +36,25 @@
    "label": "Unidade"
   },
   {
-   "default": "N\u00famero",
+   "default": "Número",
    "fieldname": "data_type",
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Tipo de Dado",
-   "options": "N\u00famero\nTexto\nSim-N\u00e3o",
+   "options": "Número\nTexto\nSim-Não",
    "reqd": 1
   },
   {
-   "description": "Valor sugerido ao criar o item na obra (edit\u00e1vel).",
+   "description": "Valor sugerido ao criar o item na obra (editável).",
    "fieldname": "default_value",
    "fieldtype": "Data",
-   "label": "Valor padr\u00e3o"
+   "label": "Valor padrão"
   },
   {
    "default": "0",
    "fieldname": "required",
    "fieldtype": "Check",
-   "label": "Obrigat\u00f3rio"
+   "label": "Obrigatório"
   },
   {
    "default": "1",

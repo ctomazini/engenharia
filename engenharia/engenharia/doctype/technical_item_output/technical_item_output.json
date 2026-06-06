@@ -25,11 +25,11 @@
    "fieldname": "label",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "R\u00f3tulo",
+   "label": "Rótulo",
    "reqd": 1
   },
   {
-   "description": "Vazio = resultado local. volume = t\u00edtulo do item; value = valor total (R$) no item e soma na obra; preview = pr\u00e9via na obra; area = \u00e1rea total (deferido).",
+   "description": "Vazio = resultado local. volume = título do item; value = valor total (R$) no item e soma na obra; preview = prévia na obra; area = área total (deferido).",
    "fieldname": "role",
    "fieldtype": "Select",
    "in_list_view": 1,
@@ -46,7 +46,7 @@
    "fieldname": "formula",
    "fieldtype": "Small Text",
    "in_list_view": 1,
-   "label": "F\u00f3rmula",
+   "label": "Fórmula",
    "reqd": 1
   },
   {

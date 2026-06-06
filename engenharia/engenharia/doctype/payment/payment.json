@@ -43,7 +43,7 @@
   {
    "fieldname": "title",
    "fieldtype": "Data",
-   "label": "T\u00edtulo",
+   "label": "Título",
    "read_only": 1
   },
   {
@@ -78,7 +78,7 @@
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Origem",
-   "options": "Parcela do Contrato\nDespesa Reembols\u00e1vel"
+   "options": "Parcela do Contrato\nDespesa Reembolsável"
   },
   {
    "fieldname": "contract",
@@ -92,18 +92,18 @@
   {
    "fieldname": "installment_number",
    "fieldtype": "Int",
-   "label": "N\u00ba Parcela"
+   "label": "Nº Parcela"
   },
   {
    "bold": 1,
    "fieldname": "description",
    "fieldtype": "Small Text",
-   "label": "Descri\u00e7\u00e3o"
+   "label": "Descrição"
   },
   {
    "fieldname": "sec_origin",
    "fieldtype": "Section Break",
-   "label": "Origem / Sincroniza\u00e7\u00e3o"
+   "label": "Origem / Sincronização"
   },
   {
    "fieldname": "installment_origin_id",
@@ -123,7 +123,7 @@
    "depends_on": "eval:doc.origin_type=='Parcela do Contrato'",
    "fieldname": "manual_override",
    "fieldtype": "Check",
-   "label": "Edi\u00e7\u00e3o manual (n\u00e3o sincronizar)"
+   "label": "Edição manual (não sincronizar)"
   },
   {
    "fieldname": "sec_financial",
@@ -179,12 +179,12 @@
   {
    "fieldname": "nf_number",
    "fieldtype": "Data",
-   "label": "N\u00ba Nota Fiscal"
+   "label": "Nº Nota Fiscal"
   },
   {
    "fieldname": "bank_account",
    "fieldtype": "Data",
-   "label": "Conta Banc\u00e1ria"
+   "label": "Conta Bancária"
   },
   {
    "fieldname": "late_fee",
@@ -194,7 +194,7 @@
   {
    "fieldname": "notes",
    "fieldtype": "Small Text",
-   "label": "Observa\u00e7\u00f5es"
+   "label": "Observações"
   },
   {
    "fieldname": "receipt",
@@ -212,38 +212,28 @@
  "owner": "Administrator",
  "permissions": [
   {
-   "create": 1,
-   "delete": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
-   "read": 1,
    "role": "System Manager",
-   "share": 1,
-   "write": 1
-  },
-  {
-   "create": 1,
-   "email": 1,
-   "export": 1,
-   "print": 1,
    "read": 1,
-   "report": 1,
-   "role": "Engenharia User",
-   "share": 1,
-   "write": 1
-  },
-  {
+   "write": 1,
    "create": 1,
    "delete": 1,
-   "email": 1,
    "export": 1,
    "print": 1,
-   "read": 1,
-   "report": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
    "role": "Engenharia Manager",
-   "share": 1,
-   "write": 1
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "import": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "share": 1
   }
  ],
  "row_format": "Dynamic",
