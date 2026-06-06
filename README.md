@@ -5,13 +5,13 @@ Gestao de obras de engenharia civil
 Especificacoes tecnicas: cadastro em **Technical Item** (parametros + formulas em **Technical Item Output**);
 instancias na obra em **Project Item** (documento standalone ligado a **Construction Project**).
 
-Testes: `bench --site <site> run-tests --app engenharia` (209+ testes)
+Testes: `bench --site <site> run-tests --app engenharia` (211+ testes)
 
 **Painel de Obras:** zona de atenção + próximos compromissos (50/50), agenda operacional (sem pagamentos),
 obras ativas em largura total, entradas×saídas do mês fixas, composição de custos por categoria,
 filtros de linhas com atualização parcial (5/10/15).
 
-**Custos de obra:** campo `funded_by` (Escritório vs Cliente) — custos pagos pelo cliente não entram no fluxo de caixa do escritório.
+**Custos e subcontratos:** campo `funded_by` (Escritório vs Cliente) — lançamentos pagos pelo cliente não entram no fluxo de caixa do escritório (KPIs, margem realizada, saídas do mês).
 
 Documentação de usuário: `engenharia/docs/manual_usuario.md`
 

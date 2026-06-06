@@ -12,7 +12,7 @@
 | Módulo | Função |
 |---|---|
 | `__init__.py` | Orquestrador `get()` |
-| `kpis.py` | KPIs agregados (`month_costs` só `funded_by=Escritório`) |
+| `kpis.py` | KPIs agregados (`month_costs`: Work Cost + Subcontract Payment só `funded_by=Escritório`) |
 | `financial.py` | Fluxo mensal fixo, composição por categoria, pagamentos pendentes no período |
 | `deadlines.py` | Prazos, alertas, centro_atencao |
 | `attention.py` | Tiles de ação imediata |
@@ -26,9 +26,9 @@
 
 | Origem | DocType(s) | Limit |
 |---|---|---|
-| kpis (manager) | Payment, Work Cost (`funded_by=Escritório`), Reimbursable Expense, Engineering Contract | 100 |
+| kpis (manager) | Payment, Work Cost + Subcontract (`funded_by=Escritório`), Reimbursable Expense, Engineering Contract | 100 |
 | kpis (operacional) | Construction Project, Deadline, Task, Permit, Customer | count/get_all capped |
-| financial | Payment (período), Work Cost (mês, escritório) | 100 |
+| financial | Payment (período), Work Cost + Subcontract Payment (mês, escritório) | 100 |
 | deadlines | Deadline | list_cap (5–15) |
 | timeline | Task, Communication Log, Time Log | 100 |
 | operational | Construction Project | list_cap `operational` |
@@ -53,7 +53,7 @@ user_is_engenharia_manager() → Engenharia Manager | System Manager | Administr
 | User não recebe `financeiro` | ✅ test_permissions |
 | Manager recebe financeiro completo | ✅ |
 | Agenda sem pagamentos (todos os perfis) | ✅ `build_agenda` + filtro JS |
-| `month_costs` exclui `funded_by=Cliente` | ✅ test_work_cost |
+| `month_costs` exclui `funded_by=Cliente` (Work Cost + Subcontract) | ✅ test_work_cost, test_subcontract (`test_client_funded_excluded_from_cash_flow_kpis`) |
 
 ---
 
@@ -92,6 +92,8 @@ user_is_engenharia_manager() → Engenharia Manager | System Manager | Administr
 | Entradas × saídas | A receber total vs custos | Entradas/saídas **do mês** fixas |
 | Composição custos | Fatia única azul | Fatias por **Cost Category** |
 | Work Cost no caixa | Todos os lançamentos | Só `funded_by=Escritório` |
+| Subcontrato no caixa | Todos os pagamentos | Só `funded_by=Escritório` |
+| Saídas do mês (painel) | Só Work Cost | Work Cost + subcontratos do escritório |
 
 ---
 

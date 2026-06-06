@@ -15,7 +15,8 @@ Legenda: ✅ OK · 🟡 Atenção · 🔴 Problema
 | Engineering Contract | ✅ | Parcelas, aditivos | project reqd | current_value parcial | Botão aplicar aditivo |
 | Commission | ✅ | Valores, pagamentos | project, supplier, total | total_paid, outstanding, status | set_query exclui obra cancelada |
 | Payment | ✅ | Financeiro | project | título auto | Indicador list view |
-| Work Cost | ✅ | Custo | project, amount | — | — |
+| Work Cost | ✅ | Custo | project, amount | — | `funded_by` Escritório/Cliente afeta caixa |
+| Subcontract | ✅ | Valores, pagamentos | project, supplier, total | total_paid, outstanding, status | `funded_by` Escritório/Cliente afeta KPI e caixa |
 | Project Item | 🟡 | Técnico denso | technical_item | outputs computed | Curva de aprendizado alta |
 | Task | ✅ | Simples | subject | — | Timer global disponível |
 | Deadline | ✅ | Prazo + órgão | due_date | — | — |
@@ -44,6 +45,7 @@ Legenda: ✅ OK · 🟡 Atenção · 🔴 Problema
 | Commission | ✅ | ✅ | ✅ | 🟡 |
 | Engineering Contract | ✅ | ✅ | ✅ | 🟡 |
 | Work Cost | ✅ | ✅ | ✅ | 🟡 |
+| Subcontract | ✅ | ✅ | ✅ funded_by Cliente | 🟡 |
 | Deadline | ✅ | ✅ | ✅ | 🟡 |
 | Permit | ✅ | ✅ | ✅ | 🟡 |
 | Customer | ✅ | parcial | 🟡 | — |
@@ -91,10 +93,11 @@ Legenda: ✅ OK · 🟡 Atenção · 🔴 Problema
 
 ### Fluxo 5: Despesas de obra
 
-1. **Work Cost** — lançamento ✅  
-2. Campo **Quem arca** (`funded_by`): Escritório (fluxo de caixa) vs Cliente (só administração) ✅  
-3. Categoria/fornecedor via Link ✅  
-4. Manager only (write) ✅  
+1. **Work Cost** — lançamento avulso ✅  
+2. **Subcontract** — contrato com prestador + parcelas ✅  
+3. Campo **Quem arca** (`funded_by`) em ambos: Escritório (fluxo de caixa, KPIs, margem) vs Cliente (só administração na obra) ✅  
+4. Categoria/fornecedor via Link ✅  
+5. Manager only (write) ✅  
 
 ### Fluxo 6: Controle de contratos
 

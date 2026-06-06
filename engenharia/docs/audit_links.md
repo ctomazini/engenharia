@@ -22,6 +22,7 @@ Construction Project  [HUB]
       ├── Engineering Contract.project
       ├── Payment.project
       ├── Work Cost.project
+      ├── Subcontract.project
       ├── Reimbursable Expense.project
       ├── Commission.construction_project
       ├── Deadline.project
@@ -61,6 +62,11 @@ Work Cost
   ├── project, customer, cost_category, supplier, stage (Link)
   └── Sem filhos
 
+Subcontract
+  ├── project, customer, supplier (Link)
+  ├── payments (Table → Subcontract Payment)
+  └── `funded_by` Escritório/Cliente — caixa do escritório via `office_subcontract_filters()`
+
 Payment
   ├── project, customer, contract (Link)
   └── Sync ← Engineering Contract Installment
@@ -90,6 +96,8 @@ Project Specification: child legado (istable, deprecated)
 | Engineering Contract | project | Construction Project | customer ← project.customer | ❌ | 🟡 Sem filtro status |
 | Payment | project | Construction Project | customer ← project.customer | ❌ | OK |
 | Work Cost | project | Construction Project | customer ← project.customer; `funded_by` Escritório/Cliente | ❌ | OK |
+| Subcontract | project | Construction Project | customer ← project.customer; `funded_by` Escritório/Cliente | ❌ | OK |
+| Subcontract | supplier | Supplier | — | ❌ | OK |
 | Task | project | Construction Project | customer ← project.customer | ❌ | OK |
 | Project Item | technical_item | Technical Item | unit ← technical_item.default_unit | ❌ | OK |
 | Project Item | stage | Project Stage | — | ❌ | 🟡 Poderia filtrar por project |

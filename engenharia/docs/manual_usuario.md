@@ -65,10 +65,10 @@ O **Painel de Obras** reúne indicadores e atalhos do dia a dia.
 
 | Bloco | O que mostra |
 |---|---|
-| **KPIs** | A receber, vencido, a reembolsar, a pagar (prestadores/subcontratos), custos do mês, margem |
-| **Entradas do mês × saídas do mês** | Valores **fixos do mês corrente** — **não mudam** ao alterar o filtro de 7/15/30 dias. Entradas = recebimentos confirmados; saídas = custos de obra pagos pelo **escritório** |
-| **Composição de custos** | Donut com fatias por **categoria de custo** (Materiais, Mão de obra etc.) — só custos do escritório no mês |
-| **Subcontratos (KPI)** | O card *A pagar (prestadores)* resume saldo de subcontratos; não há mais seção acordeão de subcontratos no painel |
+| **KPIs** | A receber, vencido, a reembolsar, a pagar (prestadores), saídas do mês, margem |
+| **Entradas do mês × saídas do mês** | Valores **fixos do mês corrente** — **não mudam** com o filtro de 7/15/30 dias. Saídas = custos de obra **e parcelas de subcontrato** pagos pelo **escritório** |
+| **Composição de custos** | Donut por **categoria de custo** (custos avulsos + subcontratos do escritório no mês) |
+| **Subcontratos (KPI)** | *A pagar (prestadores)* = saldo de subcontratos **do escritório**; subcontratos *Cliente* ficam só no cadastro da obra |
 
 ### Dicas
 
@@ -270,6 +270,7 @@ Controle de **pagamentos a prestadores** (pedreiro, eletricista, etc.) com valor
 |---|---|
 | Obra | Obra onde o serviço será executado |
 | Prestador | Fornecedor cadastrado (ex.: João Pedreiro) |
+| **Quem arca** | **Escritório** (padrão): você paga o prestador e entra no fluxo de caixa. **Cliente**: só acompanhamento — o cliente paga direto e **não** entra no seu caixa |
 | Valor Total | Valor acordado do serviço (editável — registre o motivo em Observações de aditivo) |
 | Pagamentos Efetuados | Cada parcela paga: data, valor, forma e comprovante |
 | Saldo a Pagar | Calculado automaticamente (Total − Pago) |
@@ -277,7 +278,9 @@ Controle de **pagamentos a prestadores** (pedreiro, eletricista, etc.) com valor
 
 **Exemplo:** João cobrou R$ 5.000 pelo reboco — registre R$ 2.000 em janeiro e R$ 3.000 em fevereiro na tabela de pagamentos. O saldo zera e o status vira **Paga**.
 
-Na **Obra → Conexões** e no cadastro do **Fornecedor** você vê todos os subcontratos vinculados. No painel *(Manager)*, o KPI **A pagar (prestadores)** resume o saldo pendente de subcontratos.
+**Quando usar Cliente:** o dono da obra contrata e paga o pedreiro ou eletricista diretamente; você só acompanha valores e parcelas na obra. O subcontrato continua visível na obra e no fornecedor, mas é ignorado em custos do mês, KPI *A pagar (prestadores)*, margem realizada e fluxo de caixa do escritório.
+
+Na **Obra → Conexões** e no cadastro do **Fornecedor** você vê todos os subcontratos vinculados. No painel *(Manager)*, o KPI **A pagar (prestadores)** resume o saldo pendente de subcontratos **do escritório** (subcontratos *Cliente* ficam fora desse KPI).
 
 *(Engenharia User: somente leitura.)*
 

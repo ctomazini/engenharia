@@ -308,13 +308,15 @@ Construction Project (hub)
 - `cost_category` → Cost Category  
 - `supplier` → Supplier  
 - `stage` → Project Stage  
+- `funded_by` → Escritório (fluxo de caixa) / Cliente (só registro na obra)
 
 Habilita relatórios por categoria / fornecedor / etapa / total.
 
 `Subcontract` para contratos com prestador (valor acordado + parcelas):
 
 - `total_value`, `total_paid`, `outstanding`, child `Subcontract Payment`  
-- Margem: leitura dupla — `Work Cost` (Pago) + `Subcontract.total_paid` (sem sync entre DocTypes)  
+- `funded_by` → Escritório (KPIs, caixa, margem realizada) / Cliente (obra apenas)  
+- Margem: leitura dupla — `Work Cost` (Pago) + `Subcontract.total_paid` **do escritório** (sem sync entre DocTypes); `funded_by=Cliente` excluído do caixa via `office_subcontract_filters()` em `work_costs.py`  
 - Aditivo: edição direta de `total_value` + `amendment_remarks`
 
 ### 7.4 Administração de obra
