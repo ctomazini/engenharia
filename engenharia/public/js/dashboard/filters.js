@@ -35,7 +35,8 @@ engenharia.dashboard.filters = {
 	},
 
 	bind($root, page, reload_fn) {
-		$root.find(".eng-dash-periodo-btn").on("click", function () {
+		$root.off("click.engDashPeriod", ".eng-dash-periodo-btn");
+		$root.on("click.engDashPeriod", ".eng-dash-periodo-btn", function () {
 			const days = cint($(this).attr("data-period-days"));
 			if (!page || days === page.period_days) return;
 			page.period_days = days;
