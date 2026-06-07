@@ -7,7 +7,7 @@ frappe.pages["eng-dashboard"].on_page_load = function (wrapper) {
 		single_column: true,
 	});
 
-	page.$container = $('<div class="eng-dash-root dashboard-root"></div>').appendTo(page.main);
+	page.$container = $('<div class="eng-dash-root eng-dashboard-container dashboard-root"></div>').appendTo(page.main);
 	page.period_days = 7;
 	page.eng_dash_list_limits = engenharia.dashboard?.utils?.default_list_limits?.() || {
 		timeline: 5,
