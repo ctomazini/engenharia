@@ -70,6 +70,10 @@ O **Painel de Obras** reúne indicadores e atalhos do dia a dia.
 | **Composição de custos** | Donut por **categoria de custo** (custos avulsos + subcontratos do escritório no mês) |
 | **Subcontratos (KPI)** | *A pagar (prestadores)* = saldo de subcontratos **do escritório**; subcontratos *Cliente* ficam só no cadastro da obra |
 
+### Ações rápidas
+
+Atalhos para o **dia a dia**: novo cliente, obra, prazo, tarefa, calendário (visão Event com prazos sincronizados), comunicação e horas. **Manager** também vê pagamento, subcontrato e custo de obra. Contratos, protocolos e despesas reembolsáveis ficam na sidebar — são cadastros menos frequentes.
+
 ### Dicas
 
 - Clique em um tile ou linha da agenda para ir direto à lista filtrada do registro correspondente.

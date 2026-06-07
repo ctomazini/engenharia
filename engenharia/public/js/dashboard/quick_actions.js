@@ -1,20 +1,35 @@
 frappe.provide("engenharia.dashboard");
 
 engenharia.dashboard.quick_actions = {
+	/** Ordem: Dia a Dia (sidebar) → financeiro frequente. Sem contrato/protocolo/reembolso — cadastro episódico. */
 	actions() {
 		return [
 			{ label: __("Cliente"), icon: "user-plus", doctype: "Customer" },
 			{ label: __("Obra"), icon: "folder-plus", doctype: "Construction Project" },
-			{ label: __("Contrato"), icon: "file-plus", doctype: "Engineering Contract" },
-			{ label: __("Pagamento"), icon: "circle-dollar-sign", doctype: "Payment" },
-			{ label: __("Custo de obra"), icon: "receipt", doctype: "Work Cost" },
-			{ label: __("Despesa reembolsável"), icon: "wallet", doctype: "Reimbursable Expense" },
 			{ label: __("Prazo"), icon: "clock-plus", doctype: "Deadline" },
-			{ label: __("Protocolo"), icon: "file-check", doctype: "Permit" },
-			{ label: __("Comunicação"), icon: "message-square-plus", doctype: "Communication Log" },
 			{ label: __("Tarefa"), icon: "list-plus", doctype: "Task" },
+			{
+				label: __("Calendário"),
+				icon: "calendar",
+				route: ["List", "Event", "Calendar"],
+				read_doctype: "Event",
+			},
+			{ label: __("Comunicação"), icon: "message-square-plus", doctype: "Communication Log" },
 			{ label: __("Horas"), icon: "clock", doctype: "Time Log" },
+			{ label: __("Pagamento"), icon: "circle-dollar-sign", doctype: "Payment" },
+			{ label: __("Subcontrato"), icon: "hard-hat", doctype: "Subcontract" },
+			{ label: __("Custo de obra"), icon: "receipt", doctype: "Work Cost" },
 		];
+	},
+
+	visible_actions() {
+		return this.actions().filter((action) => {
+			if (action.route) {
+				const dt = action.read_doctype || action.route[1];
+				return frappe.perm.has_perm(dt, 0, "read");
+			}
+			return frappe.model.can_create(action.doctype);
+		});
 	},
 
 	icon(name) {
@@ -26,14 +41,20 @@ engenharia.dashboard.quick_actions = {
 	},
 
 	render(container) {
-		const chips = this.actions()
-			.map(
-				(action) => `
-			<button type="button" class="eng-dash-action-chip" data-new-dt="${frappe.utils.escape_html(action.doctype)}">
+		const chips = this.visible_actions()
+			.map((action) => {
+				const route_attr = action.route
+					? ` data-route="${frappe.utils.escape_html(action.route.join("/"))}"`
+					: "";
+				const dt_attr = action.doctype
+					? ` data-new-dt="${frappe.utils.escape_html(action.doctype)}"`
+					: "";
+				return `
+			<button type="button" class="eng-dash-action-chip"${dt_attr}${route_attr}>
 				${this.icon(action.icon)}
 				<span>${frappe.utils.escape_html(action.label)}</span>
-			</button>`
-			)
+			</button>`;
+			})
 			.join("");
 
 		container.html(`
@@ -46,6 +67,11 @@ engenharia.dashboard.quick_actions = {
 
 	bind($root) {
 		$root.find(".eng-dash-action-chip").on("click", function () {
+			const route = $(this).attr("data-route");
+			if (route) {
+				frappe.set_route(...route.split("/"));
+				return;
+			}
 			const dt = $(this).attr("data-new-dt");
 			if (dt) frappe.new_doc(dt);
 		});
