@@ -1,0 +1,9 @@
+/* Query Report — tabela usa largura total do painel */
+#page-query-report .report-wrapper {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+#page-query-report .report-wrapper .datatable {
+	width: 100%;
+}

@@ -12,7 +12,7 @@ def get_dashboard_data(
 	period_days: int = 7,
 	periodo_dias: int | None = None,
 	list_limit: int = 5,
-	list_limits: dict | None = None,
+	list_limits: dict | str | None = None,
 ) -> dict:
 	frappe.has_permission("Construction Project", "read", throw=True)
 	return _get_dashboard_data(

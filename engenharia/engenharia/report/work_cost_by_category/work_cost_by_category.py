@@ -4,8 +4,8 @@ from frappe.utils import flt
 
 from engenharia.report_visuals import (
 	REPORT_COLORS,
+	bar_chart,
 	currency_summary,
-	donut_chart,
 	int_summary,
 )
 
@@ -30,16 +30,15 @@ def execute(filters=None):
 
 def _get_columns():
 	return [
-		{
-			"fieldname": "cost_category",
-			"label": _("Categoria"),
-			"fieldtype": "Link",
-			"options": "Cost Category",
-			"width": 180,
-		},
-		{"fieldname": "category_name", "label": _("Nome"), "fieldtype": "Data", "width": 200},
+		{"fieldname": "category_name", "label": _("Categoria"), "fieldtype": "Data", "width": 280},
 		{"fieldname": "total_cost", "label": _("Custo Total"), "fieldtype": "Currency", "width": 140},
-		{"fieldname": "share_percent", "label": _("% do Total"), "fieldtype": "Percent", "width": 100},
+		{
+			"fieldname": "share_percent",
+			"label": _("% do Total"),
+			"fieldtype": "Percent",
+			"width": 110,
+			"precision": 1,
+		},
 	]
 
 
@@ -93,4 +92,8 @@ def _build_chart(data):
 	labels = [row["category_name"] for row in data[:8]]
 	values = [flt(row["total_cost"]) for row in data[:8]]
 	colors = [CATEGORY_PALETTE[i % len(CATEGORY_PALETTE)] for i in range(len(labels))]
-	return donut_chart(labels, values, colors)
+	return bar_chart(
+		labels,
+		[{"name": _("Custo Total"), "values": values}],
+		colors,
+	)

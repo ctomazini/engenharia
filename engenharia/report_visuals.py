@@ -34,10 +34,18 @@ def month_label(dt) -> str:
 	return f"{MESES_PT[dt.month - 1]}/{dt.year}"
 
 
+def short_label(text, max_len: int = 22) -> str:
+	text = (text or "").strip()
+	if len(text) <= max_len:
+		return text
+	return f"{text[: max_len - 1]}…"
+
+
 def bar_chart(labels: list, datasets: list[dict], colors: list[str] | None = None) -> dict:
 	chart = {
-		"data": {"labels": labels, "datasets": datasets},
+		"data": {"labels": [short_label(label, 32) for label in labels], "datasets": datasets},
 		"type": "bar",
+		"height": 280,
 	}
 	if colors:
 		chart["colors"] = colors
@@ -46,8 +54,11 @@ def bar_chart(labels: list, datasets: list[dict], colors: list[str] | None = Non
 
 def donut_chart(labels: list, values: list, colors: list[str] | None = None) -> dict:
 	chart = {
-		"data": {"labels": labels, "datasets": [{"values": values}]},
+		"data": {"labels": [short_label(label) for label in labels], "datasets": [{"values": values}]},
 		"type": "donut",
+		"height": 300,
+		"truncateLegends": True,
+		"maxLegendPoints": 8,
 	}
 	if colors:
 		chart["colors"] = colors

@@ -61,6 +61,7 @@ fixtures = [
 # include js, css files in header of desk.html
 app_include_css = [
 	"/assets/engenharia/css/list_filters.css",
+	"/assets/engenharia/css/reports.css",
 ]
 app_include_js = [
 	"/assets/engenharia/js/masks.js",
@@ -69,6 +70,7 @@ app_include_js = [
 	"/assets/engenharia/js/customer_from_project.js",
 	"/assets/engenharia/js/documents_placeholders.js",
 	"/assets/engenharia/js/timer_global.js",
+	"/assets/engenharia/js/reports_common.js",
 ]
 
 # include js, css files in header of web template

@@ -17,10 +17,6 @@ frappe.query_reports["cash_flow"] = {
 		if (column.fieldname === "description" && row.description && !row.date) {
 			return `<strong>${row.description}</strong>`;
 		}
-		if (column.fieldname === "balance" && row.balance != null && !row.date) {
-			const cls = flt(row.balance) >= 0 ? "text-success" : "text-danger";
-			return `<strong class="${cls}">${value}</strong>`;
-		}
 		return value;
 	},
 };

@@ -20,14 +20,7 @@ def execute(filters=None):
 
 def _get_columns():
 	return [
-		{
-			"fieldname": "project",
-			"label": _("Obra"),
-			"fieldtype": "Link",
-			"options": "Construction Project",
-			"width": 180,
-		},
-		{"fieldname": "project_title", "label": _("Título"), "fieldtype": "Data", "width": 220},
+		{"fieldname": "project_title", "label": _("Obra"), "fieldtype": "Data", "width": 260},
 		{
 			"fieldname": "contract_value",
 			"label": _("Valor Contratado"),
@@ -68,7 +61,8 @@ def _get_columns():
 			"fieldname": "received_percent",
 			"label": _("% Recebido"),
 			"fieldtype": "Percent",
-			"width": 90,
+			"width": 100,
+			"precision": 1,
 		},
 	]
 
@@ -198,7 +192,7 @@ def _build_chart(data):
 	values = []
 	for row in top:
 		title = row.get("project_title") or row.get("project")
-		labels.append(title[:40] + "…" if len(title) > 40 else title)
+		labels.append(title)
 		values.append(flt(row.get("realized_margin")))
 
 	return bar_chart(

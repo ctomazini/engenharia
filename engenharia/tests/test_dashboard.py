@@ -185,6 +185,15 @@ class TestDashboard(FrappeTestCase):
 		self.assertEqual(payload["list_limits"]["parcelas"], 5)
 		self.assertEqual(payload["list_limits"]["timeline"], 5)
 
+	def test_api_accepts_list_limits_json_string(self):
+		payload = api_get_dashboard_data(
+			list_limits='{"parcelas": 10, "timeline": 5, "payments": 5}',
+			period_days=7,
+		)
+		self.assertEqual(payload["list_limits"]["parcelas"], 10)
+		self.assertEqual(payload["list_limits"]["timeline"], 5)
+		self.assertIn("resumo", payload)
+
 	def test_permission_required(self):
 		user_email = f"dash_no_perm_{frappe.generate_hash(length=6)}@example.com"
 		if not frappe.db.exists("User", user_email):

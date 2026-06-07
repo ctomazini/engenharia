@@ -18,7 +18,13 @@ def _get_columns():
 	return [
 		{"fieldname": "status", "label": _("Status"), "fieldtype": "Data", "width": 140},
 		{"fieldname": "count", "label": _("Quantidade"), "fieldtype": "Int", "width": 120},
-		{"fieldname": "share_percent", "label": _("% do Total"), "fieldtype": "Percent", "width": 100},
+		{
+			"fieldname": "share_percent",
+			"label": _("% do Total"),
+			"fieldtype": "Percent",
+			"width": 110,
+			"precision": 1,
+		},
 	]
 
 
