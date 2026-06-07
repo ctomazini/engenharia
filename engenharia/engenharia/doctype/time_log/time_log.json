@@ -47,6 +47,7 @@
    "fieldname": "project",
    "fieldtype": "Link",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Obra",
    "options": "Construction Project",
    "reqd": 1,
@@ -71,6 +72,7 @@
    "fieldname": "log_date",
    "fieldtype": "Date",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Data",
    "reqd": 1,
    "description": "Data da atividade."
