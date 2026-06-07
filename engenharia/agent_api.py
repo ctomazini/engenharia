@@ -2,7 +2,7 @@
 
 import frappe
 from frappe import _
-from frappe.utils import flt, today
+from frappe.utils import add_months, flt, getdate, today
 
 from engenharia.dashboard._helpers import user_is_engenharia_manager
 from engenharia.titles import get_customer_name
@@ -102,8 +102,46 @@ def get_project_summary(project: str) -> dict:
 	if not user_is_engenharia_manager():
 		for key in _FINANCIAL_SUMMARY_KEYS:
 			data.pop(key, None)
+		data["financial_restricted"] = True
 
 	return data
+
+
+@frappe.whitelist()
+def get_financial_overview() -> dict:
+	"""Aggregated financial data — Engenharia Manager only."""
+	if not user_is_engenharia_manager():
+		frappe.throw(_("Sem permissão"), frappe.PermissionError)
+	frappe.has_permission("Payment", "read", throw=True)
+
+	hoje = getdate(today())
+	mes_inicio = hoje.replace(day=1)
+	mes_fim = add_months(mes_inicio, 1)
+
+	overview = {
+		"overdue": frappe.db.count("Payment", {"status": "Vencido"}),
+		"pending": frappe.db.count("Payment", {"status": "Pendente"}),
+		"received_this_month": frappe.db.count(
+			"Payment",
+			{"status": "Recebido", "received_date": ["between", [mes_inicio, mes_fim]]},
+		),
+	}
+
+	overdue_val = frappe.db.sql(
+		"SELECT COALESCE(SUM(amount), 0) FROM `tabPayment` WHERE status = 'Vencido'",
+		as_list=True,
+	)
+	overview["overdue_amount"] = flt(overdue_val[0][0]) if overdue_val else 0
+
+	received_val = frappe.db.sql(
+		"""SELECT COALESCE(SUM(received_amount), 0) FROM `tabPayment`
+		WHERE status = 'Recebido' AND received_date BETWEEN %s AND %s""",
+		(mes_inicio, mes_fim),
+		as_list=True,
+	)
+	overview["received_amount"] = flt(received_val[0][0]) if received_val else 0
+
+	return overview
 
 
 @frappe.whitelist()

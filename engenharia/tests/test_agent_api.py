@@ -1,7 +1,12 @@
 import frappe
 from frappe.tests.utils import FrappeTestCase
 
-from engenharia.agent_api import get_active_projects, get_costs_by_category, get_project_summary
+from engenharia.agent_api import (
+	get_active_projects,
+	get_costs_by_category,
+	get_financial_overview,
+	get_project_summary,
+)
 from engenharia.tests.test_setup import create_test_construction_project, create_test_cost_category, create_test_work_cost
 
 
@@ -65,6 +70,7 @@ class TestAgentApi(FrappeTestCase):
 			self.assertNotIn("total_costs", summary)
 			self.assertNotIn("contract_value", summary)
 			self.assertNotIn("margin", summary)
+			self.assertTrue(summary.get("financial_restricted"))
 		finally:
 			frappe.set_user("Administrator")
 
@@ -100,6 +106,51 @@ class TestAgentApi(FrappeTestCase):
 		try:
 			with self.assertRaises(PermissionError):
 				get_costs_by_category(project.name)
+		finally:
+			frappe.set_user("Administrator")
+
+	def test_get_financial_overview_returns_dict(self):
+		result = get_financial_overview()
+		self.assertIsInstance(result, dict)
+		self.assertIn("overdue", result)
+		self.assertIn("pending", result)
+		self.assertIn("received_this_month", result)
+
+	def test_get_financial_overview_has_amounts(self):
+		result = get_financial_overview()
+		self.assertIn("overdue_amount", result)
+		self.assertIn("received_amount", result)
+
+	def test_get_financial_overview_requires_manager(self):
+		from engenharia.setup.roles import seed_roles
+		from frappe.exceptions import PermissionError
+
+		seed_roles()
+		user_email = f"agent_fin_{frappe.generate_hash(length=6)}@example.com"
+		if not frappe.db.exists("User", user_email):
+			frappe.get_doc(
+				{
+					"doctype": "User",
+					"email": user_email,
+					"first_name": "Agent",
+					"last_name": "Fin",
+					"send_welcome_email": 0,
+				}
+			).insert(ignore_permissions=True)
+		frappe.get_doc(
+			{
+				"doctype": "Has Role",
+				"parent": user_email,
+				"parenttype": "User",
+				"parentfield": "roles",
+				"role": "Engenharia User",
+			}
+		).insert(ignore_permissions=True)
+
+		frappe.set_user(user_email)
+		try:
+			with self.assertRaises(PermissionError):
+				get_financial_overview()
 		finally:
 			frappe.set_user("Administrator")
 

@@ -8,8 +8,8 @@
 
 | Componente | Status |
 |---|---|
-| `agent_api.py` | ✅ Implementado (3 endpoints) |
-| `test_agent_api.py` | ✅ 6 testes |
+| `agent_api.py` | ✅ Implementado (4 endpoints) |
+| `test_agent_api.py` | ✅ 9 testes |
 | Endpoints agregados para agente | ✅ Read-only |
 | Documentação de contrato IA | ✅ Este arquivo + `engenharia/docs/README.md` |
 | REST `/api/resource/` em DocTypes | ✅ Nativo Frappe (40 DocTypes `custom: 0`) |
@@ -17,7 +17,7 @@
 
 O app está **operacional para humanos** e **pronto para integração MCP/Hermes** via endpoints agregados. Fase 2 (tools MCP registradas) permanece no backlog.
 
-**Gap vs advocacia:** falta `get_financial_overview` (visão escritório-wide de recebíveis) — ver §7.3.
+**Gap vs advocacia:** paridade Fase 1 fechada (incl. `get_financial_overview`). Contadores em `get_active_projects` permanecem backlog opcional.
 
 ---
 
@@ -30,6 +30,7 @@ O app está **operacional para humanos** e **pronto para integração MCP/Hermes
 | `get_active_projects` | Construction Project read | Obras ativas + `customer_name` (batch lookup) |
 | `get_project_summary` | Construction Project read | Prazos; financeiro condicional (Manager) |
 | `get_costs_by_category` | Manager + Work Cost read | Custos agregados por Cost Category |
+| `get_financial_overview` | Manager + Payment read | Inadimplência e recebimentos do mês |
 
 **Regras aplicadas:** read-only · `has_permission(..., throw=True)` · type hints · zero `commit()` · financeiro omitido para Engenharia User (espelha dashboard).
 
@@ -53,16 +54,7 @@ O app está **operacional para humanos** e **pronto para integração MCP/Hermes
 | `get_active_projects` | `get_active_cases` | 🟡 Eng. sem contadores de satélites na lista; advocacia usa 3× `db.count` por caso |
 | `get_project_summary` | `get_case_summary` | 🟡 Eng. omite financeiro para User; advocacia retorna `financial_restricted: true` |
 | `get_costs_by_category` | `get_court_costs_by_type` | ✅ Agregação por tipo/categoria, Manager only |
-| — | `get_financial_overview` | ❌ **Gap engenharia** — inadimplência/recebimentos do mês (escritório) |
-
-### Recomendação (backlog Fase 1.5)
-
-Implementar `get_financial_overview()` em `engenharia/agent_api.py`:
-
-- Permission: Engenharia Manager + Payment read
-- Retorno sugerido: `overdue`, `pending`, `received_this_month`, `overdue_amount`, `received_amount`
-- Espelhar `advocacia/advocacia/agent_api.py:get_financial_overview`
-- +2 testes em `test_agent_api.py`
+| `get_financial_overview` | `get_financial_overview` | ✅ Inadimplência/recebimentos do mês (escritório) |
 
 ---
 
@@ -84,7 +76,7 @@ Implementar `get_financial_overview()` em `engenharia/agent_api.py`:
 }
 ```
 
-Para **Engenharia User**, chaves em `_FINANCIAL_SUMMARY_KEYS` são omitidas (sem flag `financial_restricted` — backlog cosmético).
+Para **Engenharia User**, chaves em `_FINANCIAL_SUMMARY_KEYS` são omitidas e `financial_restricted: true` é retornado.
 
 ---
 
@@ -97,6 +89,9 @@ Para **Engenharia User**, chaves em `_FINANCIAL_SUMMARY_KEYS` são omitidas (sem
 | `test_get_project_summary_redacts_financial_for_user` | Sem valores para User |
 | `test_get_costs_by_category` | Agregação por categoria |
 | `test_get_costs_by_category_requires_manager` | PermissionError para User |
+| `test_get_financial_overview_returns_dict` | Contadores operacionais |
+| `test_get_financial_overview_has_amounts` | Totais monetários |
+| `test_get_financial_overview_requires_manager` | PermissionError para User |
 | `test_permission_denied_without_access` | PermissionError sem role |
 
 ---
@@ -105,9 +100,9 @@ Para **Engenharia User**, chaves em `_FINANCIAL_SUMMARY_KEYS` são omitidas (sem
 
 ### Fase 1.5 — Paridade advocacia
 
-1. `get_financial_overview()` + testes.
-2. Opcional: contadores leves em `get_active_projects` (deadlines/payments pendentes) com batch query — **sem** N+1.
-3. Opcional: `financial_restricted: true` no summary para User.
+1. ~~`get_financial_overview()` + testes.~~ ✅
+2. ~~`financial_restricted: true` no summary para User.~~ ✅
+3. Opcional: contadores leves em `get_active_projects` (deadlines/payments pendentes) com batch query — **sem** N+1.
 
 ### Fase 2 — Tools MCP
 
