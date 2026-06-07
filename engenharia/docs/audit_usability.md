@@ -112,7 +112,7 @@ Legenda: ✅ OK · 🟡 Atenção · 🔴 Problema
 2. Gerar via botão no projeto ✅  
 3. Document Kit para pacotes ✅  
 
-**Fricção:** 🟡 Template exige campos técnicos; manual necessário (Seção 8).
+**Fricção:** 🟡 Template exige campos técnicos; manual necessário (Seção 10).
 
 ---
 

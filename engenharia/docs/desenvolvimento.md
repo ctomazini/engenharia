@@ -28,6 +28,10 @@ bench --site engenharia.local run-tests --app engenharia
 ```
 
 - Código em `engenharia/tests/`
+- Gates úteis após mudanças pontuais:
+  - Relatórios: `bench --site engenharia.local run-tests --module engenharia.tests.test_reports`
+  - Documentos/placeholders: `bench --site engenharia.local run-tests --module engenharia.tests.test_documents`
+  - Subcontratos: `bench --site engenharia.local run-tests --module engenharia.tests.test_subcontract`
 - Padrão: `tearDown` com `frappe.db.rollback()`; CPF/CNPJ únicos nos factories
 - **Definition of Done:** suite verde em site com app instalado
 
@@ -44,7 +48,21 @@ E2E_PASS=<senha_admin> npm test
 
 Detalhes, variáveis de ambiente e limpeza de dados: [`e2e/README.md`](../../e2e/README.md).
 
-Recomendado após mudanças em formulários, permissões, sync financeiro ou painel.
+Recomendado após mudanças em formulários, permissões, sync financeiro, painel, **Script Reports** ou **placeholders de documento**.
+
+---
+
+## Estrutura útil
+
+| Área | Caminho |
+| --- | --- |
+| DocTypes | `engenharia/engenharia/doctype/` |
+| Painel | `engenharia/engenharia/page/eng_dashboard/`, `engenharia/dashboard/` |
+| Relatórios | `engenharia/engenharia/report/`, helper `engenharia/report_visuals.py` |
+| Documentos docx | `engenharia/documents.py` (`PLACEHOLDER_REFERENCE`) |
+| Setup / migrate | `engenharia/engenharia/setup/` |
+| Testes Python | `engenharia/tests/` |
+| Testes E2E | `e2e/` |
 
 ---
 
@@ -83,15 +101,3 @@ bench --site engenharia.local execute engenharia.engenharia.setup.demo_data.tear
 ```
 
 Não usar seed de demo em produção.
-
----
-
-## Estrutura útil
-
-| Área | Caminho |
-| --- | --- |
-| DocTypes | `engenharia/engenharia/doctype/` |
-| Painel | `engenharia/engenharia/page/eng_dashboard/`, `engenharia/dashboard/` |
-| Setup / migrate | `engenharia/engenharia/setup/` |
-| Testes Python | `engenharia/tests/` |
-| Testes E2E | `e2e/` |

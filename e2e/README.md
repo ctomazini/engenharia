@@ -65,6 +65,12 @@ Cadastros auxiliares → Cliente → Obra → Etapas / Itens → Contrato (+ **s
 
 Cada execução usa marcador único **`PLAYWRIGHT_<run_id>`** nos campos de texto para identificar registros de teste.
 
+### Fora do escopo atual
+
+- Geração de `.docx` com placeholders (`generate_project_documents`)
+- Navegação nos 5 **Script Reports** (gráficos/KPIs)
+- Asserção de parcelas individuais de subcontrato na UI
+
 ---
 
 ## Implementação (Frappe v16)
@@ -100,5 +106,7 @@ Registros ficam no site. Para remover manualmente, filtre listas por `PLAYWRIGHT
 Melhorias futuras possíveis:
 
 - Teardown automatizado por marcador
+- Passo de geração de documento Word na obra
+- Smoke dos Script Reports (KPI + gráfico)
 - Mais asserções puramente UI (preenchimento de campos sem `frappe.db.insert`)
 - Job CI com imagem `mcr.microsoft.com/playwright`

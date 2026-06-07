@@ -7,6 +7,7 @@ import frappe
 from frappe import _
 from frappe.utils import flt, formatdate, fmt_money, getdate, strip_html, today
 
+from engenharia.project_rollup import get_project_items_summary
 from engenharia.titles import get_customer_name
 
 PLACEHOLDER_REFERENCE = [
@@ -16,6 +17,7 @@ PLACEHOLDER_REFERENCE = [
 			{"placeholder": "company_name", "label": "Nome do escritório"},
 			{"placeholder": "company_cnpj", "label": "CNPJ do escritório"},
 			{"placeholder": "company_crea", "label": "CREA do escritório"},
+			{"placeholder": "company_logo", "label": "URL do logotipo (Configurações da Engenharia)"},
 			{"placeholder": "bank_name", "label": "Banco"},
 			{"placeholder": "bank_agency", "label": "Agência"},
 			{"placeholder": "bank_account", "label": "Conta bancária"},
@@ -95,6 +97,34 @@ PLACEHOLDER_REFERENCE = [
 		],
 	},
 	{
+		"grupo": "Orçamento (obra)",
+		"items": [
+			{"placeholder": "project_item_count", "label": "Quantidade de itens do orçamento (revisão vigente)"},
+			{
+				"placeholder": "project_items",
+				"label": "Lista de itens do orçamento (use {% for item in project_items %})",
+			},
+		],
+	},
+	{
+		"grupo": "Item do orçamento (loop)",
+		"condicional": True,
+		"items": [
+			{"placeholder": "name", "label": "Código do item", "loop_only": True, "loop_var": "item"},
+			{"placeholder": "title", "label": "Título do item", "loop_only": True, "loop_var": "item"},
+			{"placeholder": "technical_item", "label": "Item técnico (catálogo)", "loop_only": True, "loop_var": "item"},
+			{"placeholder": "instance_label", "label": "Identificação / instância", "loop_only": True, "loop_var": "item"},
+			{"placeholder": "quantity", "label": "Quantidade", "loop_only": True, "loop_var": "item"},
+			{"placeholder": "unit", "label": "Unidade", "loop_only": True, "loop_var": "item"},
+			{"placeholder": "unit_price", "label": "Preço unitário (R$)", "loop_only": True, "loop_var": "item"},
+			{"placeholder": "unit_price_fmt", "label": "Preço unitário (formatado)", "loop_only": True, "loop_var": "item"},
+			{"placeholder": "total_value", "label": "Valor total (R$)", "loop_only": True, "loop_var": "item"},
+			{"placeholder": "total_value_fmt", "label": "Valor total (formatado)", "loop_only": True, "loop_var": "item"},
+			{"placeholder": "params_summary", "label": "Resumo dos parâmetros", "loop_only": True, "loop_var": "item"},
+			{"placeholder": "outputs_summary", "label": "Resumo dos resultados calculados", "loop_only": True, "loop_var": "item"},
+		],
+	},
+	{
 		"grupo": "Subcontratos (obra)",
 		"items": [
 			{"placeholder": "subcontract_count", "label": "Quantidade de subcontratos"},
@@ -116,8 +146,10 @@ PLACEHOLDER_REFERENCE = [
 		"items": [
 			{"placeholder": "name", "label": "Código do subcontrato", "loop_only": True, "loop_var": "s"},
 			{"placeholder": "title", "label": "Título do subcontrato", "loop_only": True, "loop_var": "s"},
+			{"placeholder": "supplier", "label": "Código do prestador (Link)", "loop_only": True, "loop_var": "s"},
 			{"placeholder": "supplier_name", "label": "Nome do prestador", "loop_only": True, "loop_var": "s"},
 			{"placeholder": "supplier_cnpj", "label": "CNPJ do prestador", "loop_only": True, "loop_var": "s"},
+			{"placeholder": "funded_by", "label": "Quem arca (Escritório / Cliente)", "loop_only": True, "loop_var": "s"},
 			{"placeholder": "description", "label": "Descrição do serviço", "loop_only": True, "loop_var": "s"},
 			{"placeholder": "total_value", "label": "Valor acordado (R$)", "loop_only": True, "loop_var": "s"},
 			{"placeholder": "total_value_fmt", "label": "Valor acordado (formatado)", "loop_only": True, "loop_var": "s"},
@@ -333,6 +365,7 @@ def _get_settings_context(settings) -> dict:
 		"company_name": settings.company_name or "",
 		"company_cnpj": settings.company_cnpj or "",
 		"company_crea": settings.company_crea or "",
+		"company_logo": settings.company_logo or "",
 		"bank_name": settings.bank_name or "",
 		"bank_agency": settings.bank_agency or "",
 		"bank_account": settings.bank_account or "",
@@ -464,6 +497,7 @@ def _get_subcontracts_context(project_name: str) -> dict:
 			"status",
 			"cost_category",
 			"amendment_remarks",
+			"funded_by",
 		],
 		order_by="creation asc",
 		limit=100,
@@ -507,6 +541,7 @@ def _get_subcontracts_context(project_name: str) -> dict:
 				"supplier": row.supplier or "",
 				"supplier_name": supplier_names.get(row.supplier, row.supplier or ""),
 				"supplier_cnpj": supplier_cnpjs.get(row.supplier, ""),
+				"funded_by": row.funded_by or "",
 				"description": row.description or "",
 				"total_value": row_total,
 				"total_value_fmt": _fmt_currency(row_total),
@@ -530,6 +565,34 @@ def _get_subcontracts_context(project_name: str) -> dict:
 		"subcontract_outstanding": outstanding,
 		"subcontract_outstanding_fmt": _fmt_currency(outstanding),
 		"subcontracts": subcontracts,
+	}
+
+
+def _get_project_items_context(project_name: str) -> dict:
+	summary = get_project_items_summary(project_name)
+	items = []
+	for row in summary.get("items") or []:
+		total = flt(row.get("total_value"))
+		unit_price = flt(row.get("unit_price"))
+		items.append(
+			{
+				"name": row.get("name") or "",
+				"title": row.get("title") or "",
+				"technical_item": row.get("technical_item") or "",
+				"instance_label": row.get("instance_label") or "",
+				"quantity": flt(row.get("quantity")),
+				"unit": row.get("unit") or "",
+				"unit_price": unit_price,
+				"unit_price_fmt": _fmt_currency(unit_price),
+				"total_value": total,
+				"total_value_fmt": _fmt_currency(total),
+				"params_summary": row.get("params_summary") or "",
+				"outputs_summary": row.get("outputs_summary") or "",
+			}
+		)
+	return {
+		"project_item_count": len(items),
+		"project_items": items,
 	}
 
 
@@ -596,6 +659,7 @@ def _build_context(project_name: str) -> dict:
 	context.update(_get_settings_context(settings))
 	context.update(_get_customer_context(customer, addr, contact))
 	context.update(_get_project_context(project))
+	context.update(_get_project_items_context(project.name))
 	context.update(_get_contract_context(contract))
 	context.update(_get_subcontracts_context(project.name))
 	context.update(

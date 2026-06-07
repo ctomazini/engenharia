@@ -17,10 +17,10 @@
 | `bulk_delete_payments` | financial.py | names | ✅ Payment delete | Exclusão massa |
 | `cancel_contract_payment` | financial.py | payment_name | 🟡 Payment write (sem throw) | Cancela pagamento |
 | `get_construction_project_spec_preview` | project_rollup.py | project | ✅ Project read | HTML preview specs |
-| `generate_document` | documents.py | project, template, ... | ✅ Project read | Gera docx |
-| `get_document_templates` | documents.py | — | ✅ | Lista templates |
-| `get_document_placeholders` | documents.py | — | ✅ | Placeholders |
-| `attach_generated_document` | documents.py | — | ✅ | Anexa File |
+| `generate_project_documents` | documents.py | project_name, template_names | ✅ Project write | Gera docx em lote |
+| `get_available_templates` | documents.py | — | ✅ Document Template read | Lista templates |
+| `get_available_kits` | documents.py | — | ✅ Document Kit read | Lista kits |
+| `get_placeholder_reference` | documents.py | — | ✅ Document Template read | Catálogo de placeholders |
 | `apply_contract_amendment` | engineering_contract.py | contract, ... | ✅ Contract write | Aplica aditivo |
 | `start_timer` / `stop_timer` | time_log.py | — | ✅ Time Log | Timer |
 | `get_active_user_timer` | time_log.py | — | ✅ | Timer ativo |
@@ -56,7 +56,7 @@ DocTypes `custom: 0` expõem CRUD REST automaticamente com permissões DocPerm.
 | Criar deadline com alerta | ✅ REST POST Deadline | Notificação é async scheduler |
 | Consultar comissões pendentes | 🟡 Manager REST / QB | User role bloqueado |
 | Registrar pagamento comissão | 🟡 REST PATCH Commission child | Sem whitelist dedicado |
-| Gerar documento template | ✅ `documents.generate_document` | — |
+| Gerar documento template | ✅ `documents.generate_project_documents` | — |
 | Consultar KPIs dashboard | ✅ `get_dashboard_data` | User sem financeiro |
 | Prazos vencendo semana | 🟡 REST GET Deadline filters | Sem whitelist dedicado |
 | Criar medição | ✅ REST POST | — |

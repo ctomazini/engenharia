@@ -316,6 +316,26 @@ Registro de comissões a receber (ex.: pré-moldado, parceiro).
 4. O sistema calcula **Total pago**, **Saldo a receber** e status (Aberta / Parcial / Paga).
 5. O campo **Comissões a receber** na obra agrega todas as comissões abertas *(Manager)*.
 
+### 6.6 Relatórios operacionais
+
+Os cinco **Script Reports** da sidebar (Engenharia → Relatórios) exibem **cards KPI coloridos** no topo e um **gráfico** (barras ou donut) acima da tabela. Use os filtros de cada relatório para refinar a visão.
+
+| Relatório | Gráfico | KPIs principais | Filtros |
+|---|---|---|---|
+| **Obras por Status** | Donut por status | Total, em andamento, em orçamento, concluídas | — |
+| **Custo por Categoria** | Donut (top 8) | Custo total, nº categorias, maior categoria | Categoria |
+| **Custo por Obra** | Barras (top 10) | Custo total, nº obras, média por obra | Obra |
+| **Fluxo de Caixa** | Barras mensais entradas × saídas | Total entradas, saídas, saldo líquido | Horizonte 3/6/12 meses |
+| **Margem por Obra** | Barras margem realizada (top 10) | Valor contratado, receita, margem, % recebido médio | Obra |
+
+**Regras de caixa vs analítico:**
+
+- **Fluxo de Caixa** e **Margem Realizada** consideram apenas custos e subcontratos com **Quem arca = Escritório**.
+- **Custo por Categoria/Obra** incluem todos os lançamentos (Escritório e Cliente) para visão analítica da obra.
+- Saídas do fluxo de caixa somam **Custo de Obra** + **Subcontrato** (escritório) + **Despesa Reembolsável**.
+
+Na tabela, valores críticos aparecem com **destaque colorido** (margem negativa em vermelho, custos em vermelho, status com pills).
+
 ---
 
 ## 7. Medições
@@ -387,11 +407,40 @@ Status incluem deferido, indeferido, cancelado — eventos de calendário são a
 
 ### 10.1 Modelos de Documento
 
-Cadastre modelos Word (.docx) com **placeholders** no formato `{{ nome_do_campo }}` (ex.: `{{ customer_name }}`, `{{ project_address_full }}`).
+Cadastre modelos Word (.docx) com **placeholders** Jinja no formato `{{ nome_do_campo }}` (ex.: `{{ customer_name }}`, `{{ project_address_full }}`).
 
-No formulário do template, use o botão **Ver Placeholders** para a lista completa. Grupos disponíveis: Escritório, Cliente, Obra, Contrato, **Subcontratos** e Data.
+No formulário **Modelo de Documento**, use o botão **Ver Placeholders Disponíveis** para a lista completa e atualizada. A lista é gerada automaticamente pelo sistema — sempre reflete os campos suportados.
 
-**Subcontratos na obra** (totais agregados):
+**Grupos disponíveis:**
+
+| Grupo | Conteúdo |
+|---|---|
+| **Escritório** | Nome, CNPJ, CREA, logotipo, dados bancários e PIX |
+| **Cliente** | Nome, CPF/CNPJ, RG, representante legal, etc. |
+| **Endereço do cliente** | Logradouro, número, bairro, cidade, UF, CEP, endereço completo |
+| **Contato** | Nome, telefone, celular, e-mail |
+| **Obra** | Código, título, status, endereço, área, avanço, ART, totais de orçamento |
+| **Orçamento (obra)** | Quantidade e lista de itens da revisão vigente |
+| **Item do orçamento** *(loop)* | Campos de cada **Item do Projeto** |
+| **Subcontratos (obra)** | Totais agregados e lista `subcontracts` |
+| **Subcontrato** *(loop)* | Prestador, valores, status, quem arca, parcelas pagas |
+| **Pagamento de subcontrato** *(loop)* | Data, valor, forma, comprovante |
+| **Contrato** *(condicional)* | Valores, parcelas, retenção, multa — vazio se não houver contrato |
+| **Data** | `today`, `today_iso` |
+
+**Aliases legados:** alguns campos aceitam nomes em português (`{{ nome }}`, `{{ cpf }}`, `{{ endereco }}`, `{{ titulo_obra }}`, etc.) — equivalentes aos nomes em inglês.
+
+**Orçamento — loop no Word:**
+
+```
+{% for item in project_items %}
+  {{ item.title }} — {{ item.quantity }} {{ item.unit }} — {{ item.total_value_fmt }}
+  Parâmetros: {{ item.params_summary }}
+  Resultados: {{ item.outputs_summary }}
+{% endfor %}
+```
+
+**Subcontratos — totais agregados:**
 
 | Placeholder | Conteúdo |
 |---|---|
@@ -400,18 +449,29 @@ No formulário do template, use o botão **Ver Placeholders** para a lista compl
 | `subcontract_total_paid` / `_fmt` | Total já pago |
 | `subcontract_outstanding` / `_fmt` | Saldo a pagar |
 
-**Lista detalhada** (loop no Word):
+**Subcontratos — loop detalhado:**
 
 ```
 {% for s in subcontracts %}
-  {{ s.supplier_name }} — {{ s.total_value_fmt }} — saldo {{ s.outstanding_fmt }}
+  {{ s.supplier_name }} ({{ s.funded_by }}) — {{ s.total_value_fmt }} — saldo {{ s.outstanding_fmt }}
   {% for p in s.payments %}
     {{ p.payment_date_fmt }}: {{ p.amount_fmt }} ({{ p.payment_method }})
   {% endfor %}
 {% endfor %}
 ```
 
-Tipos: contrato, proposta, memorial, etc.
+**Contrato** *(preenchido quando existe contrato vigente na obra):*
+
+| Placeholder | Conteúdo |
+|---|---|
+| `contract_value` / `_fmt` | Valor atual do contrato |
+| `contract_base_value` / `_fmt` | Valor base (antes de aditivos) |
+| `contract_installment_count` | Número de parcelas |
+| `contract_installment_value` / `_fmt` | Valor da parcela |
+| `contract_technical_retention_pct` | Retenção técnica (%) |
+| `contract_late_fee_pct` | Multa por mora (%) |
+
+Tipos de modelo: **Contrato**, **Proposta**, **Relatório** ou **Outro**.
 
 ### 10.2 Kits de Documentos
 
@@ -419,13 +479,13 @@ Agrupe vários modelos em um **Kit** para gerar pacotes completos de uma vez.
 
 ### 10.3 Gerar documento
 
-Na **Obra**, use o botão de geração de documentos (ou menu Documentos):
+Na **Obra**, use o botão **Gerar Documentos**:
 
-1. Escolha o modelo.
-2. O sistema preenche placeholders com dados da obra, cliente, especificações e contrato.
-3. Baixe o `.docx` gerado ou anexe à obra.
+1. Escolha um ou mais modelos (ou um **Kit**).
+2. O sistema preenche placeholders com dados do escritório, cliente, obra, orçamento (itens da revisão vigente), contrato e subcontratos.
+3. O `.docx` gerado é anexado à obra para download.
 
-Configure **CNPJ do escritório** em **Configurações da Engenharia** para aparecer nos documentos.
+Configure em **Configurações da Engenharia**: CNPJ, razão social, CREA, **logotipo**, dados bancários e PIX — todos disponíveis como placeholders.
 
 ---
 
@@ -450,8 +510,10 @@ Informe **Assunto**, obra, tipo de comunicação e resumo.
 
 **Configurações da Engenharia** (registro único):
 
-- Dados do escritório (CNPJ, razão social)
-- Parâmetros globais usados em documentos e relatórios
+- Dados do escritório (CNPJ, razão social, CREA)
+- Logotipo (URL exibida em documentos e impressos)
+- Dados bancários e chave PIX (placeholders de documentos)
+- Parâmetros globais usados em relatórios
 
 *(Acesso tipicamente restrito ao Manager.)*
 
@@ -484,4 +546,4 @@ Contratos, pagamentos, custos, despesas reembolsáveis, comissões, totais de or
 
 ---
 
-*Manual versão 1.0 — junho/2026. Alinhado ao app engenharia no Frappe v16.*
+*Manual versão 1.1 — junho/2026. Alinhado ao app engenharia no Frappe v16.*

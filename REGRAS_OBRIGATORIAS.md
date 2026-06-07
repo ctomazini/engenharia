@@ -351,9 +351,10 @@ Calendar sync opcional: espelhar `calendar_sync.py` → `Event` nativo.
 ### 7.8 Documentos
 
 - Reusar gerador **docxtpl** (`advocacia/advocacia/documentos.py`).  
-- Placeholders de obra (project, customer, specs, contract value).  
+- Catálogo único em `engenharia/documents.py` → `PLACEHOLDER_REFERENCE`; UI **Ver Placeholders** no **Document Template** renderiza a lista via `get_placeholder_reference`.  
+- Grupos: escritório (incl. logo/banco), cliente, endereço, contato, obra, orçamento (`project_items`), subcontratos (agregados + loops), contrato (condicional), data.  
 - Nome de arquivo: `{tipo}_{project}_{date}.docx`.  
-- Whitelist: `frappe.has_permission` antes de gerar — ver `documentos.py`.
+- Whitelist: `frappe.has_permission` antes de gerar — ver `documents.py`.
 
 ---
 
@@ -422,7 +423,8 @@ Extraídas da auditoria consolidada do advocacia (código atual).
 | `financeiro.py` | `financial.py` | sync Payment ↔ installments |
 | `tasks.py` | `tasks.py` | vencidos, notificações |
 | `notificacoes.py` | `notifications.py` | templates email |
-| `documentos.py` | `documents.py` | docxtpl |
+| `documentos.py` | `documents.py` | docxtpl + `PLACEHOLDER_REFERENCE` |
+| — | `report_visuals.py` | charts/KPIs dos Script Reports |
 | `calendar_sync.py` | `calendar_sync.py` | se usar Event |
 | `painel/` → | `dashboard/` | renomear domínios |
 | `painel_api.py` | `dashboard_api.py` | facade |
@@ -471,6 +473,8 @@ after_migrate = [ ... cadeia ensure_* ... ]
 | E2E Desk (opcional) | `cd e2e && E2E_PASS=… npm test` — ver `e2e/README.md` |
 | Site limpo | `install-app` + `migrate` sem erro |
 | Painel | `xcall` dashboard retorna todas as chaves; smoke manual |
+| Script Reports | `test_reports.py` verde após mudanças em `engenharia/engenharia/report/` ou `report_visuals.py` |
+| Placeholders docx | `test_documents.py` verde após mudanças em `documents.py` |
 | Sidebar | 26-ish links alinhados workspace ↔ sidebar; seções `collapsible: 1` |
 | Um commit | Um DocType (json + py + js + test CRUD mínimo) |
 

@@ -1,7 +1,7 @@
 # Seção 1 — Auditoria de Código Completa
 
 **App:** `engenharia` · **Site:** `engenharia.local` · **Data:** 2026-06-06  
-**Referência normativa:** `REGRAS_OBRIGATORIAS.md` **não encontrado** na raiz do app. Usado como proxy o checklist de `ENGENHARIA_STANDARDS.md` (repo `advocacia`) e regras Cursor do projeto.
+**Referência normativa:** `REGRAS_OBRIGATORIAS.md` na raiz do app.
 
 ---
 
@@ -35,18 +35,16 @@
 
 ### Inconsistências prioritárias (Seção 1)
 
-1. 🔴 **`REGRAS_OBRIGATORIAS.md` ausente** no repositório `engenharia` — norma referenciada no prompt não está versionada no app.
-2. 🟡 **`limit_page_length` em massa** — deprecação v17; migrar para `limit` em dashboard, tasks, documents, reports.
-3. 🟡 **18 stubs de teste vazios** em pastas de DocType — duplicam cobertura ou ficam mortos.
-4. 🟡 **Prefixo COMM** compartilhado: `Communication Log` (`COMM-{YYYY}`) vs histórico Commission (`CMSN` após fix) — resolvido para Commission, mas COMM ainda é ambíguo para Communication Log.
-5. 🟡 **`custom: 0` explícito** faltando em 13 JSONs standalone — risco em export/import de fixtures.
-6. 🟢 **`permissions.py:144`** — adicionar comentário `# setup: Custom DocPerm`.
+1. 🟡 **`limit_page_length` em massa** — deprecação v17; migrar para `limit` em dashboard, tasks, documents, reports.
+2. 🟡 **18 stubs de teste vazios** em pastas de DocType — duplicam cobertura ou ficam mortos.
+3. 🟡 **Prefixo COMM** compartilhado: `Communication Log` (`COMM-{YYYY}`) vs histórico Commission (`CMSN` após fix) — resolvido para Commission, mas COMM ainda é ambíguo para Communication Log.
+4. 🟡 **`custom: 0` explícito** faltando em 13 JSONs standalone — risco em export/import de fixtures.
 
 ---
 
 ## 1.2 Cobertura de testes
 
-**Total suite:** 190 testes (`bench run-tests --app engenharia`).
+**Total suite:** 211 testes (`bench run-tests --app engenharia`).
 
 | DocType / Módulo | Tem teste? | Nº testes* | Funcionalidades testadas | SEM teste |
 |---|---|---|---|---|
@@ -65,7 +63,8 @@
 | Technical Item | Sim | ~11 | Fórmulas, fields, outputs | — |
 | Construction Measurement | Sim | 2 | CRUD mínimo | itens, totais |
 | Communication Log | Sim | 7 | CRUD, título | — |
-| Document Template / Kit | Sim | ~11 | Geração docx, kits | — |
+| Document Template / Kit | Sim | ~13 | Geração docx, kits, placeholders | — |
+| Script Reports (5) | Sim | 4 | chart + report_summary via `report_visuals.py` | — |
 | Project Stage | Sim | 3 | CRUD, progress hook | título composto |
 | Cadastros (Supplier, Cost Category, etc.) | Sim | 1–6 cada | CRUD mínimo | — |
 | Engineering Settings | Sim | 3 | Seed, documents | — |

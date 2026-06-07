@@ -98,6 +98,9 @@ class TestDocuments(FrappeTestCase):
 		self.assertIn("Escritório", groups)
 		self.assertIn("Cliente", groups)
 		self.assertIn("Obra", groups)
+		self.assertIn("Orçamento (obra)", groups)
+		self.assertIn("Endereço do cliente", groups)
+		self.assertIn("Contrato", groups)
 		self.assertIn("Subcontratos (obra)", groups)
 
 	def test_build_context_company_and_customer(self):
@@ -183,6 +186,15 @@ class TestDocuments(FrappeTestCase):
 		self.assertEqual(len(row["payments"]), 2)
 		self.assertEqual(row["payments"][0]["amount"], 2000)
 		self.assertEqual(row["payments"][0]["payment_method"], "PIX")
+		self.assertEqual(row["funded_by"], "Escritório")
+
+	def test_build_context_project_items(self):
+		_ensure_engineering_settings()
+		project = create_test_construction_project()
+		context = _build_context(project.name)
+		self.assertIn("project_items", context)
+		self.assertIn("project_item_count", context)
+		self.assertIsInstance(context["project_items"], list)
 
 	def test_get_available_kits_with_templates(self):
 		template_name = _create_test_document_template()
