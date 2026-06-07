@@ -62,6 +62,7 @@
    "fieldname": "communication_date",
    "fieldtype": "Datetime",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Data",
    "reqd": 1,
    "description": "Data e hora da comunicação."
@@ -69,6 +70,7 @@
   {
    "fieldname": "communication_type",
    "fieldtype": "Select",
+   "in_standard_filter": 1,
    "label": "Tipo",
    "options": "Telefone\nWhatsApp\nEmail\nReunião Presencial\nReunião Virtual\nOutro",
    "reqd": 1,
