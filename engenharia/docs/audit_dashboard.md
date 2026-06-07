@@ -77,6 +77,8 @@ user_is_engenharia_manager() → Engenharia Manager | System Manager | Administr
 - `fluxo.entrada` / `fluxo.saida` = mês corrente fixo (`fixed_to_month: true`)
 - `grafico` = donut por categoria de custo (cores por `tone`)
 - Filtros 5/10/15: delegação em `utils.bind_list_limits` → `eng_dashboard_refresh_list_sections` (sem reload total)
+- Filtro de período: `eng_dashboard_refresh_period_sections` — patch por host com `min-height` lock + scroll preservado; barra de período só atualiza label/botão ativo
+- Hero: stats sempre visíveis (prazos críticos, vencidos, tarefas, parcelas vencidas) com 0 quando vazio
 
 **CSS:** `dashboard.css` — CSS vars, grid responsivo, cards `eng-dash-atencao-card` espelhados em compromissos.
 

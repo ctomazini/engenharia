@@ -27,11 +27,18 @@ engenharia.dashboard.filters = {
 			.join("");
 
 		container.html(`
-			<div class="eng-dash-periodo-bar">
+			<div class="eng-dash-periodo-bar" id="eng-dash-periodo-bar">
 				<span class="eng-dash-periodo-label">${frappe.utils.escape_html(this.scope_label(current))}</span>
 				<div class="eng-dash-periodo-filters">${periodButtons}</div>
 			</div>
 		`);
+	},
+
+	update_ui($root, period_days) {
+		const days = cint(period_days) || 7;
+		$root.find(".eng-dash-periodo-label").text(this.scope_label(days));
+		$root.find(".eng-dash-periodo-btn").removeClass("active");
+		$root.find(`.eng-dash-periodo-btn[data-period-days="${days}"]`).addClass("active");
 	},
 
 	bind($root, page, reload_fn) {
@@ -40,6 +47,7 @@ engenharia.dashboard.filters = {
 			const days = cint($(this).attr("data-period-days"));
 			if (!page || days === page.period_days) return;
 			page.period_days = days;
+			engenharia.dashboard.filters.update_ui($root, days);
 			reload_fn(page);
 		});
 	},

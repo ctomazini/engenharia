@@ -60,7 +60,7 @@ O **Painel de Obras** reúne indicadores e atalhos do dia a dia.
 
 - A **agenda** e os **próximos compromissos** mostram apenas itens operacionais: prazos, tarefas e protocolos. **Pagamentos não aparecem** nessas áreas (ficam nas listas financeiras).
 - Os filtros **5 / 10 / 15 linhas** nas listas (agenda, obras ativas, parcelas etc.) atualizam só aquela seção, sem recarregar o painel inteiro.
-- O filtro de **período** (Hoje / 7 / 15 / 30 dias) atualiza só as seções afetadas (hero, atenção, agenda, financeiro), mantendo ações rápidas e obras ativas no lugar.
+- O filtro de **período** (Hoje / 7 / 15 / 30 dias) atualiza só as seções afetadas (hero, atenção, agenda, financeiro), mantendo ações rápidas e obras ativas no lugar — sem piscar a página nem reiniciar a animação de entrada.
 
 ### Financeiro no painel *(Manager)*
 

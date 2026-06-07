@@ -167,8 +167,53 @@ engenharia.dashboard.utils = {
 			}
 			if (page.eng_dash_list_limits[key] === limit) return;
 			page.eng_dash_list_limits[key] = limit;
+			const $group = $(this).closest(".eng-dash-linhas-filters");
+			$group.find(".eng-dash-linhas-btn").removeClass("active");
+			$(this).addClass("active");
 			reload_fn(page);
 		});
+	},
+
+	scroll_parent($container) {
+		let el = $container[0];
+		while (el && el !== document.body) {
+			if (el.scrollHeight > el.clientHeight + 1) {
+				return $(el);
+			}
+			el = el.parentElement;
+		}
+		return $(window);
+	},
+
+	save_scroll($container) {
+		const $scrollEl = this.scroll_parent($container);
+		return { $el: $scrollEl, top: $scrollEl.scrollTop() };
+	},
+
+	restore_scroll(saved) {
+		if (saved && saved.$el) {
+			saved.$el.scrollTop(saved.top);
+		}
+	},
+
+	patch_host($host, patch_fn) {
+		if (!$host || !$host.length) {
+			return false;
+		}
+		const height = $host.outerHeight();
+		if (height > 0) {
+			$host.css("min-height", `${height}px`);
+			$host.addClass("eng-dash-section--height-lock");
+		}
+		$host.addClass("eng-dash-section--updating");
+		patch_fn($host);
+		requestAnimationFrame(() => {
+			requestAnimationFrame(() => {
+				$host.css("min-height", "");
+				$host.removeClass("eng-dash-section--height-lock eng-dash-section--updating");
+			});
+		});
+		return true;
 	},
 
 	render_skeleton($container) {

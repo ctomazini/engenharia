@@ -79,6 +79,16 @@ function eng_dashboard_load(page) {
 	});
 }
 
+function eng_dashboard_fetch_data(page) {
+	if (!page.eng_dash_list_limits) {
+		page.eng_dash_list_limits = engenharia.dashboard?.utils?.default_list_limits?.() || {};
+	}
+	return frappe.xcall("engenharia.dashboard_api.get_dashboard_data", {
+		period_days: page.period_days,
+		list_limits: page.eng_dash_list_limits,
+	});
+}
+
 function eng_dashboard_bind_list_limits_once(page) {
 	if (page.eng_dash_list_limits_bound || !engenharia.dashboard?.utils?.bind_list_limits) {
 		return;
@@ -110,67 +120,58 @@ function eng_dashboard_refresh_period_sections(page) {
 		return;
 	}
 
-	if (!page.eng_dash_list_limits) {
-		page.eng_dash_list_limits = engenharia.dashboard?.utils?.default_list_limits?.() || {};
-	}
+	const utils = engenharia.dashboard.utils;
+	const scroll = utils.save_scroll($container);
+	engenharia.dashboard.filters.update_ui($container, page.period_days);
 
-	frappe
-		.xcall("engenharia.dashboard_api.get_dashboard_data", {
-			period_days: page.period_days,
-			list_limits: page.eng_dash_list_limits,
-		})
+	eng_dashboard_fetch_data(page)
 		.then((data) => {
 			page.eng_dash_data = data;
 
-			const $hero = $container.find(".eng-dash-hero-wrap");
-			if ($hero.length) {
-				engenharia.dashboard.hero.render($hero, data);
-			}
+			const patch = (selector, fn) => {
+				const $host = $container.find(selector).first();
+				if (!$host.length) {
+					return false;
+				}
+				return utils.patch_host($host, () => fn($host, data, page));
+			};
 
-			const $filters = $container.find(".eng-dash-filters-wrap");
-			if ($filters.length) {
-				engenharia.dashboard.filters.render($filters, data, page);
-			}
-
-			const $attention = $container.find(".eng-dash-zona-critica");
-			if ($attention.length) {
-				engenharia.dashboard.attention.render($attention, data);
-				engenharia.dashboard.attention.bind($attention);
-			}
-
-			const $nextEvent = $container.find(".eng-dash-next-event-host");
-			if ($nextEvent.length) {
-				engenharia.dashboard.next_event.render($nextEvent, data);
-				engenharia.dashboard.utils.bind_routes($nextEvent);
-			}
-
-			const $agenda = $container.find(".eng-dash-agenda-host");
-			if ($agenda.length) {
-				engenharia.dashboard.timeline.render($agenda, data, page);
-				engenharia.dashboard.utils.bind_routes($agenda);
-			}
+			let ok = true;
+			ok = patch(".eng-dash-hero-wrap", (h, d) => engenharia.dashboard.hero.render(h, d)) && ok;
+			ok =
+				patch(".eng-dash-zona-critica", (h, d) => {
+					engenharia.dashboard.attention.render(h, d);
+					engenharia.dashboard.attention.bind(h);
+				}) && ok;
+			ok =
+				patch(".eng-dash-next-event-host", (h, d) => {
+					engenharia.dashboard.next_event.render(h, d);
+					utils.bind_routes(h);
+				}) && ok;
+			ok =
+				patch(".eng-dash-agenda-host", (h, d, p) => {
+					engenharia.dashboard.timeline.render(h, d, p);
+					utils.bind_routes(h);
+				}) && ok;
 
 			if (data.is_manager) {
-				const $health = $container.find(".eng-dash-health-host");
-				if ($health.length) {
-					engenharia.dashboard.health.render($health, data);
-				}
-
-				const $kpis = $container.find(".eng-dash-kpis-host");
-				if ($kpis.length) {
-					engenharia.dashboard.kpis.render($kpis, data);
-				}
-
-				const $fin = $container.find(".eng-dash-finance-host");
-				if ($fin.length) {
-					engenharia.dashboard.financial.render($fin, data, page);
-				}
-
-				const $lists = $container.find(".eng-dash-lists-host");
-				if ($lists.length) {
-					engenharia.dashboard.lists.render_duo($lists, data, page);
-				}
+				ok = patch(".eng-dash-health-host", (h, d) => engenharia.dashboard.health.render(h, d)) && ok;
+				ok = patch(".eng-dash-kpis-host", (h, d) => engenharia.dashboard.kpis.render(h, d)) && ok;
+				ok =
+					patch(".eng-dash-finance-host", (h, d, p) => {
+						engenharia.dashboard.financial.render(h, d, p);
+					}) && ok;
+				ok =
+					patch(".eng-dash-lists-host", (h, d, p) => {
+						engenharia.dashboard.lists.render_duo(h, d, p);
+					}) && ok;
 			}
+
+			if (!ok) {
+				engenharia.dashboard.render_dashboard($container, data, page, { animate: false });
+			}
+
+			utils.restore_scroll(scroll);
 		})
 		.catch(() => {
 			frappe.show_alert({
@@ -181,34 +182,37 @@ function eng_dashboard_refresh_period_sections(page) {
 }
 
 function eng_dashboard_refresh_list_sections(page) {
-	const $agenda = page.$container.find(".eng-dash-agenda-host");
-	const $lists = page.$container.find(".eng-dash-lists-host");
-	const $operational = page.$container.find(".eng-dash-operational-host");
+	const $container = page.$container;
+	const $agenda = $container.find(".eng-dash-agenda-host");
+	const $lists = $container.find(".eng-dash-lists-host");
+	const $operational = $container.find(".eng-dash-operational-host");
 	if (!$agenda.length && !$lists.length && !$operational.length) return;
 
-	if (!page.eng_dash_list_limits) {
-		page.eng_dash_list_limits = engenharia.dashboard?.utils?.default_list_limits?.() || {};
-	}
+	const utils = engenharia.dashboard.utils;
+	const scroll = utils.save_scroll($container);
 
-	frappe
-		.xcall("engenharia.dashboard_api.get_dashboard_data", {
-			period_days: page.period_days,
-			list_limits: page.eng_dash_list_limits,
-		})
+	eng_dashboard_fetch_data(page)
 		.then((data) => {
 			page.eng_dash_data = data;
+
 			if ($agenda.length) {
-				$agenda.empty();
-				engenharia.dashboard.timeline.render($agenda, data, page);
+				utils.patch_host($agenda, () => {
+					engenharia.dashboard.timeline.render($agenda, data, page);
+					utils.bind_routes($agenda);
+				});
 			}
 			if ($lists.length) {
-				$lists.empty();
-				engenharia.dashboard.lists.render_duo($lists, data, page);
+				utils.patch_host($lists, () => {
+					engenharia.dashboard.lists.render_duo($lists, data, page);
+				});
 			}
 			if ($operational.length) {
-				$operational.empty();
-				engenharia.dashboard.operational.render($operational, data, page);
+				utils.patch_host($operational, () => {
+					engenharia.dashboard.operational.render($operational, data, page);
+				});
 			}
+
+			utils.restore_scroll(scroll);
 		})
 		.catch(() => {
 			frappe.show_alert({
@@ -220,9 +224,12 @@ function eng_dashboard_refresh_list_sections(page) {
 
 frappe.provide("engenharia.dashboard");
 
-engenharia.dashboard.render_dashboard = function ($container, data, page) {
+engenharia.dashboard.render_dashboard = function ($container, data, page, options = {}) {
 	$container.empty();
-	const $content = $('<div class="eng-dash-content dashboard-content"></div>').appendTo($container);
+	const stableClass = options.animate === false ? " eng-dash-content--stable" : "";
+	const $content = $(`<div class="eng-dash-content dashboard-content${stableClass}"></div>`).appendTo(
+		$container
+	);
 
 	const $hero = $('<div class="eng-dash-hero-wrap eng-dash-priority-high"></div>').appendTo($content);
 	const $filters = $('<div class="eng-dash-filters-wrap"></div>').appendTo($content);
