@@ -1,5 +1,6 @@
 import frappe
-from frappe.utils import today
+from frappe import _
+from frappe.utils import add_days, today
 
 
 def on_installment_update(doc, method=None):
@@ -86,3 +87,116 @@ def check_overdue_installments():
 		frappe.db.set_value(
 			"Engineering Contract Installment", name, "status", "Vencido", update_modified=False
 		)
+
+
+def check_overdue_reimbursable_expenses():
+	"""Notifica despesas a reembolsar com pagamento antigo (60+ dias)."""
+	from engenharia.notifications import _notification_already_sent, _send_system_notification
+
+	cutoff = add_days(today(), -60)
+	expenses = frappe.get_all(
+		"Reimbursable Expense",
+		filters={
+			"status": "A reembolsar",
+			"payment_date": ["<", cutoff],
+		},
+		fields=["name", "title", "project", "amount", "payment_date", "owner"],
+		limit_page_length=500,
+	)
+
+	count = 0
+	for row in expenses:
+		subject = _("Despesa a reembolsar pendente: {0}").format(row.name)
+		if _notification_already_sent("Reimbursable Expense", row.name, subject):
+			continue
+		message = _(
+			"A despesa {0} ({1}) da obra {2} aguarda reembolso desde {3}."
+		).format(
+			row.title or row.name,
+			frappe.utils.fmt_money(row.amount, currency="BRL"),
+			row.project or _("N/A"),
+			frappe.utils.formatdate(row.payment_date),
+		)
+		_send_system_notification(
+			users=[row.owner] if row.owner else ["Administrator"],
+			doctype="Reimbursable Expense",
+			docname=row.name,
+			subject=subject,
+			message=message,
+		)
+		count += 1
+
+	if count:
+		frappe.logger().info("Notificações de reembolsáveis pendentes: {0}".format(count))
+
+
+def check_project_status_weekly():
+	"""Marca obras Em andamento como Concluída quando não há pendências operacionais."""
+	hoje = today()
+
+	projects = frappe.get_all(
+		"Construction Project",
+		filters={"status": "Em andamento"},
+		pluck="name",
+		limit_page_length=500,
+	)
+	if not projects:
+		return
+
+	contracts = frappe.get_all(
+		"Engineering Contract",
+		filters={"project": ["in", projects], "status": ["not in", ["Quitado", "Cancelado"]]},
+		pluck="project",
+		limit_page_length=500,
+	)
+	projects_with_open_contract = set(contracts)
+
+	open_payments = frappe.get_all(
+		"Payment",
+		filters={
+			"project": ["in", projects],
+			"status": ["in", ["Pendente", "Vencido"]],
+		},
+		pluck="project",
+		limit_page_length=500,
+	)
+	projects_with_open_payment = set(open_payments)
+
+	open_deadlines = frappe.get_all(
+		"Deadline",
+		filters={"project": ["in", projects], "status": "Pendente"},
+		pluck="project",
+		limit_page_length=500,
+	)
+	projects_with_deadline = set(open_deadlines)
+
+	open_tasks = frappe.get_all(
+		"Task",
+		filters={
+			"project": ["in", projects],
+			"status": ["in", ["A fazer", "Fazendo"]],
+			"due_date": [">=", hoje],
+		},
+		pluck="project",
+		limit_page_length=500,
+	)
+	projects_with_task = set(open_tasks)
+
+	for name in projects:
+		if name in projects_with_open_contract:
+			continue
+		if name in projects_with_open_payment:
+			continue
+		if name in projects_with_deadline:
+			continue
+		if name in projects_with_task:
+			continue
+
+		frappe.db.set_value(
+			"Construction Project",
+			name,
+			"status",
+			"Concluída",
+			update_modified=True,
+		)
+		frappe.logger().info("Construction Project {0} marcada como Concluída".format(name))

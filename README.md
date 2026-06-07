@@ -15,7 +15,9 @@ Especificações técnicas: cadastro em **Technical Item** (parâmetros + fórmu
 | [`engenharia/docs/desenvolvimento.md`](engenharia/docs/desenvolvimento.md) | Bench, testes, pre-commit, demo seed |
 | [`e2e/README.md`](e2e/README.md) | Testes E2E Playwright |
 | [`REGRAS_OBRIGATORIAS.md`](REGRAS_OBRIGATORIAS.md) | Padrões normativos do app |
-| [`docs/audit-deploy-ready.md`](docs/audit-deploy-ready.md) | Auditoria deploy-ready (2026-06-07) |
+| [`docs/audit-deploy-ready.md`](docs/audit-deploy-ready.md) | Auditoria deploy-ready |
+| [`CODEBASE.md`](CODEBASE.md) | Inventário técnico (gerado) |
+| [`docs/crosscheck_advocacia.md`](docs/crosscheck_advocacia.md) | Paridade com advocacia |
 
 ---
 
@@ -32,7 +34,7 @@ Especificações técnicas: cadastro em **Technical Item** (parâmetros + fórmu
 ## Testes
 
 ```bash
-# Unitários / integração (211 testes)
+# Unitários / integração (246 testes)
 bench --site engenharia.local run-tests --app engenharia
 
 # E2E Playwright (ver e2e/README.md)

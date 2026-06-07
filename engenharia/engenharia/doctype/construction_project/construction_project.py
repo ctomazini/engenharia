@@ -2,7 +2,71 @@ import frappe
 from frappe.model.document import Document
 from frappe.utils import flt, today
 
-from engenharia.titles import apply_title_post_insert, recompose_title
+from engenharia.titles import apply_title_post_insert, get_customer_name, recompose_title
+
+
+def format_construction_project_link_label(doc=None, project_name=None):
+	"""Label amigável para Link / autocomplete de obra."""
+	if doc is None and project_name:
+		doc = frappe.db.get_value(
+			"Construction Project",
+			project_name,
+			["name", "title", "customer", "city", "status"],
+			as_dict=True,
+		)
+	if not doc:
+		return project_name or ""
+	title = (doc.get("title") or doc.get("name") or "").strip()
+	if title:
+		return title
+	customer = get_customer_name(doc.get("customer"))
+	parts = [p for p in (customer, doc.get("city")) if p]
+	return " - ".join(parts) if parts else doc.get("name") or ""
+
+
+@frappe.whitelist()
+@frappe.validate_and_sanitize_search_inputs
+def construction_project_query(
+	doctype: str,
+	txt: str,
+	searchfield: str,
+	start: int,
+	page_len: int,
+	filters,
+) -> list[tuple[str, str]]:
+	frappe.has_permission("Construction Project", "read", throw=True)
+	txt = (txt or "").strip()
+	list_filters = dict(filters or {})
+
+	or_filters = [
+		["name", "like", f"%{txt}%"],
+		["title", "like", f"%{txt}%"],
+		["customer", "like", f"%{txt}%"],
+		["city", "like", f"%{txt}%"],
+		["status", "like", f"%{txt}%"],
+	]
+
+	if txt:
+		customers = frappe.get_all(
+			"Customer",
+			filters={"customer_name": ["like", f"%{txt}%"]},
+			pluck="name",
+			limit_page_length=50,
+		)
+		if customers:
+			or_filters.append(["customer", "in", customers])
+
+	rows = frappe.get_all(
+		"Construction Project",
+		filters=list_filters,
+		or_filters=or_filters if txt else None,
+		fields=["name", "title", "customer", "city", "status"],
+		limit_start=start,
+		limit_page_length=page_len,
+		order_by="modified desc",
+	)
+
+	return [(row.name, format_construction_project_link_label(doc=row)) for row in rows]
 
 
 @frappe.whitelist()

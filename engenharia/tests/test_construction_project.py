@@ -5,7 +5,11 @@ from engenharia.tests.test_setup import _uid, create_test_construction_project, 
 from engenharia.titles import TITLE_SEPARATOR, join_title_parts
 
 
-from engenharia.engenharia.doctype.construction_project.construction_project import create_project_item
+from engenharia.engenharia.doctype.construction_project.construction_project import (
+	construction_project_query,
+	create_project_item,
+	format_construction_project_link_label,
+)
 from engenharia.tests.test_project_item import create_test_technical_item_cylinder
 
 
@@ -51,3 +55,21 @@ class TestConstructionProject(FrappeTestCase):
 		project.reload()
 		expected = join_title_parts(project.name, f"{customer_name} - Guarujá")
 		self.assertEqual(project.title, expected)
+
+	def test_format_construction_project_link_label_uses_title(self):
+		project = create_test_construction_project(city="Curitiba")
+		label = format_construction_project_link_label(project_name=project.name)
+		self.assertEqual(label, project.title)
+
+	def test_construction_project_query_returns_rows(self):
+		project = create_test_construction_project(city="Florianópolis")
+		rows = construction_project_query(
+			"Construction Project",
+			project.city[:4],
+			"name",
+			0,
+			20,
+			{},
+		)
+		names = [row[0] for row in rows]
+		self.assertIn(project.name, names)

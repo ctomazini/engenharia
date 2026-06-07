@@ -64,8 +64,11 @@ app_include_css = [
 ]
 app_include_js = [
 	"/assets/engenharia/js/masks.js",
-	"/assets/engenharia/js/timer_global.js",
+	"/assets/engenharia/js/list_nav.js",
 	"/assets/engenharia/js/list_filters.js",
+	"/assets/engenharia/js/customer_from_project.js",
+	"/assets/engenharia/js/documents_placeholders.js",
+	"/assets/engenharia/js/timer_global.js",
 ]
 
 # include js, css files in header of web template
@@ -118,6 +121,10 @@ importable_doctypes = [
 	"Public Agency",
 ]
 
+standard_queries = {
+	"Construction Project": "engenharia.engenharia.doctype.construction_project.construction_project.construction_project_query",
+}
+
 # Jinja
 # ----------
 
@@ -133,6 +140,7 @@ importable_doctypes = [
 # before_install = "engenharia.install.before_install"
 after_install = "engenharia.setup.install.after_install"
 after_migrate = [
+	"engenharia.setup.reinstall_child_doctypes.reinstall_child_doctypes",
 	"engenharia.setup.roles.seed_roles",
 	"engenharia.setup.install.ensure_event_custom_fields",
 	"engenharia.setup.permissions.ensure_engenharia_permissions",
@@ -227,6 +235,14 @@ doc_events = {
 scheduler_events = {
 	"daily": [
 		"engenharia.tasks.check_overdue_installments",
+		"engenharia.tasks.check_overdue_reimbursable_expenses",
+		"engenharia.notifications.notify_deadlines_daily",
+		"engenharia.notifications.notify_expiring_permits",
+		"engenharia.notifications.notify_overdue_tasks",
+		"engenharia.notifications.notify_overdue_payments",
+	],
+	"weekly": [
+		"engenharia.tasks.check_project_status_weekly",
 	],
 }
 

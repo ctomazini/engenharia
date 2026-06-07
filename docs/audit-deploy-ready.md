@@ -1,7 +1,7 @@
 # Auditoria Deploy-Ready — Engenharia
 
-**Data:** 2026-06-07  
-**Commit:** `8adb0aef30e31911d856a45a9105c4dac8745a3c`  
+**Data:** 2026-06-05  
+**Commit:** `8c907d2014a8f22b752057a14bfcf59545e444ff`  
 **Site de referência:** `engenharia.local`  
 **Norma:** `REGRAS_OBRIGATORIAS.md`
 
@@ -11,11 +11,11 @@
 
 | Resultado | Quantidade |
 | --- | ---: |
-| ✅ Passou | 42 |
-| ⚠️ Atenção (não bloqueante) | 14 |
-| ❌ Bloqueante | 2 |
+| ✅ Passou | 46 |
+| ⚠️ Atenção (não bloqueante) | 16 |
+| ❌ Bloqueante | 0 |
 
-**Veredito:** o app está **quase pronto** para deploy em bench nativo. A suíte Python está verde (**211 testes OK**), não há Server/Client Scripts no banco, schema DocType está consistente e os três baldes de reprodutibilidade (código / fixtures / seed) estão implementados. Há **2 violações normativas** que devem ser corrigidas antes de considerar o deploy “fechado” segundo `REGRAS_OBRIGATORIAS.md`.
+**Veredito:** o app está **pronto para deploy** em bench nativo. A suíte Python está verde (**212 testes OK**), não há Server/Client Scripts no banco, o schema DocType está consistente, os três baldes de reprodutibilidade estão implementados e os **2 bloqueantes** da auditoria anterior (`permissions.py` + type hints em whitelisted) foram **corrigidos** nos commits `0cf9a54` / `8c907d2`. Permanecem apenas itens de atenção (hex em relatórios, delegação de permissão na facade do painel, caps de query em reports, alinhamento parcial do workspace).
 
 ---
 
@@ -27,11 +27,11 @@
 ✅ **Zero** ocorrências de `"custom": 1` em `engenharia/engenharia/doctype/*/`.
 
 #### 1.2 `naming_rule` + `autoname`
-✅ **Transacionais** (16 DocTypes): todos com `naming_rule=Expression (old style)` e `autoname=format:PREFIX-{YYYY}-{####}` (ex.: `PROJ-`, `CNTR-`, `PAY-`).
+✅ **Transacionais** (16 DocTypes): `naming_rule=Expression (old style)` + `autoname=format:PREFIX-{YYYY}-{####}` (`PROJ-`, `CNTR-`, `PAY-`, `WCST-`, `SUBC-`, etc.).
 
-✅ **Cadastros auxiliares** (9 DocTypes): `By fieldname` + `field:<nome>` — conforme §3.4 de `REGRAS_OBRIGATORIAS.md` (Cost Category, Supplier, Stage Type, etc.).
+✅ **Cadastros auxiliares** (9 DocTypes): `By fieldname` + `field:<nome>` — conforme §3.4 (`Cost Category`, `Supplier`, `Technical Item`, etc.).
 
-⚠️ **Engineering Settings** (Single): `naming_rule` e `autoname` ausentes — aceitável para Single DocType, mas vale documentar explicitamente no JSON.
+⚠️ **Engineering Settings** (Single): `naming_rule` e `autoname` ausentes — aceitável para Single DocType.
 
 #### 1.3 `title_field` + `show_title_field_in_link`
 ✅ Todos os standalones transacionais e cadastros: `title_field` definido e `show_title_field_in_link=1`.
@@ -49,15 +49,15 @@
 #### 1.6 Fieldnames — qualidade
 ✅ **Zero** fieldnames com acentos (português).
 
-⚠️ **5** `column_break_*` sem sufixo descritivo (padrão Frappe, não auto-gerado aleatório):
+⚠️ **5** `column_break_*` genéricos (não aleatórios, padrão Frappe):
 - `communication_log`, `deadline`, `permit`: `column_break_info`
 - `time_log`: `column_break_info`, `column_break_time`
 
 #### 1.7 Link fields tipados
-✅ Nenhuma referência real `Data`-como-`Link`. O script heurístico sinalizou campos legítimos de **nome** (`customer_name`, `supplier_name`, etc.) — falsos positivos.
+✅ Nenhuma referência real `Data`-como-`Link`. Heurística sinalizou campos legítimos de **nome** (`customer_name`, `supplier_name`, `template_name`, etc.) — falsos positivos.
 
 #### 1.8 Prefixos de autoname — colisão
-✅ **16 prefixos `format:` únicos**, sem colisão.
+✅ **16 prefixos `format:` únicos**, sem colisão (`CMSN-`, `COMM-`, `PROJ-`, …).
 
 #### 1.9 `idx` duplicado
 ✅ Nenhum `idx` duplicado detectado nos JSONs de DocType.
@@ -67,62 +67,58 @@
 ### SEÇÃO 2 — Controllers Python
 
 #### 2.1 Ordem do ciclo de vida
-⚠️ Ordem **majoritariamente correta** (`validate` → `before_insert`/`after_insert` → `on_update`). Exceção observada:
-
-- **Construction Measurement**: `after_insert` aparece **antes** de `before_save` no arquivo — inversão cosmética, sem impacto funcional conhecido.
+⚠️ Ordem **majoritariamente correta** (`validate` → `after_insert` → `on_update`). Inversões cosméticas pontuais (ex.: `Construction Measurement`) — sem impacto funcional conhecido.
 
 #### 2.2 Auto-título no controller
-✅ Transacionais usam `recompose_title` / `apply_title_post_insert` de `engenharia/titles.py` nos controllers (Payment, Contract, Work Cost, Permit, etc.).
+✅ **42+** referências a `recompose_title` / `apply_title_post_insert` nos controllers transacionais via `engenharia/titles.py`.
 
 ✅ **Seção 5**: zero Server Scripts no banco — títulos não dependem de lógica no DB.
 
 #### 2.3 `frappe.db.commit()` proibido
-✅ **Nenhum** `frappe.db.commit()` em `engenharia/engenharia/doctype/`, APIs, `doc_events` ou scheduler.
+✅ **Nenhum** `frappe.db.commit()` em `doctype/`, APIs whitelisted, `doc_events` ou scheduler.
 
-⚠️ Ocorrências **permitidas** com comentário em `setup/*` e `patches/*` (11 arquivos).
+✅ Ocorrências **permitidas** com comentário em `setup/*` e `patches/*` (14 arquivos).
 
-⚠️ **`engenharia/commands.py`** (`seed-demo`, `clear-demo`): `frappe.db.commit()` sem comentário inline — aceitável como CLI de desenvolvimento, mas fora do padrão estrito §9.
+⚠️ **`engenharia/commands.py`** (`seed-demo`, `clear-demo`): `frappe.db.commit()` sem comentário inline — CLI de desenvolvimento; fora do padrão estrito §9, mas não roda em request/hook.
 
 #### 2.4 `ignore_permissions` sem justificativa
-❌ **`engenharia/setup/permissions.py:147`** — `frappe.get_doc(doc).insert(ignore_permissions=True)` **sem comentário inline** explicando o motivo (viola §9.1 / checklist §13).
+✅ **`setup/permissions.py:147`** — comentário inline presente: `# setup: insere Custom DocPerm no migrate — sync de roles Engenharia` *(bloqueante anterior resolvido)*.
 
-✅ Demais ocorrências em produção (`financial.py`, `calendar_sync.py`, `documents.py`, `setup/*`, `patches/*`) têm bloco ou comentário.
+✅ **`financial.py`** — bloco de justificativa no topo do módulo para sync de Payment filho.
 
-✅ Uso em `tests/` e `demo_data.py` com comentário de setup — aceitável.
+✅ Demais ocorrências em produção (`calendar_sync.py`, `documents.py`, `setup/*`, `patches/*`, `engineering_contract.apply_amendment`) têm comentário inline ou bloco.
+
+✅ Uso em `tests/` — aceitável.
 
 #### 2.5 `except Exception: pass`
 ✅ **Zero** ocorrências de `except …: pass` silencioso.
-
-✅ Exceções genéricas em `documents.py`, `demo_data.py`, `project_item.py` usam `frappe.log_error` ou re-raise.
 
 #### 2.6 `eval` / `exec`
 ✅ **Zero** `eval(` / `exec(` em código de produção. Fórmulas usam `frappe.safe_eval`.
 
 #### 2.7 Strings sem `_()`
-⚠️ Vários `frappe.throw(` multilinha **usam** `_()` na linha seguinte — o grep heurístico (`grep -v '_('`) gera falsos positivos. Revisão manual: **sem strings PT hardcoded** evidentes em throws de produção.
+⚠️ Vários `frappe.throw(` multilinha **usam** `_()` na linha seguinte — grep heurístico gera falsos positivos. Revisão manual: sem strings PT hardcoded evidentes em throws de produção.
 
 #### 2.8 Whitelisted — type hints e permission check
-✅ Maioria das APIs whitelisted conformes (`dashboard_api.get_dashboard_data`, `agent_api.*`, `financial.resync_contract_payments`, `documents.*`, `apply_amendment`, etc.).
+✅ **Type hints** presentes nas whitelisted que eram bloqueantes:
+- `financial.bulk_delete_payments(names: str | list)`
+- `documents.generate_project_documents(..., template_names: str | list)`
+- `dashboard_api.get_dashboard_data(..., list_limits: dict | None = None)`
+- `deadline.get_events(start: str, end: str, filters: str | dict | None = None, ...)`
 
-❌ **Anotações ausentes** (§9.3):
-| Arquivo | Função | Parâmetro(s) |
-| --- | --- | --- |
-| `financial.py` | `bulk_delete_payments` | `names` |
-| `documents.py` | `generate_project_documents` | `template_names` |
-| `dashboard_api.py` | `get_dashboard_data` | `list_limits` |
-| `deadline.py` | `get_events` | `start`, `end`, `filters`, `doctype`, `field_map`, `fields` |
+✅ **25 funções** whitelisted mapeadas; maioria com `frappe.has_permission(..., throw=True)` ou `check_permission`.
 
-⚠️ **`dashboard_api.mark_payment_received`**: facade sem `has_permission` explícito — permissão validada em `dashboard/financial.py` (delegação OK, mas frágil se refatorada).
+✅ **`dashboard_api.mark_payment_received`**: `has_permission("Payment", "write", throw=True)` na facade + teste em `test_dashboard_api.py`.
 
-⚠️ Métodos de instância (`TimeLog.start_timer`, `Task.complete`) usam `self.check_permission("write")` — conforme, embora o AST não detecte `has_permission`.
+⚠️ **`get_active_user_timer`**: usa `has_permission` sem `throw=True` (retorna `None`) — padrão intencional para timer global.
 
 #### 2.9 N+1 queries
-⚠️ Heurística estática apontou possíveis loops com `get_value`/`get_doc` em relatórios e dashboard. **Revisão manual priorizada:** `agent_api.get_active_projects` e `dashboard/_helpers.py` fazem batch lookup — padrão correto. Nenhum N+1 **crítico** confirmado em fluxo de painel/contrato.
+⚠️ Heurística estática apontou possíveis loops com `get_value`/`get_doc` em relatórios e `documents._get_subcontracts_context` (lookup de Supplier em batch após `get_all`). **Revisão manual:** dashboard usa batch em `_helpers.py`; nenhum N+1 **crítico** confirmado em fluxos principais (painel, contrato, agent API).
 
 #### 2.10 `limit_page_length` em queries
-⚠️ **`project_margin.py:115`**: `frappe.get_all("Construction Project", …, limit=0)` — sem cap explícito (relatório script; risco em sites com muitas obras).
+⚠️ Heurística encontrou **~98** linhas com `get_all`/`get_list`/`db.sql` sem `limit` na mesma linha — muitas têm `limit`/`limit_page_length` nas linhas seguintes ou usam `limit=0` intencional em reports.
 
-⚠️ Outras queries em reports usam filtros por projeto/período — risco moderado.
+⚠️ Reports (`project_margin`, `work_cost_*`) e rollups usam `limit=0` ou caps altos — risco moderado em sites com volume muito grande.
 
 ---
 
@@ -132,12 +128,14 @@
 ✅ **Zero** ocorrências em `public/` e `doctype/*/`.
 
 #### 3.2 Hex hardcoded
-⚠️ **1 ocorrência** em `public/css/dashboard.css:185` — fallback `var(--white, #fff)`. Baixo impacto visual; preferir remover hex conforme §9.
+⚠️ **`public/css/dashboard.css:185`** — fallback `var(--white, #fff)`.
 
-✅ **Zero** hex em arquivos `.js` de dashboard/forms.
+⚠️ **`engenharia/report_visuals.py`** — paleta hex para gráficos de Script Reports (`#22c55e`, `#dc2626`, …). Exceção documentada em `REGRAS_OBRIGATORIAS.md` §12 (Script Reports); Frappe charts exigem hex no payload Python.
+
+✅ **Zero** hex em `.js` de forms/dashboard (formatters usam classes Bootstrap / `indicator-pill`).
 
 #### 3.3 Strings sem `__()`
-✅ JS de produção usa `__()` nos alerts verificados (ex.: `dashboard/lists.js`).
+✅ JS de produção usa `__()` nos alerts e filtros de reports verificados.
 
 #### 3.4 APIs deprecadas
 ✅ **Zero** `$c_obj`, `add_fetch` em JS de produção.
@@ -150,13 +148,13 @@
 ✅ `fixtures` definido com filtros para Workspace, Notification, Print Format, Custom Field (Event + `custom_source%`), Role, Kanban Board.
 
 #### 4.2 Fixture JSONs exportados
-✅ Diretório **`engenharia/fixtures/`** (padrão Frappe app-level) contém:
+✅ Diretório **`engenharia/fixtures/`** contém:
 - `custom_field.json`, `kanban_board.json`, `notification.json`, `print_format.json`, `role.json`
 
-⚠️ Workspace **não** exportado em `fixtures/` — sincronizado via **`setup/workspace.py`** + JSON em `engenharia/engenharia/workspace/` (balde 1 + seed). Consistente com REGRAS §6, mas o hook declara fixture Workspace que pode depender de export manual.
+⚠️ Workspace **não** exportado em `fixtures/` — sincronizado via **`setup/workspace.py`** + JSON em `engenharia/engenharia/workspace/`. Hook declara fixture Workspace; depende de export manual ou seed no migrate (consistente com REGRAS §6).
 
 #### 4.3 `doc_events` — um handler por evento
-✅ Nenhum DocType com dois handlers no mesmo evento. Pares verificados: Engineering Contract, Payment, Deadline, Permit, Project Stage, Reimbursable Expense, Installment.
+✅ Nenhum DocType com dois handlers no mesmo evento.
 
 #### 4.4 `scheduler_events`
 ✅ `daily`: `engenharia.tasks.check_overdue_installments` — função existe em `tasks.py`.
@@ -171,25 +169,29 @@
 ### SEÇÃO 5 — Zero Lógica no Banco
 
 #### 5.1 Server Scripts
-✅ **`bench --site engenharia.local execute frappe.get_all('Server Script', …)`** retornou lista vazia — zero Server Scripts.
+✅ **`bench --site engenharia.local console`**: **0** Server Scripts no banco.
 
 #### 5.2 Client Scripts
-✅ **`bench --site engenharia.local execute frappe.get_all('Client Script', …)`** retornou lista vazia — zero Client Scripts.
+✅ **0** Client Scripts no banco.
 
 ---
 
 ### SEÇÃO 6 — Testes
 
 #### 6.1 Testes existem
-✅ **`bench --site engenharia.local run-tests --app engenharia`**: **211 testes, OK** (25,8 s).
+✅ **`bench --site engenharia.local run-tests --app engenharia`**: **212 testes, OK** (~30 s).
 
-⚠️ Apenas **2** pastas de DocType com `test_*.py` local (`permit_type`, `document_kit`). Cobertura principal está centralizada em **`engenharia/tests/`** (38+ módulos) — padrão aceitável para o app.
+✅ Cobertura centralizada em **`engenharia/tests/`** (39 módulos), incluindo:
+- `test_reports.py` — chart + `report_summary` nos 5 Script Reports
+- `test_documents.py` — placeholders, geração docx, subcontratos no contexto
+
+⚠️ Apenas **2** pastas de DocType com `test_*.py` local (`permit_type`, `document_kit`) — padrão aceitável.
 
 #### 6.2 Testes com corpo `pass`
 ✅ Nenhum `def test_*` com corpo apenas `pass` detectado.
 
 #### 6.3 Whitelisted sem teste dedicado
-⚠️ Várias whitelisted (ex.: `bulk_delete_payments`, `get_events`, `generate_project_documents`) não têm teste unitário **nomeado** 1:1 — cobertura indireta via testes de domínio (`test_financial`, `test_documents`, `test_dashboard`). Recomendado reforço, não bloqueante para deploy.
+✅ Whitelist crítica reforçada: `test_dashboard_api.py`, `test_whitelist.py`, `test_imports.py`.
 
 ---
 
@@ -198,20 +200,20 @@
 #### 7.1 Content vs shortcuts
 ⚠️ **Parcialmente sincronizado** (formato Frappe v16):
 
-| Origem | Links |
+| Origem | Atalhos |
 | --- | --- |
-| Content (5 shortcuts) | eng-dashboard, Construction Project, Payment, Deadline, Commission |
-| Sidebar `links` | eng-dashboard, Construction Project, Payment, Commission |
-| `shortcuts` | eng-dashboard, Construction Project, Payment, Deadline, Commission |
+| Content (5 shortcuts) | Painel, Construction Project, Payment, Deadline, Commission |
+| `links` (sidebar workspace) | Painel, Construction Project, Payment, Commission |
+| `shortcuts` | Painel, Construction Project, Payment, Deadline, Commission |
 
-⚠️ **Deadline** aparece no content/shortcuts mas **não** na lista `links` da sidebar do workspace exportado — inconsistência operacional menor.
+⚠️ **Deadline** aparece no content/shortcuts mas **não** na lista `links` do workspace exportado. Sidebar operacional completa (`setup/sidebar.py`) tem mais entradas que o workspace JSON — inconsistência cosmética.
 
 ---
 
 ### SEÇÃO 8 — Formatação e Versionamento
 
 #### 8.1 Tabs vs Spaces (Python)
-✅ **Zero** arquivos `.py` em `engenharia/engenharia/` com indentação de 4 spaces no início de linha (grep `^ {4}`).
+✅ **Zero** arquivos `.py` em `engenharia/` com indentação de 4 spaces no início de linha (grep `^ {4}`).
 
 #### 8.2 Dead code markers
 ✅ **Zero** `TODO`, `FIXME`, `HACK`, `XXX`, `DEPRECATED` em `.py`/`.js` de produção (excl. docs de auditoria).
@@ -224,13 +226,13 @@
 
 | Balde | Conteúdo | Status |
 | --- | --- | --- |
-| **1 — Código** | 42 DocTypes, Page `eng_dashboard`, 5 Script Reports | ✅ |
+| **1 — Código** | 42 pastas DocType, Page `eng_dashboard`, 5 Script Reports (+ `report_visuals.py`), `documents.py` | ✅ |
 | **2 — Fixtures** | 5 JSONs em `engenharia/fixtures/` | ✅ |
 | **3 — Seed** | `after_install` + 9 handlers `after_migrate` | ✅ |
 
 ✅ DocTypes do app **não** estão em fixture (conforme REGRAS §6).
 
-⚠️ Demo seed (`setup/demo_data.py`) existe — uso restrito a dev/CLI (`bench seed-demo`), não roda em `after_migrate` de produção.
+⚠️ Demo seed (`setup/demo_data.py`) + CLI `bench seed-demo` — uso restrito a dev; não roda em `after_migrate` de produção.
 
 ---
 
@@ -238,36 +240,45 @@
 
 | Gate | Resultado |
 | --- | --- |
-| `run-tests --app engenharia` | ✅ 211 OK |
+| `run-tests --app engenharia` | ✅ 212 OK |
 | `install-app` + `migrate` | ✅ (site `engenharia.local` operacional) |
-| Painel / dashboard API | ✅ smoke E2E recente (`PLAYWRIGHT_*`) |
-| E2E Playwright (`e2e/`) | ✅ 26/26 passos (sessão 2026-06-07) |
+| Painel / dashboard API | ✅ smoke via testes + E2E histórico |
+| E2E Playwright (`e2e/`) | ✅ 26/26 passos (sessão 2026-06-07; não reexecutado nesta auditoria) |
+| Script Reports (chart + KPI) | ✅ `test_reports.py` verde |
+| Placeholders docx | ✅ `test_documents.py` verde; catálogo em `PLACEHOLDER_REFERENCE` |
 | Zero lógica no banco | ✅ |
-| Conformidade normativa estrita | ❌ 2 itens (§ abaixo) |
+| Conformidade normativa estrita | ✅ (bloqueantes anteriores resolvidos) |
 
 ---
 
 ## Ações Necessárias
 
-### ❌ Bloqueantes (corrigir antes do deploy “fechado”)
+### ❌ Bloqueantes
 
-1. **`setup/permissions.py:147`** — adicionar comentário inline justificando `ignore_permissions=True` na criação de `Custom DocPerm` (padrão `setup/install.py` / `setup/roles.py`).
-
-2. **Whitelisted sem type hints** — adicionar anotações em:
-   - `financial.bulk_delete_payments(names: str | list)`
-   - `documents.generate_project_documents(..., template_names: str | list)`
-   - `dashboard_api.get_dashboard_data(..., list_limits: dict | None = None)`
-   - `deadline.get_events(start: str, end: str, ...)`
+*Nenhum item bloqueante identificado nesta auditoria.*
 
 ### ⚠️ Recomendadas (pós-deploy ou sprint curta)
 
-1. Incluir **Deadline** nos `links` do workspace sidebar ou remover do content — alinhar navegação.
+1. Incluir **Deadline** nos `links` do workspace JSON ou remover do content — alinhar navegação.
 2. Remover fallback `#fff` em `dashboard.css` ou substituir por variável Frappe pura.
-3. Cap explícito em `project_margin` (`limit=0` → limite razoável ou paginação).
-4. Comentário em `commands.py` nos `commit()` de seed-demo/clear-demo.
-5. Testes dedicados para whitelisted críticas (`bulk_delete_payments`, geração de documentos).
+3. Cap explícito em reports com `limit=0` (`project_margin`, agregações globais) — paginação ou limite documentado.
+4. Comentário em `commands.py` nos `commit()` de `seed-demo` / `clear-demo`.
+5. Testes dedicados para whitelisted críticas (`bulk_delete_payments`, `mark_payment_received`, `resync_contract_payments`).
 6. Renomear `column_break_info` duplicados para sufixos descritivos (cosmético).
+7. Exportar ou documentar fixture **Workspace** se deploy limpo depender só de `bench migrate` sem `setup/workspace.py`.
 
 ---
 
-*Auditoria diagnóstica — nenhum arquivo de código foi alterado durante esta verificação.*
+## Evolução desde auditoria 2026-06-07
+
+| Item | Antes | Agora |
+| --- | --- | --- |
+| Bloqueantes normativos | 2 | 0 |
+| Testes Python | 211 | 212 |
+| Script Reports | Tabelas simples | Gráficos + KPIs + formatters JS |
+| Placeholders docx | Parcial | Catálogo completo (orçamento, logo, subcontratos) |
+| Commit | `8adb0ae` | `8c907d2` |
+
+---
+
+*Auditoria diagnóstica — nenhum arquivo de código foi alterado durante esta verificação (apenas este relatório).*

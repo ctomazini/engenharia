@@ -67,7 +67,7 @@ engenharia.dashboard.lists = {
 						${utils.render_list_limit_controls("parcelas", limits.parcelas || 5, meta.parcelas)}
 					</div>
 					${parcelasHtml}
-					${utils.render_view_all_footer("Payment", meta.parcelas)}
+					${utils.render_view_all_footer("Payment", meta.parcelas, [["status", "in", ["Pendente", "Vencido"]]])}
 				</section>
 				<section class="eng-dash-section">
 					<div class="eng-dash-section-head">
@@ -78,7 +78,7 @@ engenharia.dashboard.lists = {
 						${utils.render_list_limit_controls("despesas", limits.despesas || 5, meta.despesas)}
 					</div>
 					${despesasHtml}
-					${utils.render_view_all_footer("Reimbursable Expense", meta.despesas)}
+					${utils.render_view_all_footer("Reimbursable Expense", meta.despesas, [["status", "=", "A reembolsar"]])}
 				</section>
 			</div>
 		`);

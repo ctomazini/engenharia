@@ -328,18 +328,38 @@ def create_test_construction_measurement(project=None, stage=None, **kwargs):
 
 
 def create_test_payment(project=None, amount=1000, **kwargs):
+	"""Cria pagamento de parcela de contrato (sync automático)."""
 	if not project:
 		project = create_test_construction_project().name
-	customer = frappe.db.get_value("Construction Project", project, "customer")
-	data = {
-		"doctype": "Payment",
-		"project": project,
-		"customer": customer,
-		"amount": amount,
-		"due_date": today(),
-		"status": "Pendente",
-		**kwargs,
-	}
-	doc = frappe.get_doc(data)
-	doc.insert(ignore_permissions=True)
+	contract = create_test_engineering_contract(
+		project=project,
+		base_value=amount,
+		installment_count=1,
+	)
+	payment_name = get_contract_payments(contract.name)[0].name
+	doc = frappe.get_doc("Payment", payment_name)
+	updates = {k: v for k, v in kwargs.items() if k not in ("base_value", "installment_count")}
+	if updates:
+		doc.update(updates)
+		doc.save(ignore_permissions=True)
 	return doc
+
+
+from frappe.tests.utils import FrappeTestCase  # noqa: E402
+
+
+class TestSetupSmoke(FrappeTestCase):
+	def tearDown(self):
+		frappe.db.rollback()
+
+	def test_reinstall_child_doctypes_is_idempotent(self):
+		from engenharia.setup.reinstall_child_doctypes import reinstall_child_doctypes
+
+		reinstall_child_doctypes()
+		reinstall_child_doctypes()
+		for dt in (
+			"Engineering Contract Installment",
+			"Document Kit Item",
+			"Customer Address",
+		):
+			self.assertTrue(frappe.db.exists("DocType", dt), msg=f"DocType {dt} ausente")

@@ -46,7 +46,7 @@ engenharia.dashboard.operational = {
 					${utils.render_list_limit_controls("operational", limits.operational || 5, meta)}
 				</div>
 				${projectsHtml}
-				${utils.render_view_all_footer("Construction Project", meta)}
+				${utils.render_view_all_footer("Construction Project", meta, [["status", "=", "Em andamento"]])}
 			</section>
 		`);
 

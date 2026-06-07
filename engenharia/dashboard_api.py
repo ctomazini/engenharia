@@ -28,4 +28,5 @@ def get_dashboard_data(
 
 @frappe.whitelist()
 def mark_payment_received(payment_name: str, received_date: str | None = None):
+	frappe.has_permission("Payment", "write", throw=True)
 	return _mark_payment_received(payment_name, received_date)

@@ -10,7 +10,9 @@
 | --- | --- | --- |
 | [`README.md`](../../README.md) | Todos | Visão geral do app, instalação e links principais |
 | [`REGRAS_OBRIGATORIAS.md`](../../REGRAS_OBRIGATORIAS.md) | Desenvolvedores | Padrões fechados: DocTypes, dashboard, testes, commits |
-| [`../../docs/audit-deploy-ready.md`](../../docs/audit-deploy-ready.md) | Dev / release | Auditoria deploy-ready (2026-06-07) |
+| [`../../docs/audit-deploy-ready.md`](../../docs/audit-deploy-ready.md) | Dev / release | Auditoria deploy-ready |
+| [`../../CODEBASE.md`](../../CODEBASE.md) | Desenvolvedores | Inventário técnico (`scripts/generate_codebase.py`) |
+| [`../../docs/crosscheck_advocacia.md`](../../docs/crosscheck_advocacia.md) | Desenvolvedores | Paridade estrutural com advocacia |
 
 ---
 

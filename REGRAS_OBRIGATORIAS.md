@@ -429,7 +429,9 @@ Extraídas da auditoria consolidada do advocacia (código atual).
 | `painel/` → | `dashboard/` | renomear domínios |
 | `painel_api.py` | `dashboard_api.py` | facade |
 | `setup/*` | `setup/*` | install, sidebar, workspace, reports, translations |
-| `public/js/masks.js`, `list_nav.js` | idem | máscaras BR genéricas |
+| `public/js/masks.js`, `list_nav.js`, `customer_from_project.js`, `documents_placeholders.js` | idem | máscaras BR + navegação filtrada + UX satélite |
+| `notificacoes.py` | `notifications.py` | prazos, protocolos, tarefas, pagamentos |
+| `setup/reinstalar_istable_doctypes` | `setup/reinstall_child_doctypes.py` | primeiro em `after_migrate` |
 | `tests/test_setup.py`, padrão CRUD | `tests/` | factories com hash único |
 
 ### 10.2 Não reusar (domínio jurídico)
@@ -452,8 +454,13 @@ Espelhar `advocacia/hooks.py`:
 
 ```python
 fixtures = [Workspace, Notification, Custom Field em nativos, Kanban Board, ...]
-app_include_js = [masks, list_nav, ...]  # + dashboard assets se global
-scheduler_events = {"daily": [...], "weekly": [...]}
+app_include_js = [masks, list_nav, customer_from_project, documents_placeholders, ...]
+standard_queries = {"Construction Project": "construction_project_query"}
+scheduler_events = {
+  "daily": [check_overdue_installments, check_overdue_reimbursable_expenses,
+            notify_deadlines_daily, notify_expiring_permits, notify_overdue_tasks, notify_overdue_payments],
+  "weekly": [check_project_status_weekly],
+}
 doc_events = {
     "Engineering Contract": {"on_update": "....financial.sync_payments_hook"},
     "Contract Installment": {"on_update": "....tasks.on_installment_update"},
@@ -522,7 +529,9 @@ Use como gate antes de cada commit (uma linha = uma verificação).
 | DocType transacional | `advocacia/advocacia/doctype/acordo_de_honorarios_processuais/` |
 | Cadastro auxiliar | `advocacia/advocacia/doctype/comarca/comarca.json` |
 | List view | `advocacia/advocacia/doctype/pagamento/pagamento_list.js` |
-| Inventário completo | `CODEBASE.md` |
+| Inventário completo | `CODEBASE.md` (gerar: `python scripts/generate_codebase.py`) |
+| Cross-audit advocacia | `docs/crosscheck_advocacia.md` |
+| Cursor rules | `.cursorrules` |
 | Testes E2E engenharia | `e2e/run-e2e.mjs`, `e2e/README.md` |
 
 ---

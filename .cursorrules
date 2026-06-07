@@ -1,0 +1,38 @@
+# Frappe App — engenharia (Gestão de Obras)
+
+## Ambiente
+- Frappe v16 (nativo, sem ERPNext)
+- Bench: /home/frappe/frappe-bench
+- Site: engenharia.local
+- App path: /home/frappe/frappe-bench/apps/engenharia/
+
+## Norma
+- Seguir `REGRAS_OBRIGATORIAS.md` em todo commit
+- Referência read-only: `/home/frappe/frappe-bench/apps/advocacia`
+- DocTypes em inglês; labels UI em português; fieldnames `snake_case` EN
+
+## Estrutura
+
+engenharia/
+├── REGRAS_OBRIGATORIAS.md, CODEBASE.md, pyproject.toml
+├── engenharia/
+│   ├── hooks.py, dashboard_api.py, documents.py, financial.py, notifications.py
+│   ├── dashboard/ (backend modular do painel)
+│   ├── setup/ (install, sidebar, reinstall_child_doctypes, …)
+│   ├── public/js/ (list_nav, customer_from_project, dashboard/*)
+│   └── engenharia/doctype/, report/, page/eng_dashboard/
+
+## Comandos
+
+bench --site engenharia.local migrate
+bench build --app engenharia
+bench --site engenharia.local clear-cache
+bench --site engenharia.local run-tests --app engenharia
+
+## Regras para o Agent
+1. Tabs em `.py` e `.js`
+2. Sem `frappe.db.commit()` fora de `setup/` e `patches/`
+3. Whitelisted: `has_permission(..., throw=True)` + type hints
+4. Um handler por `(DocType, evento)` em `doc_events`
+5. Não alterar o app `advocacia`
+6. Conventional Commits; preferir um DocType por commit

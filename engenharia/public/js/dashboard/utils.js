@@ -126,12 +126,10 @@ engenharia.dashboard.utils = {
 
 	goto_list(doctype, filters) {
 		if (!doctype) return;
-		frappe.route_options = {};
-		(filters || []).forEach((filter) => {
-			if (Array.isArray(filter) && filter.length >= 3) {
-				frappe.route_options[filter[1]] = [filter[0], filter[2]];
-			}
-		});
+		if (frappe.provide && engenharia.list_nav && engenharia.list_nav.goto) {
+			engenharia.list_nav.goto(doctype, filters || []);
+			return;
+		}
 		frappe.set_route("List", doctype);
 	},
 
@@ -276,11 +274,12 @@ engenharia.dashboard.utils = {
 		return groups;
 	},
 
-	render_view_all_footer(doctype, meta) {
+	render_view_all_footer(doctype, meta, filters) {
 		if (!meta || !meta.total || meta.showing >= meta.total) return "";
+		const filtersAttr = frappe.utils.escape_html(JSON.stringify(filters || []));
 		return `
 			<div class="eng-dash-list-footer">
-				<button type="button" class="eng-dash-view-all" data-doctype="${frappe.utils.escape_html(doctype)}">
+				<button type="button" class="eng-dash-view-all" data-doctype="${frappe.utils.escape_html(doctype)}" data-filters="${filtersAttr}">
 					${__("Ver todos ({0})", [meta.total])}
 				</button>
 			</div>`;
@@ -288,7 +287,14 @@ engenharia.dashboard.utils = {
 
 	bind_view_all($root) {
 		$root.find(".eng-dash-view-all[data-doctype]").on("click", function () {
-			frappe.set_route("List", $(this).attr("data-doctype"));
+			const doctype = $(this).attr("data-doctype");
+			let filters = [];
+			try {
+				filters = JSON.parse($(this).attr("data-filters") || "[]");
+			} catch (e) {
+				filters = [];
+			}
+			engenharia.dashboard.utils.goto_list(doctype, filters);
 		});
 	},
 };
