@@ -2,11 +2,24 @@ import frappe
 from frappe import _
 from frappe.utils import flt
 
+from engenharia.report_visuals import (
+	REPORT_COLORS,
+	bar_chart,
+	currency_summary,
+	percent_summary,
+)
 from engenharia.work_costs import FUNDED_BY_OFFICE, get_subcontract_paid_totals_by_project
 
 
 def execute(filters=None):
-	columns = [
+	filters = frappe._dict(filters or {})
+	columns = _get_columns()
+	data, chart, report_summary = _get_data(filters)
+	return columns, data, None, chart, report_summary
+
+
+def _get_columns():
+	return [
 		{
 			"fieldname": "project",
 			"label": _("Obra"),
@@ -59,6 +72,8 @@ def execute(filters=None):
 		},
 	]
 
+
+def _get_data(filters):
 	contract_by_project = {}
 	for row in frappe.get_all(
 		"Engineering Contract",
@@ -120,7 +135,15 @@ def execute(filters=None):
 		| set(cost_by_project)
 		| set(reimbursable_by_project)
 	)
+	if filters.get("project"):
+		projects = {filters.project} & projects
+
 	data = []
+	total_contract = 0.0
+	total_received = 0.0
+	total_realized = 0.0
+	received_pcts = []
+
 	for project in sorted(projects):
 		contract_value = flt(contract_by_project.get(project))
 		received_revenue = flt(received_by_project.get(project))
@@ -143,5 +166,43 @@ def execute(filters=None):
 				"received_percent": round(received_percent, 1),
 			}
 		)
+		total_contract += contract_value
+		total_received += received_revenue
+		total_realized += realized_margin
+		if contract_value:
+			received_pcts.append(received_percent)
+
 	data.sort(key=lambda row: row["realized_margin"], reverse=True)
-	return columns, data
+
+	chart = _build_chart(data)
+	avg_received = round(sum(received_pcts) / len(received_pcts), 1) if received_pcts else 0
+	report_summary = [
+		currency_summary(total_contract, _("Valor Contratado"), "Blue"),
+		currency_summary(total_received, _("Receita Recebida"), "Green"),
+		currency_summary(
+			total_realized,
+			_("Margem Realizada"),
+			"Green" if total_realized >= 0 else "Red",
+		),
+		percent_summary(avg_received, _("% Recebido Médio"), "Orange"),
+	]
+	return data, chart, report_summary
+
+
+def _build_chart(data):
+	top = [row for row in data if row.get("project")][:10]
+	if not top:
+		return None
+
+	labels = []
+	values = []
+	for row in top:
+		title = row.get("project_title") or row.get("project")
+		labels.append(title[:40] + "…" if len(title) > 40 else title)
+		values.append(flt(row.get("realized_margin")))
+
+	return bar_chart(
+		labels,
+		[{"name": _("Margem Realizada"), "values": values}],
+		[REPORT_COLORS["teal"]],
+	)

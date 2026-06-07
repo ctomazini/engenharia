@@ -1,13 +1,21 @@
-// Copyright (c) 2026, Charles Tomazini and contributors
-// For license information, please see license.txt
+const STATUS_PILL = {
+	"Orçamento": "blue",
+	"Em andamento": "green",
+	Paralisada: "orange",
+	"Concluída": "darkgrey",
+	Cancelada: "red",
+};
 
 frappe.query_reports["projects_by_status"] = {
-	filters: [
-		// {
-		// 	"fieldname": "my_filter",
-		// 	"label": __("My Filter"),
-		// 	"fieldtype": "Data",
-		// 	"reqd": 1,
-		// },
-	],
+	formatter(value, row, column, data, default_formatter) {
+		value = default_formatter(value, row, column, data);
+		if (column.fieldname === "status" && row.status) {
+			const cls = STATUS_PILL[row.status] || "grey";
+			return `<span class="indicator-pill ${cls} filterable ellipsis">${row.status}</span>`;
+		}
+		if (column.fieldname === "count" && row.count) {
+			return `<strong>${value}</strong>`;
+		}
+		return value;
+	},
 };

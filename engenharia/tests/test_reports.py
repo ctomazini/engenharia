@@ -21,15 +21,19 @@ class TestReports(FrappeTestCase):
 
 	def test_projects_by_status_returns_rows(self):
 		create_test_construction_project(status="Em andamento")
-		columns, data = projects_by_status()
+		columns, data, _message, chart, report_summary = projects_by_status()
 		self.assertTrue(columns)
 		self.assertTrue(data)
+		self.assertIsNotNone(chart)
+		self.assertTrue(report_summary)
 
 	def test_work_cost_by_project_with_seed(self):
 		project = create_test_construction_project()
 		create_test_work_cost(project=project.name, amount=1500)
-		columns, data = work_cost_by_project()
+		columns, data, _message, chart, report_summary = work_cost_by_project()
 		self.assertTrue(any(row.get("project") == project.name for row in data))
+		self.assertIsNotNone(chart)
+		self.assertTrue(report_summary)
 
 	def test_project_margin_includes_realized_columns(self):
 		project = create_test_construction_project()
@@ -43,8 +47,10 @@ class TestReports(FrappeTestCase):
 		payment.received_amount = payment.amount
 		payment.save(ignore_permissions=True)
 
-		columns, data = project_margin()
+		columns, data, _message, chart, report_summary = project_margin()
 		row = next(r for r in data if r["project"] == project.name)
+		self.assertIsNotNone(chart)
+		self.assertTrue(report_summary)
 		fieldnames = {c["fieldname"] for c in columns}
 		self.assertIn("received_revenue", fieldnames)
 		self.assertIn("realized_margin", fieldnames)
@@ -55,7 +61,9 @@ class TestReports(FrappeTestCase):
 		expense.payment_date = today()
 		expense.save(ignore_permissions=True)
 
-		columns, data = cash_flow({"months": 1})
+		columns, data, _message, chart, report_summary = cash_flow({"months": 1})
 		self.assertTrue(
 			any(flt(row.get("outflow")) >= 350 for row in data if row.get("description"))
 		)
+		self.assertIsNotNone(chart)
+		self.assertEqual(len(report_summary), 3)

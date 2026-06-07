@@ -1,13 +1,20 @@
-// Copyright (c) 2026, Charles Tomazini and contributors
-// For license information, please see license.txt
-
 frappe.query_reports["work_cost_by_category"] = {
 	filters: [
-		// {
-		// 	"fieldname": "my_filter",
-		// 	"label": __("My Filter"),
-		// 	"fieldtype": "Data",
-		// 	"reqd": 1,
-		// },
+		{
+			fieldname: "cost_category",
+			label: __("Categoria de Custo"),
+			fieldtype: "Link",
+			options: "Cost Category",
+		},
 	],
+	formatter(value, row, column, data, default_formatter) {
+		value = default_formatter(value, row, column, data);
+		if (column.fieldname === "total_cost") {
+			return `<span class="text-danger bold">${value}</span>`;
+		}
+		if (column.fieldname === "share_percent" && flt(row.share_percent) >= 20) {
+			return `<span class="text-warning bold">${value}</span>`;
+		}
+		return value;
+	},
 };

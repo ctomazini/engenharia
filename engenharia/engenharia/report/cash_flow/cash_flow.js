@@ -1,13 +1,26 @@
-// Copyright (c) 2026, Charles Tomazini and contributors
-// For license information, please see license.txt
-
 frappe.query_reports["cash_flow"] = {
 	filters: [
-		// {
-		// 	"fieldname": "my_filter",
-		// 	"label": __("My Filter"),
-		// 	"fieldtype": "Data",
-		// 	"reqd": 1,
-		// },
+		{
+			fieldname: "months",
+			label: __("Horizonte (meses)"),
+			fieldtype: "Select",
+			options: "3\n6\n12",
+			default: "6",
+		},
 	],
+	formatter(value, row, column, data, default_formatter) {
+		value = default_formatter(value, row, column, data);
+		if (column.fieldname === "type" && row.type) {
+			const cls = row.type === __("Entrada") ? "green" : "red";
+			return `<span class="indicator-pill ${cls} filterable ellipsis">${row.type}</span>`;
+		}
+		if (column.fieldname === "description" && row.description && !row.date) {
+			return `<strong>${row.description}</strong>`;
+		}
+		if (column.fieldname === "balance" && row.balance != null && !row.date) {
+			const cls = flt(row.balance) >= 0 ? "text-success" : "text-danger";
+			return `<strong class="${cls}">${value}</strong>`;
+		}
+		return value;
+	},
 };
