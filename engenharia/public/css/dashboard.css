@@ -2242,15 +2242,56 @@
 		min-width: 0;
 	}
 
-	/* §2 — Ações rápidas */
+	/* §2 — Ações rápidas (carrossel horizontal) */
+	.eng-dash-actions-wrap {
+		margin-left: -12px;
+		margin-right: -12px;
+		margin-bottom: calc(var(--eng-dash-gap) - 8px);
+	}
+
+	.eng-dash-actions-label {
+		padding: 0 12px;
+	}
+
 	.eng-dash-actions {
-		flex-wrap: wrap;
-		gap: 0.5rem;
-		overflow-x: visible;
+		flex-wrap: nowrap;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		scroll-snap-type: x proximity;
+		gap: 8px;
+		padding: 0 12px 6px;
+		scrollbar-width: none;
+	}
+
+	.eng-dash-actions::-webkit-scrollbar {
+		display: none;
 	}
 
 	.eng-dash-action-chip {
+		flex: 0 0 auto;
 		flex-shrink: 0;
+		scroll-snap-align: start;
+		min-width: 96px;
+		max-width: 112px;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 6px;
+		padding: 12px 8px;
+		text-align: center;
+		font-size: 11px;
+		line-height: 1.25;
+		min-height: 84px;
+	}
+
+	.eng-dash-action-chip .icon {
+		width: 18px;
+		height: 18px;
+	}
+
+	.eng-dash-action-chip span {
+		white-space: normal;
+		display: block;
 	}
 
 	/* §1 — Próximos compromissos */
