@@ -1,6 +1,6 @@
 # Engenharia
 
-Gestão de obras de engenharia civil no **Frappe v16** (sem ERPNext).
+Gestão de obras de engenharia civil no **Frappe v16** (sem ERPNext). **Versão:** 1.0.0
 
 Especificações técnicas: cadastro em **Technical Item** (parâmetros + fórmulas em **Technical Item Output**); instâncias na obra em **Project Item** (documento ligado a **Construction Project**).
 
@@ -28,6 +28,7 @@ Especificações técnicas: cadastro em **Technical Item** (parâmetros + fórmu
 - **Documentos Word**: geração a partir de modelos `.docx` com placeholders completos (obra, orçamento, contrato, subcontratos)
 - **Custos e subcontratos:** `funded_by` (Escritório vs Cliente) — lançamentos pagos pelo cliente não entram no caixa do escritório
 - **Contratos:** parcelas com sync automático para **Payment**
+- **API para agentes IA:** `engenharia/agent_api.py` — 3 endpoints read-only (`get_active_projects`, `get_project_summary`, `get_costs_by_category`); ver [`engenharia/docs/audit_ai_readiness.md`](engenharia/docs/audit_ai_readiness.md)
 
 ---
 
