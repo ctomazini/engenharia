@@ -468,6 +468,7 @@ after_migrate = [ ... cadeia ensure_* ... ]
 | Gate | Comando / critério |
 | --- | --- |
 | Unit/integration | `bench --site <site> run-tests --app engenharia` — verde |
+| E2E Desk (opcional) | `cd e2e && E2E_PASS=… npm test` — ver `e2e/README.md` |
 | Site limpo | `install-app` + `migrate` sem erro |
 | Painel | `xcall` dashboard retorna todas as chaves; smoke manual |
 | Sidebar | 26-ish links alinhados workspace ↔ sidebar; seções `collapsible: 1` |
@@ -518,6 +519,7 @@ Use como gate antes de cada commit (uma linha = uma verificação).
 | Cadastro auxiliar | `advocacia/advocacia/doctype/comarca/comarca.json` |
 | List view | `advocacia/advocacia/doctype/pagamento/pagamento_list.js` |
 | Inventário completo | `CODEBASE.md` |
+| Testes E2E engenharia | `e2e/run-e2e.mjs`, `e2e/README.md` |
 
 ---
 

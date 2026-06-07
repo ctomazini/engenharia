@@ -1,46 +1,65 @@
-### Engenharia
+# Engenharia
 
-Gestao de obras de engenharia civil
+Gestão de obras de engenharia civil no **Frappe v16** (sem ERPNext).
 
-Especificacoes tecnicas: cadastro em **Technical Item** (parametros + formulas em **Technical Item Output**);
-instancias na obra em **Project Item** (documento standalone ligado a **Construction Project**).
+Especificações técnicas: cadastro em **Technical Item** (parâmetros + fórmulas em **Technical Item Output**); instâncias na obra em **Project Item** (documento ligado a **Construction Project**).
 
-Testes: `bench --site <site> run-tests --app engenharia` (211+ testes)
+---
 
-**Painel de Obras:** zona de atenção + próximos compromissos (50/50), agenda operacional (sem pagamentos),
-obras ativas em largura total, entradas×saídas do mês fixas, composição de custos por categoria,
-filtros de linhas com atualização parcial (5/10/15).
+## Documentação
 
-**Custos e subcontratos:** campo `funded_by` (Escritório vs Cliente) — lançamentos pagos pelo cliente não entram no fluxo de caixa do escritório (KPIs, margem realizada, saídas do mês).
+| Documento | Conteúdo |
+| --- | --- |
+| [`engenharia/docs/README.md`](engenharia/docs/README.md) | Índice de toda a documentação |
+| [`engenharia/docs/manual_usuario.md`](engenharia/docs/manual_usuario.md) | Manual do usuário (Desk) |
+| [`engenharia/docs/desenvolvimento.md`](engenharia/docs/desenvolvimento.md) | Bench, testes, pre-commit, demo seed |
+| [`e2e/README.md`](e2e/README.md) | Testes E2E Playwright |
+| [`REGRAS_OBRIGATORIAS.md`](REGRAS_OBRIGATORIAS.md) | Padrões normativos do app |
 
-Documentação de usuário: `engenharia/docs/manual_usuario.md`
+---
 
-### Installation
+## Destaques funcionais
 
-You can install this app using the [bench](https://github.com/frappe/bench) CLI:
+- **Painel de Obras** (`/app/eng-dashboard`): atenção operacional, agenda, obras ativas, zona financeira (Manager), filtros com refresh parcial
+- **Custos e subcontratos:** `funded_by` (Escritório vs Cliente) — lançamentos pagos pelo cliente não entram no caixa do escritório
+- **Contratos:** parcelas com sync automático para **Payment**
+
+---
+
+## Testes
+
+```bash
+# Unitários / integração
+bench --site engenharia.local run-tests --app engenharia
+
+# E2E Playwright (ver e2e/README.md)
+cd e2e && npm install && E2E_PASS=<senha> npm test
+```
+
+---
+
+## Instalação
 
 ```bash
 cd $PATH_TO_YOUR_BENCH
 bench get-app $URL_OF_THIS_REPO --branch main
-bench install-app engenharia
+bench --site <site> install-app engenharia
+bench --site <site> migrate
 ```
 
-### Contributing
+---
 
-This app uses `pre-commit` for code formatting and linting. Please [install pre-commit](https://pre-commit.com/#installation) and enable it for this repository:
+## Contribuição
 
 ```bash
 cd apps/engenharia
 pre-commit install
 ```
 
-Pre-commit is configured to use the following tools for checking and formatting your code:
+Ferramentas: ruff, eslint, prettier, pyupgrade. Commits em **Conventional Commits**.
 
-- ruff
-- eslint
-- prettier
-- pyupgrade
+---
 
-### License
+## Licença
 
-mit
+MIT

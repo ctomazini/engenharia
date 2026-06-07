@@ -1,6 +1,8 @@
 # Manual do Usuário — Módulo Engenharia
 
-Sistema de gestão de obras de engenharia civil integrado ao Frappe/ERPNext Desk.
+Sistema de gestão de obras de engenharia civil integrado ao Frappe Desk.
+
+Documentação técnica e de desenvolvimento: [`docs/README.md`](README.md).
 
 ---
 
