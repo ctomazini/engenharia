@@ -182,7 +182,7 @@ PLACEHOLDER_REFERENCE = [
 
 
 @frappe.whitelist()
-def generate_project_documents(project_name: str, template_names) -> dict:
+def generate_project_documents(project_name: str, template_names: str | list) -> dict:
 	frappe.has_permission("Construction Project", "write", doc=project_name, throw=True)
 	names = _parse_template_names(template_names)
 	if not names:

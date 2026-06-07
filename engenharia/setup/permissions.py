@@ -144,7 +144,7 @@ def _upsert_custom_docperm(doctype: str, role: str, permlevel: int, permissions:
 		"if_owner": 0,
 		**row,
 	}
-	frappe.get_doc(doc).insert(ignore_permissions=True)
+	frappe.get_doc(doc).insert(ignore_permissions=True)  # setup: insere Custom DocPerm no migrate — sync de roles Engenharia
 
 
 def _validate_doctype_permissions(doctype: str):

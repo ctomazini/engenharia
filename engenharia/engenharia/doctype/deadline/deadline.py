@@ -23,7 +23,14 @@ class Deadline(Document):
 
 
 @frappe.whitelist()
-def get_events(start, end, filters=None, doctype=None, field_map=None, fields=None):
+def get_events(
+	start: str,
+	end: str,
+	filters: str | dict | None = None,
+	doctype: str | None = None,
+	field_map: str | dict | None = None,
+	fields: str | list | None = None,
+):
 	"""Eventos do calendário para Deadline."""
 	if not frappe.has_permission("Deadline", "read"):
 		frappe.throw(_("Not Permitted"), frappe.PermissionError)

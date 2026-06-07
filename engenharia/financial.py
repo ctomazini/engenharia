@@ -344,7 +344,7 @@ def resync_contract_payments(contract_name: str) -> dict:
 
 
 @frappe.whitelist()
-def bulk_delete_payments(names):
+def bulk_delete_payments(names: str | list):
 	import json
 
 	allowed_statuses = ("Pendente", "Cancelado")
