@@ -38,7 +38,7 @@ class CommunicationLog(Document):
 				"project": self.project,
 				"customer": self.customer,
 				"status": "A fazer",
-				"due_date": add_days(today(), 3),
+				"due_date": self.follow_up_date or add_days(today(), 3),
 			}
 		)
 		task.insert()

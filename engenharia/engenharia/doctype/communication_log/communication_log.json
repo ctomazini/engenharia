@@ -19,6 +19,7 @@
   "next_steps_section",
   "next_steps",
   "create_task",
+  "follow_up_date",
   "task"
  ],
  "fields": [
@@ -103,7 +104,7 @@
   },
   {
    "fieldname": "next_steps",
-   "fieldtype": "Small Text",
+   "fieldtype": "Text Editor",
    "label": "Próximos Passos",
    "description": "Próximos passos combinados (opcional)."
   },
@@ -113,6 +114,13 @@
    "fieldname": "create_task",
    "fieldtype": "Check",
    "label": "Gerar Tarefa"
+  },
+  {
+   "depends_on": "eval:doc.create_task",
+   "fieldname": "follow_up_date",
+   "fieldtype": "Date",
+   "label": "Data de Follow-up",
+   "description": "Data limite para a tarefa. Padrão: 3 dias após a comunicação."
   },
   {
    "depends_on": "eval:doc.task",

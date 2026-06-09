@@ -79,3 +79,38 @@ class TestCommunicationLog(FrappeTestCase):
 		self.assertTrue(log.task)
 		task = frappe.get_doc("Task", log.task)
 		self.assertEqual(getdate(task.due_date), getdate(add_days(today(), 3)))
+
+	def test_follow_up_date_used_as_due_date(self):
+		"""Task deve usar follow_up_date quando informado."""
+		target_date = add_days(today(), 10)
+		log = create_test_communication_log(
+			create_task=1,
+			next_steps="Retornar ligação",
+			follow_up_date=target_date,
+		)
+		log.reload()
+		self.assertTrue(log.task)
+		task = frappe.get_doc("Task", log.task)
+		self.assertEqual(getdate(task.due_date), getdate(target_date))
+
+	def test_follow_up_date_default_when_empty(self):
+		"""Sem follow_up_date, Task deve ter due_date = today + 3."""
+		log = create_test_communication_log(
+			create_task=1,
+			next_steps="Retornar ligação",
+		)
+		log.reload()
+		self.assertTrue(log.task)
+		task = frappe.get_doc("Task", log.task)
+		self.assertEqual(getdate(task.due_date), getdate(add_days(today(), 3)))
+
+	def test_next_steps_rich_text_in_task(self):
+		"""Text Editor HTML deve ser preservado na description da Task."""
+		html_content = "<p>Ligar para <b>cliente</b> sobre orçamento.</p>"
+		log = create_test_communication_log(
+			create_task=1,
+			next_steps=html_content,
+		)
+		log.reload()
+		task = frappe.get_doc("Task", log.task)
+		self.assertIn("<b>cliente</b>", task.description)

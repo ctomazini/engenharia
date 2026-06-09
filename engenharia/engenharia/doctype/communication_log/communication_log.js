@@ -20,4 +20,12 @@ frappe.ui.form.on("Communication Log", {
 			});
 		}
 	},
+	create_task(frm) {
+		if (frm.doc.create_task && !frm.doc.follow_up_date) {
+			frm.set_value(
+				"follow_up_date",
+				frappe.datetime.add_days(frappe.datetime.nowdate(), 3)
+			);
+		}
+	},
 });
