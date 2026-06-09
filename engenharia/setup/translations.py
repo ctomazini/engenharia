@@ -5,6 +5,7 @@ DOCTYPE_LABELS = {
 	"Engineering Contract": "Contrato de Honorários",
 	"Work Cost": "Compra ou NF Avulsa",
 	"Reimbursable Expense": "Despesa Reembolsável",
+	"Office Expense": "Despesa do Escritório",
 	"Subcontract": "Subcontrato",
 	"Communication Log": "Comunicação",
 	"Time Log": "Registro de Horas",

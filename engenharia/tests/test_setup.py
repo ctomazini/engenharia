@@ -3,7 +3,7 @@
 import random
 
 import frappe
-from frappe.utils import add_months, flt, today
+from frappe.utils import add_days, add_months, flt, today
 
 from engenharia.validators import _calcular_dv_cnpj, _calcular_dv_cpf
 
@@ -200,6 +200,21 @@ def create_test_work_cost(project=None, amount=1000, **kwargs):
 	if status == "Cancelled":
 		data["status"] = "Cancelled"
 
+	doc = frappe.get_doc(data)
+	doc.insert(ignore_permissions=True)
+	return doc
+
+
+def create_test_office_expense(amount=500, **kwargs):
+	due_date = kwargs.pop("due_date", add_days(today(), 14))
+	data = {
+		"doctype": "Office Expense",
+		"description": _uid("Despesa escritório"),
+		"expense_category": kwargs.pop("expense_category", "Aluguel"),
+		"amount": amount,
+		"due_date": due_date,
+		**kwargs,
+	}
 	doc = frappe.get_doc(data)
 	doc.insert(ignore_permissions=True)
 	return doc

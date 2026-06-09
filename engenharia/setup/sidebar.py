@@ -27,6 +27,7 @@ SIDEBAR_LINK_ORDER = (
 	("Compras e NF Avulsas", "Work Cost", "DocType"),
 	("Subcontratos", "Subcontract", "DocType"),
 	("Despesas Reembolsáveis", "Reimbursable Expense", "DocType"),
+	("Despesas do Escritório", "Office Expense", "DocType"),
 	("Custos Realizados", "consolidated_cost", "Report"),
 	# Relatórios
 	("Visão de Custos Realizados", "consolidated_cost", "Report"),

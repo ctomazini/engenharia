@@ -78,6 +78,7 @@ FINANCIAL_DOCTYPES = frozenset(
 		"Engineering Settings",
 		"Payment",
 		"Project Specification",
+		"Office Expense",
 		"Reimbursable Expense",
 		"Subcontract",
 		"Work Cost",
