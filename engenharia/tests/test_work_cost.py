@@ -1,7 +1,7 @@
 import frappe
 from frappe.exceptions import ValidationError
 from frappe.tests.utils import FrappeTestCase
-from frappe.utils import get_first_day, get_last_day, today
+from frappe.utils import flt, get_first_day, get_last_day, today
 
 from engenharia.dashboard.kpis import build_kpis
 from engenharia.tests.test_setup import (
@@ -56,6 +56,28 @@ class TestWorkCost(FrappeTestCase):
 		project = create_test_construction_project()
 		cost = create_test_work_cost(project=project.name, amount=100)
 		self.assertEqual(cost.customer, project.customer)
+
+	def test_partial_payments(self):
+		cost = create_test_work_cost(
+			amount=3000,
+			status="Open",
+			payments=[],
+		)
+		self.assertEqual(cost.status, "Open")
+		self.assertEqual(flt(cost.outstanding), 3000)
+
+		cost.append("payments", {"payment_date": today(), "amount": 1500})
+		cost.save(ignore_permissions=True)
+		cost.reload()
+		self.assertEqual(cost.status, "Partially Paid")
+		self.assertEqual(flt(cost.total_paid), 1500)
+		self.assertEqual(flt(cost.outstanding), 1500)
+
+		cost.append("payments", {"payment_date": today(), "amount": 1500})
+		cost.save(ignore_permissions=True)
+		cost.reload()
+		self.assertEqual(cost.status, "Paid")
+		self.assertEqual(flt(cost.outstanding), 0)
 
 	def test_cancelled_immutable(self):
 		cost = create_test_work_cost(status="Cancelado")

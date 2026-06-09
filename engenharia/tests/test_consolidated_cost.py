@@ -67,6 +67,7 @@ class TestConsolidatedCost(FrappeTestCase):
 		self.assertEqual(re_row["name"], re.name)
 		self.assertEqual(re_row["source_label"], "Despesa Reembolsável")
 		self.assertEqual(re_row["paid"], 500)
+		self.assertEqual(re_row["outstanding"], 0)
 
 		sub_row = by_source[SOURCE_SUBCONTRACT]
 		self.assertEqual(sub_row["name"], sub.name)
@@ -88,8 +89,8 @@ class TestConsolidatedCost(FrappeTestCase):
 
 		summary = build_consolidated_costs(project.name)["summary"]
 		self.assertEqual(summary["total_amount"], 2800)
-		self.assertEqual(summary["total_paid"], 1300)
-		self.assertEqual(summary["total_outstanding"], 1500)
+		self.assertEqual(summary["total_paid"], 1600)
+		self.assertEqual(summary["total_outstanding"], 1200)
 		self.assertIn("Custo Direto", summary["by_source"])
 		self.assertIn("Despesa Reembolsável", summary["by_source"])
 		self.assertIn("Subcontrato", summary["by_source"])
@@ -97,7 +98,7 @@ class TestConsolidatedCost(FrappeTestCase):
 	def test_consolidated_costs_filters_cancelled(self):
 		project = create_test_construction_project()
 		create_test_work_cost(project=project.name, amount=900, status="Pago")
-		create_test_work_cost(project=project.name, amount=999, status="Cancelado")
+		create_test_work_cost(project=project.name, amount=999, status="Cancelled")
 		create_test_reimbursable_expense(project=project.name, amount=400, status="Reembolsado")
 		create_test_reimbursable_expense(project=project.name, amount=888, status="Cancelado")
 		create_test_subcontract(project=project.name, total_value=2000)
@@ -133,7 +134,11 @@ class TestConsolidatedCost(FrappeTestCase):
 		project = create_test_construction_project()
 		create_test_work_cost(project=project.name, amount=1200, status="Pago")
 		create_test_reimbursable_expense(project=project.name, amount=350, status="Reembolsado")
-		create_test_subcontract(project=project.name, total_value=2500, total_paid=800)
+		create_test_subcontract(
+			project=project.name,
+			total_value=2500,
+			payments=[{"payment_date": "2026-01-15", "amount": 800}],
+		)
 
 		columns, data, _msg, chart, summary = execute({"project": project.name})
 		self.assertTrue(columns)

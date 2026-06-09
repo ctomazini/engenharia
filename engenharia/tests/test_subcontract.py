@@ -134,8 +134,8 @@ class TestSubcontract(FrappeTestCase):
 				"cost_category": category,
 				"amount": 1000,
 				"date": "2026-01-10",
-				"status": "Pago",
 				"description": "Material avulso",
+				"payments": [{"payment_date": "2026-01-10", "amount": 1000}],
 			}
 		).insert(ignore_permissions=True)
 		create_test_subcontract(

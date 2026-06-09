@@ -25,11 +25,31 @@ class TestReimbursableExpense(FrappeTestCase):
 		self.assertEqual(expense.customer, project.customer)
 
 	def test_reimbursement_status(self):
-		expense = create_test_reimbursable_expense()
-		expense.client_reimbursed_date = today()
+		expense = create_test_reimbursable_expense(amount=400, office_payments=[])
+		expense.append(
+			"reimbursements",
+			{"payment_date": today(), "amount": 400},
+		)
 		expense.save(ignore_permissions=True)
 		expense.reload()
 		self.assertEqual(expense.status, "Reembolsado")
+
+	def test_partial_office_payment(self):
+		expense = create_test_reimbursable_expense(
+			amount=1000,
+			office_payments=[{"payment_date": today(), "amount": 400}],
+		)
+		self.assertEqual(flt(expense.total_office_paid), 400)
+		self.assertEqual(flt(expense.office_outstanding), 600)
+
+	def test_partial_reimbursement(self):
+		expense = create_test_reimbursable_expense(
+			amount=500,
+			office_payments=[{"payment_date": today(), "amount": 500}],
+			reimbursements=[{"payment_date": today(), "amount": 200}],
+		)
+		self.assertEqual(expense.status, "Parcialmente reembolsado")
+		self.assertEqual(flt(expense.reimbursement_outstanding), 300)
 
 	def test_cancelled_immutable(self):
 		expense = create_test_reimbursable_expense(status="Cancelado")

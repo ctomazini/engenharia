@@ -171,15 +171,35 @@ def create_test_supplier(supplier_name=None, **kwargs):
 def create_test_work_cost(project=None, amount=1000, **kwargs):
 	if not project:
 		project = create_test_construction_project().name
+
+	status = kwargs.pop("status", "Paid")
+	payments = kwargs.pop("payments", None)
+	legacy_map = {"Pago": "Paid", "Pendente": "Open", "Cancelado": "Cancelled"}
+	status = legacy_map.get(status, status)
+
+	if payments is None and status == "Paid":
+		payments = [
+			{
+				"payment_date": kwargs.get("date") or today(),
+				"amount": amount,
+			}
+		]
+	elif payments is None and status == "Open":
+		payments = []
+
 	data = {
 		"doctype": "Work Cost",
 		"project": project,
 		"description": _uid("Custo"),
 		"amount": amount,
-		"status": "Pago",
-		"date": today(),
+		"date": kwargs.get("date") or today(),
 		**kwargs,
 	}
+	if payments:
+		data["payments"] = payments
+	if status == "Cancelled":
+		data["status"] = "Cancelled"
+
 	doc = frappe.get_doc(data)
 	doc.insert(ignore_permissions=True)
 	return doc
@@ -188,14 +208,32 @@ def create_test_work_cost(project=None, amount=1000, **kwargs):
 def create_test_reimbursable_expense(project=None, amount=500, **kwargs):
 	if not project:
 		project = create_test_construction_project().name
+
+	status = kwargs.pop("status", "A reembolsar")
+	office_payments = kwargs.pop("office_payments", None)
+	reimbursements = kwargs.pop("reimbursements", None)
+
+	if office_payments is None and status == "Cancelado":
+		office_payments = []
+	elif office_payments is None and status != "Cancelado":
+		office_payments = [{"payment_date": today(), "amount": amount}]
+
 	data = {
 		"doctype": "Reimbursable Expense",
 		"project": project,
 		"description": _uid("Despesa"),
 		"amount": amount,
-		"status": "A reembolsar",
 		**kwargs,
 	}
+	if office_payments:
+		data["office_payments"] = office_payments
+	if reimbursements:
+		data["reimbursements"] = reimbursements
+	if status == "Reembolsado" and not reimbursements:
+		data["reimbursements"] = [{"payment_date": today(), "amount": amount}]
+	if status == "Cancelado":
+		data["status"] = "Cancelado"
+
 	doc = frappe.get_doc(data)
 	doc.insert(ignore_permissions=True)
 	return doc
