@@ -3,6 +3,7 @@
  "allow_rename": 1,
  "autoname": "format:WCST-{YYYY}-{####}",
  "creation": "2026-06-02 00:00:00",
+ "custom": 0,
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -17,13 +18,17 @@
   "description",
   "nf_number",
   "cost_center",
-  "amount",
   "date",
   "col_break_2",
   "funded_by",
-  "payment_method",
+  "sec_values",
+  "amount",
+  "total_paid",
+  "outstanding",
+  "sec_status",
   "status",
-  "receipt"
+  "sec_payments",
+  "payments"
  ],
  "fields": [
   {
@@ -111,19 +116,11 @@
    "description": "Centro de custo contábil (opcional)."
   },
   {
-   "fieldname": "amount",
-   "fieldtype": "Currency",
-   "in_list_view": 1,
-   "label": "Valor",
-   "reqd": 1,
-   "description": "Valor do custo em reais."
-  },
-  {
    "fieldname": "date",
    "fieldtype": "Date",
    "in_list_view": 1,
-   "label": "Data",
-   "description": "Data do pagamento ou da nota fiscal."
+   "label": "Data da NF",
+   "description": "Data da nota fiscal ou do compromisso de pagamento."
   },
   {
    "fieldname": "col_break_2",
@@ -141,32 +138,64 @@
    "description": "Escritório: entra no seu fluxo de caixa. Cliente: só registro administrativo — o cliente paga direto."
   },
   {
-   "fieldname": "payment_method",
-   "fieldtype": "Select",
-   "label": "Forma de Pagamento",
-   "options": "\nPIX\nTED\nDinheiro\nCartão\nBoleto\nOutro",
-   "description": "Forma de pagamento: PIX, TED, Dinheiro, Cartão, Boleto ou Outro."
+   "fieldname": "sec_values",
+   "fieldtype": "Section Break",
+   "label": "Valores"
   },
   {
-   "default": "Pendente",
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Valor Total",
+   "reqd": 1,
+   "description": "Valor total do custo (NF ou compromisso)."
+  },
+  {
+   "fieldname": "total_paid",
+   "fieldtype": "Currency",
+   "label": "Total Pago",
+   "read_only": 1,
+   "description": "Soma dos pagamentos registrados abaixo. Calculado automaticamente."
+  },
+  {
+   "fieldname": "outstanding",
+   "fieldtype": "Currency",
+   "label": "Saldo a Pagar",
+   "read_only": 1,
+   "description": "Quanto ainda falta pagar (Valor Total menos Total Pago)."
+  },
+  {
+   "fieldname": "sec_status",
+   "fieldtype": "Section Break",
+   "label": "Status"
+  },
+  {
+   "default": "Open",
    "fieldname": "status",
    "fieldtype": "Select",
    "in_list_view": 1,
    "in_standard_filter": 1,
    "label": "Status",
-   "options": "Pago\nPendente\nCancelado",
-   "description": "Pago, Pendente ou Cancelado."
+   "options": "Open\nPartially Paid\nPaid\nCancelled",
+   "read_only": 1,
+   "description": "Atualiza sozinho: Aberta, Parcial, Paga ou Cancelada."
   },
   {
-   "fieldname": "receipt",
-   "fieldtype": "Attach",
-   "label": "Comprovante",
-   "description": "Comprovante ou nota fiscal anexada."
+   "fieldname": "sec_payments",
+   "fieldtype": "Section Break",
+   "label": "Pagamentos"
+  },
+  {
+   "fieldname": "payments",
+   "fieldtype": "Table",
+   "label": "Pagamentos Efetuados",
+   "options": "Work Cost Payment",
+   "description": "Registre cada pagamento ao fornecedor com data, valor e comprovante."
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2026-06-02 17:59:08.896785",
+ "modified": "2026-06-06 00:00:00",
  "modified_by": "Administrator",
  "module": "Engenharia",
  "name": "Work Cost",
@@ -205,6 +234,5 @@
  "sort_order": "DESC",
  "states": [],
  "title_field": "title",
- "track_changes": 1,
- "custom": 0
+ "track_changes": 1
 }
