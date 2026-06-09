@@ -12,3 +12,4 @@ engenharia.patches.v16_0.set_permit_type_is_art_rrt
 engenharia.patches.v16_0.backfill_work_cost_funded_by
 engenharia.patches.v16_0.backfill_subcontract_funded_by
 engenharia.patches.v16_0.backfill_work_cost_payments
+engenharia.patches.v16_0.backfill_reimbursable_expense_payments
