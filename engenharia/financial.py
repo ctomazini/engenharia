@@ -29,6 +29,7 @@ STATUS_PAYMENT_TO_INSTALLMENT = {
 
 STATUS_EXPENSE_TO_PAYMENT = {
 	"A reembolsar": "Pendente",
+	"Parcialmente reembolsado": "Pendente",
 	"Reembolsado": "Recebido",
 	"Cancelado": "Cancelado",
 }
@@ -604,17 +605,51 @@ def sync_reimbursable_from_payment(payment):
 	if not frappe.db.exists("Reimbursable Expense", expense_name):
 		return
 
+	expense = frappe.get_doc("Reimbursable Expense", expense_name)
+	already_syncing = getattr(frappe.flags, "in_payment_sync", False)
+	if not already_syncing:
+		frappe.flags.in_payment_sync = True
+	try:
+		_sync_reimbursable_from_payment_impl(expense, payment)
+	finally:
+		if not already_syncing:
+			frappe.flags.in_payment_sync = False
+
+
+def _sync_reimbursable_from_payment_impl(expense, payment):
 	updates = {}
+	received_amount = flt(payment.received_amount or payment.amount)
+	expense_amount = flt(expense.amount)
+
 	if payment.status == "Recebido":
-		updates["status"] = "Reembolsado"
+		if received_amount >= expense_amount:
+			updates["status"] = "Reembolsado"
+		elif received_amount > 0:
+			updates["status"] = "Parcialmente reembolsado"
+		else:
+			updates["status"] = "Reembolsado"
 		updates["client_reimbursed_date"] = payment.received_date or today()
+		if received_amount > 0 and not expense.reimbursements:
+			expense.append(
+				"reimbursements",
+				{
+					"payment_date": payment.received_date or today(),
+					"amount": received_amount,
+					"reference": payment.name,
+				},
+			)
+			expense.save(ignore_permissions=True)
+			return
 	elif payment.status == "Cancelado":
 		updates["status"] = "Cancelado"
 	elif payment.status in ("Pendente", "Vencido"):
-		current_status = frappe.db.get_value("Reimbursable Expense", expense_name, "status")
-		if current_status != "Cancelado":
-			updates["status"] = "A reembolsar"
-			updates["client_reimbursed_date"] = None
+		if expense.status != "Cancelado":
+			if received_amount > 0 and received_amount < expense_amount:
+				updates["status"] = "Parcialmente reembolsado"
+			else:
+				updates["status"] = "A reembolsar"
+			if received_amount <= 0:
+				updates["client_reimbursed_date"] = None
 
 	if payment.name:
 		updates["payment"] = payment.name
@@ -622,14 +657,9 @@ def sync_reimbursable_from_payment(payment):
 	if not updates:
 		return
 
-	already_syncing = getattr(frappe.flags, "in_payment_sync", False)
-	if not already_syncing:
-		frappe.flags.in_payment_sync = True
-	try:
-		frappe.db.set_value("Reimbursable Expense", expense_name, updates, update_modified=True)
-	finally:
-		if not already_syncing:
-			frappe.flags.in_payment_sync = False
+	for field, value in updates.items():
+		expense.set(field, value)
+	expense.save(ignore_permissions=True)
 
 
 def _as_reimbursable_doc(expense_doc):
@@ -641,18 +671,24 @@ def _as_reimbursable_doc(expense_doc):
 
 
 def _reimbursable_to_payment_payload(expense, origin_id):
-	status = STATUS_EXPENSE_TO_PAYMENT.get(expense.status or "A reembolsar", "Pendente")
-	received_amount = flt(expense.amount) if status == "Recebido" else 0
+	total_reimbursed = flt(expense.total_reimbursed)
+	amount = flt(expense.amount)
+	if expense.status == "Cancelado":
+		status = "Cancelado"
+	elif total_reimbursed >= amount and amount > 0:
+		status = "Recebido"
+	else:
+		status = "Pendente"
 	return {
 		"origin_type": ORIGIN_REIMBURSABLE,
 		"project": expense.project,
 		"customer": expense.customer,
 		"installment_origin_id": origin_id,
 		"description": expense.description,
-		"amount": flt(expense.amount),
-		"received_amount": received_amount,
-		"due_date": expense.payment_date or today(),
-		"received_date": expense.client_reimbursed_date if status == "Recebido" else None,
+		"amount": amount,
+		"received_amount": total_reimbursed,
+		"due_date": expense.client_reimbursed_date or today(),
+		"received_date": expense.client_reimbursed_date if total_reimbursed > 0 else None,
 		"status": status,
 		"notes": "",
 		"synced_at": now_datetime(),
@@ -690,7 +726,7 @@ def _apply_reimbursable_payment_payload(payment, payload):
 	if payment.status != payload.get("status") and payment.status in ("Pendente", "Vencido"):
 		payment.status = payload.get("status")
 		changed = True
-	if payload.get("status") == "Recebido":
+	if payload.get("status") == "Recebido" or flt(payload.get("received_amount")) > 0:
 		if payment.received_date != payload.get("received_date"):
 			payment.received_date = payload.get("received_date")
 			changed = True

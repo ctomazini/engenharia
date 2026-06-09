@@ -28,7 +28,7 @@ def _get_columns():
 
 
 def _get_data(filters):
-	query_filters = {"status": ["!=", "Cancelado"]}
+	query_filters = {"status": ["!=", "Cancelled"]}
 	if filters.get("project"):
 		query_filters["project"] = filters.project
 

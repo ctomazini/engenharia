@@ -94,15 +94,15 @@ def _get_data(filters):
 	firm_cost_by_project = {}
 	for row in frappe.get_all(
 		"Work Cost",
-		filters={"status": "Pago"},
-		fields=["project", "amount", "funded_by"],
+		filters={"status": ["!=", "Cancelled"]},
+		fields=["project", "total_paid", "funded_by"],
 		limit=0,
 	):
 		if not row.project:
 			continue
-		cost_by_project[row.project] = cost_by_project.get(row.project, 0) + flt(row.amount)
+		cost_by_project[row.project] = cost_by_project.get(row.project, 0) + flt(row.total_paid)
 		if row.funded_by == FUNDED_BY_OFFICE:
-			firm_cost_by_project[row.project] = firm_cost_by_project.get(row.project, 0) + flt(row.amount)
+			firm_cost_by_project[row.project] = firm_cost_by_project.get(row.project, 0) + flt(row.total_paid)
 
 	for project, paid in get_subcontract_paid_totals_by_project(office_funded_only=False).items():
 		cost_by_project[project] = cost_by_project.get(project, 0) + flt(paid)
@@ -114,10 +114,12 @@ def _get_data(filters):
 	for row in frappe.get_all(
 		"Reimbursable Expense",
 		filters={"status": ["!=", "Cancelado"]},
-		fields=["project", "amount"],
+		fields=["project", "total_office_paid"],
 		limit=0,
 	):
-		reimbursable_by_project[row.project] = reimbursable_by_project.get(row.project, 0) + flt(row.amount)
+		reimbursable_by_project[row.project] = reimbursable_by_project.get(row.project, 0) + flt(
+			row.total_office_paid
+		)
 
 	project_titles = {
 		p.name: p.title

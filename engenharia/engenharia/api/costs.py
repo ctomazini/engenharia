@@ -78,10 +78,12 @@ def _fetch_work_costs(project: str) -> list[dict]:
 			stg.stage_type.as_("stage_label"),
 			wc.funded_by,
 			wc.amount,
+			wc.total_paid,
+			wc.outstanding,
 			wc.status,
 		)
 		.where(wc.project == project)
-		.where(wc.status != "Cancelado")
+		.where(wc.status != "Cancelled")
 		.limit(MAX_ITEMS)
 	).run(as_dict=True)
 
@@ -101,7 +103,6 @@ def _fetch_reimbursable_expenses(project: str) -> list[dict]:
 		.on(re.supplier == sup.name)
 		.select(
 			re.name,
-			re.payment_date,
 			re.creation,
 			re.description,
 			re.expense_category,
@@ -109,6 +110,8 @@ def _fetch_reimbursable_expenses(project: str) -> list[dict]:
 			re.supplier,
 			sup.supplier_name.as_("supplier_label"),
 			re.amount,
+			re.total_office_paid,
+			re.office_outstanding,
 			re.status,
 		)
 		.where(re.project == project)
@@ -160,7 +163,8 @@ def _fetch_subcontracts(project: str) -> list[dict]:
 
 def _normalize_work_cost(row: dict) -> dict:
 	amount = flt(row.amount)
-	paid = amount if row.status == "Pago" else 0
+	paid = flt(row.total_paid)
+	outstanding = flt(row.outstanding)
 	return _base_item(
 		source=SOURCE_WORK_COST,
 		name=row.name,
@@ -175,19 +179,19 @@ def _normalize_work_cost(row: dict) -> dict:
 		funded_by=row.funded_by,
 		amount=amount,
 		paid=paid,
-		outstanding=amount - paid,
+		outstanding=outstanding,
 		status=row.status,
 	)
 
 
 def _normalize_reimbursable(row: dict) -> dict:
 	amount = flt(row.amount)
-	paid = amount if row.status == "Reembolsado" else 0
-	date = row.payment_date or getdate(row.creation)
+	paid = flt(row.total_office_paid)
+	outstanding = flt(row.office_outstanding)
 	return _base_item(
 		source=SOURCE_REIMBURSABLE,
 		name=row.name,
-		date=date,
+		date=getdate(row.creation),
 		description=row.description or row.name,
 		category=row.expense_category,
 		category_label=row.category_label,
@@ -198,7 +202,7 @@ def _normalize_reimbursable(row: dict) -> dict:
 		funded_by=None,
 		amount=amount,
 		paid=paid,
-		outstanding=amount - paid,
+		outstanding=outstanding,
 		status=row.status,
 	)
 

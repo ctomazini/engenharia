@@ -1184,8 +1184,8 @@ def _seed_work_costs() -> None:
 				"cost_category": _refs[f"cost_{category}"],
 				"description": f"{DEMO_MARKER} {description}",
 				"amount": amount,
-				"status": "Pago",
 				"date": today(),
+				"payments": [{"payment_date": today(), "amount": amount}],
 			}
 		)
 
@@ -1202,10 +1202,10 @@ def _seed_reimbursable_expenses() -> None:
 			"project": _refs[f"project_{proj_key}"],
 			"description": f"{DEMO_MARKER} {description}",
 			"amount": amount,
-			"status": status,
+			"office_payments": [{"payment_date": today(), "amount": amount}],
 		}
 		if status == "Reembolsado":
-			data["client_reimbursed_date"] = today()
+			data["reimbursements"] = [{"payment_date": today(), "amount": amount}]
 		_insert(data)
 
 

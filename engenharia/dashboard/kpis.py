@@ -3,6 +3,7 @@ from frappe.utils import add_days, flt, get_first_day, get_last_day, today
 
 from engenharia.dashboard._helpers import LIST_LIMIT_MAX
 from engenharia.work_costs import (
+	WORK_COST_PENDING_STATUSES,
 	get_firm_month_outflows,
 	office_cash_flow_filters,
 	office_subcontract_filters,
@@ -104,8 +105,8 @@ def build_kpis(hoje, period_end, month_start, month_end, include_financial=True)
 	firm_month_outflows = get_firm_month_outflows(month_start, month_end)
 	pending_work_cost_rows = frappe.get_all(
 		"Work Cost",
-		filters=office_cash_flow_filters({"status": "Pendente"}),
-		fields=["amount"],
+		filters=office_cash_flow_filters({"status": ["in", list(WORK_COST_PENDING_STATUSES)]}),
+		fields=["outstanding"],
 		limit=LIST_LIMIT_MAX,
 	)
 	pending_subcontract_rows = frappe.get_all(
@@ -169,7 +170,7 @@ def build_kpis(hoje, period_end, month_start, month_end, include_financial=True)
 			"taxa_recebimento": taxa_recebimento,
 			"pending_work_costs": {
 				"count": len(pending_work_cost_rows),
-				"amount": _sum_amount(pending_work_cost_rows),
+				"amount": _sum_amount(pending_work_cost_rows, "outstanding"),
 			},
 			"spec_project_total": spec_project_total,
 		}

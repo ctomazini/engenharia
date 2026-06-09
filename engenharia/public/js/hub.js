@@ -539,8 +539,8 @@ function _eng_hub_filter_cost_items(items, filterState) {
 
 function _eng_hub_costs_status_dot(status, source) {
 	const paidStatuses = {
-		work_cost: ["Pago"],
-		reimbursable_expense: ["Reembolsado"],
+		work_cost: ["Paid", "Partially Paid"],
+		reimbursable_expense: ["Reembolsado", "Parcialmente reembolsado"],
 		subcontract: ["Paid", "Closed"],
 	};
 	const cancelledStatuses = ["Cancelado", "Cancelled"];

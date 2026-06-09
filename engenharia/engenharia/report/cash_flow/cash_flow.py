@@ -63,17 +63,50 @@ def _get_data(filters):
 		)
 
 	for row in frappe.get_all(
-		"Work Cost",
-		filters=office_cash_flow_filters({"status": "Pago", "date": ["between", [start, end]]}),
-		fields=["name", "description", "date", "amount"],
-		order_by="date asc",
+		"Work Cost Payment",
+		filters={"payment_date": ["between", [start, end]]},
+		fields=["parent", "payment_date", "amount"],
+		order_by="payment_date asc",
 		limit=0,
 	):
+		parent = frappe.db.get_value(
+			"Work Cost",
+			row.parent,
+			["name", "title", "description", "status", "funded_by"],
+			as_dict=True,
+		)
+		if not parent or parent.status == "Cancelled" or parent.funded_by != FUNDED_BY_OFFICE:
+			continue
 		transactions.append(
 			{
-				"date": row.date,
+				"date": row.payment_date,
 				"type": _("Saída"),
-				"description": row.description or row.name,
+				"description": parent.title or parent.description or parent.name,
+				"inflow": 0,
+				"outflow": flt(row.amount),
+			}
+		)
+
+	for row in frappe.get_all(
+		"Reimbursable Expense Payment",
+		filters={"payment_date": ["between", [start, end]]},
+		fields=["parent", "payment_date", "amount"],
+		order_by="payment_date asc",
+		limit=0,
+	):
+		parent = frappe.db.get_value(
+			"Reimbursable Expense",
+			row.parent,
+			["name", "title", "description", "status"],
+			as_dict=True,
+		)
+		if not parent or parent.status == "Cancelado":
+			continue
+		transactions.append(
+			{
+				"date": row.payment_date,
+				"type": _("Saída"),
+				"description": parent.title or parent.description or parent.name,
 				"inflow": 0,
 				"outflow": flt(row.amount),
 			}
@@ -99,26 +132,6 @@ def _get_data(filters):
 				"date": row.payment_date,
 				"type": _("Saída"),
 				"description": parent.title or parent.description or parent.name,
-				"inflow": 0,
-				"outflow": flt(row.amount),
-			}
-		)
-
-	for row in frappe.get_all(
-		"Reimbursable Expense",
-		filters={
-			"status": ["!=", "Cancelado"],
-			"payment_date": ["between", [start, end]],
-		},
-		fields=["name", "description", "payment_date", "amount"],
-		order_by="payment_date asc",
-		limit=0,
-	):
-		transactions.append(
-			{
-				"date": row.payment_date,
-				"type": _("Saída"),
-				"description": row.description or row.name,
 				"inflow": 0,
 				"outflow": flt(row.amount),
 			}
