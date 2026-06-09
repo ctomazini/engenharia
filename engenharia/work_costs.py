@@ -235,6 +235,21 @@ def get_combined_project_cost(project):
 	return work_total + sub_total
 
 
+def get_project_outstanding_payable(project: str, office_funded_only: bool = True) -> float:
+	"""Saldo a pagar na obra: Work Cost + Subcontract (escritório por padrão)."""
+	filters = {"project": project, "status": ["!=", WORK_COST_CANCELLED]}
+	if office_funded_only:
+		filters["funded_by"] = FUNDED_BY_OFFICE
+	wc_rows = frappe.get_all("Work Cost", filters=filters, fields=["outstanding"], limit=500)
+
+	sub_filters = {"project": project, "status": ["!=", "Cancelled"]}
+	if office_funded_only:
+		sub_filters["funded_by"] = FUNDED_BY_OFFICE
+	sub_rows = frappe.get_all("Subcontract", filters=sub_filters, fields=["outstanding"], limit=500)
+
+	return sum(flt(row.outstanding) for row in wc_rows) + sum(flt(row.outstanding) for row in sub_rows)
+
+
 def get_subcontract_outstanding_total(office_funded_only=True):
 	"""Saldo a pagar a prestadores (subcontratos não cancelados)."""
 	conditions = "status != 'Cancelled'"

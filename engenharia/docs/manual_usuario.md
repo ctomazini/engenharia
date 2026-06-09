@@ -257,6 +257,17 @@ O relatório **Custos Realizados** consolida as três fontes. *Compras avulsas p
 
 ## 6. Financeiro
 
+Na **Obra → aba Financeiro**, o **Resumo Financeiro** usa os mesmos totais da aba **Custos Realizados** (compras avulsas + subcontratos + reembolsáveis). O banner **Orçamento vs realizado** compara o total do orçamento (`spec_project_total`) com o valor comprometido — são camadas independentes.
+
+| KPI | Significado |
+|---|---|
+| **Contratado / Recebido / A receber** | Honorários do contrato |
+| **Custos realizados** | Total **pago** (consolidado das 3 fontes) |
+| **A pagar** | Saldo em aberto de compras avulsas + subcontratos (escritório) |
+| **Margem** | Recebido − custos pagos pelo escritório |
+
+*(Disponível apenas para Engenharia Manager.)*
+
 ### 6.1 Recebimentos
 
 Recebíveis de contrato de honorários e fluxos derivados. Cada parcela gera um recebimento rastreável.

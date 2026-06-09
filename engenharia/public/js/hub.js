@@ -176,10 +176,12 @@ function _eng_hub_render_financial_summary(frm, summary) {
 
 	const total = summary.total_contracted || 1;
 	const pctReceived = Math.round((summary.total_received / total) * 100);
-	const pctCosts = Math.round((summary.total_costs / total) * 100);
+	const pctCosts = Math.round((summary.total_realized_paid / total) * 100);
 	const pctPending = Math.max(0, 100 - pctReceived - pctCosts);
+	const bannerHtml = _eng_hub_budget_banner_html(summary);
 
 	$w.html(`<div class="eng-hub-panel">
+		${bannerHtml}
 		<div class="eng-hub-panel__header">
 			<h3 class="eng-hub-panel__title">
 				<span class="eng-hub-panel__title-icon">💰</span>
@@ -207,9 +209,15 @@ function _eng_hub_render_financial_summary(frm, summary) {
 			</div>
 			<div class="eng-hub-kpi">
 				<div class="eng-hub-kpi__value" style="color:var(--red-500)">${format_currency(
-					summary.total_costs + summary.total_subcontracts
+					summary.total_realized_paid
 				)}</div>
-				<div class="eng-hub-kpi__label">${__("Custos + Sub")}</div>
+				<div class="eng-hub-kpi__label">${__("Custos Realizados")}</div>
+			</div>
+			<div class="eng-hub-kpi">
+				<div class="eng-hub-kpi__value" style="color:var(--orange-600)">${format_currency(
+					summary.outstanding_payable
+				)}</div>
+				<div class="eng-hub-kpi__label">${__("A Pagar")}</div>
 			</div>
 			<div class="eng-hub-kpi">
 				<div class="eng-hub-kpi__value" style="color:${
@@ -223,13 +231,54 @@ function _eng_hub_render_financial_summary(frm, summary) {
 				"Recebido"
 			)}"></div>
 			<div class="eng-hub-stacked-bar__segment" style="width:${pctCosts}%;background:var(--red-500)" title="${__(
-				"Custos"
+				"Custos realizados"
 			)}"></div>
 			<div class="eng-hub-stacked-bar__segment" style="width:${pctPending}%;background:var(--orange-500);opacity:.4" title="${__(
 				"Pendente"
 			)}"></div>
 		</div>
 	</div>`);
+}
+
+function _eng_hub_budget_banner_html(summary) {
+	const budget = flt(summary.budget_total);
+	const committed = flt(summary.total_realized_committed);
+	const paid = flt(summary.total_realized_paid);
+
+	if (!budget) {
+		return `<div class="eng-hub-budget-banner eng-hub-budget-banner--info">
+			<strong>${__("Orçamento vs realizado")}</strong>
+			<p>${__(
+				"Orçamento ainda não definido — cadastre itens do projeto na aba Especificações. Custos realizados abaixo são independentes do orçamento."
+			)}</p>
+		</div>`;
+	}
+
+	const variance = budget - committed;
+	const pct = Math.min(100, Math.round((committed / budget) * 100));
+	const varianceClass = variance >= 0 ? "ok" : "warn";
+
+	return `<div class="eng-hub-budget-banner eng-hub-budget-banner--${varianceClass}">
+		<div class="eng-hub-budget-banner__head">
+			<strong>${__("Orçamento vs realizado")}</strong>
+			<span class="eng-hub-budget-banner__hint">${__(
+				"Orçamento ≠ custos realizados — não há sincronização automática"
+			)}</span>
+		</div>
+		<div class="eng-hub-budget-banner__metrics">
+			<div><span class="eng-hub-budget-banner__label">${__("Orçado")}</span> ${format_currency(budget)}</div>
+			<div><span class="eng-hub-budget-banner__label">${__("Comprometido")}</span> ${format_currency(
+				committed
+			)}</div>
+			<div><span class="eng-hub-budget-banner__label">${__("Pago")}</span> ${format_currency(paid)}</div>
+			<div><span class="eng-hub-budget-banner__label">${__("Saldo orçamento")}</span> ${format_currency(
+				variance
+			)}</div>
+		</div>
+		<div class="eng-hub-budget-banner__track" title="${__("{0}% do orçamento comprometido", [pct])}">
+			<div class="eng-hub-budget-banner__fill" style="width:${pct}%"></div>
+		</div>
+	</div>`;
 }
 
 function _eng_hub_render_installments(frm, installments) {
@@ -319,6 +368,11 @@ function _eng_hub_render_costs_panel(frm, $w, items, summary) {
 	const filtersHtml = _eng_hub_costs_filters_html(filterOptions);
 
 	$w.html(`<div class="eng-hub-panel eng-hub-costs" data-project="${frappe.utils.escape_html(frm.doc.name)}">
+		${_eng_hub_budget_banner_html({
+			budget_total: flt(frm.doc.spec_project_total),
+			total_realized_committed: summary.total_amount,
+			total_realized_paid: summary.total_paid,
+		})}
 		<div class="eng-hub-panel__header">
 			<h3 class="eng-hub-panel__title">
 				<span class="eng-hub-panel__title-icon">📊</span>

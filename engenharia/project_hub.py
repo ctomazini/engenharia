@@ -5,6 +5,9 @@ from __future__ import annotations
 import frappe
 from frappe.utils import date_diff, flt, getdate, today
 
+from engenharia.engenharia.api.costs import build_consolidated_costs, build_consolidated_costs_summary
+from engenharia.work_costs import get_project_outstanding_payable
+
 
 @frappe.whitelist()
 def get_project_hub_data(project: str) -> dict:
@@ -232,10 +235,13 @@ def _get_financial(project: str) -> dict:
 
 	total_contracted = sum(flt(contract.current_value) for contract in contracts)
 	total_received = sum(flt(payment.amount) for payment in payments if payment.status == "Recebido")
-	total_costs = sum(flt(cost.amount) for cost in costs)
-	total_subcontracts = sum(flt(subcontract.total_value) for subcontract in subcontracts)
 	total_commissions = sum(flt(commission.total_value) for commission in commissions)
 	total_reimbursable = sum(flt(expense.amount) for expense in reimbursables)
+
+	cost_summary = build_consolidated_costs(project)["summary"]
+	office_paid = build_consolidated_costs_summary(project, office_only=True)["total_paid"]
+	budget_total = flt(frappe.db.get_value("Construction Project", project, "spec_project_total"))
+	outstanding_payable = get_project_outstanding_payable(project)
 
 	return {
 		"contracts": contracts,
@@ -249,10 +255,16 @@ def _get_financial(project: str) -> dict:
 			"total_contracted": total_contracted,
 			"total_received": total_received,
 			"total_pending": total_contracted - total_received,
-			"total_costs": total_costs,
-			"total_subcontracts": total_subcontracts,
+			"budget_total": budget_total,
+			"total_realized_committed": flt(cost_summary.get("total_amount")),
+			"total_realized_paid": flt(cost_summary.get("total_paid")),
+			"total_realized_outstanding": flt(cost_summary.get("total_outstanding")),
+			"outstanding_payable": outstanding_payable,
 			"total_commissions": total_commissions,
 			"total_reimbursable": total_reimbursable,
-			"margin": total_received - total_costs - total_subcontracts - total_commissions,
+			"margin": total_received - office_paid,
+			# Compat legado (KPI antigo)
+			"total_costs": flt(cost_summary.get("total_paid")),
+			"total_subcontracts": 0,
 		},
 	}

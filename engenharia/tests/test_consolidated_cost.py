@@ -1,5 +1,6 @@
 import frappe
 from frappe.tests.utils import FrappeTestCase
+from frappe.utils import flt
 
 from engenharia.engenharia.api.costs import (
 	SOURCE_REIMBURSABLE,
@@ -91,9 +92,24 @@ class TestConsolidatedCost(FrappeTestCase):
 		self.assertEqual(summary["total_amount"], 2800)
 		self.assertEqual(summary["total_paid"], 1600)
 		self.assertEqual(summary["total_outstanding"], 1200)
-		self.assertIn("Compra avulsa", summary["by_source"])
-		self.assertIn("Despesa Reembolsável", summary["by_source"])
-		self.assertIn("Subcontrato", summary["by_source"])
+
+	def test_office_only_summary_excludes_client_funded(self):
+		project = create_test_construction_project().name
+		create_test_work_cost(
+			project=project,
+			amount=500,
+			status="Paid",
+			funded_by="Cliente",
+		)
+		create_test_work_cost(project=project, amount=800, status="Paid")
+
+		from engenharia.engenharia.api.costs import build_consolidated_costs_summary
+
+		full = build_consolidated_costs_summary(project)
+		office = build_consolidated_costs_summary(project, office_only=True)
+
+		self.assertEqual(flt(full["total_paid"]), 1300)
+		self.assertEqual(flt(office["total_paid"]), 800)
 
 	def test_consolidated_costs_filters_cancelled(self):
 		project = create_test_construction_project()

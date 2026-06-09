@@ -125,7 +125,7 @@ function eng_add_hub_create_buttons(frm) {
 
 	frm.add_custom_button(__("+ Contrato"), () => frappe.new_doc("Engineering Contract", hub), __("Criar"));
 	frm.add_custom_button(__("+ Pagamento"), () => frappe.new_doc("Payment", hub), __("Criar"));
-	frm.add_custom_button(__("+ Custo"), () => frappe.new_doc("Work Cost", { project: hub.project }), __("Criar"));
+	frm.add_custom_button(__("+ Compra avulsa"), () => frappe.new_doc("Work Cost", { project: hub.project }), __("Criar"));
 	frm.add_custom_button(
 		__("+ Despesa reembolsável"),
 		() => frappe.new_doc("Reimbursable Expense", hub),

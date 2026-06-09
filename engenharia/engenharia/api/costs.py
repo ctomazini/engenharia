@@ -6,6 +6,8 @@ import frappe
 from frappe import _
 from frappe.utils import flt, getdate
 
+from engenharia.work_costs import FUNDED_BY_OFFICE
+
 MAX_ITEMS = 500
 
 SOURCE_WORK_COST = "work_cost"
@@ -42,6 +44,20 @@ def build_consolidated_costs(project: str, filters: dict | None = None) -> dict:
 	items = items[:MAX_ITEMS]
 	summary = _build_summary(items)
 	return {"items": items, "summary": summary}
+
+
+def build_consolidated_costs_summary(project: str, office_only: bool = False) -> dict:
+	"""Totais consolidados da obra; office_only restringe a fluxo do escritório."""
+	items = _fetch_normalized_items(project)
+	if office_only:
+		items = [row for row in items if _is_office_cash_flow_item(row)]
+	return _build_summary(items)
+
+
+def _is_office_cash_flow_item(row: dict) -> bool:
+	if row.get("source") == SOURCE_REIMBURSABLE:
+		return True
+	return row.get("funded_by") == FUNDED_BY_OFFICE
 
 
 def _fetch_normalized_items(project: str) -> list[dict]:

@@ -1,13 +1,15 @@
 import frappe
 from frappe.tests.utils import FrappeTestCase
-from frappe.utils import add_days, today
+from frappe.utils import add_days, flt, today
 
 from engenharia.project_hub import get_project_counts, get_project_hub_data
 from engenharia.tests.test_setup import (
 	create_test_construction_project,
 	create_test_deadline,
 	create_test_project_stage,
+	create_test_work_cost,
 )
+from engenharia.tests.test_subcontract import create_test_subcontract
 
 
 class TestProjectHub(FrappeTestCase):
@@ -47,6 +49,28 @@ class TestProjectHub(FrappeTestCase):
 		if "Engenharia Manager" in frappe.get_roles():
 			self.assertIn("financial", data)
 			self.assertIsInstance(data["financial"], dict)
+
+	def test_financial_summary_uses_consolidated_costs(self):
+		if "Engenharia Manager" not in frappe.get_roles():
+			return
+
+		project = create_test_construction_project()
+		frappe.db.set_value("Construction Project", project.name, "spec_project_total", 50000)
+
+		create_test_work_cost(project=project.name, amount=1000, status="Open", payments=[])
+		create_test_subcontract(
+			project=project.name,
+			total_value=3000,
+			payments=[{"payment_date": today(), "amount": 1000}],
+		)
+
+		summary = get_project_hub_data(project.name)["financial"]["summary"]
+
+		self.assertEqual(flt(summary["budget_total"]), 50000)
+		self.assertEqual(flt(summary["total_realized_committed"]), 4000)
+		self.assertEqual(flt(summary["total_realized_paid"]), 1000)
+		self.assertEqual(flt(summary["outstanding_payable"]), 3000)
+		self.assertEqual(flt(summary["total_realized_outstanding"]), 3000)
 
 	def test_hub_deadlines_urgency(self):
 		project = create_test_construction_project()
