@@ -16,9 +16,9 @@ engenharia.dashboard.quick_actions = {
 			},
 			{ label: __("Comunicação"), icon: "message-square-plus", doctype: "Communication Log" },
 			{ label: __("Horas"), icon: "clock", doctype: "Time Log" },
-			{ label: __("Pagamento"), icon: "circle-dollar-sign", doctype: "Payment" },
+			{ label: __("Recebimento"), icon: "circle-dollar-sign", doctype: "Payment" },
 			{ label: __("Subcontrato"), icon: "hard-hat", doctype: "Subcontract" },
-			{ label: __("Custo de obra"), icon: "receipt", doctype: "Work Cost" },
+			{ label: __("Compra avulsa"), icon: "receipt", doctype: "Work Cost" },
 		];
 	},
 

@@ -14,7 +14,7 @@ SOURCE_SUBCONTRACT = "subcontract"
 
 SOURCE_META = {
 	SOURCE_WORK_COST: {
-		"label": _("Custo Direto"),
+		"label": _("Compra avulsa"),
 		"doctype": "Work Cost",
 	},
 	SOURCE_REIMBURSABLE: {

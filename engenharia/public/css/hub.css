@@ -108,6 +108,33 @@
 	color: var(--card-bg);
 }
 
+.eng-hub-panel__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	justify-content: flex-end;
+}
+
+.eng-hub-empty__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	justify-content: center;
+	margin-top: 12px;
+}
+
+.eng-hub-empty__actions .eng-hub-empty__action {
+	margin-top: 0;
+	background: none;
+	color: var(--primary);
+	border: 1px solid var(--primary);
+}
+
+.eng-hub-empty__actions .eng-hub-empty__action:hover {
+	background: var(--primary);
+	color: var(--card-bg);
+}
+
 .eng-hub-kpi-row {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));

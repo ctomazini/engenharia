@@ -35,7 +35,7 @@ def _get_columns():
 		},
 		{
 			"fieldname": "total_cost",
-			"label": _("Custos de Obra"),
+			"label": _("Compras avulsas"),
 			"fieldtype": "Currency",
 			"width": 130,
 		},

@@ -376,13 +376,13 @@
   {
    "fieldname": "sec_costs_hub",
    "fieldtype": "Section Break",
-   "label": "Custos",
+   "label": "Custos Realizados",
    "permlevel": 1
   },
   {
    "fieldname": "costs_panel",
    "fieldtype": "HTML",
-   "label": "Custos",
+   "label": "Custos Realizados",
    "options": "<p class=\"text-muted\">Carregando custos...</p>",
    "permlevel": 1
   },

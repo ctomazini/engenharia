@@ -54,7 +54,7 @@ class TestConsolidatedCost(FrappeTestCase):
 
 		wc_row = by_source[SOURCE_WORK_COST]
 		self.assertEqual(wc_row["name"], wc.name)
-		self.assertEqual(wc_row["source_label"], "Custo Direto")
+		self.assertEqual(wc_row["source_label"], "Compra avulsa")
 		self.assertEqual(wc_row["source_doctype"], "Work Cost")
 		self.assertEqual(wc_row["amount"], 1000)
 		self.assertEqual(wc_row["paid"], 1000)
@@ -91,7 +91,7 @@ class TestConsolidatedCost(FrappeTestCase):
 		self.assertEqual(summary["total_amount"], 2800)
 		self.assertEqual(summary["total_paid"], 1600)
 		self.assertEqual(summary["total_outstanding"], 1200)
-		self.assertIn("Custo Direto", summary["by_source"])
+		self.assertIn("Compra avulsa", summary["by_source"])
 		self.assertIn("Despesa Reembolsável", summary["by_source"])
 		self.assertIn("Subcontrato", summary["by_source"])
 

@@ -302,10 +302,8 @@ function eng_hub_render_costs(frm) {
 
 function _eng_hub_render_costs_panel(frm, $w, items, summary) {
 	if (!items.length) {
-		$w.html(_eng_hub_empty("📊", __("Nenhum custo registrado"), __("+ Custo"), "new-cost"));
-		$w.find('[data-hub-action="new-cost"]').on("click", () => {
-			frappe.new_doc("Work Cost", { project: frm.doc.name });
-		});
+		$w.html(_eng_hub_empty_costs(frm));
+		_eng_hub_bind_costs_empty_actions(frm, $w);
 		return;
 	}
 
@@ -324,12 +322,20 @@ function _eng_hub_render_costs_panel(frm, $w, items, summary) {
 		<div class="eng-hub-panel__header">
 			<h3 class="eng-hub-panel__title">
 				<span class="eng-hub-panel__title-icon">📊</span>
-				${__("Custos Consolidados")}
+				${__("Custos Realizados")}
 				<span class="eng-hub-panel__count">${items.length}</span>
 			</h3>
-			<button type="button" class="eng-hub-panel__action" data-hub-action="new-cost">
-				${__("+ Custo")}
-			</button>
+			<div class="eng-hub-panel__actions">
+				<button type="button" class="eng-hub-panel__action" data-hub-action="new-work-cost">
+					${__("+ Compra avulsa")}
+				</button>
+				<button type="button" class="eng-hub-panel__action" data-hub-action="new-subcontract">
+					${__("+ Subcontrato")}
+				</button>
+				<button type="button" class="eng-hub-panel__action" data-hub-action="new-reimbursable">
+					${__("+ Reembolsável")}
+				</button>
+			</div>
 		</div>
 		${kpiHtml}
 		${filtersHtml}
@@ -431,8 +437,14 @@ function _eng_hub_render_costs_panel(frm, $w, items, summary) {
 		renderRows();
 	});
 
-	$w.find('[data-hub-action="new-cost"]').on("click", () => {
+	$w.find('[data-hub-action="new-work-cost"]').on("click", () => {
 		frappe.new_doc("Work Cost", { project: frm.doc.name });
+	});
+	$w.find('[data-hub-action="new-subcontract"]').on("click", () => {
+		frappe.new_doc("Subcontract", { project: frm.doc.name });
+	});
+	$w.find('[data-hub-action="new-reimbursable"]').on("click", () => {
+		frappe.new_doc("Reimbursable Expense", { project: frm.doc.name });
 	});
 }
 
@@ -765,7 +777,7 @@ function eng_hub_render_summary_bar(frm, counts) {
 		},
 		{
 			icon: "📊",
-			label: __("Custos"),
+			label: __("Compras avulsas"),
 			count: counts.costs,
 			doctype: "Work Cost",
 			fieldname: "project",
@@ -1274,6 +1286,38 @@ function eng_hub_render_timelogs(frm, timelogs) {
 	$w.find(".eng-hub-list-row[data-route]").on("click", function () {
 		const parts = $(this).attr("data-route").split("/");
 		frappe.set_route(parts[0], parts[1], parts[2]);
+	});
+}
+
+function _eng_hub_empty_costs(frm) {
+	return `<div class="eng-hub-empty">
+		<div class="eng-hub-empty__icon">📊</div>
+		<div>${__(
+			"Nenhum custo realizado registrado. Orçamento (itens do projeto) é planejamento — aqui entram compras, subcontratos e reembolsáveis."
+		)}</div>
+		<div class="eng-hub-empty__actions">
+			<button type="button" class="eng-hub-empty__action" data-hub-action="new-work-cost">${__(
+				"+ Compra avulsa"
+			)}</button>
+			<button type="button" class="eng-hub-empty__action" data-hub-action="new-subcontract">${__(
+				"+ Subcontrato"
+			)}</button>
+			<button type="button" class="eng-hub-empty__action" data-hub-action="new-reimbursable">${__(
+				"+ Reembolsável"
+			)}</button>
+		</div>
+	</div>`;
+}
+
+function _eng_hub_bind_costs_empty_actions(frm, $w) {
+	$w.find('[data-hub-action="new-work-cost"]').on("click", () => {
+		frappe.new_doc("Work Cost", { project: frm.doc.name });
+	});
+	$w.find('[data-hub-action="new-subcontract"]').on("click", () => {
+		frappe.new_doc("Subcontract", { project: frm.doc.name });
+	});
+	$w.find('[data-hub-action="new-reimbursable"]').on("click", () => {
+		frappe.new_doc("Reimbursable Expense", { project: frm.doc.name });
 	});
 }
 
