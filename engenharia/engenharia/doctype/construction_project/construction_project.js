@@ -14,6 +14,26 @@ frappe.ui.form.on("Construction Project", {
 			eng_refresh_commission_summary(frm);
 			eng_add_hub_create_buttons(frm);
 			frm.add_custom_button(
+				__("Redistribuir Pesos"),
+				function () {
+					frappe.call({
+						method: "engenharia.stage_template.redistribute_stage_weights",
+						args: { project: frm.doc.name },
+						freeze: true,
+						callback(r) {
+							if (r.message && r.message.count) {
+								frappe.show_alert({
+									message: __("{0} etapas redistribuídas", [r.message.count]),
+									indicator: "green",
+								});
+								frm.reload_doc();
+							}
+						},
+					});
+				},
+				__("Etapas")
+			);
+			frm.add_custom_button(
 				__("Nova revisão de orçamento"),
 				() => eng_create_budget_revision(frm),
 				__("Orçamento")
@@ -40,7 +60,49 @@ frappe.ui.form.on("Construction Project", {
 			}
 		}
 	},
+	project_type(frm) {
+		if (!frm.doc.project_type || frm.is_new()) return;
+		frappe.call({
+			method: "engenharia.stage_template.get_stage_count_for_project",
+			args: { project: frm.doc.name },
+			callback(r) {
+				const count = r.message || 0;
+				if (count > 0) {
+					frappe.confirm(
+						__(
+							"Esta obra já possui {0} etapa(s). Substituir pelas etapas do template?",
+							[count]
+						),
+						() => eng_apply_stage_template(frm)
+					);
+				} else {
+					eng_apply_stage_template(frm);
+				}
+			},
+		});
+	},
 });
+
+function eng_apply_stage_template(frm) {
+	frappe.call({
+		method: "engenharia.stage_template.apply_template_to_project",
+		args: {
+			project: frm.doc.name,
+			project_type: frm.doc.project_type,
+		},
+		freeze: true,
+		freeze_message: __("Criando etapas..."),
+		callback(r) {
+			if (r.message && r.message.created) {
+				frappe.show_alert({
+					message: __("{0} etapa(s) criada(s)", [r.message.created]),
+					indicator: "green",
+				});
+				frm.reload_doc();
+			}
+		},
+	});
+}
 
 function eng_hub_defaults(frm) {
 	return {

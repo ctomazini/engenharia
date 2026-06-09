@@ -1,0 +1,113 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:template_name",
+ "creation": "2026-06-05 00:00:00",
+ "custom": 0,
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "template_name",
+  "project_type",
+  "sec_stages",
+  "stages",
+  "sec_weight_info",
+  "total_weight_display"
+ ],
+ "fields": [
+  {
+   "fieldname": "template_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Nome do Template",
+   "reqd": 1,
+   "unique": 1,
+   "description": "Ex.: Execução de Obra, Projeto Residencial."
+  },
+  {
+   "fieldname": "project_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Tipo de Projeto",
+   "options": "Execução\nProjeto\nLaudo\nVistoria\nConsultoria\nPerícia\nFiscalização\nReforma\nRegularização",
+   "reqd": 1,
+   "description": "Tipo de projeto que usa este template."
+  },
+  {
+   "fieldname": "sec_stages",
+   "fieldtype": "Section Break",
+   "label": "Etapas do Template"
+  },
+  {
+   "fieldname": "stages",
+   "fieldtype": "Table",
+   "label": "Etapas",
+   "options": "Project Stage Template Item",
+   "reqd": 1,
+   "description": "Etapas e pesos do template."
+  },
+  {
+   "fieldname": "sec_weight_info",
+   "fieldtype": "Section Break",
+   "label": ""
+  },
+  {
+   "fieldname": "total_weight_display",
+   "fieldtype": "HTML",
+   "label": "Soma dos Pesos",
+   "description": "Exibe soma em tempo real."
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-06-05 00:00:00",
+ "modified_by": "Administrator",
+ "module": "Engenharia",
+ "name": "Project Stage Template",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "role": "System Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "share": 1
+  },
+  {
+   "role": "Engenharia Manager",
+   "read": 1,
+   "write": 1,
+   "create": 1,
+   "delete": 1,
+   "import": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1,
+   "share": 1
+  },
+  {
+   "role": "Engenharia User",
+   "read": 1,
+   "export": 1,
+   "print": 1,
+   "email": 1,
+   "report": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "search_fields": "template_name,project_type",
+ "show_title_field_in_link": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "template_name",
+ "track_changes": 1
+}

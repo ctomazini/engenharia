@@ -7,7 +7,8 @@
  "engine": "InnoDB",
  "field_order": [
   "stage_name",
-  "default_order"
+  "default_order",
+  "default_weight"
  ],
  "fields": [
   {
@@ -28,6 +29,13 @@
    "in_list_view": 1,
    "label": "Ordem Padrão",
    "description": "Ordem padrão de exibição ao criar etapas na obra."
+  },
+  {
+   "default": "0",
+   "fieldname": "default_weight",
+   "fieldtype": "Percent",
+   "label": "Peso Padrão",
+   "description": "Peso sugerido ao usar esta etapa em templates (0 a 100)."
   }
  ],
  "index_web_pages_for_search": 1,

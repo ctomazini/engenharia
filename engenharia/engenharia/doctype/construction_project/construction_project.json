@@ -77,7 +77,7 @@
    "fieldtype": "Select",
    "in_standard_filter": 1,
    "label": "Tipo de Obra",
-   "options": "Residencial\nComercial\nIndustrial\nInfraestrutura\nReforma\nOutro",
+   "options": "Residencial\nComercial\nIndustrial\nInfraestrutura\nReforma\nOutro\nExecução\nProjeto\nLaudo\nVistoria\nConsultoria\nPerícia\nFiscalização\nRegularização",
    "description": "Classificação da obra: Residencial, Comercial, Industrial, Infraestrutura, Reforma ou Outro."
   },
   {

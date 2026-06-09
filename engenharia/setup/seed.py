@@ -187,10 +187,82 @@ def ensure_technical_item_templates():
 		_sync_technical_item_template(item_def)
 
 
+def _seed_stage_templates():
+	"""Templates padrão de etapas por tipo de projeto."""
+	templates = [
+		{
+			"template_name": "Execução de Obra Padrão",
+			"project_type": "Execução",
+			"stages": [
+				("Fundação", 20),
+				("Estrutura", 20),
+				("Alvenaria", 15),
+				("Cobertura", 10),
+				("Instalações Elétricas", 10),
+				("Instalações Hidráulicas", 10),
+				("Acabamento", 10),
+				("Limpeza e Entrega", 5),
+			],
+		},
+		{
+			"template_name": "Projeto Padrão",
+			"project_type": "Projeto",
+			"stages": [
+				("Estudo Preliminar", 15),
+				("Projeto Executivo", 30),
+				("Projeto Prefeitura", 20),
+				("Projeto Elétrico", 15),
+				("Projeto Hidrossanitário", 10),
+				("Aprovação", 10),
+			],
+		},
+		{
+			"template_name": "Laudo Padrão",
+			"project_type": "Laudo",
+			"stages": [
+				("Vistoria em Campo", 30),
+				("Análise Técnica", 30),
+				("Elaboração do Laudo", 30),
+				("Entrega", 10),
+			],
+		},
+	]
+
+	for template_def in templates:
+		if frappe.db.exists("Project Stage Template", template_def["template_name"]):
+			continue
+
+		for stage_name, _weight in template_def["stages"]:
+			if not frappe.db.exists("Stage Type", stage_name):
+				frappe.get_doc(
+					{
+						"doctype": "Stage Type",
+						"stage_name": stage_name,
+					}
+				).insert(ignore_permissions=True)  # seed — sistema
+
+		frappe.get_doc(
+			{
+				"doctype": "Project Stage Template",
+				"template_name": template_def["template_name"],
+				"project_type": template_def["project_type"],
+				"stages": [
+					{
+						"stage_type": stage_name,
+						"weight": weight,
+						"sort_order": idx + 1,
+					}
+					for idx, (stage_name, weight) in enumerate(template_def["stages"])
+				],
+			}
+		).insert(ignore_permissions=True)  # seed — sistema
+
+
 def ensure_seed_data():
 	ensure_default_cost_categories()
 	ensure_default_stage_types()
 	ensure_default_permit_types()
 	ensure_engineering_settings()
 	ensure_technical_item_templates()
+	_seed_stage_templates()
 	frappe.db.commit()  # setup: seed idempotente no migrate

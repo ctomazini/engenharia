@@ -94,6 +94,7 @@ CATALOG_DOCTYPES = frozenset(
 		"Permit Type",
 		"Public Agency",
 		"Stage Type",
+		"Project Stage Template",
 		"Supplier",
 		"Technical Item",
 	}

@@ -1,4 +1,5 @@
 import frappe
+from frappe import _
 from frappe.model.document import Document
 from frappe.utils import flt, today
 
@@ -151,7 +152,28 @@ class ConstructionProject(Document):
 	def validate(self):
 		recompose_title(self)
 		self._sync_physical_progress()
+		self._warn_stage_weights()
 		self._seed_initial_budget_revision()
+
+	def _warn_stage_weights(self):
+		"""Aviso se soma dos pesos das etapas != 100%."""
+		if self.is_new() or not self.name:
+			return
+		stages = frappe.get_all(
+			"Project Stage",
+			filters={"project": self.name},
+			fields=["weight"],
+			limit=500,
+		)
+		if not stages:
+			return
+		total = sum(flt(s.weight) for s in stages)
+		if abs(total - 100) > 0.01:
+			frappe.msgprint(
+				_("A soma dos pesos das etapas é {0}%. O ideal é 100%.").format(round(total, 1)),
+				indicator="orange",
+				title=_("Pesos das etapas"),
+			)
 
 	def _seed_initial_budget_revision(self) -> None:
 		if self.budget_revisions:

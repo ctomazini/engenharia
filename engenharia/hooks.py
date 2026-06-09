@@ -227,7 +227,9 @@ doc_events = {
 		"on_update": "engenharia.calendar_sync.sync_permit_to_event",
 	},
 	"Project Stage": {
+		"after_insert": "engenharia.project_progress.on_project_stage_update",
 		"on_update": "engenharia.project_progress.on_project_stage_update",
+		"on_trash": "engenharia.project_progress.on_project_stage_update",
 	},
 }
 
