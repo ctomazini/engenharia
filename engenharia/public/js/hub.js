@@ -544,58 +544,147 @@ function eng_hub_render_summary_bar(frm, counts) {
 	if (!$w) return;
 
 	const items = [
-		{ icon: "🏗️", label: __("Etapas"), count: counts.stages, tab: "tab_progress" },
-		{ icon: "📋", label: __("Contratos"), count: counts.contracts, tab: "tab_financial" },
-		{ icon: "💵", label: __("Pagamentos"), count: counts.payments, tab: "tab_financial" },
-		{ icon: "📊", label: __("Custos"), count: counts.costs, tab: "tab_financial" },
+		{
+			icon: "🏗️",
+			label: __("Etapas"),
+			count: counts.stages,
+			doctype: "Project Stage",
+			fieldname: "project",
+		},
+		{
+			icon: "📋",
+			label: __("Contratos"),
+			count: counts.contracts,
+			doctype: "Engineering Contract",
+			fieldname: "project",
+		},
+		{
+			icon: "💵",
+			label: __("Pagamentos"),
+			count: counts.payments,
+			doctype: "Payment",
+			fieldname: "project",
+		},
+		{
+			icon: "📊",
+			label: __("Custos"),
+			count: counts.costs,
+			doctype: "Work Cost",
+			fieldname: "project",
+		},
 		{
 			icon: "🧾",
 			label: __("Reembolsáveis"),
 			count: counts.reimbursables,
-			tab: "tab_financial",
+			doctype: "Reimbursable Expense",
+			fieldname: "project",
 		},
-		{ icon: "🤝", label: __("Comissões"), count: counts.commissions, tab: "tab_financial" },
+		{
+			icon: "🤝",
+			label: __("Comissões"),
+			count: counts.commissions,
+			doctype: "Commission",
+			fieldname: "construction_project",
+		},
 		{
 			icon: "📦",
 			label: __("Subcontratos"),
 			count: counts.subcontracts,
-			tab: "tab_financial",
+			doctype: "Subcontract",
+			fieldname: "project",
 		},
-		{ icon: "📅", label: __("Prazos"), count: counts.deadlines, tab: "tab_deadlines" },
-		{ icon: "🏛️", label: __("Protocolos"), count: counts.permits, tab: "tab_deadlines" },
-		{ icon: "✅", label: __("Tarefas"), count: counts.tasks, tab: "tab_deadlines" },
+		{
+			icon: "📅",
+			label: __("Prazos"),
+			count: counts.deadlines,
+			doctype: "Deadline",
+			fieldname: "project",
+		},
+		{
+			icon: "🏛️",
+			label: __("Protocolos"),
+			count: counts.permits,
+			doctype: "Permit",
+			fieldname: "project",
+		},
+		{
+			icon: "✅",
+			label: __("Tarefas"),
+			count: counts.tasks,
+			doctype: "Task",
+			fieldname: "project",
+		},
 		{
 			icon: "💬",
 			label: __("Comunicações"),
 			count: counts.communications,
-			tab: "tab_records",
+			doctype: "Communication Log",
+			fieldname: "project",
 		},
-		{ icon: "📏", label: __("Medições"), count: counts.measurements, tab: "tab_records" },
-		{ icon: "⏱️", label: __("Horas"), count: counts.timelogs, tab: "tab_records" },
-		{ icon: "🔧", label: __("Itens"), count: counts.items, tab: "tab_specs" },
+		{
+			icon: "📏",
+			label: __("Medições"),
+			count: counts.measurements,
+			doctype: "Construction Measurement",
+			fieldname: "project",
+		},
+		{
+			icon: "⏱️",
+			label: __("Horas"),
+			count: counts.timelogs,
+			doctype: "Time Log",
+			fieldname: "project",
+		},
+		{
+			icon: "🔧",
+			label: __("Itens"),
+			count: counts.items,
+			doctype: "Project Item",
+			fieldname: "project",
+		},
 	];
+
+	const project = frm.doc.name;
 
 	const pills = items
 		.map((item) => {
 			const hasData = (item.count || 0) > 0;
+			const listUrl = `/app/${frappe.router.slug(item.doctype)}?${item.fieldname}=${encodeURIComponent(
+				project
+			)}`;
+
 			return `<div class="eng-hub-summary-pill${
 				hasData ? " eng-hub-summary-pill--active" : ""
-			}" data-tab="${item.tab}" title="${frappe.utils.escape_html(item.label)}">
-			<span class="eng-hub-summary-pill__icon">${item.icon}</span>
-			<span class="eng-hub-summary-pill__label">${item.label}</span>
-			<span class="eng-hub-summary-pill__count">${item.count || 0}</span>
+			}">
+			<a class="eng-hub-summary-pill__link" href="${listUrl}"
+				data-doctype="${frappe.utils.escape_html(item.doctype)}"
+				data-fieldname="${frappe.utils.escape_html(item.fieldname)}"
+				title="${frappe.utils.escape_html(__("Ver lista de {0}", [item.label]))}">
+				<span class="eng-hub-summary-pill__icon">${item.icon}</span>
+				<span class="eng-hub-summary-pill__label">${item.label}</span>
+				<span class="eng-hub-summary-pill__count">${item.count || 0}</span>
+			</a>
+			<span class="eng-hub-summary-pill__add"
+				data-doctype="${frappe.utils.escape_html(item.doctype)}"
+				data-fieldname="${frappe.utils.escape_html(item.fieldname)}"
+				title="${frappe.utils.escape_html(__("Criar {0}", [item.label]))}">+</span>
 		</div>`;
 		})
 		.join("");
 
 	$w.html(`<div class="eng-hub-summary-bar">${pills}</div>`);
 
-	$w.find(".eng-hub-summary-pill").on("click", function () {
-		const tabFieldname = $(this).attr("data-tab");
-		const tabField = frm.fields_dict[tabFieldname];
-		if (tabField && tabField.tab_link) {
-			$(tabField.tab_link).trigger("click");
-		}
+	$w.find(".eng-hub-summary-pill__link").on("click", function (e) {
+		e.preventDefault();
+		const doctype = $(this).attr("data-doctype");
+		const fieldname = $(this).attr("data-fieldname");
+		frappe.set_route("List", doctype, { [fieldname]: project });
+	});
+	$w.find(".eng-hub-summary-pill__add").on("click", function (e) {
+		e.stopPropagation();
+		const doctype = $(this).attr("data-doctype");
+		const fieldname = $(this).attr("data-fieldname");
+		frappe.new_doc(doctype, { [fieldname]: project });
 	});
 }
 
