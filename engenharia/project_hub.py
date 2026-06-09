@@ -29,6 +29,34 @@ def get_project_hub_data(project: str) -> dict:
 	return data
 
 
+@frappe.whitelist()
+def get_project_counts(project: str) -> dict:
+	"""Contadores rápidos de todos os satélites — para barra resumo."""
+	frappe.has_permission("Construction Project", "read", throw=True)
+
+	doctypes = {
+		"stages": ("Project Stage", "project"),
+		"contracts": ("Engineering Contract", "project"),
+		"payments": ("Payment", "project"),
+		"costs": ("Work Cost", "project"),
+		"subcontracts": ("Subcontract", "project"),
+		"reimbursables": ("Reimbursable Expense", "project"),
+		"commissions": ("Commission", "construction_project"),
+		"deadlines": ("Deadline", "project"),
+		"permits": ("Permit", "project"),
+		"tasks": ("Task", "project"),
+		"communications": ("Communication Log", "project"),
+		"timelogs": ("Time Log", "project"),
+		"measurements": ("Construction Measurement", "project"),
+		"items": ("Project Item", "project"),
+	}
+
+	return {
+		key: frappe.db.count(doctype, {fieldname: project})
+		for key, (doctype, fieldname) in doctypes.items()
+	}
+
+
 def _get_stages(project: str) -> list[dict]:
 	stages = frappe.get_all(
 		"Project Stage",

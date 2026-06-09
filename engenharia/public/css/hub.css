@@ -419,3 +419,65 @@
 		padding: 14px;
 	}
 }
+
+/* ── Summary bar (topo tab Detalhes) ── */
+
+.eng-hub-summary-bar {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	padding: 12px 0 16px;
+	border-bottom: 1px solid var(--border-color);
+	margin-bottom: 16px;
+}
+
+.eng-hub-summary-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 4px 10px;
+	border-radius: 16px;
+	background: var(--control-bg);
+	font-size: var(--text-xs);
+	color: var(--text-muted);
+	cursor: pointer;
+	transition: all .2s ease;
+	border: 1px solid transparent;
+	user-select: none;
+}
+
+.eng-hub-summary-pill:hover {
+	border-color: var(--border-color);
+	background: var(--card-bg);
+}
+
+.eng-hub-summary-pill--active {
+	color: var(--text-color);
+	background: var(--card-bg);
+	border-color: var(--border-color);
+	box-shadow: 0 1px 2px color-mix(in srgb, var(--text-color) 4%, transparent);
+}
+
+.eng-hub-summary-pill__icon {
+	font-size: 13px;
+}
+
+.eng-hub-summary-pill__label {
+	font-weight: 500;
+}
+
+.eng-hub-summary-pill__count {
+	font-weight: 700;
+	min-width: 16px;
+	text-align: center;
+}
+
+.eng-hub-summary-pill--active .eng-hub-summary-pill__count {
+	color: var(--primary);
+}
+
+@media (max-width: 768px) {
+	.eng-hub-summary-pill__label {
+		display: none;
+	}
+}

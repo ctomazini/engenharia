@@ -45,9 +45,10 @@ class TestDocTypeDashboard(FrappeTestCase):
 					seen_items.append(item)
 
 	def test_hub_dashboard_internal_links(self):
+		"""Dashboard nativo esvaziado — contadores ficam no hub_summary_bar."""
 		data = frappe.get_meta("Construction Project").get_dashboard_data()
-		self.assertIn("Engineering Contract", data.internal_links)
-		self.assertEqual(data.internal_links["Payment"], "project")
+		self.assertEqual(data.internal_links, {})
+		self.assertTrue(data.transactions)
 
 	def test_customer_dashboard_internal_links(self):
 		data = frappe.get_meta("Customer").get_dashboard_data()

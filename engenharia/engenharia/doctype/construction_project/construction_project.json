@@ -9,6 +9,7 @@
  "engine": "InnoDB",
  "field_order": [
   "tab_details",
+  "hub_summary_bar",
   "customer",
   "title",
   "col_break_1",
@@ -52,6 +53,12 @@
   "installments_panel",
   "sec_costs_hub",
   "costs_panel",
+  "sec_payments",
+  "payments_panel",
+  "sec_reimbursables",
+  "reimbursables_panel",
+  "sec_commissions_hub",
+  "commissions_hub_panel",
   "tab_deadlines",
   "sec_deadlines_hub",
   "deadlines_panel",
@@ -81,6 +88,11 @@
    "fieldname": "tab_details",
    "fieldtype": "Tab Break",
    "label": "Detalhes"
+  },
+  {
+   "fieldname": "hub_summary_bar",
+   "fieldtype": "HTML",
+   "label": "Resumo da Obra"
   },
   {
    "fieldname": "customer",
@@ -360,6 +372,42 @@
    "fieldtype": "HTML",
    "label": "Custos",
    "options": "<p class=\"text-muted\">Carregando custos...</p>",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "sec_payments",
+   "fieldtype": "Section Break",
+   "label": "Pagamentos",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "payments_panel",
+   "fieldtype": "HTML",
+   "label": "Pagamentos",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "sec_reimbursables",
+   "fieldtype": "Section Break",
+   "label": "Despesas Reembolsáveis",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "reimbursables_panel",
+   "fieldtype": "HTML",
+   "label": "Despesas Reembolsáveis",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "sec_commissions_hub",
+   "fieldtype": "Section Break",
+   "label": "Comissões",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "commissions_hub_panel",
+   "fieldtype": "HTML",
+   "label": "Comissões",
    "permlevel": 1
   },
   {

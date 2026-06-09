@@ -2,7 +2,7 @@ import frappe
 from frappe.tests.utils import FrappeTestCase
 from frappe.utils import add_days, today
 
-from engenharia.project_hub import get_project_hub_data
+from engenharia.project_hub import get_project_counts, get_project_hub_data
 from engenharia.tests.test_setup import (
 	create_test_construction_project,
 	create_test_deadline,
@@ -59,3 +59,35 @@ class TestProjectHub(FrappeTestCase):
 		data = get_project_hub_data(project.name)
 		overdue = [row for row in data["deadlines"] if row["urgency"] == "overdue"]
 		self.assertGreater(len(overdue), 0)
+
+	def test_get_project_counts_returns_all_keys(self):
+		project = create_test_construction_project()
+		counts = get_project_counts(project.name)
+
+		expected_keys = [
+			"stages",
+			"contracts",
+			"payments",
+			"costs",
+			"subcontracts",
+			"reimbursables",
+			"commissions",
+			"deadlines",
+			"permits",
+			"tasks",
+			"communications",
+			"timelogs",
+			"measurements",
+			"items",
+		]
+		for key in expected_keys:
+			self.assertIn(key, counts)
+
+	def test_get_project_counts_reflects_data(self):
+		project = create_test_construction_project()
+		create_test_project_stage(project=project.name)
+		create_test_project_stage(project=project.name)
+
+		counts = get_project_counts(project.name)
+
+		self.assertEqual(counts["stages"], 2)

@@ -16,6 +16,20 @@ function eng_hub_load(frm) {
 			eng_hub_render_communications(frm, data.communications || []);
 			eng_hub_render_measurements(frm, data.measurements || []);
 			eng_hub_render_timelogs(frm, data.timelogs || []);
+
+			if (data.financial) {
+				eng_hub_render_payments(frm, data.financial.payments || []);
+				eng_hub_render_reimbursables(frm, data.financial.reimbursables || []);
+				eng_hub_render_commissions_hub(frm, data.financial.commissions || []);
+			}
+		},
+	});
+
+	frappe.call({
+		method: "engenharia.project_hub.get_project_counts",
+		args: { project: frm.doc.name },
+		callback(r) {
+			eng_hub_render_summary_bar(frm, r.message || {});
 		},
 	});
 }
@@ -134,7 +148,14 @@ function eng_hub_edit_stage(frm, stage_name) {
 }
 
 function eng_hub_render_financial(frm, financial) {
-	const panels = ["financial_summary_panel", "installments_panel", "costs_panel"];
+	const panels = [
+		"financial_summary_panel",
+		"installments_panel",
+		"costs_panel",
+		"payments_panel",
+		"reimbursables_panel",
+		"commissions_hub_panel",
+	];
 	if (!financial) {
 		panels.forEach((panel) => {
 			if (frm.fields_dict[panel]) {
@@ -335,6 +356,240 @@ function _eng_hub_render_costs(frm, financial) {
 	$w.find(".eng-hub-list-row[data-route]").on("click", function () {
 		const parts = $(this).attr("data-route").split("/");
 		frappe.set_route(parts[0], parts[1], parts[2]);
+	});
+}
+
+function eng_hub_render_payments(frm, payments) {
+	const $w = frm.fields_dict.payments_panel?.$wrapper;
+	if (!$w) return;
+
+	if (!payments || !payments.length) {
+		$w.html("");
+		return;
+	}
+
+	const statusMap = {
+		Recebido: "green",
+		Received: "green",
+		Pendente: "orange",
+		Pending: "orange",
+		Atrasado: "red",
+		Overdue: "red",
+		Cancelado: "gray",
+	};
+
+	const rows = payments
+		.map((payment) => {
+			const dt = payment.received_date
+				? frappe.datetime.str_to_user(payment.received_date)
+				: "—";
+			const badge = `<span class="eng-hub-badge eng-hub-badge--${
+				statusMap[payment.status] || "gray"
+			}">${payment.status || ""}</span>`;
+			return `<div class="eng-hub-list-row" data-route="Form/Payment/${frappe.utils.escape_html(
+				payment.name
+			)}">
+			<div class="eng-hub-list-row__icon">💵</div>
+			<div class="eng-hub-list-row__main">
+				${frappe.utils.escape_html(payment.title || payment.name)}
+				<span class="eng-hub-list-row__secondary">${dt}</span>
+			</div>
+			<div class="eng-hub-list-row__value">${format_currency(payment.amount)}</div>
+			${badge}
+		</div>`;
+		})
+		.join("");
+
+	$w.html(`<div class="eng-hub-panel">
+		<div class="eng-hub-panel__header">
+			<h3 class="eng-hub-panel__title">
+				<span class="eng-hub-panel__title-icon">💵</span>
+				${__("Pagamentos")}
+				<span class="eng-hub-panel__count">${payments.length}</span>
+			</h3>
+			<button type="button" class="eng-hub-panel__action" data-hub-action="new-payment">
+				${__("+ Pagamento")}
+			</button>
+		</div>
+		${rows}
+	</div>`);
+
+	$w.find('[data-hub-action="new-payment"]').on("click", () => {
+		frappe.new_doc("Payment", { project: frm.doc.name });
+	});
+	$w.find(".eng-hub-list-row[data-route]").on("click", function () {
+		const parts = $(this).attr("data-route").split("/");
+		frappe.set_route(parts[0], parts[1], parts[2]);
+	});
+}
+
+function eng_hub_render_reimbursables(frm, reimbursables) {
+	const $w = frm.fields_dict.reimbursables_panel?.$wrapper;
+	if (!$w) return;
+
+	if (!reimbursables || !reimbursables.length) {
+		$w.html("");
+		return;
+	}
+
+	const statusMap = {
+		Pendente: "orange",
+		Reembolsado: "green",
+		Pago: "green",
+		Cancelado: "gray",
+		Recusado: "red",
+	};
+
+	const rows = reimbursables
+		.map((expense) => {
+			const badge = `<span class="eng-hub-badge eng-hub-badge--${
+				statusMap[expense.status] || "gray"
+			}">${expense.status || ""}</span>`;
+			return `<div class="eng-hub-list-row" data-route="Form/Reimbursable Expense/${frappe.utils.escape_html(
+				expense.name
+			)}">
+			<div class="eng-hub-list-row__icon">🧾</div>
+			<div class="eng-hub-list-row__main">
+				${frappe.utils.escape_html(expense.title || expense.name)}
+			</div>
+			<div class="eng-hub-list-row__value">${format_currency(expense.amount)}</div>
+			${badge}
+		</div>`;
+		})
+		.join("");
+
+	$w.html(`<div class="eng-hub-panel">
+		<div class="eng-hub-panel__header">
+			<h3 class="eng-hub-panel__title">
+				<span class="eng-hub-panel__title-icon">🧾</span>
+				${__("Despesas Reembolsáveis")}
+				<span class="eng-hub-panel__count">${reimbursables.length}</span>
+			</h3>
+			<button type="button" class="eng-hub-panel__action" data-hub-action="new-reimbursable">
+				${__("+ Despesa")}
+			</button>
+		</div>
+		${rows}
+	</div>`);
+
+	$w.find('[data-hub-action="new-reimbursable"]').on("click", () => {
+		frappe.new_doc("Reimbursable Expense", { project: frm.doc.name });
+	});
+	$w.find(".eng-hub-list-row[data-route]").on("click", function () {
+		const parts = $(this).attr("data-route").split("/");
+		frappe.set_route(parts[0], parts[1], parts[2]);
+	});
+}
+
+function eng_hub_render_commissions_hub(frm, commissions) {
+	const $w = frm.fields_dict.commissions_hub_panel?.$wrapper;
+	if (!$w) return;
+
+	if (!commissions || !commissions.length) {
+		$w.html("");
+		return;
+	}
+
+	const statusMap = {
+		Pendente: "orange",
+		"A receber": "orange",
+		Pago: "green",
+		Recebido: "green",
+		Cancelado: "gray",
+	};
+
+	const rows = commissions
+		.map((commission) => {
+			const badge = `<span class="eng-hub-badge eng-hub-badge--${
+				statusMap[commission.status] || "gray"
+			}">${commission.status || ""}</span>`;
+			return `<div class="eng-hub-list-row" data-route="Form/Commission/${frappe.utils.escape_html(
+				commission.name
+			)}">
+			<div class="eng-hub-list-row__icon">🤝</div>
+			<div class="eng-hub-list-row__main">
+				${frappe.utils.escape_html(commission.title || commission.name)}
+			</div>
+			<div class="eng-hub-list-row__value">${format_currency(commission.total_value)}</div>
+			${badge}
+		</div>`;
+		})
+		.join("");
+
+	$w.html(`<div class="eng-hub-panel">
+		<div class="eng-hub-panel__header">
+			<h3 class="eng-hub-panel__title">
+				<span class="eng-hub-panel__title-icon">🤝</span>
+				${__("Comissões")}
+				<span class="eng-hub-panel__count">${commissions.length}</span>
+			</h3>
+		</div>
+		${rows}
+	</div>`);
+
+	$w.find(".eng-hub-list-row[data-route]").on("click", function () {
+		const parts = $(this).attr("data-route").split("/");
+		frappe.set_route(parts[0], parts[1], parts[2]);
+	});
+}
+
+function eng_hub_render_summary_bar(frm, counts) {
+	const $w = frm.fields_dict.hub_summary_bar?.$wrapper;
+	if (!$w) return;
+
+	const items = [
+		{ icon: "🏗️", label: __("Etapas"), count: counts.stages, tab: "tab_progress" },
+		{ icon: "📋", label: __("Contratos"), count: counts.contracts, tab: "tab_financial" },
+		{ icon: "💵", label: __("Pagamentos"), count: counts.payments, tab: "tab_financial" },
+		{ icon: "📊", label: __("Custos"), count: counts.costs, tab: "tab_financial" },
+		{
+			icon: "🧾",
+			label: __("Reembolsáveis"),
+			count: counts.reimbursables,
+			tab: "tab_financial",
+		},
+		{ icon: "🤝", label: __("Comissões"), count: counts.commissions, tab: "tab_financial" },
+		{
+			icon: "📦",
+			label: __("Subcontratos"),
+			count: counts.subcontracts,
+			tab: "tab_financial",
+		},
+		{ icon: "📅", label: __("Prazos"), count: counts.deadlines, tab: "tab_deadlines" },
+		{ icon: "🏛️", label: __("Protocolos"), count: counts.permits, tab: "tab_deadlines" },
+		{ icon: "✅", label: __("Tarefas"), count: counts.tasks, tab: "tab_deadlines" },
+		{
+			icon: "💬",
+			label: __("Comunicações"),
+			count: counts.communications,
+			tab: "tab_records",
+		},
+		{ icon: "📏", label: __("Medições"), count: counts.measurements, tab: "tab_records" },
+		{ icon: "⏱️", label: __("Horas"), count: counts.timelogs, tab: "tab_records" },
+		{ icon: "🔧", label: __("Itens"), count: counts.items, tab: "tab_specs" },
+	];
+
+	const pills = items
+		.map((item) => {
+			const hasData = (item.count || 0) > 0;
+			return `<div class="eng-hub-summary-pill${
+				hasData ? " eng-hub-summary-pill--active" : ""
+			}" data-tab="${item.tab}" title="${frappe.utils.escape_html(item.label)}">
+			<span class="eng-hub-summary-pill__icon">${item.icon}</span>
+			<span class="eng-hub-summary-pill__label">${item.label}</span>
+			<span class="eng-hub-summary-pill__count">${item.count || 0}</span>
+		</div>`;
+		})
+		.join("");
+
+	$w.html(`<div class="eng-hub-summary-bar">${pills}</div>`);
+
+	$w.find(".eng-hub-summary-pill").on("click", function () {
+		const tabFieldname = $(this).attr("data-tab");
+		const tabField = frm.fields_dict[tabFieldname];
+		if (tabField && tabField.tab_link) {
+			$(tabField.tab_link).trigger("click");
+		}
 	});
 }
 
