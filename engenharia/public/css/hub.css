@@ -434,21 +434,6 @@
 	color: var(--orange-600);
 }
 
-@media (max-width: 768px) {
-	.eng-hub-progress__label {
-		flex: 0 0 100px;
-		font-size: var(--text-xs);
-	}
-
-	.eng-hub-kpi-row {
-		grid-template-columns: repeat(2, 1fr);
-	}
-
-	.eng-hub-panel {
-		padding: 14px;
-	}
-}
-
 /* ── Summary bar (topo tab Detalhes) ── */
 
 .eng-hub-summary-bar {
@@ -551,11 +536,77 @@
 
 @media (max-width: 768px) {
 	.eng-hub-summary-bar {
-		grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+		/* 2 linhas horizontais com scroll lateral */
+		display: grid;
+		grid-template-rows: repeat(2, auto);
+		grid-auto-flow: column;
+		grid-auto-columns: max-content;
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
 		gap: 6px;
+		padding: 12px 0;
+		scrollbar-width: thin;
+
+		/* Fade hint nas bordas para indicar scroll */
+		mask-image: linear-gradient(
+			to right,
+			transparent 0,
+			black 8px,
+			black calc(100% - 8px),
+			transparent 100%
+		);
+		-webkit-mask-image: linear-gradient(
+			to right,
+			transparent 0,
+			black 8px,
+			black calc(100% - 8px),
+			transparent 100%
+		);
 	}
 
+	/* Manter labels visíveis no mobile */
 	.eng-hub-summary-pill__label {
-		display: none;
+		display: inline !important;
+		font-size: 11px;
+	}
+
+	.eng-hub-summary-pill {
+		height: 32px;
+		border-radius: 6px;
+		white-space: nowrap;
+		flex-shrink: 0;
+	}
+
+	.eng-hub-summary-pill__link {
+		padding: 0 4px 0 8px;
+		gap: 4px;
+	}
+
+	.eng-hub-summary-pill__icon {
+		font-size: 12px;
+	}
+
+	.eng-hub-summary-pill__count {
+		font-size: 11px;
+		min-width: 14px;
+	}
+
+	.eng-hub-summary-pill__add {
+		width: 28px;
+		font-size: 14px;
+	}
+
+	/* Panels menores no mobile */
+	.eng-hub-panel {
+		padding: 12px;
+	}
+
+	.eng-hub-progress__label {
+		flex: 0 0 100px;
+		font-size: var(--text-xs);
+	}
+
+	.eng-hub-kpi-row {
+		grid-template-columns: repeat(2, 1fr);
 	}
 }
