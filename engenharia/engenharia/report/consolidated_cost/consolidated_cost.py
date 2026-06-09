@@ -89,6 +89,16 @@ def _get_data(filters):
 		currency_summary(summary.get("total_outstanding"), _("Em aberto"), "Orange"),
 		int_summary(len(data), _("Lançamentos"), "Blue"),
 	]
+	for source_key, color in (
+		(SOURCE_WORK_COST, "Blue"),
+		(SOURCE_REIMBURSABLE, "Orange"),
+		(SOURCE_SUBCONTRACT, "Green"),
+	):
+		bucket = (summary.get("by_source") or {}).get(SOURCE_META[source_key]["label"])
+		if bucket:
+			report_summary.append(
+				currency_summary(bucket.get("amount"), SOURCE_META[source_key]["label"], color)
+			)
 	return data, chart, report_summary
 
 
