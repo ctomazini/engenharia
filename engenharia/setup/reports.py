@@ -10,6 +10,7 @@ REPORT_JSON_PATHS = (
 	"projects_by_status/projects_by_status.json",
 	"project_margin/project_margin.json",
 	"consolidated_cost/consolidated_cost.json",
+	"budget_vs_actual/budget_vs_actual.json",
 )
 
 _REPORT_SYNC_FIELDS = (

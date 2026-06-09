@@ -355,6 +355,7 @@ Os cinco **Script Reports** da sidebar (Engenharia → Relatórios) exibem **car
 | **Custo por Categoria** | Donut (top 8) | Compras avulsas pagas, nº categorias | Categoria |
 | **Compras avulsas por obra** | Barras (top 10) | Total pago, nº obras, média | Obra |
 | **Custos Realizados** | — | WC + Subcontratos + Reembolsáveis | Obra, período |
+| **Orçado vs Realizado** | Barras (top 10) | Total orçado, realizado, saldo, obras acima do orçamento | Obra, status |
 | **Fluxo de Caixa** | Barras mensais entradas × saídas | Total entradas, saídas, saldo líquido | Horizonte 3/6/12 meses |
 | **Margem por Obra** | Barras margem realizada (top 10) | Valor contratado, receita, margem, % recebido médio | Obra |
 
