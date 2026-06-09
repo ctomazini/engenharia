@@ -3,7 +3,7 @@ import os
 import frappe
 
 # Ordem canônica da sidebar Engenharia (espelha workspace_sidebar/engenharia.json).
-# Seções: Dia a Dia | Gestão de Obras | Financeiro | Relatórios | Cadastros | Administração
+# Seções: Dia a Dia | Obras | Orçamento | Receitas | Despesas | Relatórios | Cadastros | Administração
 SIDEBAR_LINK_ORDER = (
 	# Dia a Dia
 	("Painel", "eng-dashboard", "Page"),
@@ -11,35 +11,39 @@ SIDEBAR_LINK_ORDER = (
 	("Tarefas", "Task", "DocType"),
 	("Comunicações", "Communication Log", "DocType"),
 	("Registro de Horas", "Time Log", "DocType"),
-	# Gestão de Obras
+	# Obras
 	("Obras", "Construction Project", "DocType"),
-	("Itens na Obra", "Project Item", "DocType"),
-	("Clientes", "Customer", "DocType"),
-	("Custos de Obra", "Work Cost", "DocType"),
-	("Despesas Reembolsáveis", "Reimbursable Expense", "DocType"),
 	("Etapas", "Project Stage", "DocType"),
 	("Boletins de Medição", "Construction Measurement", "DocType"),
 	("Protocolos", "Permit", "DocType"),
-	# Financeiro
-	("Contratos", "Engineering Contract", "DocType"),
-	("Pagamentos", "Payment", "DocType"),
+	# Orçamento
+	("Itens do Projeto", "Project Item", "DocType"),
+	("Itens Técnicos", "Technical Item", "DocType"),
+	# Receitas
+	("Contratos de Honorários", "Engineering Contract", "DocType"),
+	("Recebimentos", "Payment", "DocType"),
 	("Comissões", "Commission", "DocType"),
+	# Despesas
+	("Compras e NF Avulsas", "Work Cost", "DocType"),
 	("Subcontratos", "Subcontract", "DocType"),
-	("Templates de Documento", "Document Template", "DocType"),
-	("Kits de Documentos", "Document Kit", "DocType"),
+	("Despesas Reembolsáveis", "Reimbursable Expense", "DocType"),
+	("Custos Realizados", "consolidated_cost", "Report"),
 	# Relatórios
-	("Custo por Obra", "work_cost_by_project", "Report"),
-	("Custo por Categoria", "work_cost_by_category", "Report"),
-	("Custos Consolidados", "consolidated_cost", "Report"),
+	("Visão de Custos Realizados", "consolidated_cost", "Report"),
+	("Compras avulsas por obra", "work_cost_by_project", "Report"),
+	("Compras avulsas por categoria", "work_cost_by_category", "Report"),
 	("Fluxo de Caixa", "cash_flow", "Report"),
-	("Obras por Status", "projects_by_status", "Report"),
 	("Margem por Obra", "project_margin", "Report"),
+	("Obras por Status", "projects_by_status", "Report"),
 	# Cadastros
+	("Clientes", "Customer", "DocType"),
 	("Fornecedores", "Supplier", "DocType"),
-	("Categorias de Custo", "Cost Category", "DocType"),
+	("Classificações de Gasto", "Cost Category", "DocType"),
 	("Tipos de Etapa", "Stage Type", "DocType"),
 	("Órgãos Públicos", "Public Agency", "DocType"),
-	("Itens Técnicos", "Technical Item", "DocType"),
+	("Templates de Documento", "Document Template", "DocType"),
+	("Kits de Documentos", "Document Kit", "DocType"),
+	("Modelos de Etapas", "Project Stage Template", "DocType"),
 	# Administração
 	("Configurações do Escritório", "Engineering Settings", "DocType"),
 	("Usuários", "User", "DocType"),
@@ -50,8 +54,10 @@ SIDEBAR_SECTIONS = (
 	# Frappe v16: Section Break com filhos exige collapsible=1, senão toggle() quebra
 	# ao fechar a sidebar (evento sidebar-expand) e o scroll do desk trava.
 	{"label": "Dia a Dia", "collapsible": 1, "keep_closed": 0},
-	{"label": "Gestão de Obras", "collapsible": 1, "keep_closed": 0},
-	{"label": "Financeiro", "collapsible": 1, "keep_closed": 0},
+	{"label": "Obras", "collapsible": 1, "keep_closed": 0},
+	{"label": "Orçamento", "collapsible": 1, "keep_closed": 1},
+	{"label": "Receitas", "collapsible": 1, "keep_closed": 1},
+	{"label": "Despesas", "collapsible": 1, "keep_closed": 1},
 	{"label": "Relatórios", "collapsible": 1, "keep_closed": 1},
 	{"label": "Cadastros", "collapsible": 1, "keep_closed": 1},
 	{"label": "Administração", "collapsible": 1, "keep_closed": 1},
