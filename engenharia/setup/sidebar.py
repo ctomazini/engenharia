@@ -30,6 +30,7 @@ SIDEBAR_LINK_ORDER = (
 	# Relatórios
 	("Custo por Obra", "work_cost_by_project", "Report"),
 	("Custo por Categoria", "work_cost_by_category", "Report"),
+	("Custos Consolidados", "consolidated_cost", "Report"),
 	("Fluxo de Caixa", "cash_flow", "Report"),
 	("Obras por Status", "projects_by_status", "Report"),
 	("Margem por Obra", "project_margin", "Report"),
