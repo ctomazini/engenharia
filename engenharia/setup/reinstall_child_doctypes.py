@@ -19,6 +19,7 @@ CHILD_DOCTYPES = [
 	"Document Kit Item",
 	"Subcontract Payment",
 	"Work Cost Payment",
+	"Reimbursable Expense Payment",
 	"Commission Payment",
 	"Construction Measurement Item",
 ]
