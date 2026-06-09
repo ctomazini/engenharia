@@ -8,6 +8,7 @@ from engenharia.dashboard._helpers import (
 	_project_lookup,
 )
 from engenharia.work_costs import (
+	get_office_expense_paid_by_category_month,
 	get_subcontract_payments_by_category_month,
 	office_cash_flow_filters,
 )
@@ -47,6 +48,25 @@ def _build_cost_composition_chart(month_start, month_end):
 		if amount <= 0:
 			continue
 		label = category_names.get(key, key)
+		grafico.append(
+			{
+				"label": label,
+				"valor": amount,
+				"tone": _CHART_TONES[index % len(_CHART_TONES)],
+			}
+		)
+	return grafico
+
+
+def _build_office_composition_chart(month_start, month_end):
+	totals = get_office_expense_paid_by_category_month(month_start, month_end)
+	if not totals:
+		return []
+
+	grafico = []
+	for index, (label, amount) in enumerate(sorted(totals.items(), key=lambda item: item[1], reverse=True)):
+		if amount <= 0:
+			continue
 		grafico.append(
 			{
 				"label": label,
@@ -106,12 +126,14 @@ def build_financial(hoje, period_end, kpis, month_start=None, month_end=None):
 	taxa_inadimplencia = round((overdue / base_inadimplencia) * 100, 1) if base_inadimplencia else 0
 
 	grafico = _build_cost_composition_chart(month_start, month_end)
+	grafico_office = _build_office_composition_chart(month_start, month_end)
 	month_label = formatdate(month_start, "MMMM yyyy")
 
 	return {
 		"pending_payments": pending,
 		"chart": grafico,
 		"grafico": grafico,
+		"grafico_office": grafico_office,
 		"fluxo": {
 			"month_label": month_label,
 			"fixed_to_month": True,
@@ -124,7 +146,7 @@ def build_financial(hoje, period_end, kpis, month_start=None, month_end=None):
 			"saida": {
 				"label": _("Saídas do mês"),
 				"amount": month_costs,
-				"detail": _("custos de obra e subcontratos pagos pelo escritório no mês"),
+				"detail": _("obra, subcontratos, reembolsáveis e despesas do escritório pagas no mês"),
 				"tone": "info",
 			},
 		},
@@ -135,6 +157,22 @@ def build_financial(hoje, period_end, kpis, month_start=None, month_end=None):
 		"taxa_recebimento": kpis.get("taxa_recebimento") or 0,
 		"taxa_inadimplencia": taxa_inadimplencia,
 	}
+
+
+def get_pending_office_expenses(limit):
+	if not frappe.has_permission("Office Expense", "read"):
+		return []
+	rows = frappe.get_all(
+		"Office Expense",
+		filters={"status": ["in", ["Pendente", "Atrasado"]]},
+		fields=["name", "title", "description", "expense_category", "amount", "due_date", "status"],
+		order_by="due_date asc",
+		limit=limit,
+	)
+	for row in rows:
+		row["valor"] = flt(row.amount)
+		row["vencimento"] = row.due_date
+	return rows
 
 
 def get_pending_reimbursables(limit):
@@ -176,5 +214,18 @@ def mark_payment_received(payment_name, received_date=None):
 	doc.status = "Recebido"
 	doc.received_amount = doc.amount
 	doc.received_date = received_date or today()
+	doc.save()
+	return {"name": doc.name, "status": doc.status}
+
+
+def mark_office_expense_paid(expense_name, payment_date=None):
+	frappe.has_permission("Office Expense", "write", throw=True)
+	doc = frappe.get_doc("Office Expense", expense_name)
+	if doc.status == "Cancelado":
+		frappe.throw(_("Despesa cancelada não pode ser alterada."))
+	if doc.status == "Pago":
+		frappe.throw(_("Despesa já está paga."))
+	doc.payment_date = payment_date or today()
+	doc.status = "Pago"
 	doc.save()
 	return {"name": doc.name, "status": doc.status}

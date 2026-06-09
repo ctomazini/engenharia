@@ -7,6 +7,7 @@ DEFAULT_LIST_LIMIT_KEYS = (
 	"payments",
 	"parcelas",
 	"despesas",
+	"office_expenses",
 	"comunicacoes",
 	"deadlines",
 	"tasks",

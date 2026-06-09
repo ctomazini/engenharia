@@ -113,6 +113,26 @@ def _get_data(filters):
 		)
 
 	for row in frappe.get_all(
+		"Office Expense",
+		filters={
+			"status": "Pago",
+			"payment_date": ["between", [start, end]],
+		},
+		fields=["name", "title", "description", "payment_date", "amount"],
+		order_by="payment_date asc",
+		limit=0,
+	):
+		transactions.append(
+			{
+				"date": row.payment_date,
+				"type": _("Saída"),
+				"description": row.title or row.description or row.name,
+				"inflow": 0,
+				"outflow": flt(row.amount),
+			}
+		)
+
+	for row in frappe.get_all(
 		"Subcontract Payment",
 		filters={"payment_date": ["between", [start, end]]},
 		fields=["parent", "payment_date", "amount"],

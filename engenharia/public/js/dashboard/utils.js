@@ -78,6 +78,7 @@ engenharia.dashboard.utils = {
 			payments: 5,
 			parcelas: 5,
 			despesas: 5,
+			office_expenses: 5,
 			comunicacoes: 5,
 			deadlines: 5,
 			tasks: 5,

@@ -1,7 +1,10 @@
 import frappe
 
 from engenharia.dashboard import get as _get_dashboard_data
-from engenharia.dashboard.financial import mark_payment_received as _mark_payment_received
+from engenharia.dashboard.financial import (
+	mark_office_expense_paid as _mark_office_expense_paid,
+	mark_payment_received as _mark_payment_received,
+)
 
 
 @frappe.whitelist()
@@ -30,3 +33,9 @@ def get_dashboard_data(
 def mark_payment_received(payment_name: str, received_date: str | None = None):
 	frappe.has_permission("Payment", "write", throw=True)
 	return _mark_payment_received(payment_name, received_date)
+
+
+@frappe.whitelist()
+def mark_office_expense_paid(expense_name: str, payment_date: str | None = None):
+	frappe.has_permission("Office Expense", "write", throw=True)
+	return _mark_office_expense_paid(expense_name, payment_date)

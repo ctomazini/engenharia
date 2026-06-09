@@ -69,6 +69,7 @@ def get(
 	payments_cap = _list_cap(list_limits, "payments")
 	parcelas_cap = _list_cap(list_limits, "parcelas")
 	despesas_cap = _list_cap(list_limits, "despesas")
+	office_expenses_cap = _list_cap(list_limits, "office_expenses")
 	timeline_cap = _list_cap(list_limits, "timeline")
 	comunicacoes_cap = _list_cap(list_limits, "comunicacoes")
 
@@ -78,6 +79,9 @@ def get(
 	parcelas_all = payments_all
 	despesas_all = (
 		dashboard_financial.get_pending_reimbursables(LIST_LIMIT_MAX) if is_manager else []
+	)
+	office_expenses_all = (
+		dashboard_financial.get_pending_office_expenses(LIST_LIMIT_MAX) if is_manager else []
 	)
 	agenda_full = dashboard_agenda.build_agenda(hoje, period_end, deadlines_all, tasks_all)
 	agenda_days = dashboard_agenda.build_day_strip(hoje, period_days, agenda_full)
@@ -105,6 +109,10 @@ def get(
 		"pagamentos": {"showing": min(payments_cap, len(payments_all)), "total": len(payments_all)},
 		"parcelas": {"showing": min(parcelas_cap, len(parcelas_all)), "total": len(parcelas_all)},
 		"despesas": {"showing": min(despesas_cap, len(despesas_all)), "total": len(despesas_all)},
+		"office_expenses": {
+			"showing": min(office_expenses_cap, len(office_expenses_all)),
+			"total": len(office_expenses_all),
+		},
 		"comunicacoes": {
 			"showing": min(comunicacoes_cap, len(comunicacoes_all)),
 			"total": len(comunicacoes_all),
@@ -157,6 +165,7 @@ def get(
 				"parcelas": parcelas_all[:parcelas_cap],
 				"pagamentos": payments_all[:payments_cap],
 				"despesas_pendentes": despesas_all[:despesas_cap],
+				"office_expenses_pendentes": office_expenses_all[:office_expenses_cap],
 				"total_despesas_mes": total_despesas_mes,
 				"commission_kpis": commission_kpis,
 				"pending_commissions": pending_commissions[:commissions_cap],

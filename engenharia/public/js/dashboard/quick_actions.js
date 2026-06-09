@@ -19,6 +19,7 @@ engenharia.dashboard.quick_actions = {
 			{ label: __("Recebimento"), icon: "circle-dollar-sign", doctype: "Payment" },
 			{ label: __("Subcontrato"), icon: "hard-hat", doctype: "Subcontract" },
 			{ label: __("Compra avulsa"), icon: "receipt", doctype: "Work Cost" },
+			{ label: __("Despesa escritório"), icon: "building", doctype: "Office Expense" },
 		];
 	},
 

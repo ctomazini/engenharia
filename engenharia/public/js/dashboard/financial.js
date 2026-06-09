@@ -1,55 +1,50 @@
 frappe.provide("engenharia.dashboard");
 
 engenharia.dashboard.financial = {
-	init_chart($root, fin, page) {
-		const grafico = (fin && fin.grafico) || [];
-		const $el = $root.find("#eng-dash-finance-donut");
-		if (!$el.length) return;
-		if (page?.eng_dash_finance_chart) {
-			try {
-				page.eng_dash_finance_chart.destroy();
-			} catch (e) {
-				/* ignore */
-			}
-			page.eng_dash_finance_chart = null;
-		}
-		if (!grafico.length || typeof frappe.Chart === "undefined") {
-			$el.html(
-				`<div class="eng-dash-empty-state eng-dash-empty-state--success"><p>${__(
-					"Nenhum custo lançado neste mês"
-				)}</p></div>`
-			);
-			return;
-		}
-		$el.empty();
-		const labels = [];
-		const values = [];
-		const colors = [];
+	_build_bars_html(grafico, emptyMessage) {
 		const utils = engenharia.dashboard.utils;
-		grafico.forEach((g) => {
-			const val = utils.flt(g.valor != null ? g.valor : g.amount);
-			if (val <= 0) return;
-			labels.push(g.label);
-			values.push(val);
-			colors.push(utils.tone_color(g.tone));
-		});
-		if (!values.length) {
-			$el.html(
-				`<div class="eng-dash-empty-state eng-dash-empty-state--success"><p>${__(
-					"Nenhum custo lançado neste mês"
-				)}</p></div>`
-			);
-			return;
+		const items = (grafico || []).filter((g) => utils.flt(g.valor != null ? g.valor : g.amount) > 0);
+		if (!items.length) {
+			return `<div class="eng-dash-empty-state eng-dash-empty-state--muted"><p>${emptyMessage}</p></div>`;
 		}
-		page.eng_dash_finance_chart = new frappe.Chart($el[0], {
-			type: "donut",
-			height: 220,
-			data: { labels, datasets: [{ values }] },
-			colors,
-			tooltipOptions: {
-				formatTooltipY: (d) => format_currency(d, "BRL"),
-			},
-		});
+		const maxVal = Math.max(...items.map((g) => utils.flt(g.valor != null ? g.valor : g.amount)), 1);
+		const total = items.reduce((sum, g) => sum + utils.flt(g.valor != null ? g.valor : g.amount), 0);
+
+		return items
+			.map((g) => {
+				const val = utils.flt(g.valor != null ? g.valor : g.amount);
+				const barPct = Math.max(4, Math.round((val / maxVal) * 100));
+				const sharePct = total ? Math.round((val / total) * 100) : 0;
+				const tone = g.tone || "neutral";
+				return `<div class="eng-dash-chart-row">
+					<span class="eng-dash-chart-label" title="${frappe.utils.escape_html(g.label)}">${frappe.utils.escape_html(g.label)}</span>
+					<div class="eng-dash-chart-track">
+						<div class="eng-dash-chart-fill ${tone}" style="--eng-dash-fill-pct: ${barPct}%"></div>
+					</div>
+					<span class="eng-dash-chart-amt">${utils.currency_html(val)} <span class="muted">(${sharePct}%)</span></span>
+				</div>`;
+			})
+			.join("");
+	},
+
+	init_chart($root, fin) {
+		const $projectBars = $root.find("#eng-dash-finance-bars-project");
+		const $officeBars = $root.find("#eng-dash-finance-bars-office");
+		if (!$projectBars.length) return;
+		$projectBars.html(
+			this._build_bars_html(
+				(fin && fin.grafico) || [],
+				__("Nenhum custo de obra lançado neste mês")
+			)
+		);
+		if ($officeBars.length) {
+			$officeBars.html(
+				this._build_bars_html(
+					(fin && fin.grafico_office) || [],
+					__("Nenhuma despesa do escritório paga neste mês")
+				)
+			);
+		}
 	},
 
 	render(container, data, page) {
@@ -80,9 +75,15 @@ engenharia.dashboard.financial = {
 							${saida.detail ? `<div class="eng-dash-fluxo-card__detail">${frappe.utils.escape_html(saida.detail)}</div>` : ""}
 						</div>
 					</div>
-					<div>
-						<p class="eng-dash-section-sub">${__("Composição de custos do mês por categoria")}</p>
-						<div id="eng-dash-finance-donut" class="eng-dash-finance-donut-wrap"></div>
+					<div class="eng-dash-finance-composition">
+						<p class="eng-dash-section-sub">${__(
+							"Custos de obra e subcontratos (por categoria de gasto da obra)"
+						)}</p>
+						<div id="eng-dash-finance-bars-project" class="eng-dash-finance-bars"></div>
+						<p class="eng-dash-section-sub eng-dash-section-sub--spaced">${__(
+							"Despesas de funcionamento do escritório pagas no mês"
+						)}</p>
+						<div id="eng-dash-finance-bars-office" class="eng-dash-finance-bars eng-dash-finance-bars--office"></div>
 					</div>
 				</div>
 			</section>

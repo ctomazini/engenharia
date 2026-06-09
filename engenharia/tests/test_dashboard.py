@@ -108,6 +108,21 @@ class TestDashboard(FrappeTestCase):
 		self.assertGreaterEqual(health["score"], 0)
 		self.assertLessEqual(health["score"], 100)
 
+	def test_office_expense_in_month_outflows(self):
+		from engenharia.tests.test_setup import create_test_office_expense
+
+		doc = create_test_office_expense(amount=400)
+		doc.payment_date = frappe.utils.today()
+		doc.status = "Pago"
+		doc.save(ignore_permissions=True)
+
+		hoje = frappe.utils.today()
+		period_end = frappe.utils.add_days(hoje, 7)
+		month_start = frappe.utils.get_first_day(hoje)
+		month_end = frappe.utils.get_last_day(hoje)
+		kpis = dashboard_kpis.build_kpis(hoje, period_end, month_start, month_end)
+		self.assertGreaterEqual(kpis["month_costs"]["amount"], 400)
+
 	def test_cost_composition_by_category(self):
 		from engenharia.tests.test_setup import create_test_cost_category, create_test_work_cost
 

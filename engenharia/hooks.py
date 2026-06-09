@@ -242,6 +242,7 @@ doc_events = {
 scheduler_events = {
 	"daily": [
 		"engenharia.tasks.check_overdue_installments",
+		"engenharia.tasks.check_overdue_office_expenses",
 		"engenharia.tasks.check_overdue_reimbursable_expenses",
 		"engenharia.notifications.notify_deadlines_daily",
 		"engenharia.notifications.notify_expiring_permits",

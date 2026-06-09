@@ -89,6 +89,19 @@ def check_overdue_installments():
 		)
 
 
+def check_overdue_office_expenses():
+	"""Marca despesas do escritório pendentes vencidas como Atrasado."""
+	hoje = today()
+	rows = frappe.get_all(
+		"Office Expense",
+		filters={"status": "Pendente", "due_date": ["<", hoje]},
+		pluck="name",
+		limit_page_length=500,
+	)
+	for name in rows:
+		frappe.db.set_value("Office Expense", name, "status", "Atrasado", update_modified=False)
+
+
 def check_overdue_reimbursable_expenses():
 	"""Notifica despesas a reembolsar com pagamento antigo (60+ dias)."""
 	from engenharia.notifications import _notification_already_sent, _send_system_notification

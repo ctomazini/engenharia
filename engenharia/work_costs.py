@@ -156,20 +156,68 @@ def get_subcontract_payments_by_category_month(month_start, month_end):
 	return totals
 
 
+def get_firm_office_expense_paid_total_month(month_start, month_end):
+	result = frappe.db.sql(
+		"""
+		select coalesce(sum(amount), 0)
+		from `tabOffice Expense`
+		where status = 'Pago'
+		  and payment_date between %s and %s
+		""",
+		(month_start, month_end),
+	)
+	return flt(result[0][0] if result else 0)
+
+
+def get_firm_office_expense_paid_count_month(month_start, month_end):
+	result = frappe.db.sql(
+		"""
+		select count(name)
+		from `tabOffice Expense`
+		where status = 'Pago'
+		  and payment_date between %s and %s
+		""",
+		(month_start, month_end),
+	)
+	return int(result[0][0] if result else 0)
+
+
+def get_office_expense_paid_by_category_month(month_start, month_end):
+	rows = frappe.db.sql(
+		"""
+		select expense_category, coalesce(sum(amount), 0) as amount
+		from `tabOffice Expense`
+		where status = 'Pago'
+		  and payment_date between %s and %s
+		group by expense_category
+		""",
+		(month_start, month_end),
+		as_dict=True,
+	)
+	totals: dict[str, float] = {}
+	for row in rows:
+		key = row.expense_category or _("Sem categoria")
+		totals[key] = flt(row.amount)
+	return totals
+
+
 def get_firm_month_outflows(month_start, month_end):
-	"""Saídas do escritório no mês: pagamentos de Work Cost, Reembolsável e Subcontrato."""
+	"""Saídas do escritório no mês: obra, reembolsável, subcontrato e despesas operacionais."""
 	work_amount = get_firm_work_cost_payment_total_month(month_start, month_end)
 	work_count = get_firm_work_cost_payment_count_month(month_start, month_end)
 	reimb_amount = get_firm_reimbursable_office_payment_total_month(month_start, month_end)
 	reimb_count = get_firm_reimbursable_office_payment_count_month(month_start, month_end)
 	sub_amount = get_firm_subcontract_payments_month(month_start, month_end)
 	sub_count = get_firm_subcontract_payment_count_month(month_start, month_end)
+	office_amount = get_firm_office_expense_paid_total_month(month_start, month_end)
+	office_count = get_firm_office_expense_paid_count_month(month_start, month_end)
 	return {
-		"amount": work_amount + reimb_amount + sub_amount,
-		"count": work_count + reimb_count + sub_count,
+		"amount": work_amount + reimb_amount + sub_amount + office_amount,
+		"count": work_count + reimb_count + sub_count + office_count,
 		"work_cost_amount": work_amount,
 		"reimbursable_amount": reimb_amount,
 		"subcontract_amount": sub_amount,
+		"office_expense_amount": office_amount,
 	}
 
 

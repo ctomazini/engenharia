@@ -622,15 +622,32 @@
 	}
 }
 
-.eng-dash-finance-donut-wrap {
-	min-height: 240px;
-	padding: 12px 8px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
+.eng-dash-finance-composition {
+	min-width: 0;
+}
+
+.eng-dash-finance-bars {
+	padding: 12px 14px;
 	border-radius: 12px;
 	background: color-mix(in srgb, var(--subtle-fg) 30%, var(--card-bg));
 	border: 1px solid color-mix(in srgb, var(--border-color) 70%, transparent);
+}
+
+.eng-dash-finance-bars .eng-dash-chart-row:last-child {
+	margin-bottom: 0;
+}
+
+.eng-dash-finance-bars--office {
+	margin-top: 0;
+}
+
+.eng-dash-section-sub--spaced {
+	margin-top: 14px;
+	margin-bottom: 8px;
+}
+
+.eng-dash-empty-state--muted {
+	opacity: 0.85;
 }
 
 .eng-dash-stat-row {
@@ -666,10 +683,20 @@
 
 .eng-dash-chart-row {
 	display: grid;
-	grid-template-columns: 1fr 2fr auto;
+	grid-template-columns: minmax(0, 1.1fr) minmax(48px, 1.4fr) auto;
 	gap: 10px;
 	align-items: center;
 	margin-bottom: 8px;
+}
+
+.eng-dash-chart-label {
+	font-size: var(--text-xs);
+	line-height: 1.35;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color: var(--text-color);
 }
 
 .eng-dash-chart-track {
@@ -2181,29 +2208,6 @@
 	margin-bottom: 1rem;
 }
 
-.eng-dash-finance-donut-wrap {
-	min-height: 240px;
-}
-
-.eng-dash-finance-donut-wrap .chart-legend,
-.eng-dash-finance-donut-wrap .graph-legend {
-	display: flex;
-	flex-direction: column;
-	align-items: flex-start;
-	gap: 6px;
-	max-width: 100%;
-	font-size: var(--text-xs);
-	line-height: 1.5;
-}
-
-.eng-dash-finance-donut-wrap .chart-legend .legend-item,
-.eng-dash-finance-donut-wrap .graph-legend .legend-item {
-	max-width: 100%;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-}
-
 .eng-dash-finance-grid .eng-dash-section-sub {
 	font-size: var(--text-xs);
 	font-weight: 400;
@@ -2558,26 +2562,14 @@
 		justify-self: center;
 	}
 
-	.eng-dash-finance-donut-wrap {
-		max-width: 240px;
-		width: 100%;
-		margin-left: auto;
-		margin-right: auto;
+	.eng-dash-chart-row {
+		grid-template-columns: minmax(0, 1fr) minmax(40px, 1.2fr) auto;
+		gap: 8px;
 	}
 
-	.eng-dash-finance-donut-wrap .chart-legend,
-	.eng-dash-finance-donut-wrap .graph-legend {
-		flex-direction: column;
-		align-items: stretch;
-		width: 100%;
-	}
-
-	.eng-dash-finance-donut-wrap .chart-legend .legend-item,
-	.eng-dash-finance-donut-wrap .graph-legend .legend-item {
+	.eng-dash-chart-label {
 		white-space: normal;
 		word-break: break-word;
-		overflow: visible;
-		text-overflow: unset;
 	}
 
 	/* §7 — Parcelas / reembolsos */
