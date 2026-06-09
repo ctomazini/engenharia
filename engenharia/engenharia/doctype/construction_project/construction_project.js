@@ -42,6 +42,8 @@ frappe.ui.form.on("Construction Project", {
 				"Documentos"
 			));
 
+			eng_hub_load(frm);
+
 			if (frm.fields_dict.spec_items_summary_panel) {
 				frm.fields_dict.spec_items_summary_panel.$wrapper
 					.off("click", ".eng-spec-refresh")

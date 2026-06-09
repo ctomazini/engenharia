@@ -8,6 +8,7 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "tab_details",
   "customer",
   "title",
   "col_break_1",
@@ -28,8 +29,6 @@
   "construction_area",
   "current_contract_value",
   "commission_outstanding",
-  "commission_summary_panel",
-  "physical_progress",
   "sec_technical",
   "responsible_engineer",
   "crea_number",
@@ -41,6 +40,34 @@
   "budget_revision",
   "default_bdi_percent",
   "budget_revisions",
+  "tab_progress",
+  "sec_progress_global",
+  "physical_progress",
+  "sec_stages_hub",
+  "stages_panel",
+  "tab_financial",
+  "sec_financial_summary",
+  "financial_summary_panel",
+  "sec_installments_hub",
+  "installments_panel",
+  "sec_costs_hub",
+  "costs_panel",
+  "tab_deadlines",
+  "sec_deadlines_hub",
+  "deadlines_panel",
+  "sec_permits_hub",
+  "permits_panel",
+  "sec_tasks_hub",
+  "tasks_panel",
+  "tab_records",
+  "sec_communications_hub",
+  "communications_panel",
+  "sec_measurements_hub",
+  "measurements_panel",
+  "sec_timelogs_hub",
+  "timelogs_panel",
+  "tab_specs",
+  "commission_summary_panel",
   "sec_specs",
   "specs_help",
   "spec_preview_panel",
@@ -50,6 +77,11 @@
   "observations"
  ],
  "fields": [
+  {
+   "fieldname": "tab_details",
+   "fieldtype": "Tab Break",
+   "label": "Detalhes"
+  },
   {
    "fieldname": "customer",
    "fieldtype": "Link",
@@ -264,6 +296,152 @@
    "options": "Project Budget Revision",
    "permlevel": 1,
    "description": "Histórico de revisões de orçamento com totais por versão. Visível apenas para Engenharia Manager."
+  },
+  {
+   "fieldname": "tab_progress",
+   "fieldtype": "Tab Break",
+   "label": "Avanço Físico"
+  },
+  {
+   "fieldname": "sec_progress_global",
+   "fieldtype": "Section Break",
+   "label": "Progresso Global"
+  },
+  {
+   "fieldname": "sec_stages_hub",
+   "fieldtype": "Section Break",
+   "label": "Etapas da Obra"
+  },
+  {
+   "fieldname": "stages_panel",
+   "fieldtype": "HTML",
+   "label": "Painel de Etapas",
+   "options": "<p class=\"text-muted\">Carregando etapas...</p>"
+  },
+  {
+   "fieldname": "tab_financial",
+   "fieldtype": "Tab Break",
+   "label": "Financeiro"
+  },
+  {
+   "fieldname": "sec_financial_summary",
+   "fieldtype": "Section Break",
+   "label": "Resumo",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "financial_summary_panel",
+   "fieldtype": "HTML",
+   "label": "Resumo Financeiro",
+   "options": "<p class=\"text-muted\">Carregando resumo...</p>",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "sec_installments_hub",
+   "fieldtype": "Section Break",
+   "label": "Parcelas",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "installments_panel",
+   "fieldtype": "HTML",
+   "label": "Parcelas",
+   "options": "<p class=\"text-muted\">Carregando parcelas...</p>",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "sec_costs_hub",
+   "fieldtype": "Section Break",
+   "label": "Custos",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "costs_panel",
+   "fieldtype": "HTML",
+   "label": "Custos",
+   "options": "<p class=\"text-muted\">Carregando custos...</p>",
+   "permlevel": 1
+  },
+  {
+   "fieldname": "tab_deadlines",
+   "fieldtype": "Tab Break",
+   "label": "Prazos e Tarefas"
+  },
+  {
+   "fieldname": "sec_deadlines_hub",
+   "fieldtype": "Section Break",
+   "label": "Prazos"
+  },
+  {
+   "fieldname": "deadlines_panel",
+   "fieldtype": "HTML",
+   "label": "Prazos",
+   "options": "<p class=\"text-muted\">Carregando prazos...</p>"
+  },
+  {
+   "fieldname": "sec_permits_hub",
+   "fieldtype": "Section Break",
+   "label": "Alvarás"
+  },
+  {
+   "fieldname": "permits_panel",
+   "fieldtype": "HTML",
+   "label": "Alvarás e Protocolos",
+   "options": "<p class=\"text-muted\">Carregando protocolos...</p>"
+  },
+  {
+   "fieldname": "sec_tasks_hub",
+   "fieldtype": "Section Break",
+   "label": "Tarefas"
+  },
+  {
+   "fieldname": "tasks_panel",
+   "fieldtype": "HTML",
+   "label": "Tarefas",
+   "options": "<p class=\"text-muted\">Carregando tarefas...</p>"
+  },
+  {
+   "fieldname": "tab_records",
+   "fieldtype": "Tab Break",
+   "label": "Registros"
+  },
+  {
+   "fieldname": "sec_communications_hub",
+   "fieldtype": "Section Break",
+   "label": "Comunicações"
+  },
+  {
+   "fieldname": "communications_panel",
+   "fieldtype": "HTML",
+   "label": "Comunicações",
+   "options": "<p class=\"text-muted\">Carregando comunicações...</p>"
+  },
+  {
+   "fieldname": "sec_measurements_hub",
+   "fieldtype": "Section Break",
+   "label": "Medições"
+  },
+  {
+   "fieldname": "measurements_panel",
+   "fieldtype": "HTML",
+   "label": "Medições",
+   "options": "<p class=\"text-muted\">Carregando medições...</p>"
+  },
+  {
+   "fieldname": "sec_timelogs_hub",
+   "fieldtype": "Section Break",
+   "label": "Horas"
+  },
+  {
+   "fieldname": "timelogs_panel",
+   "fieldtype": "HTML",
+   "label": "Horas Trabalhadas",
+   "options": "<p class=\"text-muted\">Carregando horas...</p>"
+  },
+  {
+   "fieldname": "tab_specs",
+   "fieldtype": "Tab Break",
+   "label": "Especificações"
   },
   {
    "fieldname": "sec_specs",
