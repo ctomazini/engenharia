@@ -9,6 +9,11 @@ frappe.ui.form.on("Construction Project", {
 		));
 
 		if (!frm.is_new()) {
+			// Esconder dashboard nativo — substituído pelo hub_summary_bar
+			if (frm.dashboard && frm.dashboard.wrapper) {
+				$(frm.dashboard.wrapper).hide();
+			}
+
 			eng_refresh_spec_rollup(frm);
 			eng_refresh_spec_items_summary(frm);
 			eng_refresh_commission_summary(frm);

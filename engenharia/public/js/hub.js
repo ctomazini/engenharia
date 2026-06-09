@@ -523,10 +523,16 @@ function eng_hub_render_commissions_hub(frm, commissions) {
 				${__("Comissões")}
 				<span class="eng-hub-panel__count">${commissions.length}</span>
 			</h3>
+			<button type="button" class="eng-hub-panel__action" data-hub-action="new-commission">
+				${__("+ Comissão")}
+			</button>
 		</div>
 		${rows}
 	</div>`);
 
+	$w.find('[data-hub-action="new-commission"]').on("click", () => {
+		frappe.new_doc("Commission", { construction_project: frm.doc.name });
+	});
 	$w.find(".eng-hub-list-row[data-route]").on("click", function () {
 		const parts = $(this).attr("data-route").split("/");
 		frappe.set_route(parts[0], parts[1], parts[2]);
@@ -898,10 +904,16 @@ function eng_hub_render_measurements(frm, measurements) {
 				${__("Medições")}
 				<span class="eng-hub-panel__count">${measurements.length}</span>
 			</h3>
+			<button type="button" class="eng-hub-panel__action" data-hub-action="new-measurement">
+				${__("+ Medição")}
+			</button>
 		</div>
 		${rows}
 	</div>`);
 
+	$w.find('[data-hub-action="new-measurement"]').on("click", () => {
+		frappe.new_doc("Construction Measurement", { project: frm.doc.name });
+	});
 	$w.find(".eng-hub-list-row[data-route]").on("click", function () {
 		const parts = $(this).attr("data-route").split("/");
 		frappe.set_route(parts[0], parts[1], parts[2]);
@@ -953,8 +965,13 @@ function eng_hub_render_timelogs(frm, timelogs) {
 				<span class="eng-hub-panel__title-icon">⏱️</span>
 				${__("Horas Trabalhadas")}
 			</h3>
-			<div style="font-size:var(--text-sm);color:var(--text-muted)">
-				${__("Total")}: <strong style="color:var(--text-color)">${total.toFixed(1)}h</strong>
+			<div style="display:flex;align-items:center;gap:12px">
+				<span style="font-size:var(--text-sm);color:var(--text-muted)">
+					${__("Total")}: <strong style="color:var(--text-color)">${total.toFixed(1)}h</strong>
+				</span>
+				<button type="button" class="eng-hub-panel__action" data-hub-action="new-timelog">
+					${__("+ Horas")}
+				</button>
 			</div>
 		</div>
 		${rows}
