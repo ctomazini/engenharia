@@ -13,9 +13,8 @@ Documentação técnica e de desenvolvimento: [`docs/README.md`](README.md).
 O módulo **Engenharia** centraliza a operação de um escritório de projetos e obras:
 
 - Cadastro de **clientes**, **fornecedores** e **obras**
-- **Orçamento técnico** com itens, fórmulas e revisões
-- **Contratos**, **parcelas** e **pagamentos**
-- **Custos de obra**, **despesas reembolsáveis** e **comissões**
+- **Orçamento técnico** (itens do projeto) e **custos realizados** (compras, subcontratos, reembolsáveis) — camadas distintas
+- **Contratos de honorários**, **recebimentos** e **comissões**
 - **Prazos**, **tarefas**, **alvarás** e **medições**
 - **Documentos** gerados a partir de modelos Word
 - **Painel** com visão operacional e financeira
@@ -237,11 +236,30 @@ Registre alterações contratuais na tabela de **Aditivos**. Use o botão **Apli
 
 ---
 
+## 5.1 Orçamento vs custos realizados
+
+O sistema separa **dois mundos** que não se sincronizam automaticamente:
+
+| Camada | Onde registrar | O que representa |
+|---|---|---|
+| **Orçamento (planejado)** | Obra → aba **Especificações**; sidebar **Orçamento → Itens do Projeto** | Quanto a obra *deveria* custar (fórmulas, itens técnicos) |
+| **Custos realizados (fato)** | Obra → aba **Custos Realizados**; sidebar **Despesas** | O que *efetivamente* saiu do caixa ou foi comprometido |
+
+**Três canais de despesa realizada:**
+
+1. **Compras e NF avulsas** — material, taxa pontual, uma nota fiscal
+2. **Subcontratos** — prestador com valor acordado e parcelas
+3. **Despesas reembolsáveis** — escritório paga e o cliente devolve
+
+O relatório **Custos Realizados** consolida as três fontes. *Compras avulsas por obra/categoria* mostram **somente** o canal 1.
+
+---
+
 ## 6. Financeiro
 
-### 6.1 Pagamentos
+### 6.1 Recebimentos
 
-Recebíveis de contrato e fluxos derivados. Cada parcela gera um pagamento rastreável.
+Recebíveis de contrato de honorários e fluxos derivados. Cada parcela gera um recebimento rastreável.
 
 | Campo | O que preencher |
 |---|---|
@@ -253,9 +271,9 @@ Recebíveis de contrato e fluxos derivados. Cada parcela gera um pagamento rastr
 
 No painel, o Manager pode marcar pagamento como recebido (atalho na lista).
 
-### 6.2 Custos de Obra
+### 6.2 Compras e NF Avulsas
 
-Lançamentos **avulsos** (NF única, compra pontual). Para contratar um prestador com valor acordado e parcelas, use **Subcontratos** (seção 6.3).
+Lançamentos **avulsos** (NF única, compra pontual) com **pagamentos em parcelas** na tabela inferior. Para contratar um prestador com valor acordado, use **Subcontratos** (seção 6.3).
 
 | Campo | O que preencher |
 |---|---|
@@ -263,9 +281,9 @@ Lançamentos **avulsos** (NF única, compra pontual). Para contratar um prestado
 | **Quem arca** | **Escritório** (padrão): você paga e o valor entra no seu fluxo de caixa, painel e relatório de fluxo. **Cliente**: só registro administrativo — o cliente paga direto ao fornecedor e o valor **não** entra no seu caixa |
 | Categoria de Custo | Materiais, Mão de obra, Equipamentos, etc. |
 | Fornecedor / Etapa | Opcionais — refinam relatórios |
-| Valor | Montante em reais |
-| Descrição | Detalhe do que foi comprado ou contratado |
-| Status | Pago, Pendente ou Cancelado |
+| Valor Total | Montante acordado (comprometido) |
+| Pagamentos Efetuados | Cada parcela paga: data, valor, forma e comprovante |
+| Status | Aberta / Parcialmente paga / Paga / Cancelada |
 
 **Quando usar Cliente:** você administra a obra mas o dono da obra paga o material, o pedreiro ou a NF diretamente. O lançamento continua visível na obra e nos relatórios por categoria, porém é ignorado em custos do mês, margem realizada e fluxo de caixa do escritório.
 
@@ -323,8 +341,9 @@ Os cinco **Script Reports** da sidebar (Engenharia → Relatórios) exibem **car
 | Relatório | Gráfico | KPIs principais | Filtros |
 |---|---|---|---|
 | **Obras por Status** | Donut por status | Total, em andamento, em orçamento, concluídas | — |
-| **Custo por Categoria** | Donut (top 8) | Custo total, nº categorias, maior categoria | Categoria |
-| **Custo por Obra** | Barras (top 10) | Custo total, nº obras, média por obra | Obra |
+| **Custo por Categoria** | Donut (top 8) | Compras avulsas pagas, nº categorias | Categoria |
+| **Compras avulsas por obra** | Barras (top 10) | Total pago, nº obras, média | Obra |
+| **Custos Realizados** | — | WC + Subcontratos + Reembolsáveis | Obra, período |
 | **Fluxo de Caixa** | Barras mensais entradas × saídas | Total entradas, saídas, saldo líquido | Horizonte 3/6/12 meses |
 | **Margem por Obra** | Barras margem realizada (top 10) | Valor contratado, receita, margem, % recebido médio | Obra |
 
