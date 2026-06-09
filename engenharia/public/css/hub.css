@@ -9,6 +9,24 @@
 	display: none !important;
 }
 
+/* Summary bar: seção isolada, largura total do form */
+.form-section[data-fieldname="sec_summary_bar"] .section-body {
+	display: block;
+}
+
+.form-section[data-fieldname="sec_summary_bar"] .form-column {
+	width: 100%;
+	max-width: 100%;
+}
+
+.frappe-control[data-fieldname="hub_summary_bar"] {
+	width: 100%;
+}
+
+.frappe-control[data-fieldname="hub_summary_bar"] .control-input-wrapper {
+	width: 100%;
+}
+
 /* ═══════════════════════════════════════════════════════════
    ENG-HUB — Painéis visuais dentro do form Construction Project
    Consistente com eng-dash-* do Painel de Obras

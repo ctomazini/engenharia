@@ -9,7 +9,9 @@
  "engine": "InnoDB",
  "field_order": [
   "tab_details",
+  "sec_summary_bar",
   "hub_summary_bar",
+  "sec_after_summary",
   "customer",
   "title",
   "col_break_1",
@@ -90,9 +92,19 @@
    "label": "Detalhes"
   },
   {
+   "fieldname": "sec_summary_bar",
+   "fieldtype": "Section Break",
+   "hide_border": 1
+  },
+  {
    "fieldname": "hub_summary_bar",
    "fieldtype": "HTML",
    "label": "Resumo da Obra"
+  },
+  {
+   "fieldname": "sec_after_summary",
+   "fieldtype": "Section Break",
+   "label": ""
   },
   {
    "fieldname": "customer",
