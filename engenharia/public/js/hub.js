@@ -18,6 +18,7 @@ function eng_hub_load(frm) {
 			eng_hub_render_timelogs(frm, data.timelogs || []);
 
 			if (data.financial) {
+				eng_hub_render_costs(frm);
 				eng_hub_render_payments(frm, data.financial.payments || []);
 				eng_hub_render_reimbursables(frm, data.financial.reimbursables || []);
 				eng_hub_render_commissions_hub(frm, data.financial.commissions || []);
@@ -167,7 +168,6 @@ function eng_hub_render_financial(frm, financial) {
 
 	_eng_hub_render_financial_summary(frm, financial.summary);
 	_eng_hub_render_installments(frm, financial.installments);
-	_eng_hub_render_costs(frm, financial);
 }
 
 function _eng_hub_render_financial_summary(frm, summary) {
@@ -284,14 +284,24 @@ function _eng_hub_render_installments(frm, installments) {
 	});
 }
 
-function _eng_hub_render_costs(frm, financial) {
+function eng_hub_render_costs(frm) {
 	const $w = frm.fields_dict.costs_panel?.$wrapper;
 	if (!$w) return;
 
-	const costs = financial.costs || [];
-	const subs = financial.subcontracts || [];
+	frappe.call({
+		method: "engenharia.engenharia.api.costs.get_consolidated_costs",
+		args: { project: frm.doc.name },
+		callback(r) {
+			const payload = r.message || {};
+			const items = payload.items || [];
+			const summary = payload.summary || {};
+			_eng_hub_render_costs_panel(frm, $w, items, summary);
+		},
+	});
+}
 
-	if (!costs.length && !subs.length) {
+function _eng_hub_render_costs_panel(frm, $w, items, summary) {
+	if (!items.length) {
 		$w.html(_eng_hub_empty("📊", __("Nenhum custo registrado"), __("+ Custo"), "new-cost"));
 		$w.find('[data-hub-action="new-cost"]').on("click", () => {
 			frappe.new_doc("Work Cost", { project: frm.doc.name });
@@ -299,64 +309,252 @@ function _eng_hub_render_costs(frm, financial) {
 		return;
 	}
 
-	const byCategory = {};
-	costs.forEach((cost) => {
-		const cat = cost.cost_category || __("Sem categoria");
-		byCategory[cat] = (byCategory[cat] || 0) + (cost.amount || 0);
-	});
+	const filterState = { source: "", category: "", stage: "", funded_by: "" };
+	const sourceColors = {
+		work_cost: "blue",
+		reimbursable_expense: "orange",
+		subcontract: "green",
+	};
 
-	const catRows = Object.entries(byCategory)
-		.sort(([, a], [, b]) => b - a)
-		.map(
-			([cat, val]) => `<div class="eng-hub-list-row">
-			<div class="eng-hub-list-row__main">${frappe.utils.escape_html(cat)}</div>
-			<div class="eng-hub-list-row__value">${format_currency(val)}</div>
-		</div>`
-		)
-		.join("");
+	const filterOptions = _eng_hub_costs_filter_options(items);
+	const kpiHtml = _eng_hub_costs_kpi_html(summary);
+	const filtersHtml = _eng_hub_costs_filters_html(filterOptions);
 
-	const subRows = subs.length
-		? `<div class="eng-hub-subgroup">
-			<div class="eng-hub-subgroup__title">${__("Subcontratos")}</div>
-			${subs
-				.map(
-					(sub) => `<div class="eng-hub-list-row" data-route="Form/Subcontract/${frappe.utils.escape_html(
-						sub.name
-					)}">
-				<div class="eng-hub-list-row__main">${frappe.utils.escape_html(sub.title || sub.name)}</div>
-				<div class="eng-hub-list-row__value">${format_currency(sub.total_value)}</div>
-				<span class="eng-hub-badge eng-hub-badge--${
-					flt(sub.total_paid) >= flt(sub.total_value) ? "green" : "orange"
-				}">
-					${format_currency(sub.total_paid || 0)} ${__("pago")}
-				</span>
-			</div>`
-				)
-				.join("")}
-		</div>`
-		: "";
-
-	$w.html(`<div class="eng-hub-panel">
+	$w.html(`<div class="eng-hub-panel eng-hub-costs" data-project="${frappe.utils.escape_html(frm.doc.name)}">
 		<div class="eng-hub-panel__header">
 			<h3 class="eng-hub-panel__title">
 				<span class="eng-hub-panel__title-icon">📊</span>
-				${__("Custos")}
+				${__("Custos Consolidados")}
+				<span class="eng-hub-panel__count">${items.length}</span>
 			</h3>
 			<button type="button" class="eng-hub-panel__action" data-hub-action="new-cost">
 				${__("+ Custo")}
 			</button>
 		</div>
-		${catRows}
-		${subRows}
+		${kpiHtml}
+		${filtersHtml}
+		<div class="eng-hub-costs-table-wrap">
+			<table class="eng-hub-costs-table">
+				<thead>
+					<tr>
+						<th>${__("Data")}</th>
+						<th>${__("Tipo")}</th>
+						<th>${__("Categoria")}</th>
+						<th>${__("Descrição")}</th>
+						<th>${__("Fornecedor")}</th>
+						<th>${__("Etapa")}</th>
+						<th class="eng-hub-costs-table__num">${__("Valor")}</th>
+						<th>${__("Status")}</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody class="eng-hub-costs-table__body"></tbody>
+				<tfoot class="eng-hub-costs-table__foot"></tfoot>
+			</table>
+		</div>
 	</div>`);
+
+	const $panel = $w.find(".eng-hub-costs");
+	const $tbody = $panel.find(".eng-hub-costs-table__body");
+	const $tfoot = $panel.find(".eng-hub-costs-table__foot");
+
+	function renderRows() {
+		const filtered = _eng_hub_filter_cost_items(items, filterState);
+		const totals = filtered.reduce(
+			(acc, row) => {
+				acc.amount += flt(row.amount);
+				acc.paid += flt(row.paid);
+				acc.outstanding += flt(row.outstanding);
+				return acc;
+			},
+			{ amount: 0, paid: 0, outstanding: 0 }
+		);
+
+		if (!filtered.length) {
+			$tbody.html(`<tr><td colspan="9" class="eng-hub-costs-table__empty">${__(
+				"Nenhum item corresponde aos filtros."
+			)}</td></tr>`);
+		} else {
+			$tbody.html(
+				filtered
+					.map((row) => {
+						const dt = row.date ? frappe.datetime.str_to_user(row.date) : "—";
+						const badgeColor = sourceColors[row.source] || "gray";
+						const desc = frappe.utils.escape_html(row.description || "");
+						const descShort =
+							desc.length > 40 ? desc.slice(0, 39) + "…" : desc;
+						const statusDot = _eng_hub_costs_status_dot(row.status, row.source);
+						return `<tr class="eng-hub-costs-row" data-route="Form/${frappe.utils.escape_html(
+							row.source_doctype
+						)}/${frappe.utils.escape_html(row.name)}">
+						<td>${dt}</td>
+						<td><span class="eng-hub-badge eng-hub-badge--${badgeColor}">${frappe.utils.escape_html(
+							row.source_label || ""
+						)}</span></td>
+						<td>${frappe.utils.escape_html(row.category || "—")}</td>
+						<td class="eng-hub-costs-table__desc" title="${desc}">${descShort || "—"}</td>
+						<td>${frappe.utils.escape_html(row.supplier || "—")}</td>
+						<td>${frappe.utils.escape_html(row.stage || "—")}</td>
+						<td class="eng-hub-costs-table__num">${format_currency(row.amount)}</td>
+						<td>${statusDot}</td>
+						<td class="eng-hub-costs-table__link">↗</td>
+					</tr>`;
+					})
+					.join("")
+			);
+		}
+
+		$tfoot.html(`<tr class="eng-hub-costs-table__totals">
+			<td colspan="6"><strong>${__("Totais filtrados")}</strong></td>
+			<td class="eng-hub-costs-table__num"><strong>${format_currency(totals.amount)}</strong></td>
+			<td colspan="2">
+				<span class="eng-hub-costs-table__subtotal">${__("Pago")}: ${format_currency(
+					totals.paid
+				)}</span>
+				<span class="eng-hub-costs-table__subtotal">${__("Em aberto")}: ${format_currency(
+					totals.outstanding
+				)}</span>
+			</td>
+		</tr>`);
+
+		$panel.find(".eng-hub-costs-row[data-route]").off("click").on("click", function () {
+			const parts = $(this).attr("data-route").split("/");
+			frappe.set_route(parts[0], parts[1], parts[2]);
+		});
+	}
+
+	renderRows();
+
+	$panel.find(".eng-hub-costs-filter").on("change", function () {
+		const field = $(this).attr("data-filter");
+		filterState[field] = $(this).val() || "";
+		renderRows();
+	});
 
 	$w.find('[data-hub-action="new-cost"]').on("click", () => {
 		frappe.new_doc("Work Cost", { project: frm.doc.name });
 	});
-	$w.find(".eng-hub-list-row[data-route]").on("click", function () {
-		const parts = $(this).attr("data-route").split("/");
-		frappe.set_route(parts[0], parts[1], parts[2]);
+}
+
+function _eng_hub_costs_kpi_html(summary) {
+	const bySource = summary.by_source || {};
+	const sourceCards = Object.entries(bySource)
+		.map(
+			([label, bucket]) => `<div class="eng-hub-kpi eng-hub-kpi--compact">
+			<div class="eng-hub-kpi__value" style="font-size:var(--text-md)">${format_currency(
+				bucket.amount || 0
+			)}</div>
+			<div class="eng-hub-kpi__label">${frappe.utils.escape_html(label)}</div>
+		</div>`
+		)
+		.join("");
+
+	return `<div class="eng-hub-kpi-row">
+		<div class="eng-hub-kpi">
+			<div class="eng-hub-kpi__value" style="color:var(--blue-500)">${format_currency(
+				summary.total_amount || 0
+			)}</div>
+			<div class="eng-hub-kpi__label">${__("Total")}</div>
+		</div>
+		<div class="eng-hub-kpi">
+			<div class="eng-hub-kpi__value" style="color:var(--green-600)">${format_currency(
+				summary.total_paid || 0
+			)}</div>
+			<div class="eng-hub-kpi__label">${__("Pago")}</div>
+		</div>
+		<div class="eng-hub-kpi">
+			<div class="eng-hub-kpi__value" style="color:var(--orange-500)">${format_currency(
+				summary.total_outstanding || 0
+			)}</div>
+			<div class="eng-hub-kpi__label">${__("Em aberto")}</div>
+		</div>
+		${sourceCards}
+	</div>`;
+}
+
+function _eng_hub_costs_filters_html(options) {
+	const opt = (values, allLabel) =>
+		`<option value="">${frappe.utils.escape_html(allLabel)}</option>` +
+		values
+			.map(
+				(v) =>
+					`<option value="${frappe.utils.escape_html(v.value)}">${frappe.utils.escape_html(
+						v.label
+					)}</option>`
+			)
+			.join("");
+
+	return `<div class="eng-hub-costs-filters">
+		<select class="eng-hub-costs-filter" data-filter="source">${opt(
+			options.sources,
+			__("Todos os tipos")
+		)}</select>
+		<select class="eng-hub-costs-filter" data-filter="category">${opt(
+			options.categories,
+			__("Todas categorias")
+		)}</select>
+		<select class="eng-hub-costs-filter" data-filter="stage">${opt(
+			options.stages,
+			__("Todas etapas")
+		)}</select>
+		<select class="eng-hub-costs-filter" data-filter="funded_by">${opt(
+			options.funded_by,
+			__("Quem arca")
+		)}</select>
+	</div>`;
+}
+
+function _eng_hub_costs_filter_options(items) {
+	const uniq = (key) => {
+		const seen = new Map();
+		items.forEach((row) => {
+			const val = row[key];
+			if (val && !seen.has(val)) {
+				seen.set(val, row[key === "source" ? "source_label" : key] || val);
+			}
+		});
+		return [...seen.entries()].map(([value, label]) => ({ value, label }));
+	};
+
+	return {
+		sources: uniq("source").map((row) => ({
+			value: row.value,
+			label: items.find((i) => i.source === row.value)?.source_label || row.label,
+		})),
+		categories: uniq("category"),
+		stages: uniq("stage").filter((row) => row.value),
+		funded_by: uniq("funded_by").filter((row) => row.value),
+	};
+}
+
+function _eng_hub_filter_cost_items(items, filterState) {
+	return items.filter((row) => {
+		if (filterState.source && row.source !== filterState.source) return false;
+		if (filterState.category && row.category !== filterState.category) return false;
+		if (filterState.stage && row.stage !== filterState.stage) return false;
+		if (filterState.funded_by && row.funded_by !== filterState.funded_by) return false;
+		return true;
 	});
+}
+
+function _eng_hub_costs_status_dot(status, source) {
+	const paidStatuses = {
+		work_cost: ["Pago"],
+		reimbursable_expense: ["Reembolsado"],
+		subcontract: ["Paid", "Closed"],
+	};
+	const cancelledStatuses = ["Cancelado", "Cancelled"];
+	let color = "orange";
+	if (paidStatuses[source]?.includes(status)) {
+		color = "green";
+	} else if (cancelledStatuses.includes(status)) {
+		color = "gray";
+	} else if (source === "subcontract" && status === "Open") {
+		color = "blue";
+	}
+	return `<span class="eng-hub-costs-status-dot eng-hub-costs-status-dot--${color}" title="${frappe.utils.escape_html(
+		status || ""
+	)}"></span>`;
 }
 
 function eng_hub_render_payments(frm, payments) {
