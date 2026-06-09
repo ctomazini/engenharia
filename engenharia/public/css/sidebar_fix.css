@@ -1,0 +1,8 @@
+/*
+ * Sidebar collapsed mode: hide labels, show only icons.
+ * Frappe core applies truncate() but doesn't hide labels at 50px width.
+ * This scoped fix ensures clean icon-only mode when collapsed.
+ */
+.body-sidebar:not(.expanded) .sidebar-item-label {
+	display: none !important;
+}

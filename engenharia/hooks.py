@@ -63,6 +63,7 @@ app_include_css = [
 	"/assets/engenharia/css/list_filters.css",
 	"/assets/engenharia/css/reports.css",
 	"/assets/engenharia/css/hub.css",
+	"/assets/engenharia/css/sidebar_fix.css",
 ]
 app_include_js = [
 	"/assets/engenharia/js/masks.js",
