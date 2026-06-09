@@ -1,3 +1,14 @@
+/* ── Esconder dashboard nativo no Construction Project ──
+   Substituído pela summary bar do hub.
+   Seletor específico para não afetar outros DocTypes. ── */
+
+[data-doctype="Construction Project"] .form-dashboard-section,
+[data-doctype="Construction Project"] .form-dashboard,
+[data-doctype="Construction Project"] .form-links,
+[data-doctype="Construction Project"] .document-link {
+	display: none !important;
+}
+
 /* ═══════════════════════════════════════════════════════════
    ENG-HUB — Painéis visuais dentro do form Construction Project
    Consistente com eng-dash-* do Painel de Obras
@@ -423,18 +434,19 @@
 /* ── Summary bar (topo tab Detalhes) ── */
 
 .eng-hub-summary-bar {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 6px;
-	padding: 12px 0 16px;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+	gap: 8px;
+	padding: 16px 0;
 	border-bottom: 1px solid var(--border-color);
-	margin-bottom: 16px;
+	margin-bottom: 20px;
 }
 
 .eng-hub-summary-pill {
-	display: inline-flex;
+	display: flex;
 	align-items: center;
-	border-radius: 16px;
+	justify-content: space-between;
+	border-radius: 8px;
 	background: var(--control-bg);
 	font-size: var(--text-xs);
 	color: var(--text-muted);
@@ -442,6 +454,7 @@
 	border: 1px solid transparent;
 	user-select: none;
 	overflow: hidden;
+	height: 36px;
 }
 
 .eng-hub-summary-pill:hover {
@@ -458,13 +471,16 @@
 }
 
 .eng-hub-summary-pill__link {
-	display: inline-flex;
+	display: flex;
 	align-items: center;
-	gap: 4px;
-	padding: 4px 6px 4px 10px;
+	gap: 6px;
+	padding: 0 8px 0 10px;
 	color: inherit;
 	text-decoration: none;
 	cursor: pointer;
+	flex: 1;
+	min-width: 0;
+	height: 100%;
 }
 
 .eng-hub-summary-pill__link:hover {
@@ -473,17 +489,22 @@
 }
 
 .eng-hub-summary-pill__icon {
-	font-size: 13px;
+	font-size: 14px;
+	flex-shrink: 0;
 }
 
 .eng-hub-summary-pill__label {
 	font-weight: 500;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .eng-hub-summary-pill__count {
 	font-weight: 700;
-	min-width: 16px;
+	min-width: 18px;
 	text-align: center;
+	flex-shrink: 0;
 }
 
 .eng-hub-summary-pill--active .eng-hub-summary-pill__count {
@@ -491,18 +512,18 @@
 }
 
 .eng-hub-summary-pill__add {
-	display: inline-flex;
+	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 24px;
-	height: 24px;
-	margin: 0 2px;
-	border-radius: 50%;
-	font-size: 14px;
+	width: 32px;
+	height: 100%;
+	font-size: 16px;
 	font-weight: 600;
 	color: var(--text-muted);
 	cursor: pointer;
 	transition: all .15s ease;
+	border-left: 1px solid var(--border-color);
+	flex-shrink: 0;
 }
 
 .eng-hub-summary-pill__add:hover {
@@ -511,6 +532,11 @@
 }
 
 @media (max-width: 768px) {
+	.eng-hub-summary-bar {
+		grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+		gap: 6px;
+	}
+
 	.eng-hub-summary-pill__label {
 		display: none;
 	}
