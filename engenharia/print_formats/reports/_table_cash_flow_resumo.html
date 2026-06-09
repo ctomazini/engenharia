@@ -1,0 +1,33 @@
+<table class="data">
+	<thead>
+		<tr>
+			<th style="width: 28px;">#</th>
+			{% for col in columns %}
+				{% if col.name && col._id !== "_check" && (col.fieldname == "date" || col.fieldname == "type" || col.fieldname == "description" || col.fieldname == "inflow" || col.fieldname == "outflow") %}
+				<th {% if frappe.model.is_numeric_field(col.fieldtype) %} class="text-right" {% endif %}>{{ __(col.name) }}</th>
+				{% endif %}
+			{% endfor %}
+		</tr>
+	</thead>
+	<tbody>
+		{% for row in data %}
+		<tr {% if !row.date %} style="font-weight: bold; background: #f3f3f3;" {% endif %}>
+			<td>{{ row._index + 1 }}</td>
+			{% for col in columns %}
+				{% if col.name && col._id !== "_check" && (col.fieldname == "date" || col.fieldname == "type" || col.fieldname == "description" || col.fieldname == "inflow" || col.fieldname == "outflow") %}
+					{% var value = col.fieldname ? row[col.fieldname] : row[col.id] %}
+					<td {% if frappe.model.is_numeric_field(col.fieldtype) %} class="text-right" {% endif %}>
+						{{
+							col.formatter
+								? col.formatter(row._index, col._index, value, col, row, true)
+								: col.docfield
+									? frappe.format(value, col.docfield)
+									: value
+						}}
+					</td>
+				{% endif %}
+			{% endfor %}
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>

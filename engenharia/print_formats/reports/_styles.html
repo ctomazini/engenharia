@@ -1,0 +1,108 @@
+<style>
+	.eng-rpt-print {
+		font-family: "Helvetica Neue", Arial, sans-serif;
+		font-size: 10pt;
+		color: #222;
+		line-height: 1.4;
+	}
+	.eng-rpt-print-header {
+		display: table;
+		width: 100%;
+		margin-bottom: 16px;
+		padding-bottom: 12px;
+		border-bottom: 2px solid #333;
+	}
+	.eng-rpt-print-logo {
+		display: table-cell;
+		width: 110px;
+		vertical-align: middle;
+	}
+	.eng-rpt-print-logo img {
+		max-height: 64px;
+		max-width: 100px;
+	}
+	.eng-rpt-print-office {
+		display: table-cell;
+		vertical-align: middle;
+		padding-left: 12px;
+	}
+	.eng-rpt-print-office strong {
+		font-size: 13pt;
+	}
+	.eng-rpt-print-meta {
+		display: table-cell;
+		vertical-align: middle;
+		text-align: right;
+		font-size: 9pt;
+		color: #555;
+	}
+	.eng-rpt-print-title {
+		text-align: center;
+		font-size: 14pt;
+		font-weight: 700;
+		text-transform: uppercase;
+		margin: 12px 0 8px;
+		letter-spacing: 0.04em;
+	}
+	.eng-rpt-print-filters {
+		font-size: 9pt;
+		color: #555;
+		margin-bottom: 12px;
+		padding: 8px 10px;
+		background: #f6f6f6;
+		border: 1px solid #ddd;
+		border-radius: 4px;
+	}
+	.eng-rpt-print-filters .filter-row {
+		margin-bottom: 2px;
+	}
+	.eng-rpt-print table.data {
+		width: 100%;
+		border-collapse: collapse;
+		font-size: 9pt;
+	}
+	.eng-rpt-print table.data th {
+		background: #f0f0f0;
+		border: 1px solid #bbb;
+		padding: 5px 6px;
+		text-align: left;
+		font-weight: 600;
+		font-size: 8pt;
+		text-transform: uppercase;
+		letter-spacing: 0.03em;
+	}
+	.eng-rpt-print table.data td {
+		border: 1px solid #ccc;
+		padding: 4px 6px;
+		vertical-align: top;
+	}
+	.eng-rpt-print table.data tr:nth-child(even) td {
+		background: #fafafa;
+	}
+	.eng-rpt-print .text-right {
+		text-align: right;
+	}
+	.eng-rpt-print .muted {
+		color: #666;
+		font-size: 9pt;
+	}
+	.eng-rpt-print-footer {
+		margin-top: 16px;
+		padding-top: 8px;
+		border-top: 1px solid #ccc;
+		font-size: 8pt;
+		color: #777;
+		text-align: center;
+	}
+	.eng-rpt-print .overflow-wrap-anywhere {
+		word-break: break-word;
+	}
+	@media print {
+		.eng-rpt-print {
+			font-size: 9pt;
+		}
+		.eng-rpt-print table.data tr {
+			page-break-inside: avoid;
+		}
+	}
+</style>

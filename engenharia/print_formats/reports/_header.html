@@ -1,0 +1,26 @@
+<div class="eng-rpt-print{% if print_settings && print_settings.orientation == "Landscape" %} landscape{% endif %}">
+	<div class="eng-rpt-print-header">
+		{% if frappe.boot.eng_office.company_logo_url %}
+		<div class="eng-rpt-print-logo">
+			<img src="{{ frappe.boot.eng_office.company_logo_url }}" alt="">
+		</div>
+		{% endif %}
+		<div class="eng-rpt-print-office">
+			<strong>{{ frappe.boot.eng_office.company_name }}</strong>
+			{% if frappe.boot.eng_office.company_cnpj %}
+			<div class="muted">CNPJ {{ frappe.boot.eng_office.company_cnpj }}</div>
+			{% endif %}
+			{% if frappe.boot.eng_office.company_crea %}
+			<div class="muted">CREA {{ frappe.boot.eng_office.company_crea }}</div>
+			{% endif %}
+		</div>
+		<div class="eng-rpt-print-meta">
+			<div><strong>Emissão:</strong> {{ frappe.datetime.str_to_user(frappe.datetime.nowdate()) }}</div>
+		</div>
+	</div>
+	{% if title %}
+	<h2 class="eng-rpt-print-title">{{ __(title) }}</h2>
+	{% endif %}
+	{% if subtitle %}
+	<div class="eng-rpt-print-filters">{{ subtitle }}</div>
+	{% endif %}

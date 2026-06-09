@@ -25,6 +25,18 @@ fixtures = [
 			"Engenharia - Contrato de Obra",
 			"Engenharia - Recibo de Pagamento",
 			"Engenharia - Orçamento da Obra",
+			"Engenharia - Custos Realizados (Resumo)",
+			"Engenharia - Custos Realizados (Detalhado)",
+			"Engenharia - Custos Realizados (Paisagem)",
+			"Engenharia - Orçado vs Realizado (Resumo)",
+			"Engenharia - Orçado vs Realizado (Paisagem)",
+			"Engenharia - Fluxo de Caixa (Resumo)",
+			"Engenharia - Fluxo de Caixa (Paisagem)",
+			"Engenharia - Compras avulsas por obra (Resumo)",
+			"Engenharia - Compras avulsas por categoria (Resumo)",
+			"Engenharia - Margem por Obra (Resumo)",
+			"Engenharia - Margem por Obra (Paisagem)",
+			"Engenharia - Obras por Status (Resumo)",
 		]]],
 	},
 	{
@@ -129,6 +141,8 @@ importable_doctypes = [
 standard_queries = {
 	"Construction Project": "engenharia.engenharia.doctype.construction_project.construction_project.construction_project_query",
 }
+
+boot_session = "engenharia.boot.boot_session"
 
 # Jinja
 # ----------

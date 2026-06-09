@@ -4,7 +4,11 @@ from frappe.utils import today
 from frappe.utils.print_utils import get_print
 
 from engenharia.engenharia.doctype.construction_project.construction_project import create_project_item
-from engenharia.setup.print_formats import PRINT_FORMAT_NAMES, ensure_engenharia_print_formats
+from engenharia.setup.print_formats import (
+	_REPORT_PRINT_FORMATS,
+	PRINT_FORMAT_NAMES,
+	ensure_engenharia_print_formats,
+)
 from engenharia.tests.test_project_item import create_test_technical_item_cylinder
 from engenharia.tests.test_setup import (
 	create_test_construction_project,
@@ -29,6 +33,19 @@ class TestPrintFormats(FrappeTestCase):
 				frappe.db.exists("Print Format", name),
 				msg=f"Print Format {name} não encontrado — rode migrate",
 			)
+
+	def test_report_print_formats_linked(self):
+		for spec in _REPORT_PRINT_FORMATS:
+			meta = frappe.db.get_value(
+				"Print Format",
+				spec["name"],
+				["print_format_for", "report", "print_format_type", "html"],
+				as_dict=True,
+			)
+			self.assertEqual(meta.print_format_for, "Report")
+			self.assertEqual(meta.report, spec["report"])
+			self.assertEqual(meta.print_format_type, "JS")
+			self.assertIn("eng-rpt-print", meta.html or "")
 
 	def test_contract_print_preview(self):
 		contract = create_test_engineering_contract(base_value=12000, installment_count=2)
