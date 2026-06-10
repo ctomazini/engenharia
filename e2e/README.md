@@ -68,7 +68,8 @@ Cada execução usa marcador único **`PLAYWRIGHT_<run_id>`** nos campos de text
 ### Fora do escopo atual
 
 - Geração de `.docx` com placeholders (`generate_project_documents`)
-- Navegação nos 5 **Script Reports** (gráficos/KPIs)
+- Navegação nos 7 **Script Reports** (gráficos/KPIs) e preview Print Format PDF
+- Office Expense (Despesas do Escritório)
 - Asserção de parcelas individuais de subcontrato na UI
 
 ---

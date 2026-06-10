@@ -23,10 +23,12 @@ Especificações técnicas: cadastro em **Technical Item** (parâmetros + fórmu
 
 ## Destaques funcionais
 
-- **Painel de Obras** (`/app/eng-dashboard`): atenção operacional, agenda, obras ativas, zona financeira (Manager), filtros com refresh parcial
-- **Relatórios operacionais** (5 Script Reports): gráficos de barras/donut, cards KPI e formatação colorida nas tabelas
+- **Painel de Obras** (`/app/eng-dashboard`): atenção operacional, agenda, obras ativas, zona financeira (Manager), despesas do escritório pendentes, filtros com refresh parcial
+- **Relatórios operacionais** (7 Script Reports): gráficos de barras/donut, cards KPI, formatação colorida e **15 Print Formats** PDF (logo do escritório via Engineering Settings)
+- **Despesas do Escritório** (`Office Expense`): custos de funcionamento (aluguel, energia, salários) com recorrência e integração no fluxo de caixa
 - **Documentos Word**: geração a partir de modelos `.docx` com placeholders completos (obra, orçamento, contrato, subcontratos)
 - **Custos e subcontratos:** `funded_by` (Escritório vs Cliente) — lançamentos pagos pelo cliente não entram no caixa do escritório
+- **Modelos de Etapas** (`Project Stage Template`): aplicar etapas padronizadas à obra
 - **Contratos:** parcelas com sync automático para **Payment**
 - **API para agentes IA:** `engenharia/agent_api.py` — 4 endpoints read-only; ver [`engenharia/docs/audit_ai_readiness.md`](engenharia/docs/audit_ai_readiness.md)
 
@@ -35,7 +37,7 @@ Especificações técnicas: cadastro em **Technical Item** (parâmetros + fórmu
 ## Testes
 
 ```bash
-# Unitários / integração (246 testes)
+# Unitários / integração (294 testes)
 bench --site engenharia.local run-tests --app engenharia
 
 # E2E Playwright (ver e2e/README.md)

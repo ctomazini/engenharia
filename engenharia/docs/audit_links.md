@@ -1,6 +1,8 @@
 # Seção 2 — Cross-check de Links entre DocTypes
 
-**App:** `engenharia` · **Data:** 2026-06-06
+**App:** `engenharia` · **Data:** 2026-06-06 (revisão 2026-06-09)
+
+> **Adições:** `Office Expense` (standalone, sem `project`), `Project Stage Template`, sidebar em `workspace_sidebar/engenharia.json` (~37 itens).
 
 ---
 
@@ -33,6 +35,12 @@ Construction Project  [HUB]
       ├── Project Stage.project
       ├── Project Item.project
       └── Construction Measurement.project
+
+Office Expense  [standalone — custos escritório, sem project]
+  └── integra: cash_flow (saídas), dashboard Manager (pendentes)
+
+Project Stage Template  [cadastro]
+  └── aplicado em Construction Project via stage_template.py
 
 Engineering Contract
   ├── project, customer (Link)

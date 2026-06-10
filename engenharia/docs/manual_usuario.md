@@ -14,6 +14,7 @@ O módulo **Engenharia** centraliza a operação de um escritório de projetos e
 
 - Cadastro de **clientes**, **fornecedores** e **obras**
 - **Orçamento técnico** (itens do projeto) e **custos realizados** (compras, subcontratos, reembolsáveis) — camadas distintas
+- **Despesas do escritório** (aluguel, energia, salários) — custos de funcionamento, separados dos custos de obra
 - **Contratos de honorários**, **recebimentos** e **comissões**
 - **Prazos**, **tarefas**, **alvarás** e **medições**
 - **Documentos** gerados a partir de modelos Word
@@ -24,7 +25,7 @@ O módulo **Engenharia** centraliza a operação de um escritório de projetos e
 | Perfil | O que pode fazer |
 |---|---|
 | **Engenharia Manager** | Acesso completo: operacional + financeiro + configurações sensíveis (orçamento total da obra, comissões, contratos, pagamentos, custos) |
-| **Engenharia User** | Operacional: projetos, etapas, itens técnicos da obra, prazos, tarefas, alvarás, medições, registros de horas e comunicações. **Não vê** contratos, pagamentos, comissões, custos nem a zona financeira do painel |
+| **Engenharia User** | Operacional: projetos, etapas, itens técnicos da obra, prazos, tarefas, alvarás, medições, registros de horas e comunicações. **Não vê** contratos, pagamentos, comissões, custos de obra, despesas do escritório nem a zona financeira do painel |
 
 Se você tentar abrir um registro financeiro sem permissão, o sistema exibirá *Permissão insuficiente* — isso é esperado para o perfil User.
 
@@ -180,6 +181,8 @@ O sistema gera um código automático (ex.: `PROJ-2026-0042`) e um **título** c
 
 Crie registros **Etapa da Obra** vinculados ao projeto, escolhendo **Tipo de etapa** e informando avanço e datas.
 
+**Modelos de Etapas** (sidebar **Orçamento → Modelos de Etapas**): cadastre templates com tipos de etapa e pesos. Na obra, use **Aplicar modelo** para criar etapas automaticamente (substitui etapas existentes). O botão **Redistribuir pesos** divide o peso igualmente entre as etapas da obra.
+
 ### Itens do Projeto
 
 São as linhas de orçamento/especificação técnica da obra:
@@ -252,6 +255,8 @@ O sistema separa **dois mundos** que não se sincronizam automaticamente:
 3. **Despesas reembolsáveis** — escritório paga e o cliente devolve
 
 O relatório **Custos Realizados** consolida as três fontes. *Compras avulsas por obra/categoria* mostram **somente** o canal 1.
+
+**Despesas do escritório** (sidebar **Despesas → Despesas do Escritório**) são **custos de funcionamento** — não vinculados a uma obra. Entram no **fluxo de caixa** como saídas quando pagas e aparecem no painel (Manager) na lista de despesas pendentes.
 
 ---
 
@@ -345,9 +350,29 @@ Registro de comissões a receber (ex.: pré-moldado, parceiro).
 4. O sistema calcula **Total pago**, **Saldo a receber** e status (Aberta / Parcial / Paga).
 5. O campo **Comissões a receber** na obra agrega todas as comissões abertas *(Manager)*.
 
-### 6.6 Relatórios operacionais
+### 6.7 Despesas do Escritório
 
-Os cinco **Script Reports** da sidebar (Engenharia → Relatórios) exibem **cards KPI coloridos** no topo e um **gráfico** (barras ou donut) acima da tabela. Use os filtros de cada relatório para refinar a visão.
+Custos de **funcionamento do escritório** (aluguel, energia, salários, software, etc.) — **não** são custos de uma obra específica.
+
+| Campo | O que preencher |
+|---|---|
+| Descrição | Texto do lançamento (ex.: Aluguel sala) |
+| Categoria | Aluguel, Energia, Salários, Software/Assinatura, … |
+| Valor | Valor da despesa |
+| Vencimento | Data de vencimento |
+| Data de pagamento | Quando pago — marca status **Pago** |
+| Recorrente | Marque para despesas mensais/anuais |
+| Comprovante | Anexo por lançamento (não é copiado ao gerar a próxima recorrente) |
+
+**Recorrência:** com **Recorrente** ativo, use **Gerar próxima** para criar o lançamento do período seguinte (vencimento avançado; comprovante zerado).
+
+No **Painel** (Manager), despesas pendentes ou atrasadas aparecem na zona financeira; use **Marcar pago** na lista.
+
+*(Disponível apenas para Engenharia Manager.)*
+
+### 6.8 Relatórios operacionais
+
+Os **sete Script Reports** da sidebar (Engenharia → Relatórios) exibem **cards KPI coloridos** no topo e um **gráfico** (barras ou donut) acima da tabela. Use os filtros de cada relatório para refinar a visão.
 
 | Relatório | Gráfico | KPIs principais | Filtros |
 |---|---|---|---|
@@ -363,9 +388,13 @@ Os cinco **Script Reports** da sidebar (Engenharia → Relatórios) exibem **car
 
 - **Fluxo de Caixa** e **Margem Realizada** consideram apenas custos e subcontratos com **Quem arca = Escritório**.
 - **Custo por Categoria/Obra** incluem todos os lançamentos (Escritório e Cliente) para visão analítica da obra.
-- Saídas do fluxo de caixa somam **Custo de Obra** + **Subcontrato** (escritório) + **Despesa Reembolsável**.
+- Saídas do fluxo de caixa somam **Custo de Obra** + **Subcontrato** (escritório) + **Despesa Reembolsável** + **Despesa do Escritório** (pagas).
 
 Na tabela, valores críticos aparecem com **destaque colorido** (margem negativa em vermelho, custos em vermelho, status com pills).
+
+### Impressão PDF dos relatórios
+
+Em qualquer Script Report, abra o menu **Imprimir** e escolha um formato **Engenharia - …** (Resumo, Detalhado ou Paisagem). O cabeçalho usa logo e dados do escritório configurados em **Configurações do Escritório** (Engineering Settings).
 
 ---
 
@@ -533,7 +562,7 @@ Controle tempo gasto por **atividade** e **obra**.
 
 Histórico de ligações, e-mails e reuniões com clientes ou órgãos.
 
-Informe **Assunto**, obra, tipo de comunicação e resumo.
+Informe **Assunto**, obra, tipo de comunicação e resumo. Opcionalmente marque **Gerar Tarefa** e **Data de retorno** (`follow_up_date`) — a data de retorno vira vencimento da tarefa criada automaticamente.
 
 ---
 

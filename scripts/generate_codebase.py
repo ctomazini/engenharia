@@ -10,6 +10,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DT_DIR = ROOT / "engenharia/engenharia/doctype"
 OUT_PATH = ROOT / "CODEBASE.md"
+REPORT_COUNT = 7  # engenharia/setup/reports.py REPORT_JSON_PATHS
+PRINT_FORMAT_COUNT = 15  # engenharia/setup/print_formats.py PRINT_FORMAT_NAMES
 
 
 def esc(s):
@@ -36,6 +38,18 @@ def count_lines(ext):
 		except OSError:
 			pass
 	return total
+
+
+def count_test_methods():
+	total = 0
+	files = 0
+	for pattern in ("engenharia/tests/test_*.py", "engenharia/engenharia/doctype/**/test_*.py"):
+		for tf in ROOT.glob(pattern):
+			files += 1
+			total += len(
+				re.findall(r"^\s+def test_", tf.read_text(encoding="utf-8", errors="ignore"), re.M)
+			)
+	return total, files
 
 
 def render_dt(name, d):
@@ -76,6 +90,7 @@ def load_doctypes():
 		"Project Stage",
 		"Stage Type",
 		"Permit Type",
+		"Project Stage Template",
 	}
 	for folder in sorted(DT_DIR.iterdir()):
 		jpath = folder / f"{folder.name}.json"
@@ -97,17 +112,13 @@ def load_doctypes():
 def main():
 	py_lines = count_lines(".py")
 	js_lines = count_lines(".js")
-	test_dir = ROOT / "engenharia/tests"
-	test_files = sorted(test_dir.glob("test_*.py"))
-	test_methods = sum(
-		len(re.findall(r"^\s+def test_", tf.read_text(encoding="utf-8", errors="ignore"), re.M))
-		for tf in test_files
-	)
+	test_methods, test_files = count_test_methods()
 	head = subprocess.check_output(
 		["git", "log", "-1", "--format=%h %ci %s"], cwd=ROOT, text=True
 	).strip()
 	recent = subprocess.check_output(["git", "log", "--oneline", "-12"], cwd=ROOT, text=True).strip()
 	child_tables, standalone, auxiliary, single = load_doctypes()
+	dt_total = len(standalone) + len(auxiliary) + len(child_tables) + len(single)
 
 	L = []
 	L.append("# CODEBASE — App Engenharia (Frappe v16)\n\n")
@@ -123,20 +134,23 @@ def main():
 			["Item", "Valor"],
 			[
 				["Nome", "engenharia"],
+				["Versão", "1.0.0 (`pyproject.toml`)"],
 				["Framework", "Frappe v16"],
 				["Licença", "MIT"],
 				["Site dev", "engenharia.local"],
 				["Linhas Python", f"~{py_lines}"],
 				["Linhas JavaScript", f"~{js_lines}"],
-				["Métodos de teste", str(test_methods)],
-				["DocTypes", f"{len(standalone) + len(auxiliary) + len(child_tables) + len(single)} (`custom: 0`)"],
-				["Script Reports", "5"],
+				["Métodos de teste", f"{test_methods} ({test_files} arquivos)"],
+				["DocTypes", f"{dt_total} (`custom: 0`)"],
+				["Script Reports", str(REPORT_COUNT)],
+				["Print Formats", str(PRINT_FORMAT_COUNT)],
 			],
 		)
 	)
 	L.append(
-		"**Propósito:** gestão de obras — projetos, contratos, custos, subcontratos, prazos, protocolos, "
-		"pagamentos, painel modular, documentos `.docx`.\n\n"
+		"**Propósito:** gestão de obras — projetos, contratos, custos (obra + escritório), "
+		"subcontratos, comissões, prazos, protocolos, pagamentos, painel modular, "
+		"documentos `.docx`, impressão PDF de relatórios.\n\n"
 		"**Deps:** `docxtpl>=0.18.0`.\n\n"
 	)
 	L.append(f"**Commits recentes:**\n```text\n{recent}\n```\n\n")
@@ -144,13 +158,33 @@ def main():
 	L.append("## 2. Árvore de Arquivos (anotada)\n\n```text\n")
 	L.append("engenharia/\n├── CODEBASE.md, README.md, REGRAS_OBRIGATORIAS.md, pyproject.toml\n")
 	L.append("└── engenharia/\n")
-	L.append("    ├── hooks.py, dashboard_api.py, documents.py, financial.py, notifications.py\n")
-	L.append("    ├── public/js/ (masks, list_nav, customer_from_project, documents_placeholders, dashboard/*)\n")
-	L.append("    ├── setup/ (install, sidebar, workspace, reports, reinstall_child_doctypes)\n")
+	L.append("    ├── hooks.py, boot.py, dashboard_api.py, agent_api.py, documents.py\n")
+	L.append("    ├── financial.py, work_costs.py, report_visuals.py, titles.py, validators.py\n")
+	L.append("    ├── dashboard/ (kpis, financial, deadlines, timeline, attention, health, …)\n")
+	L.append("    ├── public/js/ (masks, list_nav, hub, reports_common, dashboard/*)\n")
+	L.append("    ├── public/css/ (reports, hub, list_filters, sidebar_fix)\n")
+	L.append("    ├── setup/ (install, sidebar, workspace, reports, print_formats, permissions, seed)\n")
+	L.append("    ├── print_formats/reports/ (templates PDF Script Reports)\n")
 	L.append("    └── engenharia/ (doctype/, report/, page/eng_dashboard/)\n")
 	L.append("```\n\n")
 
-	L.append("## 3. Mapa de DocTypes\n\n")
+	L.append("## 3. Script Reports\n\n")
+	L.append(
+		md_table(
+			["Report", "Pasta", "Print formats"],
+			[
+				["work_cost_by_project", "Compras avulsas por obra", "Resumo"],
+				["work_cost_by_category", "Compras avulsas por categoria", "Resumo"],
+				["cash_flow", "Fluxo de Caixa", "Resumo + Paisagem"],
+				["projects_by_status", "Obras por Status", "Resumo"],
+				["project_margin", "Margem por Obra", "Resumo + Paisagem"],
+				["consolidated_cost", "Custos Realizados", "Resumo + Detalhado + Paisagem"],
+				["budget_vs_actual", "Orçado vs Realizado", "Resumo + Paisagem"],
+			],
+		)
+	)
+
+	L.append("## 4. Mapa de DocTypes\n\n")
 	for section, group in [
 		("Standalone / transacionais", standalone),
 		("Auxiliares (cadastro rígido)", auxiliary),
@@ -161,8 +195,16 @@ def main():
 		for name, d in sorted(group, key=lambda x: x[0]):
 			L.append(render_dt(name, d))
 
-	L.append("## 4. hooks.py (resumo)\n\n")
-	L.append("### app_include_js\n")
+	L.append("## 5. hooks.py (resumo)\n\n")
+	L.append("### fixtures\n")
+	L.append(
+		"- Workspace `Engenharia`, Notification (4), Print Format (15), Custom Field Event `custom_source%`, "
+		"Role (2), Kanban Board\n\n"
+	)
+	L.append("### app_include_css\n")
+	for css in ("list_filters.css", "reports.css", "hub.css", "sidebar_fix.css"):
+		L.append(f"- `/assets/engenharia/css/{css}`\n")
+	L.append("\n### app_include_js\n")
 	for js in (
 		"masks.js",
 		"list_nav.js",
@@ -170,35 +212,51 @@ def main():
 		"customer_from_project.js",
 		"documents_placeholders.js",
 		"timer_global.js",
+		"reports_common.js",
+		"hub.js",
 	):
 		L.append(f"- `/assets/engenharia/js/{js}`\n")
-	L.append("\n### scheduler_events\n")
+	L.append("\n### boot_session\n")
+	L.append("- `engenharia.boot.boot_session` → `bootinfo.eng_office` (logo, dados do escritório para print)\n\n")
+	L.append("### scheduler_events\n")
 	L.append(
-		"- **daily:** check_overdue_installments, check_overdue_reimbursable_expenses, "
-		"notify_deadlines_daily, notify_expiring_permits, notify_overdue_tasks, notify_overdue_payments\n"
+		"- **daily:** check_overdue_installments, check_overdue_office_expenses, "
+		"check_overdue_reimbursable_expenses, notify_deadlines_daily, notify_expiring_permits, "
+		"notify_overdue_tasks, notify_overdue_payments\n"
 		"- **weekly:** check_project_status_weekly\n\n"
+	)
+	L.append("### doc_events\n")
+	L.append(
+		"- Engineering Contract, Reimbursable Expense, Engineering Contract Installment, Payment, "
+		"Deadline, Permit, Project Stage\n\n"
 	)
 	L.append("### after_migrate\n")
 	L.append(
-		"reinstall_child_doctypes → roles → permissions → seed → translations → sidebar → reports → workspace\n\n"
+		"reinstall_child_doctypes → roles → ensure_event_custom_fields → permissions → seed → "
+		"translations → sidebar → reports → print_formats → workspace\n\n"
 	)
 
-	L.append("## 5. API whitelisted (facade)\n\n")
+	L.append("## 6. API whitelisted (facade e principais)\n\n")
 	L.append(
 		md_table(
 			["Função", "Módulo", "Permissão"],
 			[
 				["get_dashboard_data", "dashboard_api", "Construction Project read"],
 				["mark_payment_received", "dashboard_api", "Payment write"],
-				["construction_project_query", "construction_project", "Construction Project read"],
+				["mark_office_expense_paid", "dashboard_api", "Office Expense write"],
+				["get_consolidated_costs", "engenharia.api.costs", "Construction Project read"],
+				["get_project_hub_data", "project_hub", "Construction Project read"],
+				["get_active_projects / get_project_summary", "agent_api", "Construction Project read"],
 				["get_placeholder_reference", "documents", "Document Template read"],
 				["bulk_delete_payments / resync / cancel", "financial", "Payment / Contract write"],
+				["create_next_office_expense", "office_expense", "Office Expense create"],
+				["apply_template_to_project", "stage_template", "Construction Project write"],
 			],
 		)
 	)
 
-	L.append("## 6. Testes\n\n")
-	L.append(f"- **{test_methods}** métodos em **{len(test_files)}** arquivos.\n")
+	L.append("## 7. Testes\n\n")
+	L.append(f"- **{test_methods}** métodos em **{test_files}** arquivos.\n")
 	L.append("- `bench --site engenharia.local run-tests --app engenharia`\n\n")
 
 	text = "".join(L)

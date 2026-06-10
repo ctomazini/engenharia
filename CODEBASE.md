@@ -1,8 +1,8 @@
 # CODEBASE — App Engenharia (Frappe v16)
 
-> Gerado em **2026-06-07** — inventário técnico do app greenfield EN. Frappe puro, **sem ERPNext**.
+> Gerado em **2026-06-09** — inventário técnico do app greenfield EN. Frappe puro, **sem ERPNext**.
 
-> **HEAD:** `8c907d2 2026-06-07 18:00:02 +0000 docs: complete document placeholders and sync all documentation`
+> **HEAD:** `caec325 2026-06-09 23:04:57 +0000 feat(reports): add print formats for script reports with office branding`
 
 ---
 
@@ -11,33 +11,35 @@
 | Item | Valor |
 | --- | --- |
 | Nome | engenharia |
+| Versão | 1.0.0 (`pyproject.toml`) |
 | Framework | Frappe v16 |
 | Licença | MIT |
 | Site dev | engenharia.local |
-| Linhas Python | ~15113 |
-| Linhas JavaScript | ~3781 |
-| Métodos de teste | 239 |
-| DocTypes | 40 (`custom: 0`) |
-| Script Reports | 5 |
+| Linhas Python | ~17837 |
+| Linhas JavaScript | ~5628 |
+| Métodos de teste | 294 (56 arquivos) |
+| DocTypes | 46 (`custom: 0`) |
+| Script Reports | 7 |
+| Print Formats | 15 |
 
-**Propósito:** gestão de obras — projetos, contratos, custos, subcontratos, prazos, protocolos, pagamentos, painel modular, documentos `.docx`.
+**Propósito:** gestão de obras — projetos, contratos, custos (obra + escritório), subcontratos, comissões, prazos, protocolos, pagamentos, painel modular, documentos `.docx`, impressão PDF de relatórios.
 
 **Deps:** `docxtpl>=0.18.0`.
 
 **Commits recentes:**
 ```text
-8c907d2 docs: complete document placeholders and sync all documentation
-3cc6f0a feat(reports): add charts, KPIs and color formatting to script reports
-eba1b47 docs: add deploy-ready audit report (2026-06-07)
-0cf9a54 fix: add type hints to whitelisted APIs and justify ignore_permissions
-8adb0ae docs: organize documentation index and E2E guide
-3c6be43 test(e2e): add Playwright session covering full app flow
-46527f4 feat(communication-log): add standard filters for date and type
-de7d40d feat(time-log): add standard filters for project and date
-6419739 feat(list-filters): add responsive standard filter bar
-a0959c0 fix(dashboard): stabilize partial refresh layout
-ee5f01b fix(dashboard): refresh period filter without full page reload
-b349346 style(dashboard): restore horizontal quick-actions carousel on mobile
+caec325 feat(reports): add print formats for script reports with office branding
+d66fe00 feat(dashboard): integrate office expenses and replace cost chart with bars
+066ffe7 feat: add Office Expense DocType for office operating costs
+7f4eede feat(reports): align script report visuals with hub KPI styling
+43ba466 feat(report): add Budget vs Actual script report
+f06cadf feat(hub): add budget vs realized banner and align financial KPIs
+fc8b6f6 docs: add budget vs realized costs section to user manual
+7184dc6 feat(ux): align nomenclature for realized costs vs budget planning
+bc7aeb8 refactor(sidebar): reorganize sections by budget, revenue and expenses
+ac2b958 fix(sidebar): correct collapsed label CSS selector
+d496066 test(costs): add partial payment tests and update factories
+c2bc684 feat(costs): integrate partial payments in reports, dashboard and cash flow
 ```
 
 ## 2. Árvore de Arquivos (anotada)
@@ -46,13 +48,29 @@ b349346 style(dashboard): restore horizontal quick-actions carousel on mobile
 engenharia/
 ├── CODEBASE.md, README.md, REGRAS_OBRIGATORIAS.md, pyproject.toml
 └── engenharia/
-    ├── hooks.py, dashboard_api.py, documents.py, financial.py, notifications.py
-    ├── public/js/ (masks, list_nav, customer_from_project, documents_placeholders, dashboard/*)
-    ├── setup/ (install, sidebar, workspace, reports, reinstall_child_doctypes)
+    ├── hooks.py, boot.py, dashboard_api.py, agent_api.py, documents.py
+    ├── financial.py, work_costs.py, report_visuals.py, titles.py, validators.py
+    ├── dashboard/ (kpis, financial, deadlines, timeline, attention, health, …)
+    ├── public/js/ (masks, list_nav, hub, reports_common, dashboard/*)
+    ├── public/css/ (reports, hub, list_filters, sidebar_fix)
+    ├── setup/ (install, sidebar, workspace, reports, print_formats, permissions, seed)
+    ├── print_formats/reports/ (templates PDF Script Reports)
     └── engenharia/ (doctype/, report/, page/eng_dashboard/)
 ```
 
-## 3. Mapa de DocTypes
+## 3. Script Reports
+
+| Report | Pasta | Print formats |
+| --- | --- | --- |
+| work_cost_by_project | Compras avulsas por obra | Resumo |
+| work_cost_by_category | Compras avulsas por categoria | Resumo |
+| cash_flow | Fluxo de Caixa | Resumo + Paisagem |
+| projects_by_status | Obras por Status | Resumo |
+| project_margin | Margem por Obra | Resumo + Paisagem |
+| consolidated_cost | Custos Realizados | Resumo + Detalhado + Paisagem |
+| budget_vs_actual | Orçado vs Realizado | Resumo + Paisagem |
+
+## 4. Mapa de DocTypes
 
 #### Standalone / transacionais
 
@@ -87,8 +105,9 @@ engenharia/
 | communication_type | Tipo | Select | Telefone WhatsApp Email Reunião Presencial Reunião Virtua... | ✓ |  |
 | subject | Assunto | Data |  | ✓ |  |
 | summary | Resumo | Text Editor |  |  |  |
-| next_steps | Próximos Passos | Small Text |  |  |  |
+| next_steps | Próximos Passos | Text Editor |  |  |  |
 | create_task | Gerar Tarefa | Check |  |  |  |
+| follow_up_date | Data de Follow-up | Date |  |  |  |
 | task | Tarefa Gerada | Link | Task |  |  |
 
 ### Construction Measurement
@@ -115,6 +134,7 @@ engenharia/
 
 | fieldname | label | fieldtype | options | reqd | unique |
 | --- | --- | --- | --- | --- | --- |
+| hub_summary_bar | Resumo da Obra | HTML |  |  |  |
 | customer | Cliente | Link | Customer | ✓ |  |
 | title | Título | Data |  |  |  |
 | project_type | Tipo de Obra | Select | Residencial Comercial Industrial Infraestrutura Reforma O... |  |  |
@@ -140,6 +160,19 @@ engenharia/
 | budget_revision | Revisão vigente | Int |  |  |  |
 | default_bdi_percent | BDI padrão % | Percent |  |  |  |
 | budget_revisions | Revisões de orçamento | Table | Project Budget Revision |  |  |
+| stages_panel | Painel de Etapas | HTML | <p class="text-muted">Carregando etapas...</p> |  |  |
+| financial_summary_panel | Resumo Financeiro | HTML | <p class="text-muted">Carregando resumo...</p> |  |  |
+| installments_panel | Parcelas | HTML | <p class="text-muted">Carregando parcelas...</p> |  |  |
+| costs_panel | Custos Realizados | HTML | <p class="text-muted">Carregando custos...</p> |  |  |
+| payments_panel | Pagamentos | HTML |  |  |  |
+| reimbursables_panel | Despesas Reembolsáveis | HTML |  |  |  |
+| commissions_hub_panel | Comissões | HTML |  |  |  |
+| deadlines_panel | Prazos | HTML | <p class="text-muted">Carregando prazos...</p> |  |  |
+| permits_panel | Alvarás e Protocolos | HTML | <p class="text-muted">Carregando protocolos...</p> |  |  |
+| tasks_panel | Tarefas | HTML | <p class="text-muted">Carregando tarefas...</p> |  |  |
+| communications_panel | Comunicações | HTML | <p class="text-muted">Carregando comunicações...</p> |  |  |
+| measurements_panel | Medições | HTML | <p class="text-muted">Carregando medições...</p> |  |  |
+| timelogs_panel | Horas Trabalhadas | HTML | <p class="text-muted">Carregando horas...</p> |  |  |
 | specs_help | Itens técnicos | HTML | <p class="text-muted">Use <b>Adicionar especificação</b>,... |  |  |
 | spec_preview_panel | Prévia das especificações | HTML | <p class="text-muted">Carregando prévia...</p> |  |  |
 | spec_items_summary_panel | Especificações da Obra | HTML | <p class="text-muted">Carregando especificações...</p> |  |  |
@@ -237,6 +270,26 @@ engenharia/
 | apply_amendment | Aplicar Aditivo | Button |  |  |  |
 | observations | Observações | Text Editor |  |  |  |
 
+### Office Expense
+
+**Meta:** autoname=`format:OEXP-{YYYY}-{####}` · naming_rule=`Expression` · title_field=`title` · istable=0 · issingle=0
+
+| fieldname | label | fieldtype | options | reqd | unique |
+| --- | --- | --- | --- | --- | --- |
+| title | Título | Data |  |  |  |
+| description | Descrição | Data |  | ✓ |  |
+| expense_category | Categoria | Select | Aluguel Energia Água Internet Telefone Software/Assinatur... | ✓ |  |
+| amount | Valor | Currency |  | ✓ |  |
+| status | Status | Select | Pendente Pago Atrasado Cancelado |  |  |
+| due_date | Data de Vencimento | Date |  |  |  |
+| payment_date | Data de Pagamento | Date |  |  |  |
+| payment_method | Forma de Pagamento | Select | PIX TED Boleto Dinheiro Cartão Débito Automático |  |  |
+| is_recurring | Despesa Recorrente | Check |  |  |  |
+| recurrence_frequency | Frequência | Select | Mensal Bimestral Trimestral Semestral Anual |  |  |
+| next_due_date | Próximo Vencimento | Date |  |  |  |
+| receipt | Comprovante | Attach |  |  |  |
+| notes | Observações | Small Text |  |  |  |
+
 ### Payment
 
 **Meta:** autoname=`format:PAY-{YYYY}-{####}` · naming_rule=`Expression (old style)` · title_field=`title` · istable=0 · issingle=0
@@ -322,13 +375,17 @@ engenharia/
 | expense_category | Categoria | Link | Cost Category |  |  |
 | supplier | Fornecedor | Link | Supplier |  |  |
 | description | Descrição | Data |  | ✓ |  |
-| status | Status | Select | A reembolsar Reembolsado Cancelado |  |  |
 | payment | Pagamento | Link | Payment |  |  |
-| amount | Valor | Currency |  | ✓ |  |
-| payment_date | Data do pagamento pelo escritório | Date |  |  |  |
+| amount | Valor Total | Currency |  | ✓ |  |
+| total_office_paid | Total Pago pelo Escritório | Currency |  |  |  |
+| office_outstanding | Saldo a Pagar (Escritório) | Currency |  |  |  |
+| total_reimbursed | Total Reembolsado pelo Cliente | Currency |  |  |  |
+| reimbursement_outstanding | Saldo a Reembolsar | Currency |  |  |  |
 | await_client_reimbursement | Cliente deve reembolsar | Check |  |  |  |
-| client_reimbursed_date | Data do recebimento do cliente | Date |  |  |  |
-| receipt | Comprovante | Attach |  |  |  |
+| client_reimbursed_date | Data do último reembolso | Date |  |  |  |
+| status | Status do Reembolso | Select | A reembolsar Parcialmente reembolsado Reembolsado Cancelado |  |  |
+| office_payments | Pagamentos ao Fornecedor | Table | Reimbursable Expense Payment |  |  |
+| reimbursements | Reembolsos Recebidos | Table | Reimbursable Expense Reimbursement |  |  |
 
 ### Subcontract
 
@@ -406,12 +463,13 @@ engenharia/
 | description | Descrição | Data |  |  |  |
 | nf_number | Nº Nota Fiscal | Data |  |  |  |
 | cost_center | Centro de Custo | Data |  |  |  |
-| amount | Valor | Currency |  | ✓ |  |
-| date | Data | Date |  |  |  |
+| date | Data da NF | Date |  |  |  |
 | funded_by | Quem arca | Select | Escritório Cliente | ✓ |  |
-| payment_method | Forma de Pagamento | Select |  PIX TED Dinheiro Cartão Boleto Outro |  |  |
-| status | Status | Select | Pago Pendente Cancelado |  |  |
-| receipt | Comprovante | Attach |  |  |  |
+| amount | Valor Total | Currency |  | ✓ |  |
+| total_paid | Total Pago | Currency |  |  |  |
+| outstanding | Saldo a Pagar | Currency |  |  |  |
+| status | Status | Select | Open Partially Paid Paid Cancelled |  |  |
+| payments | Pagamentos Efetuados | Table | Work Cost Payment |  |  |
 
 #### Auxiliares (cadastro rígido)
 
@@ -450,6 +508,17 @@ engenharia/
 | expected_end | Previsão de Término | Date |  |  |  |
 | actual_end | Término Real | Date |  |  |  |
 
+### Project Stage Template
+
+**Meta:** autoname=`field:template_name` · naming_rule=`By fieldname` · title_field=`template_name` · istable=0 · issingle=0
+
+| fieldname | label | fieldtype | options | reqd | unique |
+| --- | --- | --- | --- | --- | --- |
+| template_name | Nome do Template | Data |  | ✓ | ✓ |
+| project_type | Tipo de Projeto | Select | Execução Projeto Laudo Vistoria Consultoria Perícia Fisca... | ✓ |  |
+| stages | Etapas | Table | Project Stage Template Item | ✓ |  |
+| total_weight_display | Soma dos Pesos | HTML |  |  |  |
+
 ### Public Agency
 
 **Meta:** autoname=`field:agency_name` · naming_rule=`By fieldname` · title_field=`agency_name` · istable=0 · issingle=0
@@ -468,6 +537,7 @@ engenharia/
 | --- | --- | --- | --- | --- | --- |
 | stage_name | Nome da Etapa | Data |  | ✓ | ✓ |
 | default_order | Ordem Padrão | Int |  |  |  |
+| default_weight | Peso Padrão | Percent |  |  |  |
 
 ### Supplier
 
@@ -657,6 +727,41 @@ engenharia/
 | required | Obrigatório | Check |  |  |  |
 | remarks | Observações | Small Text |  |  |  |
 
+### Project Stage Template Item
+
+**Meta:** autoname=`None` · naming_rule=`` · title_field=`` · istable=1 · issingle=0
+
+| fieldname | label | fieldtype | options | reqd | unique |
+| --- | --- | --- | --- | --- | --- |
+| stage_type | Tipo de Etapa | Link | Stage Type | ✓ |  |
+| weight | Peso (%) | Percent |  | ✓ |  |
+| sort_order | Ordem | Int |  |  |  |
+
+### Reimbursable Expense Payment
+
+**Meta:** autoname=`None` · naming_rule=`` · title_field=`` · istable=1 · issingle=0
+
+| fieldname | label | fieldtype | options | reqd | unique |
+| --- | --- | --- | --- | --- | --- |
+| payment_date | Data do Pagamento | Date |  | ✓ |  |
+| amount | Valor | Currency |  | ✓ |  |
+| payment_method | Forma de Pagamento | Select |  PIX TED Dinheiro Cartão Boleto Outro |  |  |
+| reference | Referência | Data |  |  |  |
+| receipt | Comprovante | Attach |  |  |  |
+| remarks | Observações | Small Text |  |  |  |
+
+### Reimbursable Expense Reimbursement
+
+**Meta:** autoname=`None` · naming_rule=`` · title_field=`` · istable=1 · issingle=0
+
+| fieldname | label | fieldtype | options | reqd | unique |
+| --- | --- | --- | --- | --- | --- |
+| payment_date | Data do Recebimento | Date |  | ✓ |  |
+| amount | Valor | Currency |  | ✓ |  |
+| reference | Referência | Data |  |  |  |
+| receipt | Comprovante | Attach |  |  |  |
+| remarks | Observações | Small Text |  |  |  |
+
 ### Subcontract Payment
 
 **Meta:** autoname=`None` · naming_rule=`` · title_field=`` · istable=1 · issingle=0
@@ -697,6 +802,19 @@ engenharia/
 | formula | Fórmula | Small Text |  | ✓ |  |
 | sort_order | Ordem | Int |  |  |  |
 
+### Work Cost Payment
+
+**Meta:** autoname=`None` · naming_rule=`` · title_field=`` · istable=1 · issingle=0
+
+| fieldname | label | fieldtype | options | reqd | unique |
+| --- | --- | --- | --- | --- | --- |
+| payment_date | Data do Pagamento | Date |  | ✓ |  |
+| amount | Valor | Currency |  | ✓ |  |
+| payment_method | Forma de Pagamento | Select |  PIX TED Dinheiro Cartão Boleto Outro |  |  |
+| reference | Referência | Data |  |  |  |
+| receipt | Comprovante | Attach |  |  |  |
+| remarks | Observações | Small Text |  |  |  |
+
 #### Single
 
 ### Engineering Settings
@@ -715,7 +833,16 @@ engenharia/
 | bank_account | Conta | Data |  |  |  |
 | bank_pix | Chave PIX | Data |  |  |  |
 
-## 4. hooks.py (resumo)
+## 5. hooks.py (resumo)
+
+### fixtures
+- Workspace `Engenharia`, Notification (4), Print Format (15), Custom Field Event `custom_source%`, Role (2), Kanban Board
+
+### app_include_css
+- `/assets/engenharia/css/list_filters.css`
+- `/assets/engenharia/css/reports.css`
+- `/assets/engenharia/css/hub.css`
+- `/assets/engenharia/css/sidebar_fix.css`
 
 ### app_include_js
 - `/assets/engenharia/js/masks.js`
@@ -724,26 +851,39 @@ engenharia/
 - `/assets/engenharia/js/customer_from_project.js`
 - `/assets/engenharia/js/documents_placeholders.js`
 - `/assets/engenharia/js/timer_global.js`
+- `/assets/engenharia/js/reports_common.js`
+- `/assets/engenharia/js/hub.js`
+
+### boot_session
+- `engenharia.boot.boot_session` → `bootinfo.eng_office` (logo, dados do escritório para print)
 
 ### scheduler_events
-- **daily:** check_overdue_installments, check_overdue_reimbursable_expenses, notify_deadlines_daily, notify_expiring_permits, notify_overdue_tasks, notify_overdue_payments
+- **daily:** check_overdue_installments, check_overdue_office_expenses, check_overdue_reimbursable_expenses, notify_deadlines_daily, notify_expiring_permits, notify_overdue_tasks, notify_overdue_payments
 - **weekly:** check_project_status_weekly
 
-### after_migrate
-reinstall_child_doctypes → roles → permissions → seed → translations → sidebar → reports → workspace
+### doc_events
+- Engineering Contract, Reimbursable Expense, Engineering Contract Installment, Payment, Deadline, Permit, Project Stage
 
-## 5. API whitelisted (facade)
+### after_migrate
+reinstall_child_doctypes → roles → ensure_event_custom_fields → permissions → seed → translations → sidebar → reports → print_formats → workspace
+
+## 6. API whitelisted (facade e principais)
 
 | Função | Módulo | Permissão |
 | --- | --- | --- |
 | get_dashboard_data | dashboard_api | Construction Project read |
 | mark_payment_received | dashboard_api | Payment write |
-| construction_project_query | construction_project | Construction Project read |
+| mark_office_expense_paid | dashboard_api | Office Expense write |
+| get_consolidated_costs | engenharia.api.costs | Construction Project read |
+| get_project_hub_data | project_hub | Construction Project read |
+| get_active_projects / get_project_summary | agent_api | Construction Project read |
 | get_placeholder_reference | documents | Document Template read |
 | bulk_delete_payments / resync / cancel | financial | Payment / Contract write |
+| create_next_office_expense | office_expense | Office Expense create |
+| apply_template_to_project | stage_template | Construction Project write |
 
-## 6. Testes
+## 7. Testes
 
-- **239** métodos em **48** arquivos.
+- **294** métodos em **56** arquivos.
 - `bench --site engenharia.local run-tests --app engenharia`
 

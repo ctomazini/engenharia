@@ -1,6 +1,6 @@
 # Cross-audit: engenharia ↔ advocacia
 
-> **Atualização:** 2026-06-07 — pós-nivelamento técnico (13 estágios).
+> **Atualização:** 2026-06-09 — engenharia: 46 DocTypes, 7 reports, Office Expense, 15 print formats, `boot.py`.
 
 ## Paridade alcançada
 
@@ -16,7 +16,9 @@
 | Hub dashboards | `legal_case_dashboard.py` | ✅ `construction_project_dashboard.py` |
 | Client dashboards | `client_dashboard.py` | ✅ `customer_dashboard.py` |
 | `test_imports.py` | ✅ | ✅ |
-| Reports granulares | 6× `test_report_*.py` | ✅ 5× `test_report_*.py` |
+| Reports granulares | 6× `test_report_*.py` | ✅ 6+ (`test_report_*`, `test_consolidated_cost`) |
+| Print formats reports | 3 DocType | ✅ 15 (3 DocType + 12 Report) + `boot_session` |
+| Office Expense | ✅ (sem hub link) | ✅ integrado painel + caixa |
 | Whitelist tests | parcial | ✅ `test_whitelist.py` + `test_dashboard_api.py` |
 | `CODEBASE.md` | gerado | ✅ `scripts/generate_codebase.py` |
 | `.cursorrules` | ✅ | ✅ |

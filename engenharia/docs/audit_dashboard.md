@@ -1,7 +1,8 @@
 # Seção 4 — Verificação do Painel (Dashboard)
 
 **Page:** `eng-dashboard` (`engenharia/engenharia/page/eng_dashboard/`)  
-**Backend:** `engenharia/dashboard/` · **Facade:** `dashboard_api.py`
+**Backend:** `engenharia/dashboard/` · **Facade:** `dashboard_api.py`  
+**Revisão:** 2026-06-09 — Office Expense no payload; composição financeira em barras horizontais (obra + escritório).
 
 ---
 
@@ -20,6 +21,8 @@
 | `timeline.py` | Tarefas, comunicações, horas |
 | `agenda.py` | Timeline operacional (prazos + tarefas; **sem pagamentos**) |
 | `operational.py` | Obras ativas enriquecidas |
+| `subcontracts.py` | Lista subcontratos no painel |
+| `commissions.py` | Lista comissões no painel |
 | `_helpers.py` | Caps, normalização, `user_is_engenharia_manager()` |
 
 ### Queries principais (LIMIT via `LIST_LIMIT_MAX=100` ou cap explícito)
@@ -28,7 +31,7 @@
 |---|---|---|
 | kpis (manager) | Payment, Work Cost + Subcontract (`funded_by=Escritório`), Reimbursable Expense, Engineering Contract | 100 |
 | kpis (operacional) | Construction Project, Deadline, Task, Permit, Customer | count/get_all capped |
-| financial | Payment (período), Work Cost + Subcontract Payment (mês, escritório) | 100 |
+| financial | Payment (período), Work Cost + Subcontract Payment (mês, escritório), Office Expense | 100 |
 | deadlines | Deadline | list_cap (5–15) |
 | timeline | Task, Communication Log, Time Log | 100 |
 | operational | Construction Project | list_cap `operational` |
@@ -42,7 +45,7 @@ user_is_engenharia_manager() → Engenharia Manager | System Manager | Administr
 ```
 
 **Engenharia User — chaves OMITIDAS do payload:**
-- `financeiro`, `parcelas`, `pagamentos`, `despesas_pendentes`, `total_despesas_mes`
+- `financeiro`, `parcelas`, `pagamentos`, `despesas_pendentes`, `office_expenses_pendentes`, `total_despesas_mes`
 - KPIs financeiros: `amount_receivable`, `amount_overdue`, `amount_reimbursable`, `month_costs`, `received_*`, etc.
 - Tiles financeiros em `atencao` (parcelas vencidas, custos pendentes do escritório)
 
@@ -75,7 +78,8 @@ user_is_engenharia_manager() → Engenharia Manager | System Manager | Administr
 
 **Financeiro (Manager):**
 - `fluxo.entrada` / `fluxo.saida` = mês corrente fixo (`fixed_to_month: true`)
-- `grafico` = donut por categoria de custo (cores por `tone`)
+- `grafico` / `grafico_office` = barras horizontais por categoria (obra vs escritório)
+- `mark_office_expense_paid` via `dashboard_api` (atalho na lista)
 - Filtros 5/10/15: delegação em `utils.bind_list_limits` → `eng_dashboard_refresh_list_sections` (sem reload total)
 - Filtro de período: `eng_dashboard_refresh_period_sections` — patch por host com `min-height` lock + scroll preservado; barra de período só atualiza label/botão ativo
 - Hero: stats sempre visíveis (prazos críticos, vencidos, tarefas, parcelas vencidas) com 0 quando vazio

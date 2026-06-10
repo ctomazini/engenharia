@@ -1,6 +1,6 @@
 # Seção 3 — Verificação de Usabilidade
 
-**App:** `engenharia` · **Data:** 2026-06-06
+**App:** `engenharia` · **Data:** 2026-06-06 (nota 2026-06-09: Office Expense e Modelos de Etapas não auditados neste snapshot)
 
 ---
 

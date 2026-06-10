@@ -12,7 +12,7 @@
 | `test_agent_api.py` | ✅ 9 testes |
 | Endpoints agregados para agente | ✅ Read-only |
 | Documentação de contrato IA | ✅ Este arquivo + `engenharia/docs/README.md` |
-| REST `/api/resource/` em DocTypes | ✅ Nativo Frappe (40 DocTypes `custom: 0`) |
+| REST `/api/resource/` em DocTypes | ✅ Nativo Frappe (46 DocTypes `custom: 0`) |
 | Permissões role-aware | ✅ `setup/permissions.py` + redação financeira no summary |
 
 O app está **operacional para humanos** e **pronto para integração MCP/Hermes** via endpoints agregados. Fase 2 (tools MCP registradas) permanece no backlog.

@@ -1,7 +1,9 @@
 # Seção 1 — Auditoria de Código Completa
 
-**App:** `engenharia` · **Site:** `engenharia.local` · **Data:** 2026-06-06  
+**App:** `engenharia` · **Site:** `engenharia.local` · **Data:** 2026-06-06 (métricas revisadas 2026-06-09)  
 **Referência normativa:** `REGRAS_OBRIGATORIAS.md` na raiz do app.
+
+> **Nota 2026-06-09:** 46 DocTypes, 7 Script Reports, 294 testes, Office Expense, print formats e `boot_session` adicionados após esta auditoria. Detalhes em `CODEBASE.md`.
 
 ---
 
@@ -9,9 +11,9 @@
 
 | Item | Status | Detalhes |
 |---|---|---|
-| DocTypes `custom: 0` | 🟡 Parcial | 21/38 JSONs declaram `"custom": 0`. **13 standalone omitem** o campo (Frappe assume 0): Construction Project, Task, Permit, Stage Type, Payment, Communication Log, Time Log, Reimbursable Expense, Cost Category, Supplier, Public Agency, Engineering Contract, Deadline, Work Cost. |
-| Zero Server/Client Script no banco | 🟢 OK | Nenhum fixture de Script Report customizado além do app; lógica em controllers Python. |
-| DocType names EN Title Case | 🟢 OK | 38/38 em inglês singular (ex.: `Construction Project`, `Commission`). |
+| DocTypes `custom: 0` | 🟢 OK | 46 DocTypes no app; lógica em controllers Python (zero Server/Client Script no banco). |
+| Zero Server/Client Script no banco | 🟢 OK | Confirmado em `engenharia.local` e `advocacia.local`. |
+| DocType names EN Title Case | 🟢 OK | 46/46 em inglês singular (ex.: `Office Expense`, `Construction Project`). |
 | Fieldnames slug EN | 🟡 Parcial | Maioria OK. **Exceções sem sufixo auto-gerado de 4 chars**, mas nomes genéricos: `column_break_info`, `column_break_dates`, `column_break_time`, `column_break_det`, `column_break_art` (4 arquivos). Zero `table_xxxx` auto-gerado. |
 | Strings dinâmicas `_()` / `__()` | 🟡 Parcial | Controllers e dashboard usam `_()`. **JS de forms** em geral sem `__()` nos labels inline (herdam do JSON). Print format HTML em fixture tem strings PT hardcoded (aceitável para template). |
 | naming + autoname + title + search | 🟡 Parcial | **Engineering Settings** (Single): sem autoname/title/search — aceito para Single. **Cadastros By fieldname** usam `title_field` = campo do nome (OK). Transacionais: OK pós-correções de naming. |
@@ -44,7 +46,7 @@
 
 ## 1.2 Cobertura de testes
 
-**Total suite:** 211 testes (`bench run-tests --app engenharia`).
+**Total suite:** 294 testes (`bench run-tests --app engenharia`, 2026-06-09).
 
 | DocType / Módulo | Tem teste? | Nº testes* | Funcionalidades testadas | SEM teste |
 |---|---|---|---|---|
@@ -64,7 +66,8 @@
 | Construction Measurement | Sim | 2 | CRUD mínimo | itens, totais |
 | Communication Log | Sim | 7 | CRUD, título | — |
 | Document Template / Kit | Sim | ~13 | Geração docx, kits, placeholders | — |
-| Script Reports (5) | Sim | 4 | chart + report_summary via `report_visuals.py` | — |
+| Script Reports (7) | Sim | 6+ | chart + KPI via `report_visuals.py`; print formats em `test_print_formats` | — |
+| Office Expense | Sim | 8 | CRUD, recorrência, scheduler, título | mark_office_expense_paid facade |
 | Project Stage | Sim | 3 | CRUD, progress hook | título composto |
 | Cadastros (Supplier, Cost Category, etc.) | Sim | 1–6 cada | CRUD mínimo | — |
 | Engineering Settings | Sim | 3 | Seed, documents | — |

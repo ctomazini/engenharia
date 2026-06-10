@@ -1,6 +1,6 @@
 # Seção 5 — Integridade de Dados e Rollups
 
-**App:** `engenharia` · **Data:** 2026-06-06
+**App:** `engenharia` · **Data:** 2026-06-06 (nota 2026-06-09: Office Expense no fluxo de caixa; ver `test_report_cash_flow`)
 
 ---
 

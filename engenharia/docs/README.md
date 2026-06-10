@@ -31,13 +31,13 @@
 | [`desenvolvimento.md`](desenvolvimento.md) | Fluxo local: bench, migrate, testes unitários, pre-commit |
 | [`../../e2e/README.md`](../../e2e/README.md) | Sessão E2E Playwright (Desk + dados fictícios `PLAYWRIGHT_*`) |
 
-Módulos de teste relevantes: `test_reports.py` (gráficos/KPIs dos Script Reports), `test_documents.py` (placeholders docx), `test_subcontract.py`.
+Módulos de teste relevantes: `test_reports.py`, `test_report_cash_flow.py`, `test_report_budget_vs_actual.py`, `test_consolidated_cost.py`, `test_office_expense.py`, `test_print_formats.py`, `test_boot.py`, `test_documents.py`, `test_subcontract.py`, `test_stage_template.py`.
 
 ---
 
-## Auditorias técnicas (jun/2026)
+## Auditorias técnicas (jun/2026, revisão parcial 2026-06-09)
 
-Relatórios pontuais de conformidade e UX. Não substituem `REGRAS_OBRIGATORIAS.md`.
+Relatórios pontuais de conformidade e UX. Não substituem `REGRAS_OBRIGATORIAS.md`. Métricas (DocTypes, testes, relatórios) foram atualizadas após Office Expense, print formats e relatórios `consolidated_cost` / `budget_vs_actual`.
 
 | Documento | Escopo |
 | --- | --- |
@@ -57,7 +57,9 @@ Relatórios pontuais de conformidade e UX. Não substituem `REGRAS_OBRIGATORIAS.
 | Tipo | Local |
 | --- | --- |
 | Manual de uso (PT) | `engenharia/docs/manual_usuario.md` |
-| Relatórios / placeholders docx | `manual_usuario.md` §6.6 e §10; código em `engenharia/documents.py`, `engenharia/report_visuals.py` |
+| Relatórios / placeholders docx | `manual_usuario.md` §6.6–6.8 e §10; `engenharia/documents.py`, `engenharia/report_visuals.py`, `engenharia/setup/print_formats.py` |
+| Despesas do Escritório | `manual_usuario.md` §6.7; DocType `Office Expense` |
+| Modelos de Etapas | `manual_usuario.md` §4; `Project Stage Template` |
 | Guia de dev / CI | `engenharia/docs/desenvolvimento.md` ou `e2e/README.md` |
 | Norma / padrão obrigatório | `REGRAS_OBRIGATORIAS.md` (atualizar no mesmo PR) |
 | Auditoria ou relatório pontual | `engenharia/docs/audit_<tema>.md` + entrada neste índice |

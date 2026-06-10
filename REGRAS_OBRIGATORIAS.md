@@ -2,7 +2,7 @@
 
 **App alvo:** `engenharia` (greenfield) · **Referência:** `advocacia` (brownfield Frappe v16)  
 **Objetivo:** checklist operacional fechado — nada aqui é proposta em aberto.  
-**Última consolidação:** 2026-06-02
+**Última consolidação:** 2026-06-09
 
 ---
 
@@ -54,6 +54,10 @@ Referência de roles: `advocacia/advocacia/setup/install.py`.
 | Prazo | Deadline |
 | Tarefa | Task (nativo Frappe, Kanban) |
 | Cliente | Customer (nativo ou DocType próprio — decidir no primeiro commit de Customer) |
+| Despesa do Escritório | Office Expense |
+| Modelo de Etapas | Project Stage Template |
+| Comissão | Commission |
+| Medição | Construction Measurement |
 
 ### 2.3 Advocacia vs Engenharia
 
@@ -172,7 +176,7 @@ Labels nos botões/filtros: sempre `__("...")`.
 
 | Item | Regra |
 | --- | --- |
-| Tipo | **Page custom** (`page/dashboard/`), 100% código, reinstala no `migrate` |
+| Tipo | **Page custom** (`page/eng_dashboard/`), 100% código, reinstala no `migrate` |
 | Proibido | Number Card, Dashboard Chart nativos, fixture de Page |
 | Backend | Subpacote `engenharia/engenharia/dashboard/` |
 | Facade | `dashboard_api.py` na raiz do pacote Python — **único** path de `xcall` |
@@ -190,6 +194,8 @@ Labels nos botões/filtros: sempre `__("...")`.
 | `financeiro.py` | 275 | parcelas/pagamentos, despesas | `dashboard/financial.py` |
 | `prazos.py` | 177 | prazos, audiências → deadlines/permit | `dashboard/deadlines.py` |
 | `timeline.py` | 249 | timeline, tarefas, comunicações | `dashboard/timeline.py` |
+| — | — | atenção, saúde, agenda | `dashboard/attention.py`, `health.py`, `agenda.py` |
+| — | — | subcontratos, comissões | `dashboard/subcontracts.py`, `commissions.py` |
 | `painel_api.py` | 26 | facade whitelisted | `dashboard_api.py` |
 
 \*Linhas atuais no repo; **meta de design ≤150 linhas/arquivo** — se passar, dividir subdomínio (ex.: `financial_payments.py`).
@@ -229,7 +235,7 @@ Front: `frappe.xcall("engenharia.engenharia.dashboard_api.get_dashboard_data", {
 
 ### Balde 1 — Código (install automático)
 
-Inclui: DocTypes JSON+py+js, `hooks.py`, `public/js/`, Page `dashboard/`, Script Reports em `engenharia/report/`, `patches/`, testes.
+Inclui: DocTypes JSON+py+js, `hooks.py`, `boot.py`, `public/js/`, Page `eng_dashboard/`, Script Reports em `engenharia/report/`, `print_formats/reports/`, `patches/`, testes.
 
 **Não** colocar DocType do próprio app em fixture.
 
@@ -243,6 +249,7 @@ Inclui: DocTypes JSON+py+js, `hooks.py`, `public/js/`, Page `dashboard/`, Script
 | Notification | nomes configuráveis |
 | Custom Field | DocTypes **nativos** (ex.: `Event`, `Task`) com prefixo `custom_` |
 | Kanban Board | board de obra sobre `Task` |
+| Print Format | 15 formats (3 DocType + 12 Report) — sync também em `setup/print_formats.py` |
 | Translation | se exportar |
 | Role | opcional se não criar só via seed |
 
@@ -252,13 +259,16 @@ Inclui: DocTypes JSON+py+js, `hooks.py`, `public/js/`, Page `dashboard/`, Script
 
 ```python
 after_migrate = [
-    "engenharia.engenharia.setup.reinstall_child_doctypes",  # se aplicável
-    "engenharia.engenharia.setup.install.after_install",
-    "engenharia.engenharia.setup.install.ensure_*_custom_fields",
-    "engenharia.engenharia.setup.translations.ensure_doctype_translations",
-    "engenharia.engenharia.setup.sidebar.ensure_engenharia_sidebar",
-    "engenharia.engenharia.setup.reports.ensure_engenharia_reports",
-    "engenharia.engenharia.setup.workspace.ensure_engenharia_workspace",
+    "engenharia.setup.reinstall_child_doctypes.reinstall_child_doctypes",
+    "engenharia.setup.roles.seed_roles",
+    "engenharia.setup.install.ensure_event_custom_fields",
+    "engenharia.setup.permissions.ensure_engenharia_permissions",
+    "engenharia.setup.seed.ensure_seed_data",
+    "engenharia.setup.translations.ensure_doctype_translations",
+    "engenharia.setup.sidebar.ensure_engenharia_sidebar",
+    "engenharia.setup.reports.ensure_engenharia_reports",
+    "engenharia.setup.print_formats.ensure_engenharia_print_formats",
+    "engenharia.setup.workspace.ensure_engenharia_workspace",
 ]
 ```
 
@@ -281,12 +291,16 @@ after_migrate = [
 ```
 Construction Project (hub)
     ├── Engineering Contract (+ Contract Amendment child)
-    ├── Work Cost (cost_category, supplier, stage Links) — lançamento avulso
+    ├── Work Cost (+ Work Cost Payment child) — lançamento avulso
     ├── Subcontract (+ Subcontract Payment child) — contrato com prestador
-    ├── Reimbursable Expense
-    ├── Project Specification (child: Technical Item + value + unit)
+    ├── Reimbursable Expense (+ payment/reimbursement child tables)
+    ├── Commission (+ Commission Payment child)
+    ├── Project Item / Project Specification (legado)
     ├── Deadline / Permit
     └── Payment (camada financeira única)
+
+Office Expense — custos de funcionamento do escritório (sem Link project); integra fluxo de caixa e painel Manager.
+Project Stage Template — cadastro de etapas padrão aplicável à obra.
 ```
 
 - Satélites carregam `project` (Link) + `customer` (Link ou `fetch_from` project).  
@@ -453,21 +467,28 @@ Extraídas da auditoria consolidada do advocacia (código atual).
 Espelhar `advocacia/hooks.py`:
 
 ```python
-fixtures = [Workspace, Notification, Custom Field em nativos, Kanban Board, ...]
-app_include_js = [masks, list_nav, customer_from_project, documents_placeholders, ...]
-standard_queries = {"Construction Project": "construction_project_query"}
+fixtures = [Workspace, Notification (4), Print Format (15), Custom Field Event, Role (2), Kanban Board]
+boot_session = "engenharia.boot.boot_session"
+app_include_js = [masks, list_nav, list_filters, customer_from_project, documents_placeholders,
+                  timer_global, reports_common, hub]
 scheduler_events = {
-  "daily": [check_overdue_installments, check_overdue_reimbursable_expenses,
-            notify_deadlines_daily, notify_expiring_permits, notify_overdue_tasks, notify_overdue_payments],
+  "daily": [check_overdue_installments, check_overdue_office_expenses,
+            check_overdue_reimbursable_expenses, notify_deadlines_daily, notify_expiring_permits,
+            notify_overdue_tasks, notify_overdue_payments],
   "weekly": [check_project_status_weekly],
 }
 doc_events = {
-    "Engineering Contract": {"on_update": "....financial.sync_payments_hook"},
-    "Contract Installment": {"on_update": "....tasks.on_installment_update"},
+    "Engineering Contract": {"on_update": "engenharia.financial.sync_payments_hook"},
+    "Reimbursable Expense": {"on_update": "engenharia.financial.sync_reimbursable_payments_hook"},
+    "Engineering Contract Installment": {"on_update": "engenharia.tasks.on_installment_update"},
     "Payment": {"on_update": "...", "on_trash": "..."},
+    "Deadline": {"after_insert/on_update": "engenharia.calendar_sync..."},
+    "Permit": {"after_insert/on_update": "engenharia.calendar_sync..."},
+    "Project Stage": {"after_insert/on_update/on_trash": "engenharia.project_progress..."},
 }
-after_install = "engenharia.engenharia.setup.install.after_install"
-after_migrate = [ ... cadeia ensure_* ... ]
+after_install = "engenharia.setup.install.after_install"
+after_migrate = [reinstall_child_doctypes, roles, permissions, seed, translations, sidebar,
+                 reports, print_formats, workspace]
 ```
 
 ---
@@ -482,7 +503,7 @@ after_migrate = [ ... cadeia ensure_* ... ]
 | Painel | `xcall` dashboard retorna todas as chaves; smoke manual |
 | Script Reports | `test_reports.py` verde após mudanças em `engenharia/engenharia/report/` ou `report_visuals.py` |
 | Placeholders docx | `test_documents.py` verde após mudanças em `documents.py` |
-| Sidebar | 26-ish links alinhados workspace ↔ sidebar; seções `collapsible: 1` |
+| Sidebar | ~37 itens em `workspace_sidebar/engenharia.json`; seções `collapsible: 1` |
 | Um commit | Um DocType (json + py + js + test CRUD mínimo) |
 
 **Padrão de teste:** `tearDown` → `frappe.db.rollback()`; CNPJ/CPF únicos (`_gerar_cnpj_valido()`); títulos no formato `ID — descritor` — ver `tests/test_titulos.py`.

@@ -1,9 +1,11 @@
 # Auditoria Deploy-Ready — Engenharia
 
-**Data:** 2026-06-05  
-**Commit:** `8c907d2014a8f22b752057a14bfcf59545e444ff`  
+**Data:** 2026-06-05 (métricas atualizadas em **2026-06-09**)  
+**Commit auditoria original:** `8c907d2` · **HEAD atual:** ver `git log -1`  
 **Site de referência:** `engenharia.local`  
 **Norma:** `REGRAS_OBRIGATORIAS.md`
+
+> **Delta 2026-06-07 → 2026-06-09:** Office Expense, relatórios `consolidated_cost` e `budget_vs_actual`, 12 Print Formats de Script Report, `boot.py`, integração despesas escritório no painel/caixa, modelos de etapas. Veredito deploy-ready **mantido** — 294 testes OK.
 
 ---
 
@@ -15,7 +17,7 @@
 | ⚠️ Atenção (não bloqueante) | 16 |
 | ❌ Bloqueante | 0 |
 
-**Veredito:** o app está **pronto para deploy** em bench nativo. A suíte Python está verde (**212 testes OK**), não há Server/Client Scripts no banco, o schema DocType está consistente, os três baldes de reprodutibilidade estão implementados e os **2 bloqueantes** da auditoria anterior (`permissions.py` + type hints em whitelisted) foram **corrigidos** nos commits `0cf9a54` / `8c907d2`. Permanecem apenas itens de atenção (hex em relatórios, delegação de permissão na facade do painel, caps de query em reports, alinhamento parcial do workspace).
+**Veredito:** o app está **pronto para deploy** em bench nativo. A suíte Python está verde (**294 testes OK** em 2026-06-09), não há Server/Client Scripts no banco, o schema DocType está consistente (**46** DocTypes), os três baldes de reprodutibilidade estão implementados (incl. `print_formats` no `after_migrate`). Permanecem itens de atenção documentados abaixo (cosméticos).
 
 ---
 
@@ -27,7 +29,7 @@
 ✅ **Zero** ocorrências de `"custom": 1` em `engenharia/engenharia/doctype/*/`.
 
 #### 1.2 `naming_rule` + `autoname`
-✅ **Transacionais** (16 DocTypes): `naming_rule=Expression (old style)` + `autoname=format:PREFIX-{YYYY}-{####}` (`PROJ-`, `CNTR-`, `PAY-`, `WCST-`, `SUBC-`, etc.).
+✅ **Transacionais** (19 DocTypes standalone — incl. Office Expense, Project Stage Template): `naming_rule=Expression (old style)` + `autoname=format:PREFIX-{YYYY}-{####}` (`PROJ-`, `CNTR-`, `PAY-`, `WCST-`, `SUBC-`, etc.).
 
 ✅ **Cadastros auxiliares** (9 DocTypes): `By fieldname` + `field:<nome>` — conforme §3.4 (`Cost Category`, `Supplier`, `Technical Item`, etc.).
 
@@ -44,7 +46,7 @@
 ⚠️ **Engineering Settings**: `search_fields` ausente.
 
 #### 1.5 DocType names — idioma
-✅ **40 DocTypes** listados; todos em inglês, Title Case, singular. Nenhum nome em português.
+✅ **46 DocTypes** listados; todos em inglês, Title Case, singular. Nenhum nome em português.
 
 #### 1.6 Fieldnames — qualidade
 ✅ **Zero** fieldnames com acentos (português).
@@ -179,10 +181,10 @@
 ### SEÇÃO 6 — Testes
 
 #### 6.1 Testes existem
-✅ **`bench --site engenharia.local run-tests --app engenharia`**: **212 testes, OK** (~30 s).
+✅ **`bench --site engenharia.local run-tests --app engenharia`**: **294 testes, OK** (~30 s).
 
 ✅ Cobertura centralizada em **`engenharia/tests/`** (39 módulos), incluindo:
-- `test_reports.py` — chart + `report_summary` nos 5 Script Reports
+- `test_reports.py` — chart + `report_summary` nos 7 Script Reports
 - `test_documents.py` — placeholders, geração docx, subcontratos no contexto
 
 ⚠️ Apenas **2** pastas de DocType com `test_*.py` local (`permit_type`, `document_kit`) — padrão aceitável.
@@ -226,7 +228,7 @@
 
 | Balde | Conteúdo | Status |
 | --- | --- | --- |
-| **1 — Código** | 42 pastas DocType, Page `eng_dashboard`, 5 Script Reports (+ `report_visuals.py`), `documents.py` | ✅ |
+| **1 — Código** | 46 DocTypes, Page `eng_dashboard`, 7 Script Reports (+ `report_visuals.py`), `documents.py` | ✅ |
 | **2 — Fixtures** | 5 JSONs em `engenharia/fixtures/` | ✅ |
 | **3 — Seed** | `after_install` + 9 handlers `after_migrate` | ✅ |
 
@@ -240,7 +242,7 @@
 
 | Gate | Resultado |
 | --- | --- |
-| `run-tests --app engenharia` | ✅ 212 OK |
+| `run-tests --app engenharia` | ✅ 294 OK |
 | `install-app` + `migrate` | ✅ (site `engenharia.local` operacional) |
 | Painel / dashboard API | ✅ smoke via testes + E2E histórico |
 | E2E Playwright (`e2e/`) | ✅ 26/26 passos (sessão 2026-06-07; não reexecutado nesta auditoria) |
@@ -274,7 +276,7 @@
 | Item | Antes | Agora |
 | --- | --- | --- |
 | Bloqueantes normativos | 2 | 0 |
-| Testes Python | 211 | 212 |
+| Testes Python | 294 | 294 |
 | Script Reports | Tabelas simples | Gráficos + KPIs + formatters JS |
 | Placeholders docx | Parcial | Catálogo completo (orçamento, logo, subcontratos) |
 | Commit | `8adb0ae` | `8c907d2` |

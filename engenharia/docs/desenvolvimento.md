@@ -29,9 +29,12 @@ bench --site engenharia.local run-tests --app engenharia
 
 - Código em `engenharia/tests/`
 - Gates úteis após mudanças pontuais:
-  - Relatórios: `bench --site engenharia.local run-tests --module engenharia.tests.test_reports`
-  - Documentos/placeholders: `bench --site engenharia.local run-tests --module engenharia.tests.test_documents`
-  - Subcontratos: `bench --site engenharia.local run-tests --module engenharia.tests.test_subcontract`
+  - Relatórios: `test_reports`, `test_report_cash_flow`, `test_report_budget_vs_actual`, `test_consolidated_cost`
+  - Print formats / boot: `test_print_formats`, `test_boot`
+  - Office Expense: `test_office_expense`
+  - Documentos/placeholders: `test_documents`
+  - Subcontratos: `test_subcontract`
+  - Modelos de etapas: `test_stage_template`
 - Padrão: `tearDown` com `frappe.db.rollback()`; CPF/CNPJ únicos nos factories
 - **Definition of Done:** suite verde em site com app instalado
 
@@ -56,12 +59,15 @@ Recomendado após mudanças em formulários, permissões, sync financeiro, paine
 
 | Área | Caminho |
 | --- | --- |
-| DocTypes | `engenharia/engenharia/doctype/` |
+| DocTypes | `engenharia/engenharia/doctype/` (46) |
 | Painel | `engenharia/engenharia/page/eng_dashboard/`, `engenharia/dashboard/` |
-| Relatórios | `engenharia/engenharia/report/`, helper `engenharia/report_visuals.py` |
+| Relatórios | `engenharia/engenharia/report/` (7), helper `engenharia/report_visuals.py` |
+| Print formats PDF | `engenharia/setup/print_formats.py`, `engenharia/print_formats/reports/` |
+| Boot / branding print | `engenharia/boot.py` (`boot_session` → `eng_office`) |
 | Documentos docx | `engenharia/documents.py` (`PLACEHOLDER_REFERENCE`) |
-| Setup / migrate | `engenharia/engenharia/setup/` |
-| Testes Python | `engenharia/tests/` |
+| Inventário técnico | `python scripts/generate_codebase.py` → `CODEBASE.md` |
+| Setup / migrate | `engenharia/setup/` |
+| Testes Python | `engenharia/tests/` (~294 métodos) |
 | Testes E2E | `e2e/` |
 
 ---
