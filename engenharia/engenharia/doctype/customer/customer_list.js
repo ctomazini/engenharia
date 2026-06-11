@@ -2,6 +2,16 @@ frappe.listview_settings["Customer"] = {
 	...(frappe.listview_settings["Customer"] || {}),
 	hide_name_column: true,
 	formatters: {
+		cpf(value) {
+			return window.EngenhariaMasks
+				? EngenhariaMasks.listFormatters.cpf(value)
+				: value || "";
+		},
+		cnpj(value) {
+			return window.EngenhariaMasks
+				? EngenhariaMasks.listFormatters.cnpj(value)
+				: value || "";
+		},
 		person_type(value, _df, doc) {
 			const tipo = frappe.utils.escape_html(value || "");
 			const id = frappe.utils.escape_html(doc.name || "");

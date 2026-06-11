@@ -1,8 +1,8 @@
 # CODEBASE — App Engenharia (Frappe v16)
 
-> Gerado em **2026-06-09** — inventário técnico do app greenfield EN. Frappe puro, **sem ERPNext**.
+> Gerado em **2026-06-11** — inventário técnico do app greenfield EN. Frappe puro, **sem ERPNext**.
 
-> **HEAD:** `caec325 2026-06-09 23:04:57 +0000 feat(reports): add print formats for script reports with office branding`
+> **HEAD:** `c61dbd4 2026-06-11 11:45:03 +0000 fix(project): clarify DIC field description as municipal lot registry`
 
 ---
 
@@ -15,10 +15,10 @@
 | Framework | Frappe v16 |
 | Licença | MIT |
 | Site dev | engenharia.local |
-| Linhas Python | ~17837 |
-| Linhas JavaScript | ~5628 |
-| Métodos de teste | 294 (56 arquivos) |
-| DocTypes | 46 (`custom: 0`) |
+| Linhas Python | ~18867 |
+| Linhas JavaScript | ~6631 |
+| Métodos de teste | 314 (60 arquivos) |
+| DocTypes | 49 (`custom: 0`) |
 | Script Reports | 7 |
 | Print Formats | 15 |
 
@@ -28,6 +28,9 @@
 
 **Commits recentes:**
 ```text
+c61dbd4 fix(project): clarify DIC field description as municipal lot registry
+db03922 feat(settings,project): add document generation fields
+9e64ba6 docs: sync all documentation with current app state
 caec325 feat(reports): add print formats for script reports with office branding
 d66fe00 feat(dashboard): integrate office expenses and replace cost chart with bars
 066ffe7 feat: add Office Expense DocType for office operating costs
@@ -37,9 +40,6 @@ f06cadf feat(hub): add budget vs realized banner and align financial KPIs
 fc8b6f6 docs: add budget vs realized costs section to user manual
 7184dc6 feat(ux): align nomenclature for realized costs vs budget planning
 bc7aeb8 refactor(sidebar): reorganize sections by budget, revenue and expenses
-ac2b958 fix(sidebar): correct collapsed label CSS selector
-d496066 test(costs): add partial payment tests and update factories
-c2bc684 feat(costs): integrate partial payments in reports, dashboard and cash flow
 ```
 
 ## 2. Árvore de Arquivos (anotada)
@@ -73,6 +73,14 @@ engenharia/
 ## 4. Mapa de DocTypes
 
 #### Standalone / transacionais
+
+### Building Type
+
+**Meta:** autoname=`field:building_type_name` · naming_rule=`By fieldname` · title_field=`building_type_name` · istable=0 · issingle=0
+
+| fieldname | label | fieldtype | options | reqd | unique |
+| --- | --- | --- | --- | --- | --- |
+| building_type_name | Tipo de Edificação | Data |  | ✓ | ✓ |
 
 ### Commission
 
@@ -147,20 +155,32 @@ engenharia/
 | address_district | Bairro | Data |  |  |  |
 | city | Cidade | Data |  |  |  |
 | address_uf | UF | Select | AC AL AM AP BA CE DF ES GO MA MG MS MT PA PB PE PI PR RJ ... |  |  |
+| location_code | Código de Localização | Data |  |  |  |
+| dic | DIC | Data |  |  |  |
+| property_registration | Matrícula do Imóvel | Data |  |  |  |
 | construction_area | Área Construída (m²) | Float |  |  |  |
-| current_contract_value | Valor Atual do Contrato | Currency |  |  |  |
-| commission_outstanding | Comissões a Receber | Currency |  |  |  |
-| commission_summary_panel | Resumo de comissões | HTML | <p class="text-muted">Carregando comissões...</p> |  |  |
-| physical_progress | Avanço Físico Global | Percent |  |  |  |
+| building_type | Tipo de Edificação | Link | Building Type |  |  |
+| main_material | Material Principal | Data |  |  |  |
+| unit_count | Nº de Economias | Int |  |  |  |
+| estimated_population | População Estimada | Int |  |  |  |
+| occupancy_permit | Nº Habite-se | Data |  |  |  |
 | responsible_engineer | Responsável Técnico | Data |  |  |  |
 | crea_number | CREA do Responsável | Data |  |  |  |
 | art_number | Nº ART Principal | Data |  |  |  |
-| property_registration | Matrícula do Imóvel | Data |  |  |  |
+| art_execution_number | Nº ART de Execução | Data |  |  |  |
 | gps_coordinates | Coordenadas GPS | Data |  |  |  |
+| structural_engineer | Responsável Técnico Estrutura | Data |  |  |  |
+| structural_company | Empresa Estrutural | Data |  |  |  |
+| structural_engineer_crea | CREA Estrutural | Data |  |  |  |
+| structural_art_number | Nº ART Estrutural | Data |  |  |  |
+| physical_progress | Avanço Físico Global | Percent |  |  |  |
+| current_contract_value | Valor Atual do Contrato | Currency |  |  |  |
+| commission_outstanding | Comissões a Receber | Currency |  |  |  |
+| commission_summary_panel | Resumo de comissões | HTML | <p class="text-muted">Carregando comissões...</p> |  |  |
 | budget_revision | Revisão vigente | Int |  |  |  |
 | default_bdi_percent | BDI padrão % | Percent |  |  |  |
-| budget_revisions | Revisões de orçamento | Table | Project Budget Revision |  |  |
 | stages_panel | Painel de Etapas | HTML | <p class="text-muted">Carregando etapas...</p> |  |  |
+| budget_revisions | Revisões de orçamento | Table | Project Budget Revision |  |  |
 | financial_summary_panel | Resumo Financeiro | HTML | <p class="text-muted">Carregando resumo...</p> |  |  |
 | installments_panel | Parcelas | HTML | <p class="text-muted">Carregando parcelas...</p> |  |  |
 | costs_panel | Custos Realizados | HTML | <p class="text-muted">Carregando custos...</p> |  |  |
@@ -173,6 +193,7 @@ engenharia/
 | communications_panel | Comunicações | HTML | <p class="text-muted">Carregando comunicações...</p> |  |  |
 | measurements_panel | Medições | HTML | <p class="text-muted">Carregando medições...</p> |  |  |
 | timelogs_panel | Horas Trabalhadas | HTML | <p class="text-muted">Carregando horas...</p> |  |  |
+| documents_panel | Documentos da Obra | HTML | <p class="text-muted">Carregando documentos...</p> |  |  |
 | specs_help | Itens técnicos | HTML | <p class="text-muted">Use <b>Adicionar especificação</b>,... |  |  |
 | spec_preview_panel | Prévia das especificações | HTML | <p class="text-muted">Carregando prévia...</p> |  |  |
 | spec_items_summary_panel | Especificações da Obra | HTML | <p class="text-muted">Carregando especificações...</p> |  |  |
@@ -220,6 +241,14 @@ engenharia/
 | assigned_to | Responsável | Link | User |  |  |
 | notify_days_before | Notificar com antecedência (dias) | Int |  |  |  |
 | notes | Observações | Text Editor |  |  |  |
+
+### Document Category
+
+**Meta:** autoname=`field:category_name` · naming_rule=`By fieldname` · title_field=`category_name` · istable=0 · issingle=0
+
+| fieldname | label | fieldtype | options | reqd | unique |
+| --- | --- | --- | --- | --- | --- |
+| category_name | Categoria | Data |  | ✓ | ✓ |
 
 ### Document Kit
 
@@ -339,6 +368,24 @@ engenharia/
 | art_validity_date | Validade | Date |  |  |  |
 | art_fee | Taxa Paga | Currency |  |  |  |
 | art_fee_receipt | Comprovante da Taxa | Attach |  |  |  |
+
+### Project Document
+
+**Meta:** autoname=`format:DOC-{YYYY}-{####}` · naming_rule=`Expression` · title_field=`title` · istable=0 · issingle=0
+
+| fieldname | label | fieldtype | options | reqd | unique |
+| --- | --- | --- | --- | --- | --- |
+| project | Obra | Link | Construction Project | ✓ |  |
+| customer | Cliente | Link | Customer |  |  |
+| category | Categoria | Link | Document Category | ✓ |  |
+| status | Status | Select | Rascunho Assinado Protocolado Aprovado Vencido Substituído | ✓ |  |
+| source | Origem | Select | Gerado pelo App Upload Manual Digitalizado |  |  |
+| title_descriptor | Descritor | Data |  |  |  |
+| title | Título | Data |  |  |  |
+| version | Versão / Revisão | Data |  |  |  |
+| file | Arquivo | Attach |  | ✓ |  |
+| related_permit | Protocolo Relacionado | Link | Permit |  |  |
+| remarks | Observações | Small Text |  |  |  |
 
 ### Project Item
 
@@ -827,6 +874,10 @@ engenharia/
 | company_cnpj | CNPJ da Empresa | Data |  |  |  |
 | company_crea | CREA da Empresa | Data |  |  |  |
 | company_logo | Logo do Escritório | Attach Image |  |  |  |
+| engineer_full_name | Nome Completo | Data |  |  |  |
+| engineer_cpf | CPF | Data |  |  |  |
+| engineer_phone | Telefone | Data |  |  |  |
+| engineer_email | E-mail | Data |  |  |  |
 | default_notify_days | Dias padrão de antecedência (prazos) | Int |  |  |  |
 | bank_name | Banco | Data |  |  |  |
 | bank_agency | Agência | Data |  |  |  |
@@ -884,6 +935,6 @@ reinstall_child_doctypes → roles → ensure_event_custom_fields → permission
 
 ## 7. Testes
 
-- **294** métodos em **56** arquivos.
+- **314** métodos em **60** arquivos.
 - `bench --site engenharia.local run-tests --app engenharia`
 

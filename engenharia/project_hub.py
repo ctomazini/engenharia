@@ -24,6 +24,7 @@ def get_project_hub_data(project: str) -> dict:
 		"communications": _get_communications(project),
 		"measurements": _get_measurements(project),
 		"timelogs": _get_timelogs(project),
+		"documents": _get_documents(project),
 	}
 
 	if is_manager:
@@ -52,6 +53,7 @@ def get_project_counts(project: str) -> dict:
 		"timelogs": ("Time Log", "project"),
 		"measurements": ("Construction Measurement", "project"),
 		"items": ("Project Item", "project"),
+		"documents": ("Project Document", "project"),
 	}
 
 	return {
@@ -155,6 +157,25 @@ def _get_measurements(project: str) -> list[dict]:
 		fields=["name", "title", "measurement_date", "reference_period"],
 		order_by="measurement_date desc",
 		limit=10,
+	)
+
+
+def _get_documents(project: str) -> list[dict]:
+	return frappe.get_all(
+		"Project Document",
+		filters={"project": project},
+		fields=[
+			"name",
+			"title",
+			"category",
+			"status",
+			"source",
+			"version",
+			"file",
+			"creation",
+		],
+		order_by="creation desc",
+		limit=50,
 	)
 
 

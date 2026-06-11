@@ -107,6 +107,52 @@ def ensure_default_stage_types():
 		).insert(ignore_permissions=True)  # setup: seed idempotente de tipos de etapa
 
 
+DEFAULT_DOCUMENT_CATEGORIES = (
+	"Memorial",
+	"ART",
+	"RRT",
+	"Contrato",
+	"Protocolo",
+	"Planta",
+	"Alvará",
+	"Declaração",
+	"Laudo",
+	"Orçamento",
+	"Foto",
+	"Projeto",
+	"Outro",
+)
+
+
+def ensure_default_document_categories() -> None:
+	for category_name in DEFAULT_DOCUMENT_CATEGORIES:
+		if frappe.db.exists("Document Category", category_name):
+			continue
+		frappe.get_doc(
+			{"doctype": "Document Category", "category_name": category_name}
+		).insert(ignore_permissions=True)  # setup: seed de categorias documentais padrão
+
+
+DEFAULT_BUILDING_TYPES = (
+	"Residencial",
+	"Comercial",
+	"Industrial",
+	"Mista",
+	"Galpão",
+	"Conjunto habitacional",
+	"Edifício misto",
+)
+
+
+def ensure_default_building_types():
+	for name in DEFAULT_BUILDING_TYPES:
+		if frappe.db.exists("Building Type", name):
+			continue
+		frappe.get_doc(
+			{"doctype": "Building Type", "building_type_name": name}
+		).insert(ignore_permissions=True)  # setup: seed idempotente de tipos de edificação
+
+
 def ensure_default_permit_types():
 	art_rrt_types = {"ART/RRT", "ART", "RRT"}
 	for type_name in DEFAULT_PERMIT_TYPES:
@@ -261,6 +307,8 @@ def _seed_stage_templates():
 def ensure_seed_data():
 	ensure_default_cost_categories()
 	ensure_default_stage_types()
+	ensure_default_document_categories()
+	ensure_default_building_types()
 	ensure_default_permit_types()
 	ensure_engineering_settings()
 	ensure_technical_item_templates()

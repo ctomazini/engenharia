@@ -89,7 +89,9 @@ USER_READ_FINANCIAL = frozenset({"Subcontract"})
 
 CATALOG_DOCTYPES = frozenset(
 	{
+		"Building Type",
 		"Cost Category",
+		"Document Category",
 		"Document Kit",
 		"Document Template",
 		"Permit Type",
@@ -109,6 +111,7 @@ OPERATIONAL_DOCTYPES = frozenset(
 		"Customer",
 		"Deadline",
 		"Permit",
+		"Project Document",
 		"Project Item",
 		"Project Stage",
 		"Task",

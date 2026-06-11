@@ -7,8 +7,25 @@ import frappe
 from frappe import _
 from frappe.utils import flt, formatdate, fmt_money, getdate, strip_html, today
 
+from engenharia.project_document_naming import compose_project_document_filename
 from engenharia.project_rollup import get_project_items_summary
 from engenharia.titles import get_customer_name
+from engenharia.validators import formatar_cep, formatar_cnpj, formatar_cpf, formatar_telefone
+
+TEMPLATE_CATEGORY_MAP = {
+	"memorial": "Memorial",
+	"art": "ART",
+	"contrato": "Contrato",
+	"autorizacao": "Declaração",
+	"declaracao": "Declaração",
+	"requerimento": "Protocolo",
+	"formulario": "Protocolo",
+	"laudo": "Laudo",
+	"orcamento": "Orçamento",
+	"planta": "Planta",
+	"alvara": "Alvará",
+	"foto": "Foto",
+}
 
 PLACEHOLDER_REFERENCE = [
 	{
@@ -22,6 +39,15 @@ PLACEHOLDER_REFERENCE = [
 			{"placeholder": "bank_agency", "label": "Agência"},
 			{"placeholder": "bank_account", "label": "Conta bancária"},
 			{"placeholder": "bank_pix", "label": "Chave PIX"},
+		],
+	},
+	{
+		"grupo": "Engenheiro responsável",
+		"items": [
+			{"placeholder": "engineer_full_name", "label": "Nome completo do engenheiro responsável"},
+			{"placeholder": "engineer_cpf", "label": "CPF do engenheiro"},
+			{"placeholder": "engineer_phone", "label": "Telefone do engenheiro"},
+			{"placeholder": "engineer_email", "label": "E-mail do engenheiro"},
 		],
 	},
 	{
@@ -40,6 +66,7 @@ PLACEHOLDER_REFERENCE = [
 			{"placeholder": "customer_legal_representative_cpf", "label": "CPF do representante legal"},
 			{"placeholder": "customer_legal_representative_role", "label": "Cargo do representante legal"},
 			{"placeholder": "customer_legal_representative_nationality", "label": "Nacionalidade do representante"},
+			{"placeholder": "customer_observations", "label": "Observações do cliente"},
 		],
 	},
 	{
@@ -80,6 +107,8 @@ PLACEHOLDER_REFERENCE = [
 			{"placeholder": "project_address_uf", "label": "UF da obra"},
 			{"placeholder": "project_address_cep", "label": "CEP da obra"},
 			{"placeholder": "project_address_full", "label": "Endereço completo da obra"},
+			{"placeholder": "project_location_code", "label": "Código de localização municipal"},
+			{"placeholder": "project_dic", "label": "DIC (cadastro municipal do lote)"},
 			{"placeholder": "project_construction_area", "label": "Área construída (m²)"},
 			{"placeholder": "project_current_contract_value", "label": "Valor atual do contrato (R$)"},
 			{"placeholder": "project_current_contract_value_fmt", "label": "Valor atual do contrato (formatado)"},
@@ -87,6 +116,17 @@ PLACEHOLDER_REFERENCE = [
 			{"placeholder": "project_responsible_engineer", "label": "Responsável técnico"},
 			{"placeholder": "project_crea_number", "label": "CREA do responsável"},
 			{"placeholder": "project_art_number", "label": "Nº ART principal"},
+			{"placeholder": "project_art_execution_number", "label": "Nº ART de execução (distinta da ART de projeto)"},
+			{"placeholder": "project_building_type", "label": "Tipo de edificação (código Link)"},
+			{"placeholder": "project_building_type_label", "label": "Tipo de edificação (nome legível)"},
+			{"placeholder": "project_main_material", "label": "Material principal da edificação"},
+			{"placeholder": "project_unit_count", "label": "Nº de economias"},
+			{"placeholder": "project_estimated_population", "label": "População estimada"},
+			{"placeholder": "project_occupancy_permit", "label": "Nº do habite-se existente"},
+			{"placeholder": "project_structural_engineer", "label": "Responsável técnico estrutura"},
+			{"placeholder": "project_structural_company", "label": "Empresa responsável pela estrutura"},
+			{"placeholder": "project_structural_engineer_crea", "label": "CREA do responsável estrutural"},
+			{"placeholder": "project_structural_art_number", "label": "Nº ART estrutural"},
 			{"placeholder": "project_property_registration", "label": "Matrícula do imóvel"},
 			{"placeholder": "project_gps_coordinates", "label": "Coordenadas GPS"},
 			{"placeholder": "project_budget_revision", "label": "Revisão vigente do orçamento"},
@@ -109,6 +149,7 @@ PLACEHOLDER_REFERENCE = [
 	{
 		"grupo": "Item do orçamento (loop)",
 		"condicional": True,
+		"condicional_motivo": "Campos dentro de {% for item in project_items %}",
 		"items": [
 			{"placeholder": "name", "label": "Código do item", "loop_only": True, "loop_var": "item"},
 			{"placeholder": "title", "label": "Título do item", "loop_only": True, "loop_var": "item"},
@@ -143,6 +184,7 @@ PLACEHOLDER_REFERENCE = [
 	{
 		"grupo": "Subcontrato (item do loop)",
 		"condicional": True,
+		"condicional_motivo": "Campos dentro de {% for s in subcontracts %}",
 		"items": [
 			{"placeholder": "name", "label": "Código do subcontrato", "loop_only": True, "loop_var": "s"},
 			{"placeholder": "title", "label": "Título do subcontrato", "loop_only": True, "loop_var": "s"},
@@ -158,7 +200,8 @@ PLACEHOLDER_REFERENCE = [
 			{"placeholder": "outstanding", "label": "Saldo a pagar (R$)", "loop_only": True, "loop_var": "s"},
 			{"placeholder": "outstanding_fmt", "label": "Saldo a pagar (formatado)", "loop_only": True, "loop_var": "s"},
 			{"placeholder": "status", "label": "Status", "loop_only": True, "loop_var": "s"},
-			{"placeholder": "cost_category", "label": "Categoria de custo", "loop_only": True, "loop_var": "s"},
+			{"placeholder": "cost_category", "label": "Categoria de custo (código Link)", "loop_only": True, "loop_var": "s"},
+			{"placeholder": "cost_category_label", "label": "Categoria de custo (nome legível)", "loop_only": True, "loop_var": "s"},
 			{"placeholder": "amendment_remarks", "label": "Observações de aditivo", "loop_only": True, "loop_var": "s"},
 			{
 				"placeholder": "payments",
@@ -171,6 +214,7 @@ PLACEHOLDER_REFERENCE = [
 	{
 		"grupo": "Pagamento de subcontrato (item do loop)",
 		"condicional": True,
+		"condicional_motivo": "Campos dentro de {% for p in s.payments %}",
 		"items": [
 			{"placeholder": "payment_date", "label": "Data do pagamento", "loop_only": True, "loop_var": "p"},
 			{"placeholder": "payment_date_fmt", "label": "Data do pagamento (formatada)", "loop_only": True, "loop_var": "p"},
@@ -182,8 +226,31 @@ PLACEHOLDER_REFERENCE = [
 		],
 	},
 	{
+		"grupo": "Protocolo",
+		"condicional": True,
+		"condicional_motivo": "Quando um protocolo é selecionado no diálogo Gerar Documentos",
+		"items": [
+			{"placeholder": "permit_name", "label": "Código do protocolo"},
+			{"placeholder": "permit_title", "label": "Título do protocolo"},
+			{"placeholder": "permit_number", "label": "Número do protocolo"},
+			{"placeholder": "permit_type", "label": "Tipo de protocolo (código Link)"},
+			{"placeholder": "permit_type_label", "label": "Tipo de protocolo (nome legível)"},
+			{"placeholder": "permit_status", "label": "Status"},
+			{"placeholder": "permit_protocol_date", "label": "Data do protocolo"},
+			{"placeholder": "permit_expiry_date", "label": "Data de validade"},
+			{"placeholder": "permit_responsible_professional", "label": "Responsável técnico (ART/RRT)"},
+			{"placeholder": "permit_crea_cau_number", "label": "Nº CREA/CAU do protocolo"},
+			{"placeholder": "permit_art_rrt_number", "label": "Nº ART/RRT do protocolo"},
+			{"placeholder": "permit_art_validity_date", "label": "Validade da ART/RRT"},
+			{"placeholder": "permit_art_fee", "label": "Taxa ART/RRT (R$)"},
+			{"placeholder": "permit_art_fee_fmt", "label": "Taxa ART/RRT (formatada)"},
+			{"placeholder": "permit_agency", "label": "Órgão público"},
+		],
+	},
+	{
 		"grupo": "Contrato",
 		"condicional": True,
+		"condicional_motivo": "Quando há contrato vigente na obra",
 		"items": [
 			{"placeholder": "contract_name", "label": "Código do contrato"},
 			{"placeholder": "contract_title", "label": "Título do contrato"},
@@ -198,9 +265,35 @@ PLACEHOLDER_REFERENCE = [
 			{"placeholder": "contract_daily_interest_pct", "label": "Juros diários (%)"},
 			{"placeholder": "contract_installment_count", "label": "Número de parcelas"},
 			{"placeholder": "contract_first_installment_date", "label": "Data da 1ª parcela"},
-			{"placeholder": "contract_installment_value", "label": "Valor da parcela (R$)"},
-			{"placeholder": "contract_installment_value_fmt", "label": "Valor da parcela (formatado)"},
+			{"placeholder": "contract_installment_value", "label": "Valor médio da parcela (R$)"},
+			{"placeholder": "contract_installment_value_fmt", "label": "Valor médio da parcela (formatado)"},
+			{"placeholder": "contract_total_received", "label": "Total recebido (R$)"},
+			{"placeholder": "contract_total_received_fmt", "label": "Total recebido (formatado)"},
+			{"placeholder": "contract_total_outstanding", "label": "Saldo a receber (R$)"},
+			{"placeholder": "contract_total_outstanding_fmt", "label": "Saldo a receber (formatado)"},
 			{"placeholder": "contract_observations", "label": "Observações do contrato"},
+			{
+				"placeholder": "contract_installments",
+				"label": "Lista de parcelas (use {% for i in contract_installments %})",
+			},
+		],
+	},
+	{
+		"grupo": "Parcela do contrato (loop)",
+		"condicional": True,
+		"condicional_motivo": "Campos dentro de {% for i in contract_installments %}",
+		"items": [
+			{"placeholder": "due_date", "label": "Vencimento", "loop_only": True, "loop_var": "i"},
+			{"placeholder": "due_date_fmt", "label": "Vencimento (formatado)", "loop_only": True, "loop_var": "i"},
+			{"placeholder": "amount", "label": "Valor previsto (R$)", "loop_only": True, "loop_var": "i"},
+			{"placeholder": "amount_fmt", "label": "Valor previsto (formatado)", "loop_only": True, "loop_var": "i"},
+			{"placeholder": "received_amount", "label": "Valor recebido (R$)", "loop_only": True, "loop_var": "i"},
+			{"placeholder": "received_amount_fmt", "label": "Valor recebido (formatado)", "loop_only": True, "loop_var": "i"},
+			{"placeholder": "status", "label": "Status", "loop_only": True, "loop_var": "i"},
+			{"placeholder": "description", "label": "Descrição", "loop_only": True, "loop_var": "i"},
+			{"placeholder": "receipt_date", "label": "Data de recebimento", "loop_only": True, "loop_var": "i"},
+			{"placeholder": "receipt_date_fmt", "label": "Data de recebimento (formatada)", "loop_only": True, "loop_var": "i"},
+			{"placeholder": "nf_number", "label": "Nº nota fiscal", "loop_only": True, "loop_var": "i"},
 		],
 	},
 	{
@@ -214,13 +307,15 @@ PLACEHOLDER_REFERENCE = [
 
 
 @frappe.whitelist()
-def generate_project_documents(project_name: str, template_names: str | list) -> dict:
+def generate_project_documents(
+	project_name: str, template_names: str | list, permit_name: str | None = None
+) -> dict:
 	frappe.has_permission("Construction Project", "write", doc=project_name, throw=True)
 	names = _parse_template_names(template_names)
 	if not names:
 		frappe.throw(_("Selecione ao menos um template."))
 
-	context = _build_context(project_name)
+	context = _build_context(project_name, permit_name=permit_name)
 	generated = []
 	failures = []
 
@@ -230,12 +325,19 @@ def generate_project_documents(project_name: str, template_names: str | list) ->
 			if not template_doc.enabled:
 				raise frappe.ValidationError(_("Template desabilitado: {0}").format(template_name))
 			result = _render_and_attach(project_name, template_doc, context)
+			project_document = _create_generated_project_document(
+				project_name,
+				template_doc,
+				result["file_url"],
+				permit_name=permit_name,
+			)
 			generated.append(
 				{
 					"template": template_name,
 					"title": template_doc.template_name,
 					"file_name": result["file_name"],
 					"file_url": result["file_url"],
+					"project_document": project_document,
 				}
 			)
 		except frappe.ValidationError as exc:
@@ -363,13 +465,17 @@ def _fmt_currency(value) -> str:
 def _get_settings_context(settings) -> dict:
 	return {
 		"company_name": settings.company_name or "",
-		"company_cnpj": settings.company_cnpj or "",
+		"company_cnpj": formatar_cnpj(settings.company_cnpj) if settings.company_cnpj else "",
 		"company_crea": settings.company_crea or "",
 		"company_logo": settings.company_logo or "",
 		"bank_name": settings.bank_name or "",
 		"bank_agency": settings.bank_agency or "",
 		"bank_account": settings.bank_account or "",
 		"bank_pix": settings.bank_pix or "",
+		"engineer_full_name": settings.engineer_full_name or "",
+		"engineer_cpf": formatar_cpf(settings.engineer_cpf) if settings.engineer_cpf else "",
+		"engineer_phone": formatar_telefone(settings.engineer_phone) if settings.engineer_phone else "",
+		"engineer_email": (settings.engineer_email or "").lower(),
 	}
 
 
@@ -388,39 +494,42 @@ def _get_customer_context(customer, addr, contact) -> dict:
 		"customer_name": customer_name,
 		"nome": customer_name,
 		"customer_person_type": customer.person_type if customer else "",
-		"customer_cpf": customer.cpf if customer and customer.cpf else "",
-		"customer_cnpj": customer.cnpj if customer and customer.cnpj else "",
+		"customer_cpf": formatar_cpf(customer.cpf) if customer and customer.cpf else "",
+		"customer_cnpj": formatar_cnpj(customer.cnpj) if customer and customer.cnpj else "",
 		"customer_rg": customer.rg if customer and customer.rg else "",
-		"cpf": customer.cpf if customer and customer.cpf else "",
-		"cnpj": customer.cnpj if customer and customer.cnpj else "",
+		"cpf": formatar_cpf(customer.cpf) if customer and customer.cpf else "",
+		"cnpj": formatar_cnpj(customer.cnpj) if customer and customer.cnpj else "",
 		"rg": customer.rg if customer and customer.rg else "",
 		"customer_trade_name": customer.trade_name if customer and customer.trade_name else "",
 		"customer_nationality": customer.nationality if customer and customer.nationality else "",
 		"customer_marital_status": customer.marital_status if customer and customer.marital_status else "",
 		"customer_profession": customer.profession if customer and customer.profession else "",
 		"customer_legal_representative": (customer.legal_representative or "") if customer else "",
-		"customer_legal_representative_cpf": (customer.legal_representative_cpf or "") if customer else "",
+		"customer_legal_representative_cpf": (
+			formatar_cpf(customer.legal_representative_cpf) if customer and customer.legal_representative_cpf else ""
+		),
 		"customer_legal_representative_role": (customer.legal_representative_role or "") if customer else "",
 		"customer_legal_representative_nationality": (customer.legal_representative_nationality or "") if customer else "",
+		"customer_observations": strip_html(customer.observations or "") if customer else "",
 		"address_street": addr.street if addr else "",
 		"address_number": addr.number if addr else "",
 		"address_complement": addr.complement if addr else "",
 		"address_district": addr.district if addr else "",
 		"address_city": addr.city if addr else "",
 		"address_state": addr.state if addr else "",
-		"address_cep": addr.cep if addr else "",
+		"address_cep": formatar_cep(addr.cep) if addr and addr.cep else "",
 		"endereco": addr.street if addr else "",
 		"numero": addr.number if addr else "",
 		"bairro": addr.district if addr else "",
 		"cidade": addr.city if addr else "",
 		"estado": addr.state if addr else "",
-		"cep": addr.cep if addr else "",
+		"cep": formatar_cep(addr.cep) if addr and addr.cep else "",
 		"address_full": customer_address_full,
 		"contact_name": contact.contact_name if contact else "",
-		"contact_phone": contact.phone if contact else "",
-		"contact_mobile": contact.mobile if contact else "",
+		"contact_phone": formatar_telefone(contact.phone) if contact and contact.phone else "",
+		"contact_mobile": formatar_telefone(contact.mobile) if contact and contact.mobile else "",
 		"contact_email": (contact.email or "").lower() if contact and contact.email else "",
-		"telefone": contact.phone if contact else "",
+		"telefone": formatar_telefone(contact.phone) if contact and contact.phone else "",
 		"email": (contact.email or "").lower() if contact and contact.email else "",
 	}
 
@@ -450,8 +559,10 @@ def _get_project_context(project) -> dict:
 		"project_address_district": project.address_district or "",
 		"project_city": project.city or "",
 		"project_address_uf": project.address_uf or "",
-		"project_address_cep": project.address_cep or "",
+		"project_address_cep": formatar_cep(project.address_cep) if project.address_cep else "",
 		"project_address_full": project_address_full,
+		"project_location_code": project.location_code or "",
+		"project_dic": project.dic or "",
 		"project_construction_area": flt(project.construction_area),
 		"project_current_contract_value": current_contract_value,
 		"project_current_contract_value_fmt": _fmt_currency(current_contract_value),
@@ -459,6 +570,17 @@ def _get_project_context(project) -> dict:
 		"project_responsible_engineer": project.responsible_engineer or "",
 		"project_crea_number": project.crea_number or "",
 		"project_art_number": project.art_number or "",
+		"project_art_execution_number": project.art_execution_number or "",
+		"project_building_type": project.building_type or "",
+		"project_building_type_label": project.building_type or "",
+		"project_main_material": project.main_material or "",
+		"project_unit_count": project.unit_count or 0,
+		"project_estimated_population": project.estimated_population or 0,
+		"project_occupancy_permit": project.occupancy_permit or "",
+		"project_structural_engineer": project.structural_engineer or "",
+		"project_structural_company": project.structural_company or "",
+		"project_structural_engineer_crea": project.structural_engineer_crea or "",
+		"project_structural_art_number": project.structural_art_number or "",
 		"project_property_registration": project.property_registration or "",
 		"project_gps_coordinates": project.gps_coordinates or "",
 		"project_budget_revision": project.budget_revision or 1,
@@ -514,6 +636,17 @@ def _get_subcontracts_context(project_name: str) -> dict:
 		supplier_names = {row.name: row.supplier_name for row in suppliers}
 		supplier_cnpjs = {row.name: row.cnpj or "" for row in suppliers}
 
+	cost_category_labels = {}
+	cost_categories = {row.cost_category for row in rows if row.cost_category}
+	if cost_categories:
+		for cat_row in frappe.get_all(
+			"Cost Category",
+			filters={"name": ["in", list(cost_categories)]},
+			fields=["name", "category_name"],
+			limit=100,
+		):
+			cost_category_labels[cat_row.name] = cat_row.category_name or cat_row.name
+
 	subcontracts = []
 	total_value = 0.0
 	total_paid = 0.0
@@ -540,7 +673,9 @@ def _get_subcontracts_context(project_name: str) -> dict:
 				"title": row.title or row.name,
 				"supplier": row.supplier or "",
 				"supplier_name": supplier_names.get(row.supplier, row.supplier or ""),
-				"supplier_cnpj": supplier_cnpjs.get(row.supplier, ""),
+				"supplier_cnpj": formatar_cnpj(supplier_cnpjs.get(row.supplier, ""))
+				if supplier_cnpjs.get(row.supplier)
+				else "",
 				"funded_by": row.funded_by or "",
 				"description": row.description or "",
 				"total_value": row_total,
@@ -551,6 +686,7 @@ def _get_subcontracts_context(project_name: str) -> dict:
 				"outstanding_fmt": _fmt_currency(row_outstanding),
 				"status": row.status or "",
 				"cost_category": row.cost_category or "",
+				"cost_category_label": cost_category_labels.get(row.cost_category, row.cost_category or ""),
 				"amendment_remarks": row.amendment_remarks or "",
 				"payments": [_get_subcontract_payment_row(payment) for payment in payment_rows],
 			}
@@ -596,30 +732,65 @@ def _get_project_items_context(project_name: str) -> dict:
 	}
 
 
+def _get_contract_installment_row(installment) -> dict:
+	amount = flt(installment.amount)
+	received_amount = flt(installment.received_amount)
+	return {
+		"due_date": installment.due_date or "",
+		"due_date_fmt": _fmt_date(installment.due_date),
+		"amount": amount,
+		"amount_fmt": _fmt_currency(amount),
+		"received_amount": received_amount,
+		"received_amount_fmt": _fmt_currency(received_amount),
+		"status": installment.status or "",
+		"description": installment.description or "",
+		"receipt_date": installment.receipt_date or "",
+		"receipt_date_fmt": _fmt_date(installment.receipt_date),
+		"nf_number": installment.nf_number or "",
+	}
+
+
 def _get_contract_context(contract) -> dict:
+	empty = {
+		"contract_name": "",
+		"contract_title": "",
+		"contract_status": "",
+		"contract_base_value": 0,
+		"contract_base_value_fmt": _fmt_currency(0),
+		"contract_value": 0,
+		"contract_value_fmt": _fmt_currency(0),
+		"contract_adjustment_index": "",
+		"contract_technical_retention_pct": 0,
+		"contract_late_fee_pct": 0,
+		"contract_daily_interest_pct": 0,
+		"contract_installment_count": 0,
+		"contract_first_installment_date": "",
+		"contract_installment_value": 0,
+		"contract_installment_value_fmt": _fmt_currency(0),
+		"contract_total_received": 0,
+		"contract_total_received_fmt": _fmt_currency(0),
+		"contract_total_outstanding": 0,
+		"contract_total_outstanding_fmt": _fmt_currency(0),
+		"contract_observations": "",
+		"contract_installments": [],
+	}
+
 	if not contract:
-		return {
-			"contract_name": "",
-			"contract_title": "",
-			"contract_status": "",
-			"contract_base_value": 0,
-			"contract_base_value_fmt": _fmt_currency(0),
-			"contract_value": 0,
-			"contract_value_fmt": _fmt_currency(0),
-			"contract_adjustment_index": "",
-			"contract_technical_retention_pct": 0,
-			"contract_late_fee_pct": 0,
-			"contract_daily_interest_pct": 0,
-			"contract_installment_count": 0,
-			"contract_first_installment_date": "",
-			"contract_installment_value": 0,
-			"contract_installment_value_fmt": _fmt_currency(0),
-			"contract_observations": "",
-		}
+		return empty
 
 	base_value = flt(contract.base_value)
 	current_value = flt(contract.current_value)
 	installment_value = flt(contract.installment_value)
+	installments = [
+		_get_contract_installment_row(row)
+		for row in sorted(contract.installments or [], key=lambda row: row.due_date or "")
+	]
+	total_received = sum(flt(row.get("received_amount")) for row in installments)
+	total_outstanding = sum(
+		max(0, flt(row.get("amount")) - flt(row.get("received_amount")))
+		for row in installments
+		if row.get("status") not in ("Cancelado",)
+	)
 	return {
 		"contract_name": contract.name,
 		"contract_title": contract.title or contract.name,
@@ -632,19 +803,80 @@ def _get_contract_context(contract) -> dict:
 		"contract_technical_retention_pct": flt(contract.technical_retention_pct),
 		"contract_late_fee_pct": flt(contract.late_fee_pct),
 		"contract_daily_interest_pct": flt(contract.daily_interest_pct),
-		"contract_installment_count": contract.installment_count or 0,
+		"contract_installment_count": contract.installment_count or len(installments),
 		"contract_first_installment_date": _fmt_date(contract.first_installment_date),
 		"contract_installment_value": installment_value,
 		"contract_installment_value_fmt": _fmt_currency(installment_value),
+		"contract_total_received": total_received,
+		"contract_total_received_fmt": _fmt_currency(total_received),
+		"contract_total_outstanding": total_outstanding,
+		"contract_total_outstanding_fmt": _fmt_currency(total_outstanding),
 		"contract_observations": strip_html(contract.observations or ""),
+		"contract_installments": installments,
 	}
 
 
-def _build_context(project_name: str) -> dict:
+def _get_permit_context(permit_name: str | None) -> dict:
+	empty = {
+		"permit_name": "",
+		"permit_title": "",
+		"permit_number": "",
+		"permit_type": "",
+		"permit_type_label": "",
+		"permit_status": "",
+		"permit_protocol_date": "",
+		"permit_expiry_date": "",
+		"permit_responsible_professional": "",
+		"permit_crea_cau_number": "",
+		"permit_art_rrt_number": "",
+		"permit_art_validity_date": "",
+		"permit_art_fee": 0,
+		"permit_art_fee_fmt": _fmt_currency(0),
+		"permit_agency": "",
+	}
+	if not permit_name:
+		return empty
+
+	permit = frappe.get_doc("Permit", permit_name)
+	agency_name = ""
+	if permit.public_agency:
+		agency_name = frappe.db.get_value("Public Agency", permit.public_agency, "agency_name") or permit.public_agency
+	permit_type_label = ""
+	if permit.permit_type:
+		permit_type_label = (
+			frappe.db.get_value("Permit Type", permit.permit_type, "type_name") or permit.permit_type
+		)
+	art_fee = flt(permit.art_fee)
+
+	return {
+		"permit_name": permit.name,
+		"permit_title": permit.title or permit.name,
+		"permit_number": permit.permit_number or "",
+		"permit_type": permit.permit_type or "",
+		"permit_type_label": permit_type_label,
+		"permit_status": permit.status or "",
+		"permit_protocol_date": _fmt_date(permit.protocol_date),
+		"permit_expiry_date": _fmt_date(permit.expiry_date),
+		"permit_responsible_professional": permit.responsible_professional or "",
+		"permit_crea_cau_number": permit.crea_cau_number or "",
+		"permit_art_rrt_number": permit.art_rrt_number or "",
+		"permit_art_validity_date": _fmt_date(permit.art_validity_date),
+		"permit_art_fee": art_fee,
+		"permit_art_fee_fmt": _fmt_currency(art_fee),
+		"permit_agency": agency_name,
+	}
+
+
+def _build_context(project_name: str, permit_name: str | None = None) -> dict:
 	project = frappe.get_doc("Construction Project", project_name)
 	customer = frappe.get_doc("Customer", project.customer) if project.customer else None
 	addr = _primary_customer_address(customer)
 	contact = _primary_customer_contact(customer)
+
+	if permit_name:
+		permit_project = frappe.db.get_value("Permit", permit_name, "project")
+		if permit_project != project.name:
+			frappe.throw(_("O protocolo selecionado não pertence a esta obra."))
 
 	contract_name = frappe.db.get_value(
 		"Engineering Contract",
@@ -662,6 +894,7 @@ def _build_context(project_name: str) -> dict:
 	context.update(_get_project_items_context(project.name))
 	context.update(_get_contract_context(contract))
 	context.update(_get_subcontracts_context(project.name))
+	context.update(_get_permit_context(permit_name))
 	context.update(
 		{
 			"today": formatdate(today()),
@@ -669,6 +902,54 @@ def _build_context(project_name: str) -> dict:
 		}
 	)
 	return context
+
+
+def _infer_document_category(template_doc) -> str:
+	search_text = " ".join(
+		part
+		for part in (
+			template_doc.template_name,
+			template_doc.document_type,
+			template_doc.description,
+		)
+		if part
+	).lower()
+	for keyword, category in TEMPLATE_CATEGORY_MAP.items():
+		if keyword in search_text:
+			return category
+	return "Outro"
+
+
+def _ensure_document_category(category_name: str) -> str:
+	if not frappe.db.exists("Document Category", category_name):
+		frappe.get_doc(
+			{"doctype": "Document Category", "category_name": category_name}
+		).insert(ignore_permissions=True)  # registro filho — categoria inferida do template
+	return category_name
+
+
+def _create_generated_project_document(
+	project_name: str,
+	template_doc,
+	file_url: str,
+	permit_name: str | None = None,
+) -> str:
+	category = _ensure_document_category(_infer_document_category(template_doc))
+	doc = frappe.get_doc(
+		{
+			"doctype": "Project Document",
+			"project": project_name,
+			"category": category,
+			"status": "Rascunho",
+			"source": "Gerado pelo App",
+			"file": file_url,
+			"version": "v1",
+			"title_descriptor": template_doc.template_name,
+			"related_permit": permit_name or None,
+		}
+	)
+	doc.insert(ignore_permissions=True)  # registro filho — write na obra já validada
+	return doc.name
 
 
 def _render_and_attach(project_name, template_doc, context):
@@ -692,10 +973,14 @@ def _render_and_attach(project_name, template_doc, context):
 	tpl.save(buffer)
 	buffer.seek(0)
 
-	doc_type = re.sub(r"[^\w\-]+", "_", template_doc.document_type or "doc").strip("_")
-	project_slug = re.sub(r"[^\w\-]+", "_", project_name).strip("_")
-	date_slug = frappe.utils.now_datetime().strftime("%Y%m%d")
-	file_name = f"{doc_type}_{project_slug}_{date_slug}.docx"
+	category = _infer_document_category(template_doc)
+	file_name = compose_project_document_filename(
+		project_name,
+		category,
+		"v1",
+		template_doc.template_name,
+		".docx",
+	)
 
 	attachment = frappe.get_doc(
 		{
@@ -708,4 +993,4 @@ def _render_and_attach(project_name, template_doc, context):
 		}
 	)
 	attachment.save(ignore_permissions=True)  # File anexado — write no Construction Project já validada
-	return {"file_url": attachment.file_url, "file_name": file_name}
+	return {"file_url": attachment.file_url, "file_name": attachment.file_name}

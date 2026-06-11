@@ -30,8 +30,32 @@ class TestProjectHub(FrappeTestCase):
 			"communications",
 			"measurements",
 			"timelogs",
+			"documents",
 		):
 			self.assertIn(key, data)
+
+	def test_hub_documents_reflects_records(self):
+		from engenharia.engenharia.doctype.project_document.test_project_document import (
+			_create_test_file_url,
+		)
+		from engenharia.tests.test_setup import ensure_test_document_category
+
+		project = create_test_construction_project()
+		ensure_test_document_category("Memorial")
+		frappe.get_doc(
+			{
+				"doctype": "Project Document",
+				"project": project.name,
+				"category": "Memorial",
+				"status": "Rascunho",
+				"source": "Upload Manual",
+				"file": _create_test_file_url(),
+			}
+		).insert(ignore_permissions=True)
+
+		data = get_project_hub_data(project.name)
+		self.assertEqual(len(data["documents"]), 1)
+		self.assertEqual(data["documents"][0]["category"], "Memorial")
 
 	def test_hub_stages_match_db(self):
 		project = create_test_construction_project()
@@ -103,6 +127,7 @@ class TestProjectHub(FrappeTestCase):
 			"timelogs",
 			"measurements",
 			"items",
+			"documents",
 		]
 		for key in expected_keys:
 			self.assertIn(key, counts)

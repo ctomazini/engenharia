@@ -2,7 +2,7 @@
 
 Sistema de gestão de obras de engenharia civil integrado ao Frappe Desk.
 
-Documentação técnica e de desenvolvimento: [`docs/README.md`](README.md).
+Documentação técnica e de desenvolvimento: [`engenharia/docs/README.md`](README.md) · [`docs/README.md`](../../docs/README.md).
 
 ---
 
@@ -485,7 +485,9 @@ No formulário **Modelo de Documento**, use o botão **Ver Placeholders Disponí
 | **Subcontratos (obra)** | Totais agregados e lista `subcontracts` |
 | **Subcontrato** *(loop)* | Prestador, valores, status, quem arca, parcelas pagas |
 | **Pagamento de subcontrato** *(loop)* | Data, valor, forma, comprovante |
+| **Protocolo** *(condicional)* | Dados do protocolo selecionado no diálogo de geração |
 | **Contrato** *(condicional)* | Valores, parcelas, retenção, multa — vazio se não houver contrato |
+| **Parcela do contrato** *(loop)* | Vencimento, valor, recebido, status, NF — dentro de `contract_installments` |
 | **Data** | `today`, `today_iso` |
 
 **Aliases legados:** alguns campos aceitam nomes em português (`{{ nome }}`, `{{ cpf }}`, `{{ endereco }}`, `{{ titulo_obra }}`, etc.) — equivalentes aos nomes em inglês.
@@ -530,6 +532,29 @@ No formulário **Modelo de Documento**, use o botão **Ver Placeholders Disponí
 | `contract_installment_value` / `_fmt` | Valor da parcela |
 | `contract_technical_retention_pct` | Retenção técnica (%) |
 | `contract_late_fee_pct` | Multa por mora (%) |
+| `contract_total_received` / `_fmt` | Total já recebido nas parcelas |
+| `contract_total_outstanding` / `_fmt` | Saldo a receber nas parcelas |
+
+**Parcelas do contrato — loop:**
+
+```
+{% for i in contract_installments %}
+  {{ i.due_date_fmt }} — {{ i.amount_fmt }} — {{ i.status }}
+  Recebido: {{ i.received_amount_fmt }} — NF: {{ i.nf_number }}
+{% endfor %}
+```
+
+**Protocolo** *(preenchido quando um protocolo é selecionado em Gerar Documentos):*
+
+| Placeholder | Conteúdo |
+|---|---|
+| `permit_number` | Número do protocolo |
+| `permit_type_label` | Tipo legível (cadastro Tipos de Alvará) |
+| `permit_agency` | Órgão público |
+| `permit_protocol_date` | Data do protocolo |
+| `permit_expiry_date` | Validade |
+| `permit_art_rrt_number` | Nº ART/RRT |
+| `permit_responsible_professional` | Responsável técnico |
 
 Tipos de modelo: **Contrato**, **Proposta**, **Relatório** ou **Outro**.
 
@@ -537,15 +562,44 @@ Tipos de modelo: **Contrato**, **Proposta**, **Relatório** ou **Outro**.
 
 Agrupe vários modelos em um **Kit** para gerar pacotes completos de uma vez.
 
-### 10.3 Gerar documento
+### 10.3 Gerar documento Word
 
 Na **Obra**, use o botão **Gerar Documentos**:
 
 1. Escolha um ou mais modelos (ou um **Kit**).
-2. O sistema preenche placeholders com dados do escritório, cliente, obra, orçamento (itens da revisão vigente), contrato e subcontratos.
-3. O `.docx` gerado é anexado à obra para download.
+2. Opcionalmente selecione um **Protocolo** vinculado à obra (placeholders do grupo Protocolo).
+3. O sistema preenche placeholders com dados do escritório, cliente, obra, orçamento (itens da revisão vigente), contrato (incluindo parcelas) e subcontratos.
+4. O `.docx` gerado é anexado à obra e registrado em **Documento da Obra** (origem: *Gerado pelo App*).
 
-Configure em **Configurações da Engenharia**: CNPJ, razão social, CREA, **logotipo**, dados bancários e PIX — todos disponíveis como placeholders.
+Configure em **Configurações da Engenharia**: CNPJ, razão social, CREA, **logotipo** (`{{ company_logo }}`), dados bancários e PIX.
+
+### 10.4 Arquivos da obra (Documento da Obra)
+
+Além da geração Word, a aba **Documentos** da obra gerencia PDFs, plantas, memoriais e anexos:
+
+| Campo | Uso |
+|---|---|
+| **Categoria** | Cadastro rígido (Memorial, ART, Protocolo, Planta…) |
+| **Versão** | Ex.: Rev 01, v2 |
+| **Descritor** | Complemento opcional do título |
+| **Status** | Rascunho, Enviado, Aprovado… |
+| **Protocolo relacionado** | Vínculo opcional com alvará/protocolo |
+
+O **título** exibido segue `{Obra} — {Categoria} — {Versão}`; o **nome do arquivo** anexo é renomeado automaticamente para `{ID_obra}_{categoria}_{versão}_{descritor}.ext`.
+
+Cadastros auxiliares: **Categorias de Documento** e **Tipos de Edificação** (sidebar Cadastros).
+
+Detalhes técnicos: [`project_documents.md`](project_documents.md).
+
+### 10.5 Navegação hub da obra
+
+A **Obra** funciona como hub central. Ao abrir contratos, pagamentos, documentos ou outros satélites:
+
+- O **breadcrumb** mantém o caminho até a obra (IDs curtos, ex.: `PROJ-2026-0042`).
+- O botão **Voltar à obra** retorna ao hub na **mesma aba** de onde você saiu.
+- Satélites acessíveis pelo hub: contratos, pagamentos, custos, subcontratos, prazos, protocolos, tarefas, medições, horas, comunicações, comissões, documentos da obra, etapas e itens.
+
+Detalhes técnicos: [`hub_navigation.md`](hub_navigation.md).
 
 ---
 

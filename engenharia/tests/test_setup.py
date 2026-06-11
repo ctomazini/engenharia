@@ -328,6 +328,22 @@ def create_test_time_log(project=None, activity=None, **kwargs):
 	return doc
 
 
+def ensure_test_building_type(type_name="Residencial"):
+	if not frappe.db.exists("Building Type", type_name):
+		frappe.get_doc(
+			{"doctype": "Building Type", "building_type_name": type_name}
+		).insert(ignore_permissions=True)
+	return type_name
+
+
+def ensure_test_document_category(category_name="Memorial"):
+	if not frappe.db.exists("Document Category", category_name):
+		frappe.get_doc(
+			{"doctype": "Document Category", "category_name": category_name}
+		).insert(ignore_permissions=True)
+	return category_name
+
+
 def ensure_test_permit_type(type_name="Alvará"):
 	is_art_rrt = 1 if type_name in ("ART/RRT", "ART", "RRT") else 0
 	if not frappe.db.exists("Permit Type", type_name):

@@ -35,6 +35,21 @@ const EngenhariaMasks = {
 		return v;
 	},
 
+	listFormatters: {
+		cpf(value) {
+			return EngenhariaMasks.applyCPF(value) || "";
+		},
+		cnpj(value) {
+			return EngenhariaMasks.applyCNPJ(value) || "";
+		},
+		phone(value) {
+			return EngenhariaMasks.applyPhone(value) || "";
+		},
+		cep(value) {
+			return EngenhariaMasks.applyCEP(value) || "";
+		},
+	},
+
 	_bindInput($input, maskFn) {
 		if (!$input || !$input.length) return;
 
@@ -67,6 +82,16 @@ const EngenhariaMasks = {
 		return patterns[tipo] || "";
 	},
 
+	_refreshDisplay(field, maskFn) {
+		if (!field || !field.$input) return;
+		const raw = field.get_value && field.get_value();
+		if (!raw) return;
+		const masked = maskFn.call(this, raw);
+		if (field.$input.val() !== masked) {
+			field.$input.val(masked);
+		}
+	},
+
 	bindMask(frm, fieldname, maskFn, inputmaskTipo) {
 		const field = frm.fields_dict && frm.fields_dict[fieldname];
 		if (!field || !field.$input) return;
@@ -82,13 +107,7 @@ const EngenhariaMasks = {
 			this._bindInput(field.$input, maskFn);
 		}
 
-		const current = field.get_value && field.get_value();
-		if (current) {
-			const masked = maskFn.call(this, current);
-			if (current !== masked) {
-				field.set_value(masked);
-			}
-		}
+		this._refreshDisplay(field, maskFn);
 	},
 
 	unbindMask(frm, fieldname) {
@@ -101,11 +120,9 @@ const EngenhariaMasks = {
 	},
 
 	formatFormField(frm, fieldname, maskFn) {
-		if (!frm.doc[fieldname]) return;
-		const masked = maskFn.call(this, frm.doc[fieldname]);
-		if (frm.doc[fieldname] !== masked) {
-			frm.set_value(fieldname, masked);
-		}
+		const field = frm.fields_dict && frm.fields_dict[fieldname];
+		if (!field || !frm.doc[fieldname]) return;
+		this._refreshDisplay(field, maskFn);
 	},
 
 	formatChildField(cdt, cdn, fieldname, maskFn) {
@@ -115,6 +132,21 @@ const EngenhariaMasks = {
 		if (row[fieldname] !== masked) {
 			frappe.model.set_value(cdt, cdn, fieldname, masked);
 		}
+	},
+
+	setupGridMaskFormatters(frm, tableFieldname, specs) {
+		const grid = frm.fields_dict[tableFieldname] && frm.fields_dict[tableFieldname].grid;
+		if (!grid) return;
+
+		specs.forEach(({ fieldname, maskFn }) => {
+			const df = grid.get_docfield(fieldname);
+			if (!df) return;
+			df.formatter = (value) => {
+				if (!value) return "";
+				return frappe.utils.escape_html(maskFn.call(EngenhariaMasks, value));
+			};
+		});
+		grid.refresh();
 	},
 
 	setupCustomerForm(frm) {
@@ -135,6 +167,30 @@ const EngenhariaMasks = {
 			const fn = fieldname === "cnpj" ? this.applyCNPJ : this.applyCPF;
 			this.formatFormField(frm, fieldname, fn);
 		});
+
+		this.setupGridMaskFormatters(frm, "contacts", [
+			{ fieldname: "phone", maskFn: this.applyPhone },
+			{ fieldname: "mobile", maskFn: this.applyPhone },
+		]);
+		this.setupGridMaskFormatters(frm, "addresses", [{ fieldname: "cep", maskFn: this.applyCEP }]);
+	},
+
+	setupSupplierForm(frm) {
+		if (!window.EngenhariaMasks) return;
+		this.bindMask(frm, "cnpj", this.applyCNPJ, "cnpj");
+		this.bindMask(frm, "phone", this.applyPhone, "phone");
+		this.formatFormField(frm, "cnpj", this.applyCNPJ);
+		this.formatFormField(frm, "phone", this.applyPhone);
+	},
+
+	setupEngineeringSettingsForm(frm) {
+		if (!window.EngenhariaMasks) return;
+		this.bindMask(frm, "company_cnpj", this.applyCNPJ, "cnpj");
+		this.bindMask(frm, "engineer_cpf", this.applyCPF, "cpf");
+		this.bindMask(frm, "engineer_phone", this.applyPhone, "phone");
+		this.formatFormField(frm, "company_cnpj", this.applyCNPJ);
+		this.formatFormField(frm, "engineer_cpf", this.applyCPF);
+		this.formatFormField(frm, "engineer_phone", this.applyPhone);
 	},
 };
 

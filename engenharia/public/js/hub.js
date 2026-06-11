@@ -16,6 +16,8 @@ function eng_hub_load(frm) {
 			eng_hub_render_communications(frm, data.communications || []);
 			eng_hub_render_measurements(frm, data.measurements || []);
 			eng_hub_render_timelogs(frm, data.timelogs || []);
+			eng_hub_render_documents(frm, data.documents || []);
+			eng_hub_bind_documents_tab(frm);
 
 			if (data.financial) {
 				eng_hub_render_costs(frm);
@@ -44,7 +46,7 @@ function eng_hub_render_stages(frm, stages) {
 			_eng_hub_empty("📐", __("Nenhuma etapa cadastrada"), __("+ Nova Etapa"), "new-stage")
 		);
 		$w.find('[data-hub-action="new-stage"]').on("click", () => {
-			frappe.new_doc("Project Stage", { project: frm.doc.name });
+			eng_hub_nav_new_doc("Project Stage", { project: frm.doc.name });
 		});
 		return;
 	}
@@ -94,7 +96,7 @@ function eng_hub_render_stages(frm, stages) {
 	</div>`);
 
 	$w.find('[data-hub-action="new-stage"]').on("click", () => {
-		frappe.new_doc("Project Stage", { project: frm.doc.name });
+		eng_hub_nav_new_doc("Project Stage", { project: frm.doc.name });
 	});
 	$w.find(".eng-hub-progress").on("click", function () {
 		eng_hub_edit_stage(frm, $(this).attr("data-stage"));
@@ -325,11 +327,10 @@ function _eng_hub_render_installments(frm, installments) {
 	</div>`);
 
 	$w.find('[data-hub-action="list-contracts"]').on("click", () => {
-		frappe.set_route("List", "Engineering Contract", { project: frm.doc.name });
+		eng_hub_nav_set_route("List", "Engineering Contract", { project: frm.doc.name });
 	});
 	$w.find(".eng-hub-list-row[data-route]").on("click", function () {
-		const parts = $(this).attr("data-route").split("/");
-		frappe.set_route(parts[0], parts[1], parts[2]);
+		eng_hub_nav_follow_route($(this).attr("data-route"));
 	});
 }
 
@@ -478,8 +479,7 @@ function _eng_hub_render_costs_panel(frm, $w, items, summary) {
 		</tr>`);
 
 		$panel.find(".eng-hub-costs-row[data-route]").off("click").on("click", function () {
-			const parts = $(this).attr("data-route").split("/");
-			frappe.set_route(parts[0], parts[1], parts[2]);
+			eng_hub_nav_follow_route($(this).attr("data-route"));
 		});
 	}
 
@@ -492,13 +492,13 @@ function _eng_hub_render_costs_panel(frm, $w, items, summary) {
 	});
 
 	$w.find('[data-hub-action="new-work-cost"]').on("click", () => {
-		frappe.new_doc("Work Cost", { project: frm.doc.name });
+		eng_hub_nav_new_doc("Work Cost", { project: frm.doc.name });
 	});
 	$w.find('[data-hub-action="new-subcontract"]').on("click", () => {
-		frappe.new_doc("Subcontract", { project: frm.doc.name });
+		eng_hub_nav_new_doc("Subcontract", { project: frm.doc.name });
 	});
 	$w.find('[data-hub-action="new-reimbursable"]').on("click", () => {
-		frappe.new_doc("Reimbursable Expense", { project: frm.doc.name });
+		eng_hub_nav_new_doc("Reimbursable Expense", { project: frm.doc.name });
 	});
 }
 
@@ -679,11 +679,10 @@ function eng_hub_render_payments(frm, payments) {
 	</div>`);
 
 	$w.find('[data-hub-action="new-payment"]').on("click", () => {
-		frappe.new_doc("Payment", { project: frm.doc.name });
+		eng_hub_nav_new_doc("Payment", { project: frm.doc.name });
 	});
 	$w.find(".eng-hub-list-row[data-route]").on("click", function () {
-		const parts = $(this).attr("data-route").split("/");
-		frappe.set_route(parts[0], parts[1], parts[2]);
+		eng_hub_nav_follow_route($(this).attr("data-route"));
 	});
 }
 
@@ -737,11 +736,10 @@ function eng_hub_render_reimbursables(frm, reimbursables) {
 	</div>`);
 
 	$w.find('[data-hub-action="new-reimbursable"]').on("click", () => {
-		frappe.new_doc("Reimbursable Expense", { project: frm.doc.name });
+		eng_hub_nav_new_doc("Reimbursable Expense", { project: frm.doc.name });
 	});
 	$w.find(".eng-hub-list-row[data-route]").on("click", function () {
-		const parts = $(this).attr("data-route").split("/");
-		frappe.set_route(parts[0], parts[1], parts[2]);
+		eng_hub_nav_follow_route($(this).attr("data-route"));
 	});
 }
 
@@ -795,11 +793,10 @@ function eng_hub_render_commissions_hub(frm, commissions) {
 	</div>`);
 
 	$w.find('[data-hub-action="new-commission"]').on("click", () => {
-		frappe.new_doc("Commission", { construction_project: frm.doc.name });
+		eng_hub_nav_new_doc("Commission", { construction_project: frm.doc.name });
 	});
 	$w.find(".eng-hub-list-row[data-route]").on("click", function () {
-		const parts = $(this).attr("data-route").split("/");
-		frappe.set_route(parts[0], parts[1], parts[2]);
+		eng_hub_nav_follow_route($(this).attr("data-route"));
 	});
 }
 
@@ -893,6 +890,13 @@ function eng_hub_render_summary_bar(frm, counts) {
 			fieldname: "project",
 		},
 		{
+			icon: "📄",
+			label: __("Documentos"),
+			count: counts.documents,
+			doctype: "Project Document",
+			fieldname: "project",
+		},
+		{
 			icon: "⏱️",
 			label: __("Horas"),
 			count: counts.timelogs,
@@ -942,13 +946,13 @@ function eng_hub_render_summary_bar(frm, counts) {
 		e.preventDefault();
 		const doctype = $(this).attr("data-doctype");
 		const fieldname = $(this).attr("data-fieldname");
-		frappe.set_route("List", doctype, { [fieldname]: project });
+		eng_hub_nav_set_route("List", doctype, { [fieldname]: project });
 	});
 	$w.find(".eng-hub-summary-pill__add").on("click", function (e) {
 		e.stopPropagation();
 		const doctype = $(this).attr("data-doctype");
 		const fieldname = $(this).attr("data-fieldname");
-		frappe.new_doc(doctype, { [fieldname]: project });
+		eng_hub_nav_new_doc(doctype, { [fieldname]: project });
 	});
 }
 
@@ -959,7 +963,7 @@ function eng_hub_render_deadlines(frm, deadlines) {
 	if (!deadlines.length) {
 		$w.html(_eng_hub_empty("📅", __("Nenhum prazo cadastrado"), __("+ Prazo"), "new-deadline"));
 		$w.find('[data-hub-action="new-deadline"]').on("click", () => {
-			frappe.new_doc("Deadline", { project: frm.doc.name });
+			eng_hub_nav_new_doc("Deadline", { project: frm.doc.name });
 		});
 		return;
 	}
@@ -1020,11 +1024,10 @@ function eng_hub_render_deadlines(frm, deadlines) {
 	</div>`);
 
 	$w.find('[data-hub-action="new-deadline"]').on("click", () => {
-		frappe.new_doc("Deadline", { project: frm.doc.name });
+		eng_hub_nav_new_doc("Deadline", { project: frm.doc.name });
 	});
 	$w.find(".eng-hub-timeline-item[data-route]").on("click", function () {
-		const parts = $(this).attr("data-route").split("/");
-		frappe.set_route(parts[0], parts[1], parts[2]);
+		eng_hub_nav_follow_route($(this).attr("data-route"));
 	});
 }
 
@@ -1035,7 +1038,7 @@ function eng_hub_render_permits(frm, permits) {
 	if (!permits.length) {
 		$w.html(_eng_hub_empty("🏛️", __("Nenhum alvará registrado"), __("+ Protocolo"), "new-permit"));
 		$w.find('[data-hub-action="new-permit"]').on("click", () => {
-			frappe.new_doc("Permit", { project: frm.doc.name });
+			eng_hub_nav_new_doc("Permit", { project: frm.doc.name });
 		});
 		return;
 	}
@@ -1086,11 +1089,10 @@ function eng_hub_render_permits(frm, permits) {
 	</div>`);
 
 	$w.find('[data-hub-action="new-permit"]').on("click", () => {
-		frappe.new_doc("Permit", { project: frm.doc.name });
+		eng_hub_nav_new_doc("Permit", { project: frm.doc.name });
 	});
 	$w.find(".eng-hub-list-row[data-route]").on("click", function () {
-		const parts = $(this).attr("data-route").split("/");
-		frappe.set_route(parts[0], parts[1], parts[2]);
+		eng_hub_nav_follow_route($(this).attr("data-route"));
 	});
 }
 
@@ -1101,7 +1103,7 @@ function eng_hub_render_tasks(frm, tasks) {
 	if (!tasks.length) {
 		$w.html(_eng_hub_empty("✅", __("Nenhuma tarefa pendente"), __("+ Tarefa"), "new-task"));
 		$w.find('[data-hub-action="new-task"]').on("click", () => {
-			frappe.new_doc("Task", { project: frm.doc.name });
+			eng_hub_nav_new_doc("Task", { project: frm.doc.name });
 		});
 		return;
 	}
@@ -1145,11 +1147,10 @@ function eng_hub_render_tasks(frm, tasks) {
 	</div>`);
 
 	$w.find('[data-hub-action="new-task"]').on("click", () => {
-		frappe.new_doc("Task", { project: frm.doc.name });
+		eng_hub_nav_new_doc("Task", { project: frm.doc.name });
 	});
 	$w.find(".eng-hub-list-row[data-route]").on("click", function () {
-		const parts = $(this).attr("data-route").split("/");
-		frappe.set_route(parts[0], parts[1], parts[2]);
+		eng_hub_nav_follow_route($(this).attr("data-route"));
 	});
 }
 
@@ -1162,7 +1163,7 @@ function eng_hub_render_communications(frm, communications) {
 			_eng_hub_empty("💬", __("Nenhuma comunicação registrada"), __("+ Comunicação"), "new-comm")
 		);
 		$w.find('[data-hub-action="new-comm"]').on("click", () => {
-			frappe.new_doc("Communication Log", { project: frm.doc.name });
+			eng_hub_nav_new_doc("Communication Log", { project: frm.doc.name });
 		});
 		return;
 	}
@@ -1209,11 +1210,10 @@ function eng_hub_render_communications(frm, communications) {
 	</div>`);
 
 	$w.find('[data-hub-action="new-comm"]').on("click", () => {
-		frappe.new_doc("Communication Log", { project: frm.doc.name });
+		eng_hub_nav_new_doc("Communication Log", { project: frm.doc.name });
 	});
 	$w.find(".eng-hub-list-row[data-route]").on("click", function () {
-		const parts = $(this).attr("data-route").split("/");
-		frappe.set_route(parts[0], parts[1], parts[2]);
+		eng_hub_nav_follow_route($(this).attr("data-route"));
 	});
 }
 
@@ -1226,7 +1226,7 @@ function eng_hub_render_measurements(frm, measurements) {
 			_eng_hub_empty("📏", __("Nenhuma medição registrada"), __("+ Medição"), "new-measurement")
 		);
 		$w.find('[data-hub-action="new-measurement"]').on("click", () => {
-			frappe.new_doc("Construction Measurement", { project: frm.doc.name });
+			eng_hub_nav_new_doc("Construction Measurement", { project: frm.doc.name });
 		});
 		return;
 	}
@@ -1265,11 +1265,10 @@ function eng_hub_render_measurements(frm, measurements) {
 	</div>`);
 
 	$w.find('[data-hub-action="new-measurement"]').on("click", () => {
-		frappe.new_doc("Construction Measurement", { project: frm.doc.name });
+		eng_hub_nav_new_doc("Construction Measurement", { project: frm.doc.name });
 	});
 	$w.find(".eng-hub-list-row[data-route]").on("click", function () {
-		const parts = $(this).attr("data-route").split("/");
-		frappe.set_route(parts[0], parts[1], parts[2]);
+		eng_hub_nav_follow_route($(this).attr("data-route"));
 	});
 }
 
@@ -1280,7 +1279,7 @@ function eng_hub_render_timelogs(frm, timelogs) {
 	if (!timelogs.length) {
 		$w.html(_eng_hub_empty("⏱️", __("Nenhum registro de horas"), __("+ Horas"), "new-timelog"));
 		$w.find('[data-hub-action="new-timelog"]').on("click", () => {
-			frappe.new_doc("Time Log", { project: frm.doc.name });
+			eng_hub_nav_new_doc("Time Log", { project: frm.doc.name });
 		});
 		return;
 	}
@@ -1332,14 +1331,13 @@ function eng_hub_render_timelogs(frm, timelogs) {
 	</div>`);
 
 	$w.find('[data-hub-action="new-timelog"]').on("click", () => {
-		frappe.new_doc("Time Log", { project: frm.doc.name });
+		eng_hub_nav_new_doc("Time Log", { project: frm.doc.name });
 	});
 	$w.find('[data-hub-action="list-timelogs"]').on("click", () => {
-		frappe.set_route("List", "Time Log", { project: frm.doc.name });
+		eng_hub_nav_set_route("List", "Time Log", { project: frm.doc.name });
 	});
 	$w.find(".eng-hub-list-row[data-route]").on("click", function () {
-		const parts = $(this).attr("data-route").split("/");
-		frappe.set_route(parts[0], parts[1], parts[2]);
+		eng_hub_nav_follow_route($(this).attr("data-route"));
 	});
 }
 
@@ -1365,14 +1363,173 @@ function _eng_hub_empty_costs(frm) {
 
 function _eng_hub_bind_costs_empty_actions(frm, $w) {
 	$w.find('[data-hub-action="new-work-cost"]').on("click", () => {
-		frappe.new_doc("Work Cost", { project: frm.doc.name });
+		eng_hub_nav_new_doc("Work Cost", { project: frm.doc.name });
 	});
 	$w.find('[data-hub-action="new-subcontract"]').on("click", () => {
-		frappe.new_doc("Subcontract", { project: frm.doc.name });
+		eng_hub_nav_new_doc("Subcontract", { project: frm.doc.name });
 	});
 	$w.find('[data-hub-action="new-reimbursable"]').on("click", () => {
-		frappe.new_doc("Reimbursable Expense", { project: frm.doc.name });
+		eng_hub_nav_new_doc("Reimbursable Expense", { project: frm.doc.name });
 	});
+}
+
+function eng_hub_open_new_document(frm) {
+	eng_hub_nav_new_doc("Project Document", {
+		project: frm.doc.name,
+		customer: frm.doc.customer,
+		source: "Upload Manual",
+	});
+}
+
+function eng_hub_refresh_documents(frm) {
+	frappe.call({
+		method: "engenharia.project_hub.get_project_hub_data",
+		args: { project: frm.doc.name },
+		callback(r) {
+			const data = r.message || {};
+			eng_hub_render_documents(frm, data.documents || []);
+		},
+	});
+	frappe.call({
+		method: "engenharia.project_hub.get_project_counts",
+		args: { project: frm.doc.name },
+		callback(r) {
+			eng_hub_render_summary_bar(frm, r.message || {});
+		},
+	});
+}
+
+function eng_hub_refresh_documents_by_project(project_name) {
+	if (
+		cur_frm &&
+		cur_frm.doctype === "Construction Project" &&
+		cur_frm.doc.name === project_name
+	) {
+		eng_hub_refresh_documents(cur_frm);
+	}
+}
+
+function eng_hub_bind_documents_tab(frm) {
+	const $tab = frm.$wrapper.find('[data-fieldname="tab_documents"]');
+	$tab.off("click.eng_hub_docs").on("click.eng_hub_docs", () => {
+		if (!frm.is_new()) {
+			eng_hub_refresh_documents(frm);
+		}
+	});
+}
+
+function eng_hub_bind_document_actions(frm, $w) {
+	$w.find('[data-hub-action="new-document"]').on("click", () => {
+		eng_hub_open_new_document(frm);
+	});
+	$w.find('[data-hub-action="generate-documents"]').on("click", () => {
+		if (typeof eng_open_generate_documents_dialog === "function") {
+			eng_open_generate_documents_dialog(frm);
+			return;
+		}
+		frappe.msgprint(__("Abra a obra para gerar documentos a partir dos templates."));
+	});
+	$w.find(".eng-hub-list-row[data-route]").on("click", function () {
+		eng_hub_nav_follow_route($(this).attr("data-route"));
+	});
+	$w.find(".eng-hub-doc-file").on("click", (event) => {
+		event.stopPropagation();
+	});
+}
+
+function eng_hub_render_documents(frm, documents) {
+	const $w = frm.fields_dict.documents_panel?.$wrapper;
+	if (!$w) return;
+
+	const headerActions = `<div class="eng-hub-panel__actions">
+		<button type="button" class="eng-hub-panel__action" data-hub-action="new-document">
+			${__("+ Enviar")}
+		</button>
+		<button type="button" class="eng-hub-panel__action" data-hub-action="generate-documents">
+			${__("Gerar .docx")}
+		</button>
+	</div>`;
+
+	if (!documents.length) {
+		$w.html(`<div class="eng-hub-panel">
+			<div class="eng-hub-panel__header">
+				<h3 class="eng-hub-panel__title">
+					<span class="eng-hub-panel__title-icon">📄</span>
+					${__("Documentos da Obra")}
+					<span class="eng-hub-panel__count">0</span>
+				</h3>
+				${headerActions}
+			</div>
+			<div class="eng-hub-empty">
+				<div class="eng-hub-empty__icon">📄</div>
+				<div>${__("Nenhum documento registrado")}</div>
+				<button type="button" class="eng-hub-empty__action" data-hub-action="new-document">
+					${__("+ Enviar documento")}
+				</button>
+			</div>
+		</div>`);
+		eng_hub_bind_document_actions(frm, $w);
+		return;
+	}
+
+	const statusMap = {
+		Rascunho: "gray",
+		Assinado: "blue",
+		Protocolado: "orange",
+		Aprovado: "green",
+		Vencido: "red",
+		Substituído: "gray",
+	};
+	const sourceIcons = {
+		"Gerado pelo App": "⚙️",
+		"Upload Manual": "📤",
+		Digitalizado: "🖨️",
+	};
+
+	const rows = documents
+		.map((doc) => {
+			const badge = `<span class="eng-hub-badge eng-hub-badge--${
+				statusMap[doc.status] || "gray"
+			}">${frappe.utils.escape_html(doc.status || "")}</span>`;
+			const sourceIcon = sourceIcons[doc.source] || "📄";
+			const version = doc.version
+				? `<span class="eng-hub-list-row__secondary">${frappe.utils.escape_html(doc.version)}</span>`
+				: "";
+			const fileLink = doc.file
+				? `<a href="${frappe.utils.escape_html(
+						doc.file
+				  )}" target="_blank" class="eng-hub-doc-file" title="${__("Abrir arquivo")}">📎</a>`
+				: "";
+			return `<div class="eng-hub-list-row" data-route="Form/Project Document/${frappe.utils.escape_html(
+				doc.name
+			)}">
+			<div class="eng-hub-list-row__icon">${sourceIcon}</div>
+			<div class="eng-hub-list-row__main">
+				${frappe.utils.escape_html(doc.title || doc.name)}
+				<span class="eng-hub-list-row__secondary">${frappe.utils.escape_html(
+					doc.category || ""
+				)}</span>
+				${version}
+			</div>
+			${fileLink}
+			${badge}
+		</div>`;
+		})
+		.join("");
+
+	$w.html(`<div class="eng-hub-panel">
+		<div class="eng-hub-panel__header">
+			<h3 class="eng-hub-panel__title">
+				<span class="eng-hub-panel__title-icon">📄</span>
+				${__("Documentos da Obra")}
+				<span class="eng-hub-panel__count">${documents.length}</span>
+			</h3>
+			${headerActions}
+		</div>
+		${rows}
+	</div>`);
+
+	eng_hub_bind_document_actions(frm, $w);
 }
 
 function _eng_hub_empty(icon, msg, btnLabel, actionName) {

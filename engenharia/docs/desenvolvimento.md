@@ -97,13 +97,13 @@ Ferramentas: ruff, eslint, prettier, pyupgrade.
 Seed idempotente (marcador `_DEMO_`):
 
 ```bash
-bench --site engenharia.local execute engenharia.engenharia.setup.demo_data.setup
+bench --site engenharia.local execute engenharia.setup.demo_data.setup
 ```
 
 Teardown:
 
 ```bash
-bench --site engenharia.local execute engenharia.engenharia.setup.demo_data.teardown
+bench --site engenharia.local execute engenharia.setup.demo_data.teardown
 ```
 
 Não usar seed de demo em produção.

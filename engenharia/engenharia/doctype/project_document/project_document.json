@@ -1,0 +1,188 @@
+{
+ "actions": [],
+ "allow_rename": 0,
+ "autoname": "format:DOC-{YYYY}-{####}",
+ "creation": "2026-06-11 12:00:00.000000",
+ "custom": 0,
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "project",
+  "customer",
+  "column_break_info",
+  "category",
+  "status",
+  "source",
+  "sec_document",
+  "title_descriptor",
+  "title",
+  "version",
+  "column_break_doc",
+  "file",
+  "related_permit",
+  "sec_remarks",
+  "remarks"
+ ],
+ "fields": [
+  {
+   "fieldname": "project",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Obra",
+   "options": "Construction Project",
+   "reqd": 1,
+   "description": "Obra à qual este documento pertence."
+  },
+  {
+   "fetch_from": "project.customer",
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Cliente",
+   "options": "Customer",
+   "read_only": 1,
+   "description": "Preenchido automaticamente a partir da obra."
+  },
+  {
+   "fieldname": "column_break_info",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "category",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Categoria",
+   "options": "Document Category",
+   "reqd": 1,
+   "description": "Tipo documental para organização e relatórios."
+  },
+  {
+   "default": "Rascunho",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Status",
+   "options": "Rascunho\nAssinado\nProtocolado\nAprovado\nVencido\nSubstituído",
+   "reqd": 1,
+   "description": "Situação do documento no fluxo da obra."
+  },
+  {
+   "default": "Upload Manual",
+   "fieldname": "source",
+   "fieldtype": "Select",
+   "label": "Origem",
+   "options": "Gerado pelo App\nUpload Manual\nDigitalizado",
+   "description": "Como o arquivo entrou no sistema."
+  },
+  {
+   "fieldname": "sec_document",
+   "fieldtype": "Section Break",
+   "label": "Documento"
+  },
+  {
+   "fieldname": "title_descriptor",
+   "fieldtype": "Data",
+   "label": "Descritor",
+   "description": "Texto opcional que complementa o título (ex.: Memorial estrutural)."
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Título",
+   "read_only": 1,
+   "description": "Composto automaticamente: {Obra} — {Categoria} — {Versão}[ — {Descritor}]."
+  },
+  {
+   "fieldname": "version",
+   "fieldtype": "Data",
+   "label": "Versão / Revisão",
+   "description": "Ex.: Rev 01, Rev_02, V2 Assinada."
+  },
+  {
+   "fieldname": "column_break_doc",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "file",
+   "fieldtype": "Attach",
+   "label": "Arquivo",
+   "reqd": 1,
+   "description": "Arquivo anexado (PDF, DOCX, imagem, etc.). Renomeado com prefixo da obra."
+  },
+  {
+   "fieldname": "related_permit",
+   "fieldtype": "Link",
+   "label": "Protocolo Relacionado",
+   "options": "Permit",
+   "description": "Protocolo vinculado a este documento (opcional)."
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "sec_remarks",
+   "fieldtype": "Section Break",
+   "label": "Observações"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "label": "Observações",
+   "description": "Notas internas sobre o documento."
+  }
+ ],
+ "index_web_pages_for_search": 0,
+ "links": [],
+ "modified": "2026-06-11 12:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Engenharia",
+ "name": "Project Document",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Engenharia Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Engenharia User",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "search_fields": "title,category,project,status,version,title_descriptor",
+ "show_title_field_in_link": 1,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "title_field": "title",
+ "track_changes": 1
+}

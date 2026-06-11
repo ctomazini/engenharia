@@ -21,6 +21,8 @@
 | Documento | Descrição |
 | --- | --- |
 | [`manual_usuario.md`](manual_usuario.md) | Manual completo do Desk: obras, financeiro, painel, documentos |
+| [`hub_navigation.md`](hub_navigation.md) | Navegação hub, breadcrumb, restaurar aba |
+| [`project_documents.md`](project_documents.md) | Document Category, Project Document, naming |
 
 ---
 
@@ -31,7 +33,7 @@
 | [`desenvolvimento.md`](desenvolvimento.md) | Fluxo local: bench, migrate, testes unitários, pre-commit |
 | [`../../e2e/README.md`](../../e2e/README.md) | Sessão E2E Playwright (Desk + dados fictícios `PLAYWRIGHT_*`) |
 
-Módulos de teste relevantes: `test_reports.py`, `test_report_cash_flow.py`, `test_report_budget_vs_actual.py`, `test_consolidated_cost.py`, `test_office_expense.py`, `test_print_formats.py`, `test_boot.py`, `test_documents.py`, `test_subcontract.py`, `test_stage_template.py`.
+Módulos de teste relevantes: `test_documents.py`, `test_project_document.py`, `test_project_hub.py`, `test_subcontract.py`, `test_reports.py`, `test_print_formats.py`.
 
 ---
 
@@ -57,7 +59,9 @@ Relatórios pontuais de conformidade e UX. Não substituem `REGRAS_OBRIGATORIAS.
 | Tipo | Local |
 | --- | --- |
 | Manual de uso (PT) | `engenharia/docs/manual_usuario.md` |
-| Relatórios / placeholders docx | `manual_usuario.md` §6.6–6.8 e §10; `engenharia/documents.py`, `engenharia/report_visuals.py`, `engenharia/setup/print_formats.py` |
+| Relatórios / placeholders docx | `manual_usuario.md` §10; `engenharia/documents.py`; `project_documents.md` |
+| Documentos da obra / categorias | `project_documents.md`; `manual_usuario.md` §10.4 |
+| Navegação hub | `hub_navigation.md`; `eng_hub_nav.js` |
 | Despesas do Escritório | `manual_usuario.md` §6.7; DocType `Office Expense` |
 | Modelos de Etapas | `manual_usuario.md` §4; `Project Stage Template` |
 | Guia de dev / CI | `engenharia/docs/desenvolvimento.md` ou `e2e/README.md` |

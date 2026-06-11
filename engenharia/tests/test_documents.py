@@ -13,14 +13,20 @@ from engenharia.documents import (
 	get_document_placeholder_keys,
 	get_placeholder_reference,
 )
+from engenharia.project_document_naming import compose_project_document_filename
 from engenharia.tests.test_setup import (
 	_uid,
 	create_test_construction_project,
 	create_test_customer,
 	create_test_engineering_contract,
+	create_test_permit,
 	create_test_supplier,
+	ensure_test_building_type,
 )
 from engenharia.tests.test_subcontract import create_test_subcontract
+
+VALID_FIXO = "1132345678"
+VALID_CELULAR = "11987654321"
 
 
 def _ensure_engineering_settings(company_name="Escritório Teste Engenharia"):
@@ -28,6 +34,10 @@ def _ensure_engineering_settings(company_name="Escritório Teste Engenharia"):
 	settings.company_name = company_name
 	settings.company_cnpj = "11222333000181"
 	settings.company_crea = "123456/D-SP"
+	settings.engineer_full_name = "Eng. Charles Adolfo Tomazini"
+	settings.engineer_cpf = "12345678909"
+	settings.engineer_phone = VALID_CELULAR
+	settings.engineer_email = "engenheiro@example.com"
 	settings.bank_name = "Banco Teste"
 	settings.bank_agency = "0001"
 	settings.bank_account = "12345-6"
@@ -75,10 +85,6 @@ def _create_test_document_template(paragraph="Doc test {{ customer_name }}"):
 			os.unlink(tmp_path)
 
 
-VALID_FIXO = "1132345678"
-VALID_CELULAR = "11987654321"
-
-
 class TestDocuments(FrappeTestCase):
 	def tearDown(self):
 		frappe.db.rollback()
@@ -102,6 +108,45 @@ class TestDocuments(FrappeTestCase):
 		self.assertIn("Endereço do cliente", groups)
 		self.assertIn("Contrato", groups)
 		self.assertIn("Subcontratos (obra)", groups)
+		self.assertIn("Engenheiro responsável", groups)
+		self.assertIn("Protocolo", groups)
+
+	def test_build_context_new_document_fields(self):
+		_ensure_engineering_settings()
+		ensure_test_building_type("Residencial")
+		project = create_test_construction_project(
+			location_code="07.046.00246",
+			dic="48864",
+			building_type="Residencial",
+			main_material="Alvenaria",
+			unit_count=2,
+			estimated_population=8,
+			occupancy_permit="HAB-123",
+			art_execution_number="ART-EXEC-99",
+			structural_engineer="Eng. Estrutural",
+			structural_company="Estruturas Ltda",
+			structural_engineer_crea="111111/D-SP",
+			structural_art_number="ART-EST-1",
+		)
+		permit = create_test_permit(
+			project=project.name,
+			permit_number="PROT-001",
+			status="Aprovado",
+		)
+
+		context = _build_context(project.name, permit_name=permit.name)
+		self.assertEqual(context["engineer_full_name"], "Eng. Charles Adolfo Tomazini")
+		self.assertEqual(context["engineer_cpf"], "123.456.789-09")
+		self.assertEqual(context["engineer_phone"], "(11) 98765-4321")
+		self.assertEqual(context["engineer_email"], "engenheiro@example.com")
+		self.assertEqual(context["project_location_code"], "07.046.00246")
+		self.assertEqual(context["project_dic"], "48864")
+		self.assertEqual(context["project_building_type"], "Residencial")
+		self.assertEqual(context["project_art_execution_number"], "ART-EXEC-99")
+		self.assertEqual(context["project_structural_engineer"], "Eng. Estrutural")
+		self.assertEqual(context["permit_name"], permit.name)
+		self.assertEqual(context["permit_number"], "PROT-001")
+		self.assertEqual(context["permit_status"], "Aprovado")
 
 	def test_build_context_company_and_customer(self):
 		_ensure_engineering_settings()
@@ -139,7 +184,7 @@ class TestDocuments(FrappeTestCase):
 
 		context = _build_context(project.name)
 		self.assertEqual(context["company_name"], "Escritório Teste Engenharia")
-		self.assertEqual(context["company_cnpj"], "11222333000181")
+		self.assertEqual(context["company_cnpj"], "11.222.333/0001-81")
 		self.assertEqual(context["bank_pix"], "teste@example.com")
 		self.assertEqual(context["customer_name"], customer.customer_name)
 		self.assertEqual(context["nome"], customer.customer_name)
@@ -233,3 +278,39 @@ class TestDocuments(FrappeTestCase):
 		self.assertEqual(result["total"], 2)
 		self.assertEqual(len(result["generated"]), 2)
 		self.assertFalse(result["failures"])
+
+		project_docs = frappe.get_all(
+			"Project Document",
+			filters={"project": project.name, "source": "Gerado pelo App"},
+			fields=["name", "category", "status", "file"],
+		)
+		self.assertEqual(len(project_docs), 2)
+		generated_by_url = {item["file_url"]: item for item in result["generated"]}
+		for row in project_docs:
+			self.assertEqual(row.status, "Rascunho")
+			self.assertTrue(row.file)
+			file_doc = frappe.get_doc("File", {"file_url": row.file})
+			template_title = generated_by_url[row.file]["title"]
+			expected = compose_project_document_filename(
+				project.name,
+				row.category,
+				"v1",
+				template_title,
+				".docx",
+			)
+			self.assertEqual(file_doc.file_name, expected)
+			self.assertTrue(os.path.exists(file_doc.get_full_path()))
+			self.assertEqual(os.path.basename(file_doc.get_full_path()), expected)
+			self.assertTrue(file_doc.file_name.startswith(project.name))
+
+	def test_infer_document_category_from_template_name(self):
+		from engenharia.documents import _infer_document_category
+
+		template = frappe._dict(
+			{
+				"template_name": "Memorial Descritivo Obra",
+				"document_type": "Outro",
+				"description": "",
+			}
+		)
+		self.assertEqual(_infer_document_category(template), "Memorial")

@@ -49,7 +49,7 @@
    "fieldtype": "Attach",
    "label": "Arquivo .docx",
    "reqd": 1,
-   "description": "Modelo .docx com placeholders Jinja no formato {{ nome_do_campo }}. Use o botão abaixo para ver todos os grupos: Escritório, Cliente, Endereço, Contato, Obra, Orçamento, Subcontratos, Contrato e Data."
+   "description": "Modelo .docx com placeholders Jinja no formato {{ nome_do_campo }}. Use o botão abaixo para ver todos os grupos: Escritório, Cliente, Obra, Orçamento, Subcontratos, Protocolo, Contrato (inclui parcelas) e Data."
   },
   {
    "default": "1",
@@ -67,7 +67,7 @@
    "fieldname": "view_placeholders",
    "fieldtype": "Button",
    "label": "Ver Placeholders Disponíveis",
-   "description": "Abre a lista completa e atualizada de placeholders suportados pelo gerador de documentos (inclui loops de orçamento, subcontratos e parcelas)."
+   "description": "Abre a lista completa e atualizada de placeholders suportados pelo gerador (inclui loops de orçamento, subcontratos, parcelas de contrato e protocolo)."
   }
  ],
  "index_web_pages_for_search": 1,

@@ -3,19 +3,32 @@ window.eng_render_placeholder_reference = function (blocks) {
 	html +=
 		'<p class="text-muted small" style="margin-bottom:12px;">' +
 		__(
-			"Sintaxe docxtpl: <code>{{ placeholder }}</code>. Grupos marcados como <em>condicional</em> só têm valor quando há contrato vinculado. A logo usa <code>{{ office_logo }}</code> como imagem inline."
+			"Sintaxe docxtpl: <code>{{ placeholder }}</code>. Grupos <em>condicionais</em> só têm valor quando a condição indicada é atendida. Logotipo: <code>{{ company_logo }}</code> (URL do arquivo em Configurações da Engenharia)."
 		) +
 		"</p>";
 
 	(blocks || []).forEach((block) => {
-		const badge = block.condicional
-			? ' <span class="indicator-pill orange">condicional</span>'
-			: "";
+		let badge = "";
+		if (block.condicional) {
+			const hint = block.condicional_motivo || __("condicional");
+			badge =
+				' <span class="indicator-pill orange" title="' +
+				frappe.utils.escape_html(hint) +
+				'">' +
+				__("condicional") +
+				"</span>";
+		}
 		html +=
 			'<h5 style="margin-top:14px;margin-bottom:6px;border-bottom:1px solid var(--border-color);padding-bottom:4px;">' +
 			frappe.utils.escape_html(block.grupo) +
 			badge +
 			"</h5>";
+		if (block.condicional && block.condicional_motivo) {
+			html +=
+				'<p class="text-muted small" style="margin:0 0 6px;">' +
+				frappe.utils.escape_html(block.condicional_motivo) +
+				"</p>";
+		}
 		html +=
 			'<table class="table table-condensed table-bordered" style="font-size:12px;">';
 		html += "<thead><tr><th>Placeholder</th><th>Label</th><th>Alias legado</th></tr></thead><tbody>";

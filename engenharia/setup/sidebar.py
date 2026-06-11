@@ -16,6 +16,7 @@ SIDEBAR_LINK_ORDER = (
 	("Etapas", "Project Stage", "DocType"),
 	("Boletins de Medição", "Construction Measurement", "DocType"),
 	("Protocolos", "Permit", "DocType"),
+	("Documentos da Obra", "Project Document", "DocType"),
 	# Orçamento
 	("Itens do Projeto", "Project Item", "DocType"),
 	("Itens Técnicos", "Technical Item", "DocType"),
@@ -41,6 +42,8 @@ SIDEBAR_LINK_ORDER = (
 	("Clientes", "Customer", "DocType"),
 	("Fornecedores", "Supplier", "DocType"),
 	("Classificações de Gasto", "Cost Category", "DocType"),
+	("Tipos de Edificação", "Building Type", "DocType"),
+	("Categorias de Documento", "Document Category", "DocType"),
 	("Tipos de Etapa", "Stage Type", "DocType"),
 	("Órgãos Públicos", "Public Agency", "DocType"),
 	("Templates de Documento", "Document Template", "DocType"),

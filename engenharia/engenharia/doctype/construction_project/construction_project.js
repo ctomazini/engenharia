@@ -2,6 +2,7 @@ frappe.ui.form.on("Construction Project", {
 	refresh(frm) {
 		if (window.EngenhariaMasks) {
 			EngenhariaMasks.bindMask(frm, "address_cep", EngenhariaMasks.applyCEP, "cep");
+			EngenhariaMasks.formatFormField(frm, "address_cep", EngenhariaMasks.applyCEP);
 		}
 
 		frm.add_custom_button(__("Adicionar especificação"), () => eng_add_project_item(frm), __(
@@ -50,6 +51,9 @@ frappe.ui.form.on("Construction Project", {
 			));
 
 			eng_hub_load(frm);
+			if (typeof eng_hub_nav_restore_tab === "function") {
+				eng_hub_nav_restore_tab(frm);
+			}
 
 			if (frm.fields_dict.spec_items_summary_panel) {
 				frm.fields_dict.spec_items_summary_panel.$wrapper
@@ -63,7 +67,7 @@ frappe.ui.form.on("Construction Project", {
 					.on("click", ".eng-spec-row", function () {
 						const name = $(this).attr("data-name");
 						if (name) {
-							frappe.set_route("Form", "Project Item", name);
+							eng_hub_nav_follow_route(`Form/Project Item/${name}`);
 						}
 					});
 			}
@@ -89,6 +93,11 @@ frappe.ui.form.on("Construction Project", {
 				}
 			},
 		});
+	},
+	address_cep(frm) {
+		if (window.EngenhariaMasks) {
+			EngenhariaMasks.formatFormField(frm, "address_cep", EngenhariaMasks.applyCEP);
+		}
 	},
 });
 
@@ -123,22 +132,39 @@ function eng_hub_defaults(frm) {
 function eng_add_hub_create_buttons(frm) {
 	const hub = eng_hub_defaults(frm);
 
-	frm.add_custom_button(__("+ Contrato"), () => frappe.new_doc("Engineering Contract", hub), __("Criar"));
-	frm.add_custom_button(__("+ Pagamento"), () => frappe.new_doc("Payment", hub), __("Criar"));
-	frm.add_custom_button(__("+ Compra avulsa"), () => frappe.new_doc("Work Cost", { project: hub.project }), __("Criar"));
 	frm.add_custom_button(
-		__("+ Despesa reembolsável"),
-		() => frappe.new_doc("Reimbursable Expense", hub),
+		__("+ Contrato"),
+		() => eng_hub_nav_new_doc("Engineering Contract", hub),
 		__("Criar")
 	);
-	frm.add_custom_button(__("+ Prazo"), () => frappe.new_doc("Deadline", hub), __("Criar"));
-	frm.add_custom_button(__("+ Protocolo"), () => frappe.new_doc("Permit", hub), __("Criar"));
-	frm.add_custom_button(__("+ Tarefa"), () => frappe.new_doc("Task", hub), __("Criar"));
-	frm.add_custom_button(__("+ Comunicação"), () => frappe.new_doc("Communication Log", hub), __("Criar"));
-	frm.add_custom_button(__("+ Horas"), () => frappe.new_doc("Time Log", hub), __("Criar"));
+	frm.add_custom_button(__("+ Pagamento"), () => eng_hub_nav_new_doc("Payment", hub), __("Criar"));
+	frm.add_custom_button(
+		__("+ Compra avulsa"),
+		() => eng_hub_nav_new_doc("Work Cost", { project: hub.project }),
+		__("Criar")
+	);
+	frm.add_custom_button(
+		__("+ Despesa reembolsável"),
+		() => eng_hub_nav_new_doc("Reimbursable Expense", hub),
+		__("Criar")
+	);
+	frm.add_custom_button(__("+ Prazo"), () => eng_hub_nav_new_doc("Deadline", hub), __("Criar"));
+	frm.add_custom_button(__("+ Protocolo"), () => eng_hub_nav_new_doc("Permit", hub), __("Criar"));
+	frm.add_custom_button(__("+ Tarefa"), () => eng_hub_nav_new_doc("Task", hub), __("Criar"));
+	frm.add_custom_button(
+		__("+ Comunicação"),
+		() => eng_hub_nav_new_doc("Communication Log", hub),
+		__("Criar")
+	);
+	frm.add_custom_button(
+		__("+ Documento"),
+		() => eng_hub_open_new_document(frm),
+		__("Criar")
+	);
+	frm.add_custom_button(__("+ Horas"), () => eng_hub_nav_new_doc("Time Log", hub), __("Criar"));
 	frm.add_custom_button(
 		__("+ Etapa"),
-		() => frappe.new_doc("Project Stage", { project: hub.project }),
+		() => eng_hub_nav_new_doc("Project Stage", { project: hub.project }),
 		__("Criar")
 	);
 }
@@ -298,7 +324,7 @@ function eng_refresh_commission_summary(frm) {
 				</div>`);
 			$panel.find(".eng-commission-link").on("click", (e) => {
 				e.preventDefault();
-				frappe.set_route("List", "Commission", {
+				eng_hub_nav_set_route("List", "Commission", {
 					construction_project: frm.doc.name,
 				});
 			});
@@ -384,7 +410,7 @@ function eng_show_project_item_dialog(frm, items) {
 				callback(r) {
 					d.hide();
 					if (r.message) {
-						frappe.set_route("Form", "Project Item", r.message);
+						eng_hub_nav_follow_route(`Form/Project Item/${r.message}`);
 					}
 				},
 				error() {
@@ -467,6 +493,18 @@ function eng_mount_generate_documents_dialog(frm, templates, kits) {
 		title: __("Gerar Documentos"),
 		fields: [
 			{
+				fieldname: "permit",
+				fieldtype: "Link",
+				label: __("Protocolo (opcional)"),
+				options: "Permit",
+				description: __("Preenche placeholders de protocolo no documento gerado"),
+				get_query() {
+					return {
+						filters: { project: frm.doc.name },
+					};
+				},
+			},
+			{
 				fieldname: "kit",
 				fieldtype: "Select",
 				label: __("Kit (opcional)"),
@@ -490,7 +528,7 @@ function eng_mount_generate_documents_dialog(frm, templates, kits) {
 				return;
 			}
 			dialog.hide();
-			eng_generate_documents_batch(frm, selected);
+			eng_generate_documents_batch(frm, selected, dialog.get_value("permit"));
 		},
 	});
 
@@ -541,12 +579,13 @@ function eng_update_bulk_dialog_primary_action(dialog) {
 	);
 }
 
-function eng_generate_documents_batch(frm, template_names) {
+function eng_generate_documents_batch(frm, template_names, permit_name) {
 	frappe.call({
 		method: "engenharia.documents.generate_project_documents",
 		args: {
 			project_name: frm.doc.name,
 			template_names,
+			permit_name: permit_name || null,
 		},
 		freeze: true,
 		freeze_message: __("Gerando documentos..."),

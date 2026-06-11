@@ -14,11 +14,6 @@ frappe.ui.form.on("Communication Log", {
 			frm.page.set_indicator(frm.doc.communication_type, color);
 		}
 
-		if (frm.doc.project && !frm.is_new()) {
-			frm.add_custom_button(__("Ver Obra"), function () {
-				frappe.set_route("Form", "Construction Project", frm.doc.project);
-			});
-		}
 	},
 	create_task(frm) {
 		if (frm.doc.create_task && !frm.doc.follow_up_date) {

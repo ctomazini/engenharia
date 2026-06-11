@@ -4,7 +4,7 @@
 **App:** `engenharia`  
 **Escopo:** diagnóstico histórico (pré-implementação).
 
-> **Status 2026-06-09:** vários gaps listados abaixo **já foram implementados** — `Project Stage Template`, campo `follow_up_date` em Communication Log, 15 Print Formats (incl. relatórios), hub visual expandido. Use este arquivo como registro de decisão; para estado atual ver `CODEBASE.md` e `manual_usuario.md`.
+> **Status 2026-06-11 — SUPERSEDED:** documento histórico (pré-implementação). **Não use para estado atual.** Ver `CODEBASE.md`, `manual_usuario.md`, `hub_navigation.md` e `project_documents.md`.
 
 ---
 

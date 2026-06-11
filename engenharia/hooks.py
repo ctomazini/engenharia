@@ -81,6 +81,7 @@ app_include_js = [
 	"/assets/engenharia/js/masks.js",
 	"/assets/engenharia/js/list_nav.js",
 	"/assets/engenharia/js/list_filters.js",
+	"/assets/engenharia/js/eng_hub_nav.js",
 	"/assets/engenharia/js/customer_from_project.js",
 	"/assets/engenharia/js/documents_placeholders.js",
 	"/assets/engenharia/js/timer_global.js",

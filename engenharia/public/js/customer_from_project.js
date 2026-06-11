@@ -1,18 +1,20 @@
 (function () {
-	const DOCTYPES_WITH_PROJECT = [
-		"Engineering Contract",
-		"Payment",
-		"Work Cost",
-		"Subcontract",
-		"Reimbursable Expense",
-		"Deadline",
-		"Permit",
-		"Task",
-		"Communication Log",
-		"Time Log",
-		"Construction Measurement",
-		"Commission",
-	];
+	const DOCTYPES_WITH_PROJECT =
+		(window.eng_hub_nav && window.eng_hub_nav.SATELLITE_DOCTYPES) || [
+			"Engineering Contract",
+			"Payment",
+			"Work Cost",
+			"Subcontract",
+			"Reimbursable Expense",
+			"Deadline",
+			"Permit",
+			"Task",
+			"Communication Log",
+			"Time Log",
+			"Construction Measurement",
+			"Commission",
+			"Project Document",
+		];
 
 	function fetch_customer_from_project(project, callback) {
 		if (!project) {
