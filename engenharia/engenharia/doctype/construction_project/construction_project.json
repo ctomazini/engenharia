@@ -28,24 +28,41 @@
   "address_district",
   "city",
   "address_uf",
+  "location_code",
+  "dic",
   "sec_details",
   "construction_area",
   "current_contract_value",
   "commission_outstanding",
+  "commission_summary_panel",
+  "physical_progress",
+  "sec_building",
+  "building_type",
+  "main_material",
+  "col_break_building",
+  "unit_count",
+  "estimated_population",
+  "occupancy_permit",
   "sec_technical",
   "responsible_engineer",
   "crea_number",
   "col_break_technical",
   "art_number",
+  "art_execution_number",
   "property_registration",
   "gps_coordinates",
+  "sec_structural",
+  "structural_engineer",
+  "structural_company",
+  "col_break_structural",
+  "structural_engineer_crea",
+  "structural_art_number",
   "sec_budget",
   "budget_revision",
   "default_bdi_percent",
   "budget_revisions",
   "tab_progress",
   "sec_progress_global",
-  "physical_progress",
   "sec_stages_hub",
   "stages_panel",
   "tab_financial",
@@ -76,7 +93,6 @@
   "sec_timelogs_hub",
   "timelogs_panel",
   "tab_specs",
-  "commission_summary_panel",
   "sec_specs",
   "specs_help",
   "spec_preview_panel",
@@ -89,22 +105,26 @@
   {
    "fieldname": "tab_details",
    "fieldtype": "Tab Break",
-   "label": "Detalhes"
+   "label": "Detalhes",
+   "idx": 1
   },
   {
    "fieldname": "sec_summary_bar",
    "fieldtype": "Section Break",
-   "hide_border": 1
+   "hide_border": 1,
+   "idx": 2
   },
   {
    "fieldname": "hub_summary_bar",
    "fieldtype": "HTML",
-   "label": "Resumo da Obra"
+   "label": "Resumo da Obra",
+   "idx": 3
   },
   {
    "fieldname": "sec_after_summary",
    "fieldtype": "Section Break",
-   "label": ""
+   "label": "",
+   "idx": 4
   },
   {
    "fieldname": "customer",
@@ -114,7 +134,8 @@
    "label": "Cliente",
    "options": "Customer",
    "reqd": 1,
-   "description": "Cliente contratante desta obra."
+   "description": "Cliente contratante desta obra.",
+   "idx": 5
   },
   {
    "fieldname": "title",
@@ -122,11 +143,13 @@
    "in_global_search": 1,
    "label": "Título",
    "read_only": 1,
-   "description": "Título automático no formato ID — cliente/cidade. Atualizado ao salvar."
+   "description": "Título automático no formato ID — cliente/cidade. Atualizado ao salvar.",
+   "idx": 6
   },
   {
    "fieldname": "col_break_1",
-   "fieldtype": "Column Break"
+   "fieldtype": "Column Break",
+   "idx": 7
   },
   {
    "fieldname": "project_type",
@@ -134,7 +157,8 @@
    "in_standard_filter": 1,
    "label": "Tipo de Obra",
    "options": "Residencial\nComercial\nIndustrial\nInfraestrutura\nReforma\nOutro\nExecução\nProjeto\nLaudo\nVistoria\nConsultoria\nPerícia\nFiscalização\nRegularização",
-   "description": "Classificação da obra: Residencial, Comercial, Industrial, Infraestrutura, Reforma ou Outro."
+   "description": "Classificação da obra: Residencial, Comercial, Industrial, Infraestrutura, Reforma ou Outro.",
+   "idx": 8
   },
   {
    "default": "Orçamento",
@@ -144,82 +168,110 @@
    "in_standard_filter": 1,
    "label": "Status",
    "options": "Orçamento\nEm andamento\nParalisada\nConcluída\nCancelada",
-   "description": "Situação atual: Orçamento, Em andamento, Paralisada, Concluída ou Cancelada."
+   "description": "Situação atual: Orçamento, Em andamento, Paralisada, Concluída ou Cancelada.",
+   "idx": 9
   },
   {
    "fieldname": "sec_dates",
    "fieldtype": "Section Break",
-   "label": "Datas"
+   "label": "Datas",
+   "idx": 10
   },
   {
    "fieldname": "start_date",
    "fieldtype": "Date",
    "label": "Data de Início",
-   "description": "Data de início prevista ou efetiva da obra."
+   "description": "Data de início prevista ou efetiva da obra.",
+   "idx": 11
   },
   {
    "fieldname": "expected_delivery",
    "fieldtype": "Date",
    "label": "Previsão de Entrega",
-   "description": "Data prevista para conclusão ou entrega da obra."
+   "description": "Data prevista para conclusão ou entrega da obra.",
+   "idx": 12
   },
   {
    "fieldname": "sec_address",
    "fieldtype": "Section Break",
-   "label": "Endereço da Obra"
+   "label": "Endereço da Obra",
+   "idx": 13
   },
   {
    "fieldname": "address_cep",
    "fieldtype": "Data",
    "label": "CEP",
-   "description": "CEP do local da obra (apenas dígitos)."
+   "description": "CEP do local da obra (apenas dígitos).",
+   "idx": 14
   },
   {
    "fieldname": "address_street",
    "fieldtype": "Data",
    "label": "Logradouro",
-   "description": "Logradouro do endereço da obra."
+   "description": "Logradouro do endereço da obra.",
+   "idx": 15
   },
   {
    "fieldname": "address_number",
    "fieldtype": "Data",
    "label": "Número",
-   "description": "Número do imóvel ou lote."
+   "description": "Número do imóvel ou lote.",
+   "idx": 16
   },
   {
    "fieldname": "col_break_2",
-   "fieldtype": "Column Break"
+   "fieldtype": "Column Break",
+   "idx": 17
   },
   {
    "fieldname": "address_district",
    "fieldtype": "Data",
    "label": "Bairro",
-   "description": "Bairro onde a obra será executada."
+   "description": "Bairro onde a obra será executada.",
+   "idx": 18
   },
   {
    "fieldname": "city",
    "fieldtype": "Data",
    "in_standard_filter": 1,
    "label": "Cidade",
-   "description": "Município da obra. Entra no título automático do registro."
+   "description": "Município da obra. Entra no título automático do registro.",
+   "idx": 19
   },
   {
    "fieldname": "address_uf",
    "fieldtype": "Select",
    "label": "UF",
    "options": "AC\nAL\nAM\nAP\nBA\nCE\nDF\nES\nGO\nMA\nMG\nMS\nMT\nPA\nPB\nPE\nPI\nPR\nRJ\nRN\nRO\nRR\nRS\nSC\nSE\nSP\nTO",
-   "description": "Unidade federativa (UF) do endereço da obra."
+   "description": "Unidade federativa (UF) do endereço da obra.",
+   "idx": 20
+  },
+  {
+   "fieldname": "location_code",
+   "fieldtype": "Data",
+   "label": "Código de Localização",
+   "description": "Código municipal de localização do imóvel (ex: 07.046.00246)",
+   "idx": 21
+  },
+  {
+   "fieldname": "dic",
+   "fieldtype": "Data",
+   "label": "DIC",
+   "description": "Documento de Identidade do Contribuinte no cadastro municipal (ex: 48864)",
+   "idx": 22
   },
   {
    "fieldname": "sec_details",
    "fieldtype": "Section Break",
-   "label": "Detalhes"
+   "label": "Detalhes",
+   "idx": 23
   },
   {
    "fieldname": "construction_area",
    "fieldtype": "Float",
    "label": "Área Construída (m²)",
-   "description": "Área total construída em metros quadrados (m²)."
+   "description": "Área total construída em metros quadrados (m²).",
+   "idx": 24
   },
   {
    "fieldname": "current_contract_value",
@@ -227,7 +279,8 @@
    "label": "Valor Atual do Contrato",
    "permlevel": 1,
    "read_only": 1,
-   "description": "Soma dos valores vigentes dos contratos desta obra. Atualizado automaticamente. Visível apenas para Engenharia Manager."
+   "description": "Soma dos valores vigentes dos contratos desta obra. Atualizado automaticamente. Visível apenas para Engenharia Manager.",
+   "idx": 25
   },
   {
    "fieldname": "commission_outstanding",
@@ -235,66 +288,172 @@
    "label": "Comissões a Receber",
    "permlevel": 1,
    "read_only": 1,
-   "description": "Total de comissões a receber vinculadas a esta obra. Visível apenas para Engenharia Manager."
+   "description": "Total de comissões a receber vinculadas a esta obra. Visível apenas para Engenharia Manager.",
+   "idx": 26
   },
   {
    "fieldname": "commission_summary_panel",
    "fieldtype": "HTML",
    "label": "Resumo de comissões",
    "options": "<p class=\"text-muted\">Carregando comissões...</p>",
-   "permlevel": 1
+   "permlevel": 1,
+   "idx": 27
   },
   {
    "fieldname": "physical_progress",
    "fieldtype": "Percent",
    "label": "Avanço Físico Global",
    "read_only": 1,
-   "description": "Avanço físico global da obra (%). Calculado a partir das etapas e medições."
+   "description": "Avanço físico global da obra (%). Calculado a partir das etapas e medições.",
+   "idx": 28
+  },
+  {
+   "fieldname": "sec_building",
+   "fieldtype": "Section Break",
+   "label": "Características da Edificação",
+   "collapsible": 1,
+   "idx": 29
+  },
+  {
+   "fieldname": "building_type",
+   "fieldtype": "Select",
+   "label": "Tipo de Edificação",
+   "options": "Residencial\nComercial\nIndustrial\nMista",
+   "description": "Classificação principal do empreendimento",
+   "idx": 30
+  },
+  {
+   "fieldname": "main_material",
+   "fieldtype": "Data",
+   "label": "Material Principal",
+   "description": "Sistema construtivo predominante (ex: Concreto Pré-Moldado, Alvenaria Convencional)",
+   "idx": 31
+  },
+  {
+   "fieldname": "col_break_building",
+   "fieldtype": "Column Break",
+   "idx": 32
+  },
+  {
+   "fieldname": "unit_count",
+   "fieldtype": "Int",
+   "label": "Nº de Economias",
+   "description": "Quantidade de unidades autônomas do empreendimento",
+   "idx": 33
+  },
+  {
+   "fieldname": "estimated_population",
+   "fieldtype": "Int",
+   "label": "População Estimada",
+   "description": "Estimativa de população para dimensionamento hidrossanitário",
+   "idx": 34
+  },
+  {
+   "fieldname": "occupancy_permit",
+   "fieldtype": "Data",
+   "label": "Nº Habite-se",
+   "description": "Número do habite-se existente (para regularização/ampliação/reforma)",
+   "idx": 35
   },
   {
    "fieldname": "sec_technical",
    "fieldtype": "Section Break",
-   "label": "Responsabilidade Técnica"
+   "label": "Responsabilidade Técnica",
+   "idx": 36
   },
   {
    "fieldname": "responsible_engineer",
    "fieldtype": "Data",
    "label": "Responsável Técnico",
-   "description": "Nome do engenheiro responsável técnico pela obra."
+   "description": "Nome do engenheiro responsável técnico pela obra.",
+   "idx": 37
   },
   {
    "fieldname": "crea_number",
    "fieldtype": "Data",
    "label": "CREA do Responsável",
-   "description": "Número de registro no CREA do responsável técnico."
+   "description": "Número de registro no CREA do responsável técnico.",
+   "idx": 38
   },
   {
    "fieldname": "col_break_technical",
-   "fieldtype": "Column Break"
+   "fieldtype": "Column Break",
+   "idx": 39
   },
   {
    "fieldname": "art_number",
    "fieldtype": "Data",
    "label": "Nº ART Principal",
-   "description": "Número da ART principal vinculada à obra."
+   "description": "Número da ART principal vinculada à obra.",
+   "idx": 40
+  },
+  {
+   "fieldname": "art_execution_number",
+   "fieldtype": "Data",
+   "label": "Nº ART de Execução",
+   "description": "ART de execução da obra (distinta da ART de projeto)",
+   "idx": 41
   },
   {
    "fieldname": "property_registration",
    "fieldtype": "Data",
    "label": "Matrícula do Imóvel",
-   "description": "Matrícula do imóvel no cartório de registro."
+   "description": "Matrícula do imóvel no cartório de registro.",
+   "idx": 42
   },
   {
    "fieldname": "gps_coordinates",
    "fieldtype": "Data",
    "label": "Coordenadas GPS",
-   "description": "Coordenadas geográficas do terreno (opcional)."
+   "description": "Coordenadas geográficas do terreno (opcional).",
+   "idx": 43
+  },
+  {
+   "fieldname": "sec_structural",
+   "fieldtype": "Section Break",
+   "label": "Responsabilidade Técnica — Estrutura",
+   "collapsible": 1,
+   "idx": 44
+  },
+  {
+   "fieldname": "structural_engineer",
+   "fieldtype": "Data",
+   "label": "Responsável Técnico Estrutura",
+   "description": "Nome do engenheiro/empresa responsável pelo projeto estrutural",
+   "idx": 45
+  },
+  {
+   "fieldname": "structural_company",
+   "fieldtype": "Data",
+   "label": "Empresa Estrutural",
+   "description": "Razão social da empresa responsável pela estrutura",
+   "idx": 46
+  },
+  {
+   "fieldname": "col_break_structural",
+   "fieldtype": "Column Break",
+   "idx": 47
+  },
+  {
+   "fieldname": "structural_engineer_crea",
+   "fieldtype": "Data",
+   "label": "CREA Estrutural",
+   "description": "CREA/CAU do responsável pelo projeto estrutural",
+   "idx": 48
+  },
+  {
+   "fieldname": "structural_art_number",
+   "fieldtype": "Data",
+   "label": "Nº ART Estrutural",
+   "description": "ART do projeto estrutural",
+   "idx": 49
   },
   {
    "fieldname": "sec_budget",
    "fieldtype": "Section Break",
    "label": "Orçamento",
-   "permlevel": 1
+   "permlevel": 1,
+   "idx": 50
   },
   {
    "default": "1",
@@ -303,7 +462,8 @@
    "label": "Revisão vigente",
    "permlevel": 1,
    "read_only": 1,
-   "description": "Número da revisão de orçamento vigente. Controla qual versão dos itens está ativa. Visível apenas para Engenharia Manager."
+   "description": "Número da revisão de orçamento vigente. Controla qual versão dos itens está ativa. Visível apenas para Engenharia Manager.",
+   "idx": 51
   },
   {
    "default": "0",
@@ -311,7 +471,8 @@
    "fieldtype": "Percent",
    "label": "BDI padrão %",
    "permlevel": 1,
-   "description": "Percentual de BDI padrão aplicado a novos itens do projeto. Visível apenas para Engenharia Manager."
+   "description": "Percentual de BDI padrão aplicado a novos itens do projeto. Visível apenas para Engenharia Manager.",
+   "idx": 52
   },
   {
    "fieldname": "budget_revisions",
@@ -319,214 +480,251 @@
    "label": "Revisões de orçamento",
    "options": "Project Budget Revision",
    "permlevel": 1,
-   "description": "Histórico de revisões de orçamento com totais por versão. Visível apenas para Engenharia Manager."
+   "description": "Histórico de revisões de orçamento com totais por versão. Visível apenas para Engenharia Manager.",
+   "idx": 53
   },
   {
    "fieldname": "tab_progress",
    "fieldtype": "Tab Break",
-   "label": "Avanço Físico"
+   "label": "Avanço Físico",
+   "idx": 54
   },
   {
    "fieldname": "sec_progress_global",
    "fieldtype": "Section Break",
-   "label": "Progresso Global"
+   "label": "Progresso Global",
+   "idx": 55
   },
   {
    "fieldname": "sec_stages_hub",
    "fieldtype": "Section Break",
-   "label": "Etapas da Obra"
+   "label": "Etapas da Obra",
+   "idx": 56
   },
   {
    "fieldname": "stages_panel",
    "fieldtype": "HTML",
    "label": "Painel de Etapas",
-   "options": "<p class=\"text-muted\">Carregando etapas...</p>"
+   "options": "<p class=\"text-muted\">Carregando etapas...</p>",
+   "idx": 57
   },
   {
    "fieldname": "tab_financial",
    "fieldtype": "Tab Break",
-   "label": "Financeiro"
+   "label": "Financeiro",
+   "idx": 58
   },
   {
    "fieldname": "sec_financial_summary",
    "fieldtype": "Section Break",
    "label": "Resumo",
-   "permlevel": 1
+   "permlevel": 1,
+   "idx": 59
   },
   {
    "fieldname": "financial_summary_panel",
    "fieldtype": "HTML",
    "label": "Resumo Financeiro",
    "options": "<p class=\"text-muted\">Carregando resumo...</p>",
-   "permlevel": 1
+   "permlevel": 1,
+   "idx": 60
   },
   {
    "fieldname": "sec_installments_hub",
    "fieldtype": "Section Break",
    "label": "Parcelas",
-   "permlevel": 1
+   "permlevel": 1,
+   "idx": 61
   },
   {
    "fieldname": "installments_panel",
    "fieldtype": "HTML",
    "label": "Parcelas",
    "options": "<p class=\"text-muted\">Carregando parcelas...</p>",
-   "permlevel": 1
+   "permlevel": 1,
+   "idx": 62
   },
   {
    "fieldname": "sec_costs_hub",
    "fieldtype": "Section Break",
    "label": "Custos Realizados",
-   "permlevel": 1
+   "permlevel": 1,
+   "idx": 63
   },
   {
    "fieldname": "costs_panel",
    "fieldtype": "HTML",
    "label": "Custos Realizados",
    "options": "<p class=\"text-muted\">Carregando custos...</p>",
-   "permlevel": 1
+   "permlevel": 1,
+   "idx": 64
   },
   {
    "fieldname": "sec_payments",
    "fieldtype": "Section Break",
    "label": "Pagamentos",
-   "permlevel": 1
+   "permlevel": 1,
+   "idx": 65
   },
   {
    "fieldname": "payments_panel",
    "fieldtype": "HTML",
    "label": "Pagamentos",
-   "permlevel": 1
+   "permlevel": 1,
+   "idx": 66
   },
   {
    "fieldname": "sec_reimbursables",
    "fieldtype": "Section Break",
    "label": "Despesas Reembolsáveis",
-   "permlevel": 1
+   "permlevel": 1,
+   "idx": 67
   },
   {
    "fieldname": "reimbursables_panel",
    "fieldtype": "HTML",
    "label": "Despesas Reembolsáveis",
-   "permlevel": 1
+   "permlevel": 1,
+   "idx": 68
   },
   {
    "fieldname": "sec_commissions_hub",
    "fieldtype": "Section Break",
    "label": "Comissões",
-   "permlevel": 1
+   "permlevel": 1,
+   "idx": 69
   },
   {
    "fieldname": "commissions_hub_panel",
    "fieldtype": "HTML",
    "label": "Comissões",
-   "permlevel": 1
+   "permlevel": 1,
+   "idx": 70
   },
   {
    "fieldname": "tab_deadlines",
    "fieldtype": "Tab Break",
-   "label": "Prazos e Tarefas"
+   "label": "Prazos e Tarefas",
+   "idx": 71
   },
   {
    "fieldname": "sec_deadlines_hub",
    "fieldtype": "Section Break",
-   "label": "Prazos"
+   "label": "Prazos",
+   "idx": 72
   },
   {
    "fieldname": "deadlines_panel",
    "fieldtype": "HTML",
    "label": "Prazos",
-   "options": "<p class=\"text-muted\">Carregando prazos...</p>"
+   "options": "<p class=\"text-muted\">Carregando prazos...</p>",
+   "idx": 73
   },
   {
    "fieldname": "sec_permits_hub",
    "fieldtype": "Section Break",
-   "label": "Alvarás"
+   "label": "Alvarás",
+   "idx": 74
   },
   {
    "fieldname": "permits_panel",
    "fieldtype": "HTML",
    "label": "Alvarás e Protocolos",
-   "options": "<p class=\"text-muted\">Carregando protocolos...</p>"
+   "options": "<p class=\"text-muted\">Carregando protocolos...</p>",
+   "idx": 75
   },
   {
    "fieldname": "sec_tasks_hub",
    "fieldtype": "Section Break",
-   "label": "Tarefas"
+   "label": "Tarefas",
+   "idx": 76
   },
   {
    "fieldname": "tasks_panel",
    "fieldtype": "HTML",
    "label": "Tarefas",
-   "options": "<p class=\"text-muted\">Carregando tarefas...</p>"
+   "options": "<p class=\"text-muted\">Carregando tarefas...</p>",
+   "idx": 77
   },
   {
    "fieldname": "tab_records",
    "fieldtype": "Tab Break",
-   "label": "Registros"
+   "label": "Registros",
+   "idx": 78
   },
   {
    "fieldname": "sec_communications_hub",
    "fieldtype": "Section Break",
-   "label": "Comunicações"
+   "label": "Comunicações",
+   "idx": 79
   },
   {
    "fieldname": "communications_panel",
    "fieldtype": "HTML",
    "label": "Comunicações",
-   "options": "<p class=\"text-muted\">Carregando comunicações...</p>"
+   "options": "<p class=\"text-muted\">Carregando comunicações...</p>",
+   "idx": 80
   },
   {
    "fieldname": "sec_measurements_hub",
    "fieldtype": "Section Break",
-   "label": "Medições"
+   "label": "Medições",
+   "idx": 81
   },
   {
    "fieldname": "measurements_panel",
    "fieldtype": "HTML",
    "label": "Medições",
-   "options": "<p class=\"text-muted\">Carregando medições...</p>"
+   "options": "<p class=\"text-muted\">Carregando medições...</p>",
+   "idx": 82
   },
   {
    "fieldname": "sec_timelogs_hub",
    "fieldtype": "Section Break",
-   "label": "Horas"
+   "label": "Horas",
+   "idx": 83
   },
   {
    "fieldname": "timelogs_panel",
    "fieldtype": "HTML",
    "label": "Horas Trabalhadas",
-   "options": "<p class=\"text-muted\">Carregando horas...</p>"
+   "options": "<p class=\"text-muted\">Carregando horas...</p>",
+   "idx": 84
   },
   {
    "fieldname": "tab_specs",
    "fieldtype": "Tab Break",
-   "label": "Especificações"
+   "label": "Especificações",
+   "idx": 85
   },
   {
    "fieldname": "sec_specs",
    "fieldtype": "Section Break",
-   "label": "Especificações Técnicas"
+   "label": "Especificações Técnicas",
+   "idx": 86
   },
   {
    "fieldname": "specs_help",
    "fieldtype": "HTML",
    "label": "Itens técnicos",
-   "options": "<p class=\"text-muted\">Use <b>Adicionar especificação</b>, os botões <b>Criar</b> ou a aba <b>Conexões</b> para ver e incluir registros ligados à obra.</p>"
+   "options": "<p class=\"text-muted\">Use <b>Adicionar especificação</b>, os botões <b>Criar</b> ou a aba <b>Conexões</b> para ver e incluir registros ligados à obra.</p>",
+   "idx": 87
   },
   {
    "fieldname": "spec_preview_panel",
    "fieldtype": "HTML",
    "label": "Prévia das especificações",
    "options": "<p class=\"text-muted\">Carregando prévia...</p>",
-   "permlevel": 1
+   "permlevel": 1,
+   "idx": 88
   },
   {
    "fieldname": "spec_items_summary_panel",
    "fieldtype": "HTML",
    "label": "Especificações da Obra",
    "options": "<p class=\"text-muted\">Carregando especificações...</p>",
-   "permlevel": 1
+   "permlevel": 1,
+   "idx": 89
   },
   {
    "fieldname": "spec_project_total",
@@ -534,19 +732,22 @@
    "label": "Total especificações (obra)",
    "permlevel": 1,
    "read_only": 1,
-   "description": "Soma dos valores dos itens técnicos na revisão vigente. Atualiza ao salvar itens. Visível apenas para Engenharia Manager."
+   "description": "Soma dos valores dos itens técnicos na revisão vigente. Atualiza ao salvar itens. Visível apenas para Engenharia Manager.",
+   "idx": 90
   },
   {
    "collapsible": 1,
    "fieldname": "sec_obs",
    "fieldtype": "Section Break",
-   "label": "Observações"
+   "label": "Observações",
+   "idx": 91
   },
   {
    "fieldname": "observations",
    "fieldtype": "Text Editor",
    "label": "Observações",
-   "description": "Observações gerais sobre a obra."
+   "description": "Observações gerais sobre a obra.",
+   "idx": 92
   }
  ],
  "index_web_pages_for_search": 1,

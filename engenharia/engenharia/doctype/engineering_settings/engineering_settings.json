@@ -9,6 +9,12 @@
   "company_cnpj",
   "company_crea",
   "company_logo",
+  "sec_engineer",
+  "engineer_full_name",
+  "engineer_cpf",
+  "col_break_engineer",
+  "engineer_phone",
+  "engineer_email",
   "default_notify_days",
   "sec_bank",
   "bank_name",
@@ -23,65 +29,115 @@
    "fieldtype": "Data",
    "label": "Nome do Escritório",
    "reqd": 1,
-   "description": "Razão social do escritório. Usada em documentos gerados."
+   "description": "Razão social do escritório. Usada em documentos gerados.",
+   "idx": 1
   },
   {
    "fieldname": "company_cnpj",
    "fieldtype": "Data",
    "label": "CNPJ da Empresa",
-   "description": "CNPJ do escritório. Usado em contratos e documentos oficiais."
+   "description": "CNPJ do escritório. Usado em contratos e documentos oficiais.",
+   "idx": 2
   },
   {
    "fieldname": "company_crea",
    "fieldtype": "Data",
    "label": "CREA da Empresa",
-   "description": "Número de registro no CREA do escritório."
+   "description": "Número de registro no CREA do escritório.",
+   "idx": 3
   },
   {
    "fieldname": "company_logo",
    "fieldtype": "Attach Image",
    "label": "Logo do Escritório",
-   "description": "Logotipo exibido em documentos gerados (opcional)."
+   "description": "Logotipo exibido em documentos gerados (opcional).",
+   "idx": 4
+  },
+  {
+   "fieldname": "sec_engineer",
+   "fieldtype": "Section Break",
+   "label": "Engenheiro Responsável",
+   "idx": 5
+  },
+  {
+   "fieldname": "engineer_full_name",
+   "fieldtype": "Data",
+   "label": "Nome Completo",
+   "description": "Nome legal completo para documentos oficiais (ex: Charles Adolfo Tomazini)",
+   "idx": 6
+  },
+  {
+   "fieldname": "engineer_cpf",
+   "fieldtype": "Data",
+   "label": "CPF",
+   "description": "CPF do engenheiro responsável",
+   "idx": 7
+  },
+  {
+   "fieldname": "col_break_engineer",
+   "fieldtype": "Column Break",
+   "idx": 8
+  },
+  {
+   "fieldname": "engineer_phone",
+   "fieldtype": "Data",
+   "label": "Telefone",
+   "description": "Telefone de contato do engenheiro",
+   "idx": 9
+  },
+  {
+   "fieldname": "engineer_email",
+   "fieldtype": "Data",
+   "label": "E-mail",
+   "description": "E-mail profissional do engenheiro",
+   "idx": 10
   },
   {
    "default": "3",
    "fieldname": "default_notify_days",
    "fieldtype": "Int",
    "label": "Dias padrão de antecedência (prazos)",
-   "description": "Dias padrão de antecedência para alertas de prazos."
+   "description": "Dias padrão de antecedência para alertas de prazos.",
+   "idx": 11
   },
   {
    "fieldname": "sec_bank",
    "fieldtype": "Section Break",
-   "label": "Dados Bancários"
+   "label": "Dados Bancários",
+   "idx": 12
   },
   {
    "fieldname": "bank_name",
    "fieldtype": "Data",
    "label": "Banco",
-   "description": "Nome do banco para dados em propostas e recibos."
+   "description": "Nome do banco para dados em propostas e recibos.",
+   "idx": 13
   },
   {
    "fieldname": "bank_agency",
    "fieldtype": "Data",
    "label": "Agência",
-   "description": "Agência bancária."
+   "description": "Agência bancária.",
+   "idx": 14
   },
   {
    "fieldname": "col_break_bank",
-   "fieldtype": "Column Break"
+   "fieldtype": "Column Break",
+   "idx": 15
   },
   {
    "fieldname": "bank_account",
    "fieldtype": "Data",
    "label": "Conta",
-   "description": "Número da conta corrente."
+   "description": "Número da conta corrente.",
+   "idx": 16
   },
   {
    "fieldname": "bank_pix",
    "fieldtype": "Data",
    "label": "Chave PIX",
-   "description": "Chave PIX para recebimentos."
+   "description": "Chave PIX para recebimentos.",
+   "idx": 17
   }
  ],
  "issingle": 1,
