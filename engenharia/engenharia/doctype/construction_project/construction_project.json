@@ -257,7 +257,7 @@
    "fieldname": "dic",
    "fieldtype": "Data",
    "label": "DIC",
-   "description": "Documento de Identidade do Contribuinte no cadastro municipal (ex: 48864)",
+   "description": "Cadastro municipal do lote (ex: 48864)",
    "idx": 22
   },
   {
