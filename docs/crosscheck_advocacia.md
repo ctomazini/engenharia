@@ -1,6 +1,6 @@
 # Cross-audit: engenharia ↔ advocacia
 
-> **Atualização:** 2026-06-09 — engenharia: 46 DocTypes, 7 reports, Office Expense, 15 print formats, `boot.py`.
+> **Atualização:** 2026-06-11 — engenharia: 56 DocTypes; advocacia v1.0.0 EN + labels PT (ver `REGRAS_ADVOCACIA.md`).
 
 ## Paridade alcançada
 
@@ -28,7 +28,7 @@
 
 | Item | Motivo |
 | --- | --- |
-| DocTypes PT vs EN | advocacia brownfield; engenharia greenfield |
+| DocTypes (nomenclatura interna) | advocacia v1.0.0+ EN + labels PT; engenharia greenfield EN | UI PT em ambos |
 | Hub `Legal Case` vs `Construction Project` | domínios distintos |
 | KPIs do painel | jurídico vs obra |
 | `agent_api` endpoints | superfícies de domínio diferentes |

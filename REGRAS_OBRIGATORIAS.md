@@ -63,8 +63,8 @@ Referência de roles: `advocacia/advocacia/setup/install.py`.
 
 | | Advocacia | Engenharia |
 | --- | --- | --- |
-| DocType names | PT congelado (brownfield) | EN desde o dia 0 |
-| Exemplo hub | `Servico` | `Construction Project` |
+| DocType names | EN desde v1.0.0 (jun/2026) + labels PT | EN desde o dia 0 |
+| Exemplo hub | `Legal Case` | `Construction Project` |
 | Exemplo contrato | `Acordo de Honorarios Processuais` | `Engineering Contract` |
 
 ---
@@ -202,7 +202,7 @@ Labels nos botões/filtros: sempre `__("...")`.
 
 **Contrato do orquestrador** (`painel/__init__.py`):
 
-1. `frappe.has_permission` no hub (`Servico` read → `Construction Project` read)  
+1. `frappe.has_permission` no hub (`Legal Case` read → `Construction Project` read)  
 2. Normalizar `periodo_dias`, `list_limits`, `limit_page_length` (cap 100)  
 3. Chamar `_build_*` por domínio; **uma** query em lote por lookup (`_servico_lookup`, `_cliente_nome_lookup` em `_helpers.py`)  
 4. Retornar dict estável de chaves (front depende disso — não renomear sem versionar)  
