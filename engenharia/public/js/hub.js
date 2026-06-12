@@ -1423,8 +1423,8 @@ function eng_hub_bind_document_actions(frm, $w) {
 		eng_hub_open_new_document(frm);
 	});
 	$w.find('[data-hub-action="generate-documents"]').on("click", () => {
-		if (typeof eng_open_generate_documents_dialog === "function") {
-			eng_open_generate_documents_dialog(frm);
+		if (typeof window.eng_open_generate_documents_dialog === "function") {
+			window.eng_open_generate_documents_dialog(frm);
 			return;
 		}
 		frappe.msgprint(__("Abra a obra para gerar documentos a partir dos templates."));

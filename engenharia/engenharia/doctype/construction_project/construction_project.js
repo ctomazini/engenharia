@@ -634,3 +634,5 @@ function eng_generate_documents_batch(frm, template_names, permit_name) {
 		},
 	});
 }
+
+window.eng_open_generate_documents_dialog = eng_open_generate_documents_dialog;
