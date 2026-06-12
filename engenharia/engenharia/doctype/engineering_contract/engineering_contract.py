@@ -50,7 +50,11 @@ class EngineeringContract(Document):
 			frappe.throw(_("Valor atual do contrato deve ser maior que zero."))
 
 		if self.installment_count and flt(self.installment_count) > 0:
-			if not self.first_installment_date:
+			has_fixed_date = any(
+				(row.payment_condition or "Data fixa") == "Data fixa"
+				for row in self.get("installments") or []
+			)
+			if has_fixed_date and not self.first_installment_date:
 				frappe.throw(_("Informe a data da primeira parcela."))
 			if flt(self.current_value) <= 0:
 				frappe.throw(_("Valor atual deve ser maior que zero para gerar parcelas."))
@@ -143,6 +147,7 @@ class EngineeringContract(Document):
 						"description": row.description,
 						"installment_origin_id": row.installment_origin_id,
 						"payment": row.payment,
+						"payment_condition": row.payment_condition,
 					},
 				)
 

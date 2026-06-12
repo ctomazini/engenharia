@@ -140,6 +140,32 @@ class TestEngineeringContract(FrappeTestCase):
 		value = frappe.db.get_value("Construction Project", project.name, "current_contract_value")
 		self.assertEqual(flt(value), 15000)
 
+	def test_installment_without_due_date(self):
+		"""Parcela com payment_condition != Data fixa pode ter due_date vazio."""
+		contract = create_test_engineering_contract(
+			base_value=8000,
+			current_value=8000,
+			installment_count=2,
+			installments=[
+				{
+					"due_date": today(),
+					"amount": 500,
+					"status": "Pendente",
+					"payment_condition": "Data fixa",
+					"description": "Parcela 1",
+				},
+				{
+					"amount": 7500,
+					"status": "Pendente",
+					"payment_condition": "Na conclusão",
+					"description": "Parcela 2",
+				},
+			],
+		)
+		self.assertEqual(len(contract.installments), 2)
+		self.assertFalse(contract.installments[1].due_date)
+		self.assertEqual(contract.installments[1].payment_condition, "Na conclusão")
+
 	def test_contract_settled_when_all_payments_received(self):
 		from engenharia.tasks import on_payment_update
 

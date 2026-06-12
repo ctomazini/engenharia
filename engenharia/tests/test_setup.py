@@ -61,14 +61,17 @@ def create_test_construction_project(customer=None, **kwargs):
 	return doc
 
 
-def _installment_row(due_date, amount, idx=1):
-	return {
+def _installment_row(due_date=None, amount=0, idx=1):
+	row = {
 		"doctype": "Engineering Contract Installment",
-		"due_date": due_date,
 		"amount": flt(amount),
 		"status": "Pendente",
 		"description": f"Parcela {idx}",
+		"payment_condition": "Data fixa",
 	}
+	if due_date:
+		row["due_date"] = due_date
+	return row
 
 
 def create_test_engineering_contract(

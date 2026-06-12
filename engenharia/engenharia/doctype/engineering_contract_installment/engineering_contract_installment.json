@@ -6,6 +6,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "payment_condition",
   "due_date",
   "amount",
   "received_amount",
@@ -20,12 +21,22 @@
  ],
  "fields": [
   {
+   "default": "Data fixa",
+   "fieldname": "payment_condition",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Condição",
+   "options": "Data fixa\nNa conclusão\nNa aprovação\nA definir",
+   "description": "Quando a parcela deve ser paga. Se não for 'Data fixa', o vencimento fica opcional."
+  },
+  {
    "fieldname": "due_date",
    "fieldtype": "Date",
    "in_list_view": 1,
    "label": "Vencimento",
-   "reqd": 1,
-   "description": "Data de vencimento da parcela."
+   "mandatory_depends_on": "eval:doc.payment_condition=='Data fixa' || !doc.payment_condition",
+   "reqd": 0,
+   "description": "Data de vencimento da parcela. Obrigatório quando condição é 'Data fixa'."
   },
   {
    "fieldname": "amount",

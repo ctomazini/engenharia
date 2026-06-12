@@ -65,6 +65,12 @@ frappe.ui.form.on("Engineering Contract", {
 });
 
 frappe.ui.form.on("Engineering Contract Installment", {
+	payment_condition(frm, cdt, cdn) {
+		const row = locals[cdt][cdn];
+		if (row.payment_condition && row.payment_condition !== "Data fixa") {
+			frappe.model.set_value(cdt, cdn, "due_date", null);
+		}
+	},
 	amount(frm) {
 		sum_installments(frm);
 	},
@@ -127,6 +133,7 @@ function generate_installment_table(frm) {
 	for (let i = 0; i < count; i++) {
 		const row = frm.add_child("installments");
 		row.due_date = frappe.datetime.add_months(startDate, i);
+		row.payment_condition = "Data fixa";
 		row.amount = amount;
 		row.status = "Pendente";
 		row.description = __("Parcela {0} de {1}", [i + 1, count]);

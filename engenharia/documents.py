@@ -290,6 +290,7 @@ PLACEHOLDER_REFERENCE = [
 		"condicional": True,
 		"condicional_motivo": "Campos dentro de {% for i in contract_installments %}",
 		"items": [
+			{"placeholder": "payment_condition", "label": "Condição de pagamento", "loop_only": True, "loop_var": "i"},
 			{"placeholder": "due_date", "label": "Vencimento", "loop_only": True, "loop_var": "i"},
 			{"placeholder": "due_date_fmt", "label": "Vencimento (formatado)", "loop_only": True, "loop_var": "i"},
 			{"placeholder": "amount", "label": "Valor previsto (R$)", "loop_only": True, "loop_var": "i"},
@@ -758,6 +759,7 @@ def _get_contract_installment_row(installment) -> dict:
 	amount = flt(installment.amount)
 	received_amount = flt(installment.received_amount)
 	return {
+		"payment_condition": installment.payment_condition or "Data fixa",
 		"due_date": installment.due_date or "",
 		"due_date_fmt": _fmt_date(installment.due_date),
 		"amount": amount,
