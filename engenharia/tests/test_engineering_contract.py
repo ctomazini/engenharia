@@ -166,6 +166,56 @@ class TestEngineeringContract(FrappeTestCase):
 		self.assertFalse(contract.installments[1].due_date)
 		self.assertEqual(contract.installments[1].payment_condition, "Na conclusão")
 
+	def test_payment_narrative_grouped(self):
+		"""Narrativa agrupa parcelas de mesmo valor com ajuste na última."""
+		from engenharia.documents import _build_payment_narrative
+
+		installments = [
+			{"payment_condition": "Data fixa", "due_date": "2026-06-10", "amount": 500, "status": "Pendente", "description": "Parcela 1 de 10"},
+			{"payment_condition": "Data fixa", "due_date": "2026-07-10", "amount": 500, "status": "Pendente", "description": "Parcela 2 de 10"},
+			{"payment_condition": "Data fixa", "due_date": "2026-08-10", "amount": 500, "status": "Pendente", "description": "Parcela 3 de 10"},
+			{"payment_condition": "Data fixa", "due_date": "2026-09-10", "amount": 929, "status": "Pendente", "description": "Parcela 4 de 10"},
+			{"payment_condition": "Data fixa", "due_date": "2026-10-10", "amount": 929, "status": "Pendente", "description": "Parcela 5 de 10"},
+			{"payment_condition": "Data fixa", "due_date": "2026-11-10", "amount": 929, "status": "Pendente", "description": "Parcela 6 de 10"},
+			{"payment_condition": "Data fixa", "due_date": "2026-12-10", "amount": 929, "status": "Pendente", "description": "Parcela 7 de 10"},
+			{"payment_condition": "Data fixa", "due_date": "2027-01-10", "amount": 929, "status": "Pendente", "description": "Parcela 8 de 10"},
+			{"payment_condition": "Data fixa", "due_date": "2027-02-10", "amount": 929, "status": "Pendente", "description": "Parcela 9 de 10"},
+			{"payment_condition": "Data fixa", "due_date": "2027-03-10", "amount": 926, "status": "Pendente", "description": "Parcela 10 de 10"},
+		]
+
+		result = _build_payment_narrative(installments)
+
+		self.assertIn("03 (três) parcelas", result)
+		self.assertIn("quinhentos reais", result)
+		self.assertIn("07 (sete) parcelas", result)
+		self.assertIn("novecentos e vinte e nove reais", result)
+		self.assertIn("última parcela", result)
+		self.assertIn("novecentos e vinte e seis reais", result)
+		self.assertIn("dia 10", result)
+
+	def test_payment_narrative_mixed_conditions(self):
+		"""Narrativa com parcelas fixas + Na conclusão."""
+		from engenharia.documents import _build_payment_narrative
+
+		installments = [
+			{"payment_condition": "Data fixa", "due_date": "2026-06-10", "amount": 2000, "status": "Pendente", "description": "Entrada"},
+			{"payment_condition": "Na conclusão", "due_date": "", "amount": 6000, "status": "Pendente", "description": "Saldo final"},
+		]
+
+		result = _build_payment_narrative(installments)
+
+		self.assertIn("01 (uma) parcela", result)
+		self.assertIn("dois mil reais", result)
+		self.assertIn("conclusão do serviço", result)
+		self.assertIn("saldo final", result.lower())
+
+	def test_payment_narrative_empty(self):
+		"""Narrativa vazia para lista sem parcelas."""
+		from engenharia.documents import _build_payment_narrative
+
+		self.assertEqual(_build_payment_narrative([]), "")
+		self.assertEqual(_build_payment_narrative([{"status": "Cancelado", "amount": 100}]), "")
+
 	def test_contract_settled_when_all_payments_received(self):
 		from engenharia.tasks import on_payment_update
 

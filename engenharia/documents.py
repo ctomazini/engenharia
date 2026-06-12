@@ -283,6 +283,7 @@ PLACEHOLDER_REFERENCE = [
 				"placeholder": "contract_installments",
 				"label": "Lista de parcelas (use {% for i in contract_installments %})",
 			},
+			{"placeholder": "contract_payment_narrative", "label": "Narrativa de pagamento (texto gerado)"},
 		],
 	},
 	{
@@ -755,6 +756,122 @@ def _get_project_items_context(project_name: str) -> dict:
 	}
 
 
+def _count_in_words(n: int) -> str:
+	"""Número cardinal feminino para contagem de parcelas (uma, duas, três...)."""
+	if n == 1:
+		return "uma"
+	if n == 2:
+		return "duas"
+	return _num2words(n, lang="pt_BR")
+
+
+def _build_payment_narrative(installments: list[dict]) -> str:
+	"""Monta narrativa jurídica agrupada a partir das parcelas processadas.
+
+	Agrupa parcelas 'Data fixa' consecutivas de mesmo valor e mesmo dia do mês.
+	Trata a última parcela de um grupo como ajuste se diferir em ≤ 5% do valor padrão.
+	Parcelas com condição diferente de 'Data fixa' geram frase individual.
+	"""
+	if not installments:
+		return ""
+
+	active = [row for row in installments if row.get("status") != "Cancelado"]
+	if not active:
+		return ""
+
+	fixed = [
+		row
+		for row in active
+		if (row.get("payment_condition") or "Data fixa") == "Data fixa" and row.get("due_date")
+	]
+	non_fixed = [row for row in active if row not in fixed]
+
+	parts = []
+
+	if fixed:
+		groups = []
+		current_group = [fixed[0]]
+
+		for i in range(1, len(fixed)):
+			prev_amount = flt(current_group[0]["amount"])
+			curr_amount = flt(fixed[i]["amount"])
+			amounts_match = abs(curr_amount - prev_amount) <= 0.02
+
+			if amounts_match:
+				current_group.append(fixed[i])
+			else:
+				is_last = i == len(fixed) - 1
+				diff_pct = abs(curr_amount - prev_amount) / prev_amount * 100 if prev_amount else 100
+				if is_last and diff_pct <= 5 and len(current_group) >= 2:
+					current_group.append(fixed[i])
+				else:
+					groups.append(current_group)
+					current_group = [fixed[i]]
+
+		groups.append(current_group)
+
+		for group in groups:
+			count = len(group)
+			main_amount = flt(group[0]["amount"])
+			start_date = group[0]["due_date"]
+
+			try:
+				day = getdate(start_date).day
+			except Exception:
+				day = None
+
+			last_amount = flt(group[-1]["amount"])
+			has_adjustment = count > 1 and abs(last_amount - main_amount) > 0.02
+
+			count_display = f"{count:02d}" if count < 100 else str(count)
+			count_words = _count_in_words(count)
+			amount_fmt = _fmt_currency(main_amount)
+			amount_words = _value_in_words(main_amount)
+			start_date_fmt = _fmt_date(start_date)
+
+			if count == 1:
+				line = f"{count_display} ({count_words}) parcela de {amount_fmt} ({amount_words})"
+				if day:
+					line += f", com vencimento em {start_date_fmt}"
+			else:
+				line = f"{count_display} ({count_words}) parcelas de {amount_fmt} ({amount_words})"
+				line += " mensais e consecutivas"
+				if day:
+					line += f" com pagamento todo dia {day:02d}"
+				line += f", a iniciar em {start_date_fmt}"
+
+			if has_adjustment:
+				adj_fmt = _fmt_currency(last_amount)
+				adj_words = _value_in_words(last_amount)
+				line += f", sendo a última parcela no valor de {adj_fmt} ({adj_words})"
+
+			line += "."
+			parts.append(line)
+
+	condition_text = {
+		"Na conclusão": "a ser paga na conclusão do serviço",
+		"Na aprovação": "a ser paga na aprovação do projeto",
+		"A definir": "com data a definir",
+	}
+
+	for row in non_fixed:
+		amount = flt(row["amount"])
+		amount_fmt = _fmt_currency(amount)
+		amount_words = _value_in_words(amount)
+		condition = row.get("payment_condition") or "A definir"
+		suffix = condition_text.get(condition, "com data a definir")
+
+		desc = row.get("description")
+		if desc:
+			line = f"01 (uma) parcela de {amount_fmt} ({amount_words}) referente a {desc.lower()}, {suffix}."
+		else:
+			line = f"01 (uma) parcela de {amount_fmt} ({amount_words}), {suffix}."
+
+		parts.append(line)
+
+	return "\n\n".join(parts)
+
+
 def _get_contract_installment_row(installment) -> dict:
 	amount = flt(installment.amount)
 	received_amount = flt(installment.received_amount)
@@ -799,6 +916,7 @@ def _get_contract_context(contract) -> dict:
 		"contract_total_outstanding_fmt": _fmt_currency(0),
 		"contract_observations": "",
 		"contract_installments": [],
+		"contract_payment_narrative": "",
 	}
 
 	if not contract:
@@ -841,6 +959,7 @@ def _get_contract_context(contract) -> dict:
 		"contract_total_outstanding_fmt": _fmt_currency(total_outstanding),
 		"contract_observations": strip_html(contract.observations or ""),
 		"contract_installments": installments,
+		"contract_payment_narrative": _build_payment_narrative(installments),
 	}
 
 
