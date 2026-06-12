@@ -7,6 +7,7 @@ from frappe.tests.utils import FrappeTestCase
 
 from engenharia.documents import (
 	_build_context,
+	_get_contract_context,
 	_value_in_words,
 	generate_project_documents,
 	get_available_kits,
@@ -15,6 +16,7 @@ from engenharia.documents import (
 	get_placeholder_reference,
 )
 from engenharia.project_document_naming import compose_project_document_filename
+from frappe.utils import getdate
 from engenharia.tests.test_setup import (
 	_uid,
 	create_test_construction_project,
@@ -118,6 +120,14 @@ class TestDocuments(FrappeTestCase):
 		self.assertIn("reais", result)
 		self.assertEqual(_value_in_words(0), "")
 		self.assertEqual(_value_in_words(None), "")
+
+	def test_get_contract_context_mixed_due_date_types(self):
+		contract = create_test_engineering_contract(installment_count=2)
+		contract.installments[0].due_date = "2026-06-10"
+		contract.installments[1].due_date = getdate("2026-07-10")
+		context = _get_contract_context(contract)
+		self.assertEqual(len(context["contract_installments"]), 2)
+		self.assertEqual(context["contract_installments"][0]["due_date"], "2026-06-10")
 
 	def test_build_context_new_document_fields(self):
 		_ensure_engineering_settings()

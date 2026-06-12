@@ -872,6 +872,13 @@ def _build_payment_narrative(installments: list[dict]) -> str:
 	return "\n\n".join(parts)
 
 
+def _installment_due_date_sort_key(due_date) -> tuple:
+	"""Ordena parcelas por vencimento; vazias por último; normaliza str/date."""
+	if not due_date:
+		return (1, getdate("9999-12-31"))
+	return (0, getdate(due_date))
+
+
 def _get_contract_installment_row(installment) -> dict:
 	amount = flt(installment.amount)
 	received_amount = flt(installment.received_amount)
@@ -927,7 +934,10 @@ def _get_contract_context(contract) -> dict:
 	installment_value = flt(contract.installment_value)
 	installments = [
 		_get_contract_installment_row(row)
-		for row in sorted(contract.installments or [], key=lambda row: row.due_date or "")
+		for row in sorted(
+			contract.installments or [],
+			key=lambda row: _installment_due_date_sort_key(row.due_date),
+		)
 	]
 	total_received = sum(flt(row.get("received_amount")) for row in installments)
 	total_outstanding = sum(
