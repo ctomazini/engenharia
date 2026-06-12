@@ -7,6 +7,7 @@ from frappe.tests.utils import FrappeTestCase
 
 from engenharia.documents import (
 	_build_context,
+	_value_in_words,
 	generate_project_documents,
 	get_available_kits,
 	get_available_templates,
@@ -110,6 +111,13 @@ class TestDocuments(FrappeTestCase):
 		self.assertIn("Subcontratos (obra)", groups)
 		self.assertIn("Engenheiro responsável", groups)
 		self.assertIn("Protocolo", groups)
+
+	def test_value_in_words(self):
+		result = _value_in_words(8000)
+		self.assertIn("oito mil", result)
+		self.assertIn("reais", result)
+		self.assertEqual(_value_in_words(0), "")
+		self.assertEqual(_value_in_words(None), "")
 
 	def test_build_context_new_document_fields(self):
 		_ensure_engineering_settings()

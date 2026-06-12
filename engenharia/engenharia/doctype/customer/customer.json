@@ -14,11 +14,13 @@
   "col_break_1",
   "cpf",
   "rg",
+  "rg_issuer",
   "cnpj",
   "sec_pf",
   "nationality",
   "marital_status",
   "profession",
+  "birth_date",
   "sec_pj",
   "legal_representative",
   "legal_representative_cpf",
@@ -84,6 +86,14 @@
    "description": "Documento de identidade (pessoa física)."
   },
   {
+   "depends_on": "eval:doc.person_type=='Pessoa Física'",
+   "fieldname": "rg_issuer",
+   "fieldtype": "Data",
+   "label": "Órgão Emissor do RG",
+   "mandatory_depends_on": "",
+   "description": "Ex: SSP/RS, SJS/RS"
+  },
+  {
    "allow_in_quick_entry": 1,
    "depends_on": "eval:doc.person_type=='Pessoa Jurídica'",
    "fieldname": "cnpj",
@@ -118,6 +128,12 @@
    "fieldtype": "Data",
    "label": "Profissão",
    "description": "Profissão declarada (pessoa física)."
+  },
+  {
+   "depends_on": "eval:doc.person_type=='Pessoa Física'",
+   "fieldname": "birth_date",
+   "fieldtype": "Date",
+   "label": "Data de Nascimento"
   },
   {
    "depends_on": "eval:doc.person_type=='Pessoa Jurídica'",

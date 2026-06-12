@@ -17,6 +17,8 @@ class Customer(Document):
 		else:
 			self.cpf = None
 			self.rg = None
+			self.rg_issuer = None
+			self.birth_date = None
 			self.marital_status = None
 			self.profession = None
 			self.nationality = None

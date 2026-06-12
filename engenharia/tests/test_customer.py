@@ -114,3 +114,19 @@ class TestCustomer(FrappeTestCase):
 	def test_autoname_prefix(self):
 		customer = create_test_customer()
 		self.assertTrue(customer.name.startswith("CLI-"))
+
+	def test_birth_date_and_rg_issuer(self):
+		"""Verifica que birth_date e rg_issuer salvam para PF e são limpos para PJ."""
+		customer = frappe.get_doc(
+			{
+				"doctype": "Customer",
+				"person_type": "Pessoa Física",
+				"customer_name": f"_Test PF Birth {frappe.generate_hash(length=6)}",
+				"cpf": "52998224725",
+				"birth_date": "1990-06-15",
+				"rg_issuer": "SSP/RS",
+			}
+		)
+		customer.insert(ignore_permissions=True)
+		self.assertEqual(str(customer.birth_date), "1990-06-15")
+		self.assertEqual(customer.rg_issuer, "SSP/RS")

@@ -8,6 +8,7 @@
   "company_name",
   "company_cnpj",
   "company_crea",
+  "company_address_full",
   "company_logo",
   "sec_engineer",
   "engineer_full_name",
@@ -47,50 +48,57 @@
    "idx": 3
   },
   {
+   "fieldname": "company_address_full",
+   "fieldtype": "Small Text",
+   "label": "Endereço do Escritório",
+   "description": "Endereço completo para uso em contratos e documentos",
+   "idx": 4
+  },
+  {
    "fieldname": "company_logo",
    "fieldtype": "Attach Image",
    "label": "Logo do Escritório",
    "description": "Logotipo exibido em documentos gerados (opcional).",
-   "idx": 4
+   "idx": 5
   },
   {
    "fieldname": "sec_engineer",
    "fieldtype": "Section Break",
    "label": "Engenheiro Responsável",
-   "idx": 5
+   "idx": 6
   },
   {
    "fieldname": "engineer_full_name",
    "fieldtype": "Data",
    "label": "Nome Completo",
    "description": "Nome legal completo para documentos oficiais (ex: Charles Adolfo Tomazini)",
-   "idx": 6
+   "idx": 7
   },
   {
    "fieldname": "engineer_cpf",
    "fieldtype": "Data",
    "label": "CPF",
    "description": "CPF do engenheiro responsável",
-   "idx": 7
+   "idx": 8
   },
   {
    "fieldname": "col_break_engineer",
    "fieldtype": "Column Break",
-   "idx": 8
+   "idx": 9
   },
   {
    "fieldname": "engineer_phone",
    "fieldtype": "Data",
    "label": "Telefone",
    "description": "Telefone de contato do engenheiro",
-   "idx": 9
+   "idx": 10
   },
   {
    "fieldname": "engineer_email",
    "fieldtype": "Data",
    "label": "E-mail",
    "description": "E-mail profissional do engenheiro",
-   "idx": 10
+   "idx": 11
   },
   {
    "default": "3",
@@ -98,46 +106,46 @@
    "fieldtype": "Int",
    "label": "Dias padrão de antecedência (prazos)",
    "description": "Dias padrão de antecedência para alertas de prazos.",
-   "idx": 11
+   "idx": 12
   },
   {
    "fieldname": "sec_bank",
    "fieldtype": "Section Break",
    "label": "Dados Bancários",
-   "idx": 12
+   "idx": 13
   },
   {
    "fieldname": "bank_name",
    "fieldtype": "Data",
    "label": "Banco",
    "description": "Nome do banco para dados em propostas e recibos.",
-   "idx": 13
+   "idx": 14
   },
   {
    "fieldname": "bank_agency",
    "fieldtype": "Data",
    "label": "Agência",
    "description": "Agência bancária.",
-   "idx": 14
+   "idx": 15
   },
   {
    "fieldname": "col_break_bank",
    "fieldtype": "Column Break",
-   "idx": 15
+   "idx": 16
   },
   {
    "fieldname": "bank_account",
    "fieldtype": "Data",
    "label": "Conta",
    "description": "Número da conta corrente.",
-   "idx": 16
+   "idx": 17
   },
   {
    "fieldname": "bank_pix",
    "fieldtype": "Data",
    "label": "Chave PIX",
    "description": "Chave PIX para recebimentos.",
-   "idx": 17
+   "idx": 18
   }
  ],
  "issingle": 1,

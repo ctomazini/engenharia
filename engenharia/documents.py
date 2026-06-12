@@ -11,6 +11,7 @@ from engenharia.project_document_naming import compose_project_document_filename
 from engenharia.project_rollup import get_project_items_summary
 from engenharia.titles import get_customer_name
 from engenharia.validators import formatar_cep, formatar_cnpj, formatar_cpf, formatar_telefone
+from num2words import num2words as _num2words
 
 TEMPLATE_CATEGORY_MAP = {
 	"memorial": "Memorial",
@@ -35,6 +36,7 @@ PLACEHOLDER_REFERENCE = [
 			{"placeholder": "company_cnpj", "label": "CNPJ do escritório"},
 			{"placeholder": "company_crea", "label": "CREA do escritório"},
 			{"placeholder": "company_logo", "label": "URL do logotipo (Configurações da Engenharia)"},
+			{"placeholder": "company_address_full", "label": "Endereço do escritório"},
 			{"placeholder": "bank_name", "label": "Banco"},
 			{"placeholder": "bank_agency", "label": "Agência"},
 			{"placeholder": "bank_account", "label": "Conta bancária"},
@@ -58,6 +60,9 @@ PLACEHOLDER_REFERENCE = [
 			{"placeholder": "customer_cpf", "label": "CPF", "alias": "cpf"},
 			{"placeholder": "customer_cnpj", "label": "CNPJ", "alias": "cnpj"},
 			{"placeholder": "customer_rg", "label": "RG", "alias": "rg"},
+			{"placeholder": "customer_rg_issuer", "label": "Órgão emissor do RG"},
+			{"placeholder": "customer_birth_date", "label": "Data de nascimento"},
+			{"placeholder": "customer_birth_date_fmt", "label": "Data de nascimento (formatada)"},
 			{"placeholder": "customer_trade_name", "label": "Nome fantasia"},
 			{"placeholder": "customer_nationality", "label": "Nacionalidade"},
 			{"placeholder": "customer_marital_status", "label": "Estado civil"},
@@ -259,10 +264,12 @@ PLACEHOLDER_REFERENCE = [
 			{"placeholder": "contract_base_value_fmt", "label": "Valor base (formatado)"},
 			{"placeholder": "contract_value", "label": "Valor atual (R$)"},
 			{"placeholder": "contract_value_fmt", "label": "Valor atual (formatado)"},
+			{"placeholder": "contract_value_words", "label": "Valor atual por extenso"},
 			{"placeholder": "contract_adjustment_index", "label": "Índice de reajuste"},
 			{"placeholder": "contract_technical_retention_pct", "label": "Retenção técnica (%)"},
 			{"placeholder": "contract_late_fee_pct", "label": "Multa mora (%)"},
 			{"placeholder": "contract_daily_interest_pct", "label": "Juros diários (%)"},
+			{"placeholder": "contract_monthly_interest_pct", "label": "Juros mensais (%)"},
 			{"placeholder": "contract_installment_count", "label": "Número de parcelas"},
 			{"placeholder": "contract_first_installment_date", "label": "Data da 1ª parcela"},
 			{"placeholder": "contract_installment_value", "label": "Valor médio da parcela (R$)"},
@@ -462,12 +469,24 @@ def _fmt_currency(value) -> str:
 	return fmt_money(flt(value))
 
 
+def _value_in_words(value) -> str:
+	"""Converte valor numérico para texto por extenso em PT-BR (moeda)."""
+	amount = flt(value)
+	if not amount:
+		return ""
+	try:
+		return _num2words(amount, lang="pt_BR", to="currency")
+	except Exception:
+		return ""
+
+
 def _get_settings_context(settings) -> dict:
 	return {
 		"company_name": settings.company_name or "",
 		"company_cnpj": formatar_cnpj(settings.company_cnpj) if settings.company_cnpj else "",
 		"company_crea": settings.company_crea or "",
 		"company_logo": settings.company_logo or "",
+		"company_address_full": settings.company_address_full or "",
 		"bank_name": settings.bank_name or "",
 		"bank_agency": settings.bank_agency or "",
 		"bank_account": settings.bank_account or "",
@@ -497,6 +516,9 @@ def _get_customer_context(customer, addr, contact) -> dict:
 		"customer_cpf": formatar_cpf(customer.cpf) if customer and customer.cpf else "",
 		"customer_cnpj": formatar_cnpj(customer.cnpj) if customer and customer.cnpj else "",
 		"customer_rg": customer.rg if customer and customer.rg else "",
+		"customer_rg_issuer": customer.rg_issuer if customer and customer.rg_issuer else "",
+		"customer_birth_date": _fmt_date(customer.birth_date) if customer and customer.birth_date else "",
+		"customer_birth_date_fmt": _fmt_date(customer.birth_date) if customer and customer.birth_date else "",
 		"cpf": formatar_cpf(customer.cpf) if customer and customer.cpf else "",
 		"cnpj": formatar_cnpj(customer.cnpj) if customer and customer.cnpj else "",
 		"rg": customer.rg if customer and customer.rg else "",
@@ -759,10 +781,12 @@ def _get_contract_context(contract) -> dict:
 		"contract_base_value_fmt": _fmt_currency(0),
 		"contract_value": 0,
 		"contract_value_fmt": _fmt_currency(0),
+		"contract_value_words": "",
 		"contract_adjustment_index": "",
 		"contract_technical_retention_pct": 0,
 		"contract_late_fee_pct": 0,
 		"contract_daily_interest_pct": 0,
+		"contract_monthly_interest_pct": 0,
 		"contract_installment_count": 0,
 		"contract_first_installment_date": "",
 		"contract_installment_value": 0,
@@ -799,10 +823,12 @@ def _get_contract_context(contract) -> dict:
 		"contract_base_value_fmt": _fmt_currency(base_value),
 		"contract_value": current_value,
 		"contract_value_fmt": _fmt_currency(current_value),
+		"contract_value_words": _value_in_words(current_value),
 		"contract_adjustment_index": contract.adjustment_index or "",
 		"contract_technical_retention_pct": flt(contract.technical_retention_pct),
 		"contract_late_fee_pct": flt(contract.late_fee_pct),
 		"contract_daily_interest_pct": flt(contract.daily_interest_pct),
+		"contract_monthly_interest_pct": flt(contract.monthly_interest_pct),
 		"contract_installment_count": contract.installment_count or len(installments),
 		"contract_first_installment_date": _fmt_date(contract.first_installment_date),
 		"contract_installment_value": installment_value,

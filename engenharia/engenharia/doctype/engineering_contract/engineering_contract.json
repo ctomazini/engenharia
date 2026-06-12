@@ -20,6 +20,7 @@
   "technical_retention_pct",
   "late_fee_pct",
   "daily_interest_pct",
+  "monthly_interest_pct",
   "installment_count",
   "first_installment_date",
   "installment_value",
@@ -123,6 +124,12 @@
    "fieldtype": "Float",
    "label": "Juros Diários %",
    "description": "Juros diários aplicados após o vencimento."
+  },
+  {
+   "fieldname": "monthly_interest_pct",
+   "fieldtype": "Percent",
+   "label": "Juros Mensais (%)",
+   "description": "Juros mensais por inadimplência (ex: 1%)"
   },
   {
    "fieldname": "installment_count",
