@@ -4,6 +4,7 @@ import tempfile
 
 import frappe
 from frappe.tests.utils import FrappeTestCase
+from frappe.utils import getdate
 
 from engenharia.documents import (
 	_build_context,
@@ -15,8 +16,6 @@ from engenharia.documents import (
 	get_document_placeholder_keys,
 	get_placeholder_reference,
 )
-from engenharia.project_document_naming import compose_project_document_filename
-from frappe.utils import getdate
 from engenharia.tests.test_setup import (
 	_uid,
 	create_test_construction_project,
@@ -297,29 +296,26 @@ class TestDocuments(FrappeTestCase):
 		self.assertEqual(len(result["generated"]), 2)
 		self.assertFalse(result["failures"])
 
+		for item in result["generated"]:
+			self.assertTrue(item["file_name"])
+			self.assertTrue(item["file_content"])
+			self.assertNotIn("file_url", item)
+			self.assertNotIn("project_document", item)
+
 		project_docs = frappe.get_all(
 			"Project Document",
 			filters={"project": project.name, "source": "Gerado pelo App"},
-			fields=["name", "category", "status", "file"],
 		)
-		self.assertEqual(len(project_docs), 2)
-		generated_by_url = {item["file_url"]: item for item in result["generated"]}
-		for row in project_docs:
-			self.assertEqual(row.status, "Rascunho")
-			self.assertTrue(row.file)
-			file_doc = frappe.get_doc("File", {"file_url": row.file})
-			template_title = generated_by_url[row.file]["title"]
-			expected = compose_project_document_filename(
-				project.name,
-				row.category,
-				"v1",
-				template_title,
-				".docx",
-			)
-			self.assertEqual(file_doc.file_name, expected)
-			self.assertTrue(os.path.exists(file_doc.get_full_path()))
-			self.assertEqual(os.path.basename(file_doc.get_full_path()), expected)
-			self.assertTrue(file_doc.file_name.startswith(project.name))
+		self.assertEqual(len(project_docs), 0)
+
+		attached_files = frappe.get_all(
+			"File",
+			filters={
+				"attached_to_doctype": "Construction Project",
+				"attached_to_name": project.name,
+			},
+		)
+		self.assertEqual(len(attached_files), 0)
 
 	def test_infer_document_category_from_template_name(self):
 		from engenharia.documents import _infer_document_category

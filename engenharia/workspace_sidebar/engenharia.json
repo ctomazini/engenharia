@@ -6,10 +6,6 @@
  "header_icon": "building-2",
  "idx": 0,
  "items": [
-  {"child": 0, "collapsible": 1, "icon": "compass", "indent": 0, "keep_closed": 0, "label": "Comece Aqui", "link_type": "DocType", "show_arrow": 0, "type": "Section Break"},
-  {"child": 1, "collapsible": 0, "icon": "map", "indent": 0, "keep_closed": 0, "label": "Painel — Guia inicial", "link_to": "eng-dashboard", "link_type": "Page", "show_arrow": 0, "type": "Link"},
-  {"child": 1, "collapsible": 0, "icon": "user-plus", "indent": 0, "keep_closed": 0, "label": "Clientes", "link_to": "Customer", "link_type": "DocType", "show_arrow": 0, "type": "Link"},
-  {"child": 1, "collapsible": 0, "icon": "folder-plus", "indent": 0, "keep_closed": 0, "label": "Nova Obra", "link_to": "Construction Project", "link_type": "DocType", "show_arrow": 0, "type": "Link"},
   {"child": 0, "collapsible": 1, "icon": "sun", "indent": 0, "keep_closed": 0, "label": "Dia a Dia", "link_type": "DocType", "show_arrow": 0, "type": "Section Break"},
   {"child": 1, "collapsible": 0, "icon": "layout-dashboard", "indent": 0, "keep_closed": 0, "label": "Painel", "link_to": "eng-dashboard", "link_type": "Page", "show_arrow": 0, "type": "Link"},
   {"child": 1, "collapsible": 0, "icon": "clock-alert", "indent": 0, "keep_closed": 0, "label": "Prazos", "link_to": "Deadline", "link_type": "DocType", "show_arrow": 0, "type": "Link"},

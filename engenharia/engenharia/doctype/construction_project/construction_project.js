@@ -579,6 +579,25 @@ function eng_update_bulk_dialog_primary_action(dialog) {
 	);
 }
 
+function eng_download_generated_file(file_name, file_content_base64) {
+	const binary = atob(file_content_base64);
+	const bytes = new Uint8Array(binary.length);
+	for (let i = 0; i < binary.length; i++) {
+		bytes[i] = binary.charCodeAt(i);
+	}
+	const blob = new Blob([bytes], {
+		type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+	});
+	const url = URL.createObjectURL(blob);
+	const link = document.createElement("a");
+	link.href = url;
+	link.download = file_name;
+	document.body.appendChild(link);
+	link.click();
+	document.body.removeChild(link);
+	URL.revokeObjectURL(url);
+}
+
 function eng_generate_documents_batch(frm, template_names, permit_name) {
 	frappe.call({
 		method: "engenharia.documents.generate_project_documents",
@@ -597,18 +616,28 @@ function eng_generate_documents_batch(frm, template_names, permit_name) {
 			let html = "";
 
 			if (data.generated && data.generated.length) {
+				data.generated.forEach((item, index) => {
+					if (item.file_content) {
+						setTimeout(() => {
+							eng_download_generated_file(item.file_name, item.file_content);
+						}, index * 250);
+					}
+				});
 				html += "<p><strong>" + __("Documentos gerados:") + "</strong></p><ul>";
 				data.generated.forEach((item) => {
 					html +=
 						"<li>" +
 						frappe.utils.escape_html(item.title || item.template) +
-						' — <a href="' +
-						item.file_url +
-						'" target="_blank">' +
+						" — " +
 						frappe.utils.escape_html(item.file_name) +
-						"</a></li>";
+						"</li>";
 				});
-				html += "</ul>";
+				html +=
+					"</ul><p class=\"text-muted\">" +
+					__(
+						"Os arquivos foram baixados automaticamente. Para arquivar na obra, use + Documento e faça upload manualmente."
+					) +
+					"</p>";
 			}
 
 			if (data.failures && data.failures.length) {
@@ -630,7 +659,6 @@ function eng_generate_documents_batch(frm, template_names, permit_name) {
 				indicator: data.failures && data.failures.length ? "orange" : "green",
 				wide: true,
 			});
-			frm.reload_doc();
 		},
 	});
 }

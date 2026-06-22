@@ -1,3 +1,4 @@
+import base64
 import io
 import json
 import os
@@ -333,20 +334,13 @@ def generate_project_documents(
 			template_doc = frappe.get_doc("Document Template", template_name)
 			if not template_doc.enabled:
 				raise frappe.ValidationError(_("Template desabilitado: {0}").format(template_name))
-			result = _render_and_attach(project_name, template_doc, context)
-			project_document = _create_generated_project_document(
-				project_name,
-				template_doc,
-				result["file_url"],
-				permit_name=permit_name,
-			)
+			result = _render_document(project_name, template_doc, context)
 			generated.append(
 				{
 					"template": template_name,
 					"title": template_doc.template_name,
 					"file_name": result["file_name"],
-					"file_url": result["file_url"],
-					"project_document": project_document,
+					"file_content": base64.b64encode(result["content"]).decode("ascii"),
 				}
 			)
 		except frappe.ValidationError as exc:
@@ -1077,39 +1071,7 @@ def _infer_document_category(template_doc) -> str:
 	return "Outro"
 
 
-def _ensure_document_category(category_name: str) -> str:
-	if not frappe.db.exists("Document Category", category_name):
-		frappe.get_doc(
-			{"doctype": "Document Category", "category_name": category_name}
-		).insert(ignore_permissions=True)  # registro filho — categoria inferida do template
-	return category_name
-
-
-def _create_generated_project_document(
-	project_name: str,
-	template_doc,
-	file_url: str,
-	permit_name: str | None = None,
-) -> str:
-	category = _ensure_document_category(_infer_document_category(template_doc))
-	doc = frappe.get_doc(
-		{
-			"doctype": "Project Document",
-			"project": project_name,
-			"category": category,
-			"status": "Rascunho",
-			"source": "Gerado pelo App",
-			"file": file_url,
-			"version": "v1",
-			"title_descriptor": template_doc.template_name,
-			"related_permit": permit_name or None,
-		}
-	)
-	doc.insert(ignore_permissions=True)  # registro filho — write na obra já validada
-	return doc.name
-
-
-def _render_and_attach(project_name, template_doc, context):
+def _render_document(project_name, template_doc, context):
 	try:
 		from docxtpl import DocxTemplate
 	except ImportError:
@@ -1139,15 +1101,4 @@ def _render_and_attach(project_name, template_doc, context):
 		".docx",
 	)
 
-	attachment = frappe.get_doc(
-		{
-			"doctype": "File",
-			"file_name": file_name,
-			"content": buffer.read(),
-			"attached_to_doctype": "Construction Project",
-			"attached_to_name": project_name,
-			"is_private": 1,
-		}
-	)
-	attachment.save(ignore_permissions=True)  # File anexado — write no Construction Project já validada
-	return {"file_url": attachment.file_url, "file_name": attachment.file_name}
+	return {"file_name": file_name, "content": buffer.read()}

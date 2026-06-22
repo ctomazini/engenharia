@@ -3,7 +3,7 @@
 Documento permanente de acompanhamento do projeto de modernização de experiência do usuário.
 
 **Criado:** 2026-06-05  
-**Última atualização:** 2026-06-05 (Etapa 08 — onboarding)  
+**Última atualização:** 2026-06-05 (Etapa 08 — onboarding + ajustes pós-feedback)  
 **App:** `engenharia` (Frappe v16)
 
 ---
@@ -636,7 +636,8 @@ Nunca:
 | `kpis.active_projects` (payload existente) | Gatilho onboarding sem backend novo |
 | `.eng-hub-budget-banner--info` | Checklist da Obra no hub |
 | `eng_hub_nav_new_doc` / `get_project_counts` | CTAs do checklist |
-| `Workspace` + `Workspace Sidebar` fixtures | Seção Comece Aqui |
+| `Workspace` fixture | Seção Comece Aqui no grid (mantida) |
+| `Workspace Sidebar` fixture | ~~Seção Comece Aqui~~ removida pós-feedback (atalhos duplicados) |
 
 **Implementado:**
 
@@ -646,15 +647,24 @@ Nunca:
 | **Quick Actions simplificadas** | `quick_actions.js` | Onboarding: só Cliente, Obra, Prazo, Tarefa; hint contextual |
 | **Mensagem Engenharia User** | `eng_dashboard.js` | Zona financeira explica perfil Manager vs User |
 | **Workspace Comece Aqui** | `workspace/engenharia.json` | Card + atalhos Clientes/Painel/Obras; header no grid |
-| **Sidebar Comece Aqui** | `sidebar.py` + `workspace_sidebar` | +3 links (42 total); seção aberta por padrão |
+| ~~**Sidebar Comece Aqui**~~ | ~~`sidebar.py` + `workspace_sidebar`~~ | **Removido** — rotas já existem em Dia a Dia / Cadastros / Obras |
 | **Checklist da Obra** | `hub.js` | Exibe enquanto faltam etapas/itens/contrato; CTAs `+` via nav existente |
+
+**Ajustes pós-feedback (mesma etapa / branch):**
+
+| Entrega | Onde | Comportamento |
+|---------|------|---------------|
+| **Sidebar sem Comece Aqui** | `sidebar.py` + `workspace_sidebar` | 39 links; onboarding permanece no painel e no hub |
+| **Fix `Field customer not found`** | `customer_from_project.js` | Exclui satélites sem campo `customer` (Etapa, Item, Comissão); respeita `construction_project` |
+| **Geração Word só download** | `documents.py` + `construction_project.js` | `.docx` em memória → download no browser; **sem** `File` anexado nem `Project Document` automático |
+| **Repositório de documentos** | Aba Documentos / `Project Document` | Somente upload manual (`+ Documento`); arquivar gerado é opcional pelo usuário |
 
 **Validação:**
 
 | Teste | Resultado |
 |-------|-----------|
 | `run-tests --app engenharia` | **321 OK** |
-| `test_sidebar_json` | **42/42 OK** |
+| `test_sidebar_json` | **39/39 OK** |
 | `bench migrate` | OK |
 
 **Commits:**
@@ -662,10 +672,12 @@ Nunca:
 | Hash | Escopo |
 |------|--------|
 | `3b4fac9` | Dashboard (jornada + quick actions + hint User) |
-| `e2f1075` | Workspace + sidebar Comece Aqui |
+| `e2f1075` | Workspace Comece Aqui (grid) |
 | `6f83a37` | Checklist da Obra (hub) |
+| `2f6ab82` | Registro Etapa 08 inicial |
+| *(este commit)* | Sidebar revert, customer sync, download-only docs + roadmap |
 
-**Pendências (não escopo Etapa 08):** P0-01 banner duplicado hub; P1-02 pílulas vazias; AUD-011 permissões reports.
+**Pendências (não escopo Etapa 08):** P0-01 banner duplicado hub; P1-02 pílulas vazias; AUD-011 permissões reports; limpeza de `Project Document` / `File` legados com origem *Gerado pelo App* (dados pré-mudança).
 
 ---
 
@@ -912,6 +924,8 @@ Fila priorizada para próximas etapas. Nenhum item abaixo bloqueia merge da Etap
 | DIV-009 | Manual “Projetos” vs UI “Obras” | `manual_usuario.md` | Etapa 05 |
 | DIV-010 | Engenharia User em reports financeiros sem DocPerm | `report/*.json` vs `permissions.py` | Débito UX-003 (fora Sprint 1 cosmético) |
 | DIV-011 | Kanban `Engenharia Obras` referencia `Task` | fixture | Glossário: renomear label UI para Tarefas da Obra (etapa futura) |
+| DIV-012 | `customer_from_project.js` aplicava sync em satélites sem campo `customer` | `customer_from_project.js` × `SATELLITE_DOCTYPES` | **Resolvido Etapa 08** — filtro + guard em `set_value` |
+| DIV-013 | Geração Word criava `File` + `Project Document` a cada clique | `documents.py` | **Resolvido Etapa 08** — download direto; repositório = só upload manual |
 
 ---
 
