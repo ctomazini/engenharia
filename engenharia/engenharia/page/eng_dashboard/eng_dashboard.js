@@ -249,7 +249,7 @@ engenharia.dashboard.render_dashboard = function ($container, data, page, option
 
 	engenharia.dashboard.hero.render($hero, data);
 	engenharia.dashboard.filters.render($filters, data, page);
-	engenharia.dashboard.quick_actions.render($actions);
+	engenharia.dashboard.quick_actions.render($actions, data);
 	engenharia.dashboard.attention.render($attention, data);
 	engenharia.dashboard.next_event.render($nextEvent, data);
 	engenharia.dashboard.timeline.render($agenda, data, page);
@@ -264,7 +264,13 @@ engenharia.dashboard.render_dashboard = function ($container, data, page, option
 		const $commissions = $('<div class="eng-dash-commissions-host"></div>').appendTo($content);
 		engenharia.dashboard.commissions.render($commissions, data);
 	} else {
-		$financeZone.remove();
+		$financeZone.html(`
+			<div class="eng-dash-user-hint eng-dash-empty-state eng-dash-empty-state--muted">
+				<p>${__(
+					"Indicadores financeiros disponíveis apenas para Engenharia Manager. Use Prazos, Tarefas e Obras para o dia a dia."
+				)}</p>
+			</div>
+		`);
 	}
 
 	$content.children().addClass("eng-dashboard-section");

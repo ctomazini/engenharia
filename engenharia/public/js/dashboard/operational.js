@@ -1,11 +1,59 @@
 frappe.provide("engenharia.dashboard");
 
 engenharia.dashboard.operational = {
+	_is_onboarding(data) {
+		const kpis = (data && data.kpis) || {};
+		return (kpis.active_projects || 0) === 0;
+	},
+
+	_render_journey(utils) {
+		const steps = [
+			{
+				label: __("Cadastre um cliente"),
+				hint: __("Quem contrata a obra"),
+				doctype: "Customer",
+			},
+			{
+				label: __("Abra a primeira obra"),
+				hint: __("Hub central do projeto"),
+				doctype: "Construction Project",
+			},
+			{
+				label: __("Monte etapas, orçamento e contrato"),
+				hint: __("Na obra: checklist e pílulas do resumo"),
+				route: ["List", "Construction Project"],
+			},
+		];
+
+		const rows = steps
+			.map((step, idx) => {
+				const attrs = step.doctype
+					? `data-new-dt="${frappe.utils.escape_html(step.doctype)}"`
+					: `data-route="${frappe.utils.escape_html((step.route || []).join("/"))}"`;
+				return `<li class="eng-dash-journey__step">
+				<span class="eng-dash-journey__num">${idx + 1}</span>
+				<button type="button" class="eng-dash-journey__action" ${attrs}>
+					<span class="eng-dash-journey__label">${frappe.utils.escape_html(step.label)}</span>
+					<span class="eng-dash-journey__hint">${frappe.utils.escape_html(step.hint)}</span>
+				</button>
+			</li>`;
+			})
+			.join("");
+
+		return `<div class="eng-dash-empty-state eng-dash-empty-state--success eng-dash-journey">
+			<div class="eng-dash-empty-state__icon">${utils.icon("map", "md")}</div>
+			<p><strong>${__("Jornada inicial")}</strong></p>
+			<p>${__("Siga os passos abaixo para colocar o escritório em operação.")}</p>
+			<ol class="eng-dash-journey__steps">${rows}</ol>
+		</div>`;
+	},
+
 	render(container, data, page) {
 		const projects = data.active_projects || [];
 		const meta = (data.list_meta || {}).operational;
 		const limits = data.list_limits || page?.eng_dash_list_limits || {};
 		const utils = engenharia.dashboard.utils;
+		const onboarding = this._is_onboarding(data);
 
 		const projectsHtml = projects.length
 			? projects
@@ -34,24 +82,43 @@ engenharia.dashboard.operational = {
 				</button>`;
 					})
 					.join("")
-			: utils.render_empty(__("Nenhuma obra ativa"), "building");
+			: onboarding
+				? this._render_journey(utils)
+				: utils.render_empty(__("Nenhuma obra ativa"), "building");
+
+		const title = onboarding ? __("Comece por aqui") : __("Obras Ativas");
+		const subtitle = onboarding
+			? __("Quando houver obras em andamento, elas aparecem nesta lista.")
+			: utils.list_meta_label(meta);
 
 		container.html(`
 			<section class="eng-dash-section eng-dash-section--operational">
 				<div class="eng-dash-section-head">
 					<div>
-						<h3 class="eng-dash-section-title">${__("Obras Ativas")}</h3>
-						<p class="eng-dash-section-sub">${utils.list_meta_label(meta)}</p>
+						<h3 class="eng-dash-section-title">${title}</h3>
+						<p class="eng-dash-section-sub">${subtitle}</p>
 					</div>
-					${utils.render_list_limit_controls("operational", limits.operational || 5, meta)}
+					${onboarding ? "" : utils.render_list_limit_controls("operational", limits.operational || 5, meta)}
 				</div>
 				${projectsHtml}
-				${utils.render_view_all_footer("Construction Project", meta, [["status", "=", "Em andamento"]])}
+				${onboarding ? "" : utils.render_view_all_footer("Construction Project", meta, [["status", "=", "Em andamento"]])}
 			</section>
 		`);
 
 		utils.bind_routes(container);
-		utils.bind_view_all(container);
+		if (!onboarding) {
+			utils.bind_view_all(container);
+		}
+
+		container.find(".eng-dash-journey__action").on("click", function () {
+			const route = $(this).attr("data-route");
+			if (route) {
+				frappe.set_route(...route.split("/"));
+				return;
+			}
+			const dt = $(this).attr("data-new-dt");
+			if (dt) frappe.new_doc(dt);
+		});
 	},
 
 	_status_pill(status) {
