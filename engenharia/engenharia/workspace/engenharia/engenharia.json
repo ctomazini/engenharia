@@ -15,7 +15,7 @@
   {"hidden": 0, "is_query_report": 0, "label": "Painel", "link_count": 0, "link_to": "eng-dashboard", "link_type": "Page", "onboard": 0, "type": "Link"},
   {"hidden": 0, "is_query_report": 0, "label": "Obras", "link_count": 0, "link_to": "Construction Project", "link_type": "DocType", "onboard": 0, "type": "Link"},
   {"hidden": 0, "is_query_report": 0, "label": "Financeiro", "link_count": 0, "onboard": 0, "type": "Card Break"},
-  {"hidden": 0, "is_query_report": 0, "label": "Pagamentos", "link_count": 0, "link_to": "Payment", "link_type": "DocType", "onboard": 0, "type": "Link"},
+  {"hidden": 0, "is_query_report": 0, "label": "Recebimentos", "link_count": 0, "link_to": "Payment", "link_type": "DocType", "onboard": 0, "type": "Link"},
   {"hidden": 0, "is_query_report": 0, "label": "Comissões", "link_count": 0, "link_to": "Commission", "link_type": "DocType", "onboard": 0, "type": "Link"}
  ],
  "modified": "2026-06-02 00:00:00.000000",

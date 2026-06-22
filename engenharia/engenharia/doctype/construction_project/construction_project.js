@@ -137,7 +137,7 @@ function eng_add_hub_create_buttons(frm) {
 		() => eng_hub_nav_new_doc("Engineering Contract", hub),
 		__("Criar")
 	);
-	frm.add_custom_button(__("+ Pagamento"), () => eng_hub_nav_new_doc("Payment", hub), __("Criar"));
+	frm.add_custom_button(__("+ Recebimento"), () => eng_hub_nav_new_doc("Payment", hub), __("Criar"));
 	frm.add_custom_button(
 		__("+ Compra avulsa"),
 		() => eng_hub_nav_new_doc("Work Cost", { project: hub.project }),

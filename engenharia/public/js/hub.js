@@ -668,11 +668,11 @@ function eng_hub_render_payments(frm, payments) {
 		<div class="eng-hub-panel__header">
 			<h3 class="eng-hub-panel__title">
 				<span class="eng-hub-panel__title-icon">💵</span>
-				${__("Pagamentos")}
+				${__("Recebimentos")}
 				<span class="eng-hub-panel__count">${payments.length}</span>
 			</h3>
 			<button type="button" class="eng-hub-panel__action" data-hub-action="new-payment">
-				${__("+ Pagamento")}
+				${__("+ Recebimento")}
 			</button>
 		</div>
 		${rows}
@@ -821,7 +821,7 @@ function eng_hub_render_summary_bar(frm, counts) {
 		},
 		{
 			icon: "💵",
-			label: __("Pagamentos"),
+			label: __("Recebimentos"),
 			count: counts.payments,
 			doctype: "Payment",
 			fieldname: "project",

@@ -3,7 +3,7 @@ frappe.ui.form.on("Engineering Contract", {
 		sum_installments(frm);
 
 		if (!frm.is_new()) {
-			frm.add_custom_button(__("Re-sincronizar Pagamentos"), () => {
+			frm.add_custom_button(__("Re-sincronizar Recebimentos"), () => {
 				frappe.confirm(
 					__(
 						"Isso vai re-sincronizar todos os pagamentos com as parcelas atuais. Continuar?"

@@ -28,7 +28,7 @@ DOCTYPE_LABELS = {
 	"Document Category": "Categoria de Documento",
 	"Stage Type": "Tipo de Etapa",
 	"Document Kit": "Kit de Documentos",
-	"Engineering Settings": "Configurações",
+	"Engineering Settings": "Configurações do Escritório",
 	"Project Item Parameter": "Parâmetro do Item",
 	"Project Item Output": "Resultado do Item",
 	"Technical Item Field": "Campo Técnico",
@@ -41,7 +41,7 @@ DOCTYPE_LABELS = {
 	"Construction Measurement": "Boletim de Medição",
 	"Construction Measurement Item": "Item do Boletim",
 	"Commission": "Comissão",
-	"Commission Payment": "Pagamento de Comissão",
+	"Commission Payment": "Recebimento de Comissão",
 }
 
 

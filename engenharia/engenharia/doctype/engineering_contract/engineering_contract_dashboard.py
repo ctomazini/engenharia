@@ -15,7 +15,7 @@ def get_data():
 				"items": ["Construction Project"],
 			},
 			{
-				"label": _("Pagamentos"),
+				"label": _("Recebimentos"),
 				"items": ["Payment"],
 			},
 		],

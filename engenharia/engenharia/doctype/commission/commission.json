@@ -129,7 +129,7 @@
   {
    "fieldname": "payments",
    "fieldtype": "Table",
-   "label": "Pagamentos Recebidos",
+   "label": "Recebimentos de Comissão",
    "options": "Commission Payment",
    "description": "Registre cada pagamento recebido com data, valor e comprovante."
   }

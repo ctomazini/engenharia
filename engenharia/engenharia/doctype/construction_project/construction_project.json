@@ -576,14 +576,14 @@
   {
    "fieldname": "sec_payments",
    "fieldtype": "Section Break",
-   "label": "Pagamentos",
+   "label": "Recebimentos",
    "permlevel": 1,
    "idx": 65
   },
   {
    "fieldname": "payments_panel",
    "fieldtype": "HTML",
-   "label": "Pagamentos",
+   "label": "Recebimentos",
    "permlevel": 1,
    "idx": 66
   },

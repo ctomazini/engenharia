@@ -337,7 +337,7 @@ def resync_contract_payments(contract_name: str) -> dict:
 	frappe.has_permission("Engineering Contract", "write", doc=contract, throw=True)
 	sync_payments_from_contract(contract, commit=True)
 	frappe.msgprint(
-		_("Pagamentos re-sincronizados com sucesso."),
+		_("Recebimentos re-sincronizados com sucesso."),
 		title=_("Sincronização"),
 		indicator="green",
 	)
