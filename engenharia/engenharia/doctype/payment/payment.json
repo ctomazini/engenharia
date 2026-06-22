@@ -16,10 +16,6 @@
   "contract",
   "installment_number",
   "description",
-  "sec_origin",
-  "installment_origin_id",
-  "synced_at",
-  "manual_override",
   "sec_financial",
   "amount",
   "received_amount",
@@ -32,13 +28,17 @@
   "bank_account",
   "late_fee",
   "notes",
-  "receipt"
+  "receipt",
+  "sec_origin",
+  "installment_origin_id",
+  "synced_at",
+  "manual_override"
  ],
  "fields": [
   {
    "fieldname": "sec_relationships",
    "fieldtype": "Section Break",
-   "label": "Relacionamentos"
+   "label": "Vínculos"
   },
   {
    "fieldname": "title",
@@ -92,7 +92,7 @@
    "mandatory_depends_on": "eval:doc.origin_type=='Parcela do Contrato'",
    "options": "Engineering Contract",
    "search_index": 1,
-   "description": "Contrato que originou este pagamento (quando aplicável)."
+   "description": "Contrato que originou este recebimento (quando aplicável)."
   },
   {
    "fieldname": "installment_number",
@@ -110,7 +110,9 @@
   {
    "fieldname": "sec_origin",
    "fieldtype": "Section Break",
-   "label": "Origem / Sincronização"
+   "label": "Sincronização com Contrato",
+   "collapsible": 1,
+   "collapsible_depends_on": "eval:!doc.__islocal"
   },
   {
    "fieldname": "installment_origin_id",
@@ -118,7 +120,7 @@
    "label": "ID Origem",
    "read_only": 1,
    "unique": 1,
-   "description": "Identificador de sincronização com a parcela do contrato."
+   "description": "Identificador interno da parcela no contrato. Preenchido automaticamente — não altere."
   },
   {
    "fieldname": "synced_at",
@@ -133,12 +135,12 @@
    "fieldname": "manual_override",
    "fieldtype": "Check",
    "label": "Edição manual (não sincronizar)",
-   "description": "Quando marcado, o sistema não sobrescreve este pagamento na sincronização."
+   "description": "Marque somente se precisar editar este recebimento sem que o contrato o sobrescreva na próxima sincronização."
   },
   {
    "fieldname": "sec_financial",
    "fieldtype": "Section Break",
-   "label": "Financeiro"
+   "label": "Valores e Status"
   },
   {
    "fieldname": "amount",
@@ -152,7 +154,7 @@
    "fieldname": "received_amount",
    "fieldtype": "Currency",
    "label": "Valor Recebido",
-   "description": "Valor efetivamente recebido."
+   "description": "Valor efetivamente recebido. Ao confirmar recebimento, iguale ao Valor e preencha a Data de Recebimento."
   },
   {
    "fieldname": "col_fin_1",
@@ -172,7 +174,7 @@
    "fieldname": "received_date",
    "fieldtype": "Date",
    "label": "Data de Recebimento",
-   "description": "Data em que o pagamento foi efetivamente recebido."
+   "description": "Data em que o valor foi efetivamente recebido do cliente."
   },
   {
    "default": "Pendente",
@@ -189,7 +191,8 @@
   {
    "fieldname": "sec_control",
    "fieldtype": "Section Break",
-   "label": "Controle"
+   "label": "Comprovantes e Anexos",
+   "collapsible": 1
   },
   {
    "fieldname": "nf_number",
