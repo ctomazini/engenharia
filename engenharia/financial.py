@@ -254,7 +254,7 @@ def on_payment_trash(doc, method=None):
 	if is_reimbursable_payment(doc):
 		if doc.status == "Recebido":
 			frappe.throw(
-				_("Não é possível excluir Pagamento com status '{0}'. Cancele o pagamento primeiro.").format(
+				_("Não é possível excluir Recebimento com status '{0}'. Cancele o recebimento primeiro.").format(
 					doc.status
 				),
 				title=_("Exclusão Bloqueada"),
@@ -267,7 +267,7 @@ def on_payment_trash(doc, method=None):
 
 	if doc.status == "Recebido":
 		frappe.throw(
-			_("Não é possível excluir Pagamento com status '{0}'. Cancele o pagamento primeiro.").format(
+			_("Não é possível excluir Recebimento com status '{0}'. Cancele o recebimento primeiro.").format(
 				doc.status
 			),
 			title=_("Exclusão Bloqueada"),
@@ -353,7 +353,7 @@ def bulk_delete_payments(names: str | list):
 	if isinstance(names, str):
 		names = json.loads(names)
 	if not names:
-		frappe.throw(_("Nenhum pagamento selecionado."))
+		frappe.throw(_("Nenhum recebimento selecionado."))
 	frappe.has_permission("Payment", "delete", throw=True)
 
 	deleted = []
@@ -392,14 +392,14 @@ def cancel_contract_payment(payment_name: str) -> dict:
 
 	payment = frappe.get_doc("Payment", payment_name)
 	if not is_contract_installment_payment(payment):
-		frappe.throw(_("Este pagamento não é de parcela de contrato."))
+		frappe.throw(_("Este recebimento não é de parcela de contrato."))
 
 	if payment.status == "Cancelado":
-		frappe.throw(_("Pagamento já está cancelado."))
+		frappe.throw(_("Recebimento já está cancelado."))
 
 	if payment.status == "Recebido":
 		frappe.throw(
-			_("Pagamento recebido não pode ser cancelado."),
+			_("Recebimento confirmado não pode ser cancelado."),
 			title=_("Operação não permitida"),
 		)
 

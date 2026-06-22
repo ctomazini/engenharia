@@ -17,13 +17,13 @@ class Payment(Document):
 
 		if self.origin_type == ORIGIN_CONTRACT_INSTALLMENT and not self.contract:
 			frappe.throw(
-				_("Contrato é obrigatório para pagamentos de parcela do contrato."),
+				_("Contrato é obrigatório para recebimentos de parcela do contrato."),
 				title=_("Campo obrigatório"),
 			)
 
 		if self.origin_type == ORIGIN_REIMBURSABLE and self.contract:
 			frappe.throw(
-				_("Pagamento de despesa reembolsável não pode estar vinculado a contrato."),
+				_("Recebimento de despesa reembolsável não pode estar vinculado a contrato."),
 				title=_("Campo inválido"),
 			)
 
@@ -34,7 +34,7 @@ class Payment(Document):
 			old_status = frappe.db.get_value(self.doctype, self.name, "status")
 			if old_status == "Cancelado":
 				frappe.throw(
-					_("Pagamento cancelado não pode ser alterado. Exclua o registro se necessário."),
+					_("Recebimento cancelado não pode ser alterado. Exclua o registro se necessário."),
 					title=_("Registro imutável"),
 				)
 

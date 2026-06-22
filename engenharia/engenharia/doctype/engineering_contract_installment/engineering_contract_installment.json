@@ -105,7 +105,7 @@
    "fieldname": "payment",
    "fieldtype": "Link",
    "in_list_view": 1,
-   "label": "Pagamento",
+   "label": "Recebimento",
    "no_copy": 1,
    "options": "Payment",
    "read_only": 1,
