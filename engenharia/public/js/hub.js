@@ -288,7 +288,7 @@ function _eng_hub_render_installments(frm, installments) {
 	if (!$w) return;
 
 	if (!installments || !installments.length) {
-		$w.html(`<div class="eng-hub-empty">${__("Nenhuma parcela registrada.")}</div>`);
+		$w.html(`<div class="eng-hub-empty">${__("Nenhuma parcela do contrato registrada.")}</div>`);
 		return;
 	}
 
@@ -316,7 +316,7 @@ function _eng_hub_render_installments(frm, installments) {
 		<div class="eng-hub-panel__header">
 			<h3 class="eng-hub-panel__title">
 				<span class="eng-hub-panel__title-icon">📋</span>
-				${__("Parcelas")}
+				${__("Parcelas do Contrato")}
 				<span class="eng-hub-panel__count">${installments.length}</span>
 			</h3>
 			<button type="button" class="eng-hub-panel__action" data-hub-action="list-contracts">
@@ -905,7 +905,7 @@ function eng_hub_render_summary_bar(frm, counts) {
 		},
 		{
 			icon: "🔧",
-			label: __("Itens"),
+			label: __("Itens do Orçamento"),
 			count: counts.items,
 			doctype: "Project Item",
 			fieldname: "project",
