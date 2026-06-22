@@ -3,7 +3,7 @@
 Documento permanente de acompanhamento do projeto de modernização de experiência do usuário.
 
 **Criado:** 2026-06-05  
-**Última atualização:** 2026-06-05 (Etapa 02 concluída)  
+**Última atualização:** 2026-06-05 (Etapa 03 concluída)  
 **App:** `engenharia` (Frappe v16)
 
 ---
@@ -380,33 +380,73 @@ Nunca:
 
 ---
 
-### Etapa 03
+### Etapa 03 — Glossário Sprint 1A (risco verde)
 
-**Status:** Pendente
+**Status:** Concluída
 
-**Data:**
+**Data:** 2026-06-05
 
-**Responsável:**
+**Responsável:** Sessão Agent / projeto Engenharia
+
+**Branch:** `ux/step-03-green-risk-labels`
 
 **Objetivo:**
 
-**Arquivos analisados:**
+* Aplicar exclusivamente divergências **risco verde** (labels, traduções, menus, textos de ajuda)
+* Sem alterar schema, DocTypes EN, rotas, slugs ou placeholders Word
+
+**Classificação risco verde aplicada (Matriz M2/M10 + DEC-001–007):**
+
+| Grupo | DIV | Conceito | Nome anterior → oficial |
+|-------|-----|----------|-------------------------|
+| Financeiro | DIV-001, DIV-006 | Payment / Settings / Commission | Pagamentos → **Recebimentos**; Configurações → **Configurações do Escritório**; Pagamento de Comissão → **Recebimento de Comissão** |
+| Obras | DIV-003, DIV-004, DIV-005 | Orçamento / Catálogo / Permit | Itens do Projeto → **Itens do Orçamento**; Itens Técnicos → **Catálogo Técnico**; Protocolo(s) → **Alvará e Protocolo** / **Alvarás e Protocolos** |
+| Relatórios | DIV-007 | Menu duplicado | Visão de Custos Realizados → removido; mantém **Custos Realizados** |
+
+**Fora do escopo (amarelo/vermelho ou Etapa 04+):** DIV-008 (`report_name` EN), DIV-009 (manual), dashboard tiles, notificações fixture, Kanban (DIV-011), mensagens `financial.py` de erro com “Pagamento” genérico.
 
 **Mudanças realizadas:**
 
+* 3 commits funcionais + documentação (ver tabela abaixo)
+* Sidebar: 39 links (−1 duplicata Custos Realizados)
+* Traduções `DOCTYPE_LABELS` alinhadas ao glossário §3–5
+
 **Arquivos modificados:**
 
-**Impactos identificados:**
-
-**Riscos identificados:**
+* `engenharia/setup/translations.py`, `sidebar.py`, `workspace_sidebar/engenharia.json`
+* `engenharia/engenharia/workspace/engenharia/engenharia.json`
+* `engenharia/engenharia/doctype/construction_project/*`, `permit/permit.json`, `commission/commission.json`
+* `engenharia/engenharia/doctype/engineering_contract/*`
+* `engenharia/public/js/hub.js`, `documents_placeholders.js`
+* `engenharia/documents.py`, `engenharia/financial.py` (mensagem sync)
 
 **Testes executados:**
 
+* `bench --site engenharia.local run-tests --app engenharia` — 321 testes OK após cada grupo
+* `test_sidebar_json` — 39 links OK
+
 **Resultado:**
+
+* DIV-001, DIV-003, DIV-004, DIV-005, DIV-006, DIV-007 resolvidos em código (migrate atualiza `Translation` + sidebar)
+* DIV-008 pendente Etapa 04
 
 **Pendências:**
 
+* Etapa 04: `report_name` PT nos 3 relatórios EN
+* Etapa 05: `manual_usuario.md`
+* Amarelo: dashboard `attention.py`, notificações, `financial.py` erros, section breaks Work Cost
+
+**Commits:**
+
+| Hash | Mensagem |
+|------|----------|
+| `7a0c033` | `[UX-STEP-03] Refactor: apply green-risk finance glossary labels` |
+| `d552987` | `[UX-STEP-03] Refactor: apply green-risk obras glossary labels` |
+| `3a9ac45` | `[UX-STEP-03] Refactor: deduplicate Custos Realizados sidebar link` |
+
 **Próximas etapas:**
+
+* **Etapa 04:** `report_name` PT + capitalização relatórios (DIV-008)
 
 ---
 
@@ -512,13 +552,13 @@ Nunca:
 
 | ID | Divergência | Onde | Resolução prevista |
 |----|-------------|------|-------------------|
-| DIV-001 | Pagamentos vs Recebimentos (`Payment`) | workspace, hub, translations | DEC-001 / glossário |
+| DIV-001 | Pagamentos vs Recebimentos (`Payment`) | workspace, hub, translations | **Resolvido Etapa 03** (verde) |
 | DIV-002 | Sidebar JSON 37 ≠ Python 40 links | `workspace_sidebar.json` vs `sidebar.py` | **Resolvido Etapa 02** (estrutural) |
-| DIV-003 | Itens do Projeto vs Item do Orçamento | sidebar vs translations | DEC-003 |
-| DIV-004 | Itens Técnicos vs Catálogo Técnico | sidebar vs translations | DEC-004 |
-| DIV-005 | Protocolos vs Alvarás e Protocolos | sidebar vs aba obra vs translations | DEC-002 |
-| DIV-006 | Configurações vs Configurações do Escritório | translations vs sidebar | Glossário §3 |
-| DIV-007 | consolidated_cost duplicado no menu | sidebar Despesas + Relatórios | DEC-007 |
+| DIV-003 | Itens do Projeto vs Item do Orçamento | sidebar vs translations | **Resolvido Etapa 03** |
+| DIV-004 | Itens Técnicos vs Catálogo Técnico | sidebar vs translations | **Resolvido Etapa 03** |
+| DIV-005 | Protocolos vs Alvarás e Protocolos | sidebar vs aba obra vs translations | **Resolvido Etapa 03** |
+| DIV-006 | Configurações vs Configurações do Escritório | translations vs sidebar | **Resolvido Etapa 03** |
+| DIV-007 | consolidated_cost duplicado no menu | sidebar Despesas + Relatórios | **Resolvido Etapa 03** |
 | DIV-008 | report_name EN (3 relatórios) | `report/*.json` | DEC-008 |
 | DIV-009 | Manual “Projetos” vs UI “Obras” | `manual_usuario.md` | Etapa 05 |
 | DIV-010 | Engenharia User em reports financeiros sem DocPerm | `report/*.json` vs `permissions.py` | Débito UX-003 (fora Sprint 1 cosmético) |
@@ -587,8 +627,8 @@ Validar continuamente:
 * [x] Nenhuma rota alterada (Etapa 01)
 * [x] Nenhum placeholder Word alterado (Etapa 01)
 * [x] Nenhum schema alterado (Etapa 01)
-* [x] Sidebar JSON sincronizado com `SIDEBAR_LINK_ORDER` (Etapa 02)
-* [x] Nenhum label de UX alterado na Etapa 02
+* [x] Glossário risco verde aplicado (Etapa 03)
+* [x] Nenhum slug de relatório alterado (Etapa 03)
 
 ---
 
