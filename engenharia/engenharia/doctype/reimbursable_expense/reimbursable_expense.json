@@ -11,10 +11,9 @@
   "customer",
   "title",
   "col_break_1",
+  "description",
   "expense_category",
   "supplier",
-  "description",
-  "payment",
   "sec_values",
   "amount",
   "total_office_paid",
@@ -24,12 +23,12 @@
   "col_break_2",
   "await_client_reimbursement",
   "client_reimbursed_date",
-  "sec_status",
   "status",
   "sec_office_payments",
   "office_payments",
   "sec_reimbursements",
-  "reimbursements"
+  "reimbursements",
+  "payment"
  ],
  "fields": [
   {
@@ -85,20 +84,20 @@
    "in_list_view": 1,
    "label": "Descrição",
    "reqd": 1,
-   "description": "Descrição do que foi pago pelo escritório."
+   "description": "Descrição do que o escritório pagou em nome do cliente."
   },
   {
    "fieldname": "payment",
    "fieldtype": "Link",
-   "label": "Pagamento",
+   "label": "Recebimento",
    "options": "Payment",
    "read_only": 1,
-   "description": "Recebível gerado para cobrança do reembolso ao cliente."
+   "description": "Recebível gerado automaticamente para cobrar o reembolso do cliente. Preenchido pelo sistema ao salvar."
   },
   {
    "fieldname": "sec_values",
    "fieldtype": "Section Break",
-   "label": "Valores"
+   "label": "Resumo Financeiro"
   },
   {
    "fieldname": "amount",
@@ -158,6 +157,7 @@
   {
    "fieldname": "sec_status",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Status"
   },
   {
@@ -174,7 +174,8 @@
   {
    "fieldname": "sec_office_payments",
    "fieldtype": "Section Break",
-   "label": "Pagamentos do Escritório"
+   "label": "Saída — Pagamentos do Escritório",
+   "collapsible": 1
   },
   {
    "fieldname": "office_payments",
@@ -186,7 +187,8 @@
   {
    "fieldname": "sec_reimbursements",
    "fieldtype": "Section Break",
-   "label": "Reembolsos do Cliente"
+   "label": "Entrada — Reembolsos do Cliente",
+   "collapsible": 1
   },
   {
    "fieldname": "reimbursements",
