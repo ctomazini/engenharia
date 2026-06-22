@@ -1,6 +1,7 @@
 # Seção 3 — Verificação de Usabilidade
 
-**App:** `engenharia` · **Data:** 2026-06-06 (nota 2026-06-09: Office Expense e Modelos de Etapas não auditados neste snapshot)
+**App:** `engenharia` · **Data:** 2026-06-06 (nota 2026-06-09: Office Expense e Modelos de Etapas não auditados neste snapshot)  
+**Revisão pós-UX:** 2026-06-05 — Etapa 09 (empty states, list views Task/Stage, ajuda contextual). Ver `docs/ux-final-executive-report.md`.
 
 ---
 
@@ -49,11 +50,20 @@ Legenda: ✅ OK · 🟡 Atenção · 🔴 Problema
 | Deadline | ✅ | ✅ | ✅ | 🟡 |
 | Permit | ✅ | ✅ | ✅ | 🟡 |
 | Customer | ✅ | parcial | 🟡 | — |
-| Task | ❌ stub | — | 🟡 | — |
-| Project Stage | ❌ | — | 🟡 | — |
+| Task | ✅ | ✅ subject | via status field | 🟡 |
+| Project Stage | ✅ | ✅ title | ✅ cores | 🟡 |
 | Time Log | ✅ | ✅ | 🟡 | — |
 
-**Gap:** 🟡 Task e Project Stage sem `*_list.js` customizado — coluna `name` ainda visível ou menos indicadores.
+**Gap:** 🟢 Task e Project Stage com `*_list.js` (Etapa 09). Customer list ainda parcial.
+
+### 3.2.1 Empty states e ajuda (Etapa 09)
+
+| Área | Cobertura |
+|------|-----------|
+| Hub obra — painéis vazios | CTAs + hints em financeiro, documentos, custos, etc. |
+| List view sem registros | `description` em 10 DocTypes operacionais |
+| Formulários densos | HTML intro em Project Item, Measurement, Document Template |
+| Perfil Engenharia User | Banner painel + aba Financeiro hub |
 
 ---
 
@@ -120,8 +130,8 @@ Legenda: ✅ OK · 🟡 Atenção · 🔴 Problema
 
 | # | Problema | Severidade |
 |---|---|---|
-| 1 | Engenharia User bloqueado de fluxos financeiros sem mensagem explicativa | 🟡 |
-| 2 | Task/Project Stage list views básicas | 🟡 |
+| 1 | Engenharia User bloqueado de fluxos financeiros sem mensagem explicativa | 🟢 Resolvido (painel + hub) |
+| 2 | Task/Project Stage list views básicas | 🟢 Resolvido Etapa 09 |
 | 3 | Project Item curva de aprendizado | 🟡 |
 | 4 | Measurement subdocumentado | 🟡 |
 

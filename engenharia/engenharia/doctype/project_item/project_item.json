@@ -4,9 +4,11 @@
  "autoname": "format:PITEM-{YYYY}-{#####}",
  "creation": "2026-06-02 00:00:00",
  "custom": 0,
+ "description": "Nenhum item do orçamento. Monte o planejamento técnico-financeiro da obra a partir do catálogo técnico.",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "form_help",
   "sec_identification",
   "project",
   "technical_item",
@@ -30,6 +32,11 @@
  ],
  "fields": [
   {
+   "fieldname": "form_help",
+   "fieldtype": "HTML",
+   "options": "<div class=\"form-message blue\"><p><strong>Item do orçamento</strong> — linha planejada da obra. Escolha um modelo no <em>Catálogo Técnico</em>, preencha quantidade e parâmetros; o valor total alimenta o orçado da obra.</p><p class=\"text-muted\" style=\"margin:0\">Modo <strong>Fórmula</strong>: parâmetros + resultados automáticos. <strong>Preço unitário</strong>: valor direto. <strong>Composição de custos</strong>: soma de componentes.</p></div>"
+  },
+  {
    "fieldname": "sec_identification",
    "fieldtype": "Section Break",
    "label": "Identificação"
@@ -49,7 +56,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Item Técnico",
+   "label": "Item do Catálogo Técnico",
    "options": "Technical Item",
    "reqd": 1,
    "description": "Modelo do catálogo técnico. Parâmetros e fórmulas são carregados automaticamente."

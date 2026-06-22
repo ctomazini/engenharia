@@ -167,6 +167,7 @@ after_migrate = [
 	"engenharia.setup.seed.ensure_seed_data",
 	"engenharia.setup.translations.ensure_doctype_translations",
 	"engenharia.setup.sidebar.ensure_engenharia_sidebar",
+	"engenharia.setup.kanban.ensure_engenharia_kanban_board",
 	"engenharia.setup.reports.ensure_engenharia_reports",
 	"engenharia.setup.print_formats.ensure_engenharia_print_formats",
 	"engenharia.setup.workspace.ensure_engenharia_workspace",

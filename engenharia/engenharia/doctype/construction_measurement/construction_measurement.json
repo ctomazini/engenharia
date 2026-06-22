@@ -4,9 +4,11 @@
  "autoname": "format:MED-{YYYY}-{####}",
  "creation": "2026-06-05 00:00:00",
  "custom": 0,
+ "description": "Nenhuma medição registrada. Crie boletins pela obra ou por esta lista para acompanhar execução.",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "form_help",
   "project",
   "customer",
   "title",
@@ -24,6 +26,11 @@
   "attachment"
  ],
  "fields": [
+  {
+   "fieldname": "form_help",
+   "fieldtype": "HTML",
+   "options": "<div class=\"form-message blue\"><p><strong>Boletim de medição</strong> — registre o quanto foi executado em um período. Vincule itens medidos às etapas da obra para acompanhar avanço físico e faturamento.</p></div>"
+  },
   {
    "fieldname": "project",
    "fieldtype": "Link",

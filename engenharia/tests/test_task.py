@@ -38,6 +38,7 @@ class TestTask(FrappeTestCase):
 		board = frappe.get_doc("Kanban Board", "Engenharia Obras")
 		self.assertEqual(board.reference_doctype, "Task")
 		self.assertEqual(board.field_name, "status")
+		self.assertEqual(board.kanban_board_name, "Tarefas da Obra")
 		self.assertEqual(len(board.columns), 4)
 
 	def test_task_with_stage(self):

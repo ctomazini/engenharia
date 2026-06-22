@@ -527,6 +527,19 @@
 	margin-bottom: 8px;
 }
 
+.eng-hub-empty__title {
+	font-weight: 500;
+	color: var(--text-color);
+	margin-bottom: 4px;
+}
+
+.eng-hub-empty__hint {
+	max-width: 36rem;
+	margin: 8px auto 0;
+	line-height: 1.45;
+	font-size: var(--text-sm);
+}
+
 .eng-hub-empty__action {
 	display: inline-block;
 	margin-top: 12px;

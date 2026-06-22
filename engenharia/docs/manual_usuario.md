@@ -148,13 +148,13 @@ Cada item pode ter:
 
 ---
 
-## 4. Projetos de Obra
+## 4. Obras
 
 **O que é:** registro central (hub) de cada obra — endereço, cliente, status, orçamento e links para tudo relacionado.
 
 ### Como criar
 
-1. Engenharia → Projetos → Novo.
+1. Engenharia → **Obras** → Novo (ou atalho no Painel).
 2. Selecione o **Cliente** (obrigatório).
 3. Preencha tipo de obra, status inicial (geralmente **Orçamento**), endereço e datas previstas.
 
@@ -569,13 +569,15 @@ Na **Obra**, use o botão **Gerar Documentos**:
 1. Escolha um ou mais modelos (ou um **Kit**).
 2. Opcionalmente selecione um **Protocolo** vinculado à obra (placeholders do grupo Protocolo).
 3. O sistema preenche placeholders com dados do escritório, cliente, obra, orçamento (itens da revisão vigente), contrato (incluindo parcelas) e subcontratos.
-4. O `.docx` gerado é anexado à obra e registrado em **Documento da Obra** (origem: *Gerado pelo App*).
+4. O `.docx` é **baixado no navegador** — não é arquivado automaticamente na obra.
 
-Configure em **Configurações da Engenharia**: CNPJ, razão social, CREA, **logotipo** (`{{ company_logo }}`), dados bancários e PIX.
+Para guardar na obra, use **+ Enviar documento** na aba Documentos (upload manual).
+
+Configure em **Configurações do Escritório**: CNPJ, razão social, CREA, **logotipo** (`{{ company_logo }}`), dados bancários e PIX.
 
 ### 10.4 Arquivos da obra (Documento da Obra)
 
-Além da geração Word, a aba **Documentos** da obra gerencia PDFs, plantas, memoriais e anexos:
+A aba **Documentos** da obra é o repositório de PDFs, plantas, memoriais e anexos enviados manualmente:
 
 | Campo | Uso |
 |---|---|

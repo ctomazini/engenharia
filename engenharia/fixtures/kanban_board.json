@@ -30,7 +30,7 @@
   "field_name": "status",
   "fields": "[\"subject\", \"project\", \"priority\", \"due_date\"]",
   "filters": "[]",
-  "kanban_board_name": "Engenharia Obras",
+  "kanban_board_name": "Tarefas da Obra",
   "name": "Engenharia Obras",
   "private": 0,
   "reference_doctype": "Task",

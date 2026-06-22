@@ -4,9 +4,11 @@
  "autoname": "field:template_name",
  "creation": "2026-06-02 00:00:00",
  "custom": 0,
+ "description": "Nenhum template cadastrado. Anexe um arquivo .docx com placeholders e use-o para gerar documentos na obra.",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
+  "form_help",
   "template_name",
   "document_type",
   "description",
@@ -17,6 +19,11 @@
   "view_placeholders"
  ],
  "fields": [
+  {
+   "fieldname": "form_help",
+   "fieldtype": "HTML",
+   "options": "<div class=\"form-message blue\"><p>Modelos Word (.docx) com placeholders (ex.: <code>{{ customer_name }}</code>). Na obra, use <strong>Gerar documentos</strong> para baixar o arquivo preenchido — o sistema não arquiva automaticamente na aba Documentos.</p><p class=\"text-muted\" style=\"margin:0\">Consulte o botão <strong>Ver placeholders</strong> no formulário da obra para a lista completa de campos disponíveis.</p></div>"
+  },
   {
    "fieldname": "template_name",
    "fieldtype": "Data",

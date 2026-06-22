@@ -3,6 +3,7 @@
  "allow_rename": 1,
  "autoname": "format:DLNE-{YYYY}-{####}",
  "creation": "2026-06-02 00:00:00",
+ "description": "Nenhum prazo cadastrado. Registre vencimentos internos, do cliente ou de órgãos públicos vinculados à obra.",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [

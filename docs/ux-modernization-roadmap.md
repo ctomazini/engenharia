@@ -3,8 +3,10 @@
 Documento permanente de acompanhamento do projeto de modernização de experiência do usuário.
 
 **Criado:** 2026-06-05  
-**Última atualização:** 2026-06-05 (Etapa 08 — onboarding + ajustes pós-feedback)  
+**Última atualização:** 2026-06-05 (Etapa 09 — polimento final · **PROJETO ENCERRADO**)  
 **App:** `engenharia` (Frappe v16)
+
+> **Status do projeto:** ✅ **ENCERRADO** — ver [`docs/ux-final-executive-report.md`](ux-final-executive-report.md) para relatório executivo, métricas e pendências.
 
 ---
 
@@ -681,6 +683,45 @@ Nunca:
 
 ---
 
+### Etapa 09 — Polimento final (empty states, ajuda contextual, encerramento)
+
+**Status:** Concluída
+
+**Data:** 2026-06-05
+
+**Branch:** `ux/step-09-final-polish`
+
+**Objetivo:** Refinar experiência final — empty states, textos de ajuda, tooltips/orientações e mensagens amigáveis — **sem** alterar lógica, banco, permissões ou relatórios.
+
+**Implementado:**
+
+| Entrega | Onde | Comportamento |
+|---------|------|---------------|
+| **Empty states hub** | `hub.js` + `hub.css` | Parcelas, recebimentos, reembolsáveis, comissões, documentos; hints + CTAs |
+| **Mensagem perfil User** | `hub.js` | Banner na aba Financeiro quando Manager-only |
+| **List views** | `task_list.js`, `project_stage_list.js` | `hide_name_column` + indicadores de status |
+| **Listas vazias** | `description` em 10 DocTypes | Mensagem amigável nativa Frappe |
+| **Ajuda em formulários** | Project Item, Measurement, Document Template | Blocos HTML introdutórios |
+| **AUD-012** | `project_item.json` | Label **Item do Catálogo Técnico** |
+| **AUD-016** | `kanban_board.json` | Nome UI **Tarefas da Obra** |
+| **Manual** | `manual_usuario.md` | Obras; download docx; repositório upload |
+| **Relatório executivo** | `docs/ux-final-executive-report.md` | Métricas, auditoria final, pendências, riscos |
+| **Auditoria usabilidade** | `audit_usability.md` | Snapshot pós-Etapa 09 |
+
+**Validação:**
+
+| Teste | Resultado |
+|-------|-----------|
+| `run-tests --app engenharia` | **321 OK** |
+| `test_sidebar_json` | **39/39 OK** |
+| `bench migrate` | OK |
+
+**Commits:** ver branch `ux/step-09-final-polish`
+
+**Encerramento:** Projeto UX declarado concluído — débitos remanescentes em AUD-011, UX-DT-002, AUD-015 completo, AUD-017.
+
+---
+
 ## Backlog pós-Etapa 05
 
 **Verificado:** 2026-06-05 · branch `ux/step-05-yellow-risk-adjustments` · pós-`migrate`
@@ -926,6 +967,8 @@ Fila priorizada para próximas etapas. Nenhum item abaixo bloqueia merge da Etap
 | DIV-011 | Kanban `Engenharia Obras` referencia `Task` | fixture | Glossário: renomear label UI para Tarefas da Obra (etapa futura) |
 | DIV-012 | `customer_from_project.js` aplicava sync em satélites sem campo `customer` | `customer_from_project.js` × `SATELLITE_DOCTYPES` | **Resolvido Etapa 08** — filtro + guard em `set_value` |
 | DIV-013 | Geração Word criava `File` + `Project Document` a cada clique | `documents.py` | **Resolvido Etapa 08** — download direto; repositório = só upload manual |
+| DIV-014 | Hub panels financeiros vazios sem orientação | `hub.js` | **Resolvido Etapa 09** — empty states + banner User |
+| DIV-015 | Listas Task/Stage sem customização | `*_list.js` | **Resolvido Etapa 09** |
 
 ---
 
@@ -933,10 +976,10 @@ Fila priorizada para próximas etapas. Nenhum item abaixo bloqueia merge da Etap
 
 | ID | Débito | Severidade | Etapa sugerida |
 |----|--------|------------|----------------|
-| UX-DT-001 | Task / Project Stage sem `*_list.js` customizado | Baixa | Pós-Sprint 1 |
-| UX-DT-002 | Project Item — curva de aprendizado alta (fórmulas) | Média | Sprint UX conteúdo/ajuda |
+| UX-DT-001 | Task / Project Stage sem `*_list.js` customizado | Baixa | **Resolvido Etapa 09** |
+| UX-DT-002 | Project Item — curva de aprendizado alta (fórmulas) | Média | Mitigado (HTML ajuda); treinamento |
 | UX-DT-003 | Reports financeiros acessíveis a Engenharia User sem read nos DocTypes | Média | Sprint permissões |
-| UX-DT-004 | Perfil User oculta financeiro sem mensagem explicativa | Média | Sprint UX onboarding |
+| UX-DT-004 | Perfil User oculta financeiro sem mensagem explicativa | Média | **Resolvido Etapas 08–09** |
 | UX-DT-005 | Placeholders Word em inglês — barreira para autor de templates | Baixa | Documentação apenas |
 | UX-DT-006 | `Project Specification` child em FINANCIAL_DOCTYPES | Baixa | Revisão permissions.py |
 
@@ -995,4 +1038,4 @@ Validar continuamente:
 
 ---
 
-*Atualizar este documento ao final de cada etapa antes de encerrar os trabalhos.*
+*Projeto encerrado em 2026-06-05 (Etapa 09). Atualizações futuras: apenas débitos listados em `ux-final-executive-report.md`.*

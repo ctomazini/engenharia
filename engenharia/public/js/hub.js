@@ -43,7 +43,15 @@ function eng_hub_render_stages(frm, stages) {
 
 	if (!stages.length) {
 		$w.html(
-			_eng_hub_empty("📐", __("Nenhuma etapa cadastrada"), __("+ Nova Etapa"), "new-stage")
+			_eng_hub_empty(
+				"📐",
+				__("Nenhuma etapa cadastrada"),
+				__("+ Nova Etapa"),
+				"new-stage",
+				__(
+					"Divida a obra em etapas para acompanhar avanço físico, medições e o Kanban de tarefas."
+				)
+			)
 		);
 		$w.find('[data-hub-action="new-stage"]').on("click", () => {
 			eng_hub_nav_new_doc("Project Stage", { project: frm.doc.name });
@@ -160,10 +168,22 @@ function eng_hub_render_financial(frm, financial) {
 		"commissions_hub_panel",
 	];
 	if (!financial) {
+		const is_manager =
+			frappe.user.has_role("Engenharia Manager") || frappe.user.has_role("System Manager");
 		panels.forEach((panel) => {
-			if (frm.fields_dict[panel]) {
-				frm.fields_dict[panel].$wrapper.html("");
+			if (!frm.fields_dict[panel]) {
+				return;
 			}
+			if (panel === "financial_summary_panel" && !is_manager) {
+				frm.fields_dict[panel].$wrapper.html(`<div class="eng-hub-budget-banner eng-hub-budget-banner--info">
+					<strong>${__("Área financeira restrita")}</strong>
+					<p>${__(
+						"Orçamento, recebimentos, custos e comissões detalhados ficam disponíveis para o perfil Engenharia Manager. Você pode acompanhar etapas, prazos, tarefas e documentos normalmente."
+					)}</p>
+				</div>`);
+				return;
+			}
+			frm.fields_dict[panel].$wrapper.html("");
 		});
 		return;
 	}
@@ -288,7 +308,20 @@ function _eng_hub_render_installments(frm, installments) {
 	if (!$w) return;
 
 	if (!installments || !installments.length) {
-		$w.html(`<div class="eng-hub-empty">${__("Nenhuma parcela do contrato registrada.")}</div>`);
+		$w.html(
+			_eng_hub_empty(
+				"📋",
+				__("Nenhuma parcela do contrato registrada"),
+				__("+ Contrato"),
+				"new-contract",
+				__(
+					"Crie um contrato de honorários com parcelas — os recebimentos podem ser sincronizados automaticamente."
+				)
+			)
+		);
+		$w.find('[data-hub-action="new-contract"]').on("click", () => {
+			eng_hub_nav_new_doc("Engineering Contract", { project: frm.doc.name, customer: frm.doc.customer });
+		});
 		return;
 	}
 
@@ -628,7 +661,20 @@ function eng_hub_render_payments(frm, payments) {
 	if (!$w) return;
 
 	if (!payments || !payments.length) {
-		$w.html("");
+		$w.html(
+			_eng_hub_empty(
+				"💵",
+				__("Nenhum recebimento registrado"),
+				__("+ Recebimento"),
+				"new-payment",
+				__(
+					"Recebimentos de honorários aparecem aqui. Parcelas de contrato podem gerar recebimentos automaticamente ao salvar o contrato."
+				)
+			)
+		);
+		$w.find('[data-hub-action="new-payment"]').on("click", () => {
+			eng_hub_nav_new_doc("Payment", { project: frm.doc.name });
+		});
 		return;
 	}
 
@@ -691,7 +737,23 @@ function eng_hub_render_reimbursables(frm, reimbursables) {
 	if (!$w) return;
 
 	if (!reimbursables || !reimbursables.length) {
-		$w.html("");
+		$w.html(
+			_eng_hub_empty(
+				"🧾",
+				__("Nenhuma despesa reembolsável"),
+				__("+ Reembolsável"),
+				"new-reimbursable",
+				__(
+					"Registre despesas pagas pelo escritório que o cliente deve devolver — fluxo separado de compras e subcontratos."
+				)
+			)
+		);
+		$w.find('[data-hub-action="new-reimbursable"]').on("click", () => {
+			eng_hub_nav_new_doc("Reimbursable Expense", {
+				project: frm.doc.name,
+				customer: frm.doc.customer,
+			});
+		});
 		return;
 	}
 
@@ -748,7 +810,20 @@ function eng_hub_render_commissions_hub(frm, commissions) {
 	if (!$w) return;
 
 	if (!commissions || !commissions.length) {
-		$w.html("");
+		$w.html(
+			_eng_hub_empty(
+				"🤝",
+				__("Nenhuma comissão vinculada"),
+				__("+ Comissão"),
+				"new-commission",
+				__(
+					"Comissões de fornecedores (ex.: pré-moldado) recebidas pelo escritório. Visível apenas para perfil Manager."
+				)
+			)
+		);
+		$w.find('[data-hub-action="new-commission"]').on("click", () => {
+			eng_hub_nav_new_doc("Commission", { construction_project: frm.doc.name });
+		});
 		return;
 	}
 
@@ -1544,7 +1619,10 @@ function eng_hub_render_documents(frm, documents) {
 			</div>
 			<div class="eng-hub-empty">
 				<div class="eng-hub-empty__icon">📄</div>
-				<div>${__("Nenhum documento registrado")}</div>
+				<div class="eng-hub-empty__title">${__("Nenhum documento arquivado")}</div>
+				<p class="eng-hub-empty__hint">${__(
+					"Envie PDFs, plantas e memoriais com + Enviar. Use Gerar .docx para baixar modelos Word preenchidos — arquivos gerados não ficam salvos aqui automaticamente."
+				)}</p>
 				<button type="button" class="eng-hub-empty__action" data-hub-action="new-document">
 					${__("+ Enviar documento")}
 				</button>
@@ -1614,10 +1692,14 @@ function eng_hub_render_documents(frm, documents) {
 	eng_hub_bind_document_actions(frm, $w);
 }
 
-function _eng_hub_empty(icon, msg, btnLabel, actionName) {
+function _eng_hub_empty(icon, msg, btnLabel, actionName, hint) {
+	const hintHtml = hint
+		? `<p class="eng-hub-empty__hint">${hint}</p>`
+		: "";
 	return `<div class="eng-hub-empty">
 		<div class="eng-hub-empty__icon">${icon}</div>
-		<div>${msg}</div>
+		<div class="eng-hub-empty__title">${msg}</div>
+		${hintHtml}
 		<button type="button" class="eng-hub-empty__action" data-hub-action="${actionName}">${btnLabel}</button>
 	</div>`;
 }
