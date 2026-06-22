@@ -3,7 +3,7 @@
 Documento permanente de acompanhamento do projeto de modernização de experiência do usuário.
 
 **Criado:** 2026-06-05  
-**Última atualização:** 2026-06-05 (Backlog pós-Etapa 05 organizado)  
+**Última atualização:** 2026-06-05 (Etapa 07 — organização de formulários)  
 **App:** `engenharia` (Frappe v16)
 
 ---
@@ -563,7 +563,57 @@ Nunca:
 
 **Pendências residuais:** ver [Backlog pós-Etapa 05](#backlog-pós-etapa-05) (verificado em `engenharia.local`).
 
-**Próximas etapas:** **Etapa 06** — permissões reports (AUD-011) + manual (AUD-015); cosméticos AUD-012/016.
+**Próximas etapas:** **Etapa 06** — permissões reports (AUD-011) + manual (AUD-015); hub P0 (deduplicação painéis).
+
+---
+
+### Etapa 07 — Organização de formulários (sem alteração de schema)
+
+**Status:** Concluída
+
+**Data:** 2026-06-05
+
+**Branch:** `ux/step-07-form-organization`
+
+**Objetivo:** Melhorar agrupamentos, seções, abas, tooltips e descrições dos formulários transacionais — **sem** alterar fieldnames, schema, child tables, relacionamentos ou regras de negócio.
+
+**Restrições respeitadas:** nenhum fieldname alterado; options de Select (status EN) preservados; hub/dashboard/reports/print formats não modificados nesta etapa.
+
+**Dependências verificadas (somente leitura):**
+
+| Área | Impacto |
+|------|---------|
+| `construction_project.js` / `hub.js` | Referências por `fieldname` — inalteradas |
+| `engineering_contract.js` / `financial.py` | Sync e botões — inalterados; intro UX adicionada |
+| `payment.js` / `financial.py` | Botão Cancelar Recebimento — inalterado |
+| Dashboard / relatórios / print | Sem alteração |
+| Testes | `run-tests --app engenharia` **321 OK** pós-`migrate` |
+
+**Mudanças por formulário:**
+
+| DocType | Organização |
+|---------|-------------|
+| **Construction Project** | Observações movidas para aba Detalhes; seção **Revisões de Orçamento** (vs aba Orçamento da Obra); ajuda nos painéis Financeiro |
+| **Engineering Contract** | Seções renomeadas; tooltips juros diário/mensal; intro de fluxo no form JS |
+| **Payment** | Vínculos → Valores → Comprovantes → Sincronização (colapsável) |
+| **Work Cost** | Vínculos primeiro; status na seção Valores; mapeamento EN→PT na descrição |
+| **Subcontract** | Aditivo junto aos valores; Prestador com nota de cadastro |
+| **Commission** | Label **Obra**; status na seção Valores |
+| **Reimbursable Expense** | Fluxo saída/entrada nas seções; link **Recebimento** ao final |
+
+**Commits:**
+
+| Hash | Formulário |
+|------|------------|
+| `90621d5` | Construction Project |
+| `d406e45` | Engineering Contract |
+| `6325aa1` | Payment |
+| `67cf09b` | Work Cost |
+| `1d32eaf` | Subcontract |
+| `5be7113` | Commission |
+| `093e375` | Reimbursable Expense |
+
+**Fora de escopo (backlog UX reavaliação):** hub banner duplicado (P0-01), CTA Receber no hub (P1-04), status Select em PT (exige migração de dados), print format AUD-017.
 
 ---
 
