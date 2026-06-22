@@ -637,14 +637,14 @@
   {
    "fieldname": "sec_permits_hub",
    "fieldtype": "Section Break",
-   "label": "Alvarás",
+   "label": "Alvarás e Protocolos",
    "idx": 74
   },
   {
    "fieldname": "permits_panel",
    "fieldtype": "HTML",
    "label": "Alvarás e Protocolos",
-   "options": "<p class=\"text-muted\">Carregando protocolos...</p>",
+   "options": "<p class=\"text-muted\">Carregando alvarás e protocolos...</p>",
    "idx": 75
   },
   {
@@ -721,26 +721,26 @@
   {
    "fieldname": "tab_specs",
    "fieldtype": "Tab Break",
-   "label": "Especificações",
+   "label": "Orçamento da Obra",
    "idx": 87
   },
   {
    "fieldname": "sec_specs",
    "fieldtype": "Section Break",
-   "label": "Especificações Técnicas",
+   "label": "Itens do Orçamento",
    "idx": 86
   },
   {
    "fieldname": "specs_help",
    "fieldtype": "HTML",
-   "label": "Itens técnicos",
-   "options": "<p class=\"text-muted\">Use <b>Adicionar especificação</b>, os botões <b>Criar</b> ou a aba <b>Conexões</b> para ver e incluir registros ligados à obra.</p>",
+   "label": "Itens do Orçamento",
+   "options": "<p class=\"text-muted\">Use <b>Adicionar item do orçamento</b>, os botões <b>Criar</b> ou a aba <b>Conexões</b> para ver e incluir registros ligados à obra.</p>",
    "idx": 87
   },
   {
    "fieldname": "spec_preview_panel",
    "fieldtype": "HTML",
-   "label": "Prévia das especificações",
+   "label": "Prévia do Orçamento",
    "options": "<p class=\"text-muted\">Carregando prévia...</p>",
    "permlevel": 1,
    "idx": 88
@@ -748,15 +748,15 @@
   {
    "fieldname": "spec_items_summary_panel",
    "fieldtype": "HTML",
-   "label": "Especificações da Obra",
-   "options": "<p class=\"text-muted\">Carregando especificações...</p>",
+   "label": "Itens do Orçamento",
+   "options": "<p class=\"text-muted\">Carregando itens do orçamento...</p>",
    "permlevel": 1,
    "idx": 89
   },
   {
    "fieldname": "spec_project_total",
    "fieldtype": "Currency",
-   "label": "Total especificações (obra)",
+   "label": "Total do Orçamento",
    "permlevel": 1,
    "read_only": 1,
    "description": "Soma dos valores dos itens técnicos na revisão vigente. Atualiza ao salvar itens. Visível apenas para Engenharia Manager.",
@@ -845,7 +845,7 @@
    "link_fieldname": "project"
   },
   {
-   "group": "Especificações",
+   "group": "Orçamento da Obra",
    "link_doctype": "Project Item",
    "link_fieldname": "project"
   }

@@ -3,7 +3,7 @@ window.eng_render_placeholder_reference = function (blocks) {
 	html +=
 		'<p class="text-muted small" style="margin-bottom:12px;">' +
 		__(
-			"Sintaxe docxtpl: <code>{{ placeholder }}</code>. Grupos <em>condicionais</em> só têm valor quando a condição indicada é atendida. Logotipo: <code>{{ company_logo }}</code> (URL do arquivo em Configurações da Engenharia)."
+			"Sintaxe docxtpl: <code>{{ placeholder }}</code>. Grupos <em>condicionais</em> só têm valor quando a condição indicada é atendida. Logotipo: <code>{{ company_logo }}</code> (URL do arquivo em Configurações do Escritório)."
 		) +
 		"</p>";
 

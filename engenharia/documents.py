@@ -35,7 +35,7 @@ PLACEHOLDER_REFERENCE = [
 			{"placeholder": "company_name", "label": "Nome do escritório"},
 			{"placeholder": "company_cnpj", "label": "CNPJ do escritório"},
 			{"placeholder": "company_crea", "label": "CREA do escritório"},
-			{"placeholder": "company_logo", "label": "URL do logotipo (Configurações da Engenharia)"},
+			{"placeholder": "company_logo", "label": "URL do logotipo (Configurações do Escritório)"},
 			{"placeholder": "company_address_full", "label": "Endereço do escritório"},
 			{"placeholder": "bank_name", "label": "Banco"},
 			{"placeholder": "bank_agency", "label": "Agência"},

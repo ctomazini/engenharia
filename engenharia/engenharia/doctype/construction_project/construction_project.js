@@ -5,8 +5,8 @@ frappe.ui.form.on("Construction Project", {
 			EngenhariaMasks.formatFormField(frm, "address_cep", EngenhariaMasks.applyCEP);
 		}
 
-		frm.add_custom_button(__("Adicionar especificação"), () => eng_add_project_item(frm), __(
-			"Especificações Técnicas"
+		frm.add_custom_button(__("Adicionar item do orçamento"), () => eng_add_project_item(frm), __(
+			"Orçamento da Obra"
 		));
 
 		if (!frm.is_new()) {
@@ -149,7 +149,7 @@ function eng_add_hub_create_buttons(frm) {
 		__("Criar")
 	);
 	frm.add_custom_button(__("+ Prazo"), () => eng_hub_nav_new_doc("Deadline", hub), __("Criar"));
-	frm.add_custom_button(__("+ Protocolo"), () => eng_hub_nav_new_doc("Permit", hub), __("Criar"));
+	frm.add_custom_button(__("+ Alvará e Protocolo"), () => eng_hub_nav_new_doc("Permit", hub), __("Criar"));
 	frm.add_custom_button(__("+ Tarefa"), () => eng_hub_nav_new_doc("Task", hub), __("Criar"));
 	frm.add_custom_button(
 		__("+ Comunicação"),
@@ -237,7 +237,7 @@ function eng_render_spec_items_table(frm, items, projectTotal) {
 	let html = `
 		<div class="eng-spec-summary">
 			<div class="d-flex justify-content-between align-items-center mb-2">
-				<strong>${__("Especificações da Obra")}</strong>
+				<strong>${__("Itens do Orçamento")}</strong>
 				<button type="button" class="btn btn-xs btn-default eng-spec-refresh">${__("Atualizar")}</button>
 			</div>`;
 
@@ -350,7 +350,7 @@ function eng_add_project_item(frm) {
 				frappe.msgprint({
 					title: __("Sem itens técnicos"),
 					message: __(
-						"Cadastre modelos em <b>Itens Técnicos</b> ou execute <code>bench migrate</code>."
+						"Cadastre modelos em <b>Catálogo Técnico</b> ou execute <code>bench migrate</code>."
 					),
 					indicator: "orange",
 				});
@@ -363,7 +363,7 @@ function eng_add_project_item(frm) {
 
 function eng_show_project_item_dialog(frm, items) {
 	const d = new frappe.ui.Dialog({
-		title: __("Adicionar especificação técnica"),
+		title: __("Adicionar item do orçamento"),
 		fields: [
 			{
 				fieldname: "help",
@@ -495,9 +495,9 @@ function eng_mount_generate_documents_dialog(frm, templates, kits) {
 			{
 				fieldname: "permit",
 				fieldtype: "Link",
-				label: __("Protocolo (opcional)"),
+				label: __("Alvará e Protocolo (opcional)"),
 				options: "Permit",
-				description: __("Preenche placeholders de protocolo no documento gerado"),
+				description: __("Preenche placeholders de alvará/protocolo no documento gerado"),
 				get_query() {
 					return {
 						filters: { project: frm.doc.name },

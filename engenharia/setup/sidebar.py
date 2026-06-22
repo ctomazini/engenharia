@@ -15,11 +15,11 @@ SIDEBAR_LINK_ORDER = (
 	("Obras", "Construction Project", "DocType"),
 	("Etapas", "Project Stage", "DocType"),
 	("Boletins de Medição", "Construction Measurement", "DocType"),
-	("Protocolos", "Permit", "DocType"),
+	("Alvarás e Protocolos", "Permit", "DocType"),
 	("Documentos da Obra", "Project Document", "DocType"),
 	# Orçamento
-	("Itens do Projeto", "Project Item", "DocType"),
-	("Itens Técnicos", "Technical Item", "DocType"),
+	("Itens do Orçamento", "Project Item", "DocType"),
+	("Catálogo Técnico", "Technical Item", "DocType"),
 	# Receitas
 	("Contratos de Honorários", "Engineering Contract", "DocType"),
 	("Recebimentos", "Payment", "DocType"),

@@ -251,7 +251,7 @@ function _eng_hub_budget_banner_html(summary) {
 		return `<div class="eng-hub-budget-banner eng-hub-budget-banner--info">
 			<strong>${__("Orçamento vs realizado")}</strong>
 			<p>${__(
-				"Orçamento ainda não definido — cadastre itens do projeto na aba Especificações. Custos realizados abaixo são independentes do orçamento."
+				"Orçamento ainda não definido — cadastre itens do orçamento na aba Orçamento da Obra. Custos realizados abaixo são independentes do orçamento."
 			)}</p>
 		</div>`;
 	}
@@ -863,7 +863,7 @@ function eng_hub_render_summary_bar(frm, counts) {
 		},
 		{
 			icon: "🏛️",
-			label: __("Protocolos"),
+			label: __("Alvarás e Protocolos"),
 			count: counts.permits,
 			doctype: "Permit",
 			fieldname: "project",
@@ -1036,7 +1036,7 @@ function eng_hub_render_permits(frm, permits) {
 	if (!$w) return;
 
 	if (!permits.length) {
-		$w.html(_eng_hub_empty("🏛️", __("Nenhum alvará registrado"), __("+ Protocolo"), "new-permit"));
+		$w.html(_eng_hub_empty("🏛️", __("Nenhum alvará ou protocolo registrado"), __("+ Alvará e Protocolo"), "new-permit"));
 		$w.find('[data-hub-action="new-permit"]').on("click", () => {
 			eng_hub_nav_new_doc("Permit", { project: frm.doc.name });
 		});
@@ -1082,7 +1082,7 @@ function eng_hub_render_permits(frm, permits) {
 				<span class="eng-hub-panel__count">${permits.length}</span>
 			</h3>
 			<button type="button" class="eng-hub-panel__action" data-hub-action="new-permit">
-				${__("+ Protocolo")}
+				${__("+ Alvará e Protocolo")}
 			</button>
 		</div>
 		${rows}
@@ -1345,7 +1345,7 @@ function _eng_hub_empty_costs(frm) {
 	return `<div class="eng-hub-empty">
 		<div class="eng-hub-empty__icon">📊</div>
 		<div>${__(
-			"Nenhum custo realizado registrado. Orçamento (itens do projeto) é planejamento — aqui entram compras, subcontratos e reembolsáveis."
+			"Nenhum custo realizado registrado. Orçamento (itens do orçamento) é planejamento — aqui entram compras, subcontratos e reembolsáveis."
 		)}</div>
 		<div class="eng-hub-empty__actions">
 			<button type="button" class="eng-hub-empty__action" data-hub-action="new-work-cost">${__(

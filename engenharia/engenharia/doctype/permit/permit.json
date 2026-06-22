@@ -67,7 +67,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Tipo de Protocolo",
+   "label": "Tipo de Alvará e Protocolo",
    "options": "Permit Type",
    "reqd": 1,
    "description": "Tipo de alvará ou protocolo (cadastro de Tipos de Alvará)."
@@ -76,7 +76,7 @@
    "fieldname": "permit_number",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Número do Protocolo",
+   "label": "Número do Alvará ou Protocolo",
    "description": "Número do protocolo ou alvará emitido pelo órgão."
   },
   {
@@ -106,7 +106,7 @@
    "fieldname": "protocol_date",
    "fieldtype": "Date",
    "in_list_view": 1,
-   "label": "Data do Protocolo",
+   "label": "Data do Alvará ou Protocolo",
    "description": "Data de protocolo ou emissão."
   },
   {
