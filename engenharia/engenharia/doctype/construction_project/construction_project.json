@@ -62,6 +62,8 @@
   "budget_revision",
   "default_bdi_percent",
   "budget_revisions",
+  "sec_obs",
+  "observations",
   "tab_progress",
   "sec_progress_global",
   "sec_stages_hub",
@@ -100,9 +102,7 @@
   "specs_help",
   "spec_preview_panel",
   "spec_items_summary_panel",
-  "spec_project_total",
-  "sec_obs",
-  "observations"
+  "spec_project_total"
  ],
  "fields": [
   {
@@ -126,7 +126,7 @@
   {
    "fieldname": "sec_after_summary",
    "fieldtype": "Section Break",
-   "label": "",
+   "label": "Identificação",
    "idx": 4
   },
   {
@@ -432,7 +432,7 @@
    "fieldtype": "Percent",
    "label": "Avanço Físico Global",
    "read_only": 1,
-   "description": "Avanço físico global da obra (%). Calculado a partir das etapas e medições.",
+   "description": "Avanço físico global (%). Detalhe por etapa na aba Avanço Físico.",
    "idx": 51
   },
   {
@@ -464,7 +464,7 @@
   {
    "fieldname": "sec_budget",
    "fieldtype": "Section Break",
-   "label": "Orçamento",
+   "label": "Revisões de Orçamento",
    "collapsible": 1,
    "permlevel": 1,
    "idx": 55
@@ -476,7 +476,7 @@
    "label": "Revisão vigente",
    "permlevel": 1,
    "read_only": 1,
-   "description": "Número da revisão de orçamento vigente. Controla qual versão dos itens está ativa. Visível apenas para Engenharia Manager.",
+   "description": "Número da revisão vigente. Distinto da aba Orçamento da Obra (itens planejados). Visível apenas para Engenharia Manager.",
    "idx": 56
   },
   {
@@ -531,7 +531,7 @@
   {
    "fieldname": "sec_financial_summary",
    "fieldtype": "Section Break",
-   "label": "Resumo",
+   "label": "Resumo Financeiro",
    "permlevel": 1,
    "idx": 59
   },
@@ -554,7 +554,7 @@
    "fieldname": "installments_panel",
    "fieldtype": "HTML",
    "label": "Parcelas do Contrato",
-   "options": "<p class=\"text-muted\">Carregando parcelas do contrato...</p>",
+   "options": "<p class=\"text-muted\">Plano de vencimentos do contrato. Ao salvar o contrato, o sistema gera os Recebimentos correspondentes — confirme a baixa no painel abaixo ou no Painel de Obras.</p>",
    "permlevel": 1,
    "idx": 62
   },
@@ -569,7 +569,7 @@
    "fieldname": "costs_panel",
    "fieldtype": "HTML",
    "label": "Custos Realizados",
-   "options": "<p class=\"text-muted\">Carregando custos...</p>",
+   "options": "<p class=\"text-muted\">Compras avulsas, subcontratos e reembolsáveis consolidados. Despesas reembolsáveis também aparecem no painel dedicado abaixo para acompanhar devolução do cliente.</p>",
    "permlevel": 1,
    "idx": 64
   },
@@ -598,6 +598,7 @@
    "fieldname": "reimbursables_panel",
    "fieldtype": "HTML",
    "label": "Despesas Reembolsáveis",
+   "options": "<p class=\"text-muted\">Despesas pagas pelo escritório a serem devolvidas pelo cliente. Também listadas em Custos Realizados acima.</p>",
    "permlevel": 1,
    "idx": 68
   },
@@ -734,7 +735,7 @@
    "fieldname": "specs_help",
    "fieldtype": "HTML",
    "label": "Itens do Orçamento",
-   "options": "<p class=\"text-muted\">Use <b>Adicionar item do orçamento</b>, os botões <b>Criar</b> ou a aba <b>Conexões</b> para ver e incluir registros ligados à obra.</p>",
+   "options": "<p class=\"text-muted\">Use <b>Adicionar item do orçamento</b> (menu Orçamento da Obra) ou a pílula <b>Itens do Orçamento</b> no resumo acima. Custos realizados são lançados separadamente na aba Financeiro.</p>",
    "idx": 87
   },
   {
