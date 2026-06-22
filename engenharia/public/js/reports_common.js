@@ -1,8 +1,8 @@
 frappe.provide("engenharia.reports");
 
-/** Expande colunas para preencher a largura do painel (frappe-datatable layout fluid). */
+/** Mantém layout fixo do Frappe (scroll horizontal) — fluid quebra colunas em tabelas largas. */
 engenharia.reports.get_datatable_options = function (options) {
-	options.layout = "fluid";
+	options.layout = options.layout || "fixed";
 	return options;
 };
 
@@ -57,40 +57,41 @@ engenharia.reports.link = function (route, label) {
 engenharia.reports.withCommonFormatter = function (customFormatter) {
 	const wrapped = function (value, row, column, data, default_formatter) {
 		let formatted = default_formatter(value, row, column, data);
+		const fieldname = column.fieldname || column.id;
 
-		if (column.fieldname === "source_label" && row.source_label) {
+		if (fieldname === "source_label" && row.source_label) {
 			const color = engenharia.reports.SOURCE_BADGE[row.source_label] || "gray";
 			formatted = engenharia.reports.badge(row.source_label, color);
-		} else if (column.fieldname === "status" && row.status) {
+		} else if (fieldname === "status" && row.status) {
 			const color = engenharia.reports.STATUS_BADGE[row.status] || "gray";
 			formatted = engenharia.reports.badge(row.status, color);
-		} else if (column.fieldname === "type" && row.type) {
+		} else if (fieldname === "type" && row.type) {
 			const color = row.type === __("Entrada") ? "green" : "red";
 			formatted = engenharia.reports.badge(row.type, color);
-		} else if (column.fieldname === "budget_variance" && row.budget_total) {
+		} else if (fieldname === "budget_variance" && row.budget_total) {
 			const color = flt(row.budget_variance) >= 0 ? "green-600" : "red-600";
 			formatted = `<span class="eng-rpt-num" style="color:var(--${color})">${formatted}</span>`;
-		} else if (column.fieldname === "budget_used_percent" && row.budget_total) {
+		} else if (fieldname === "budget_used_percent" && row.budget_total) {
 			const pct = flt(row.budget_used_percent);
 			let color = "green-600";
 			if (pct > 100) color = "red-600";
 			else if (pct > 85) color = "orange-500";
 			formatted = `<span class="eng-rpt-num" style="color:var(--${color})">${formatted}</span>`;
-		} else if (column.fieldname === "realized_margin" || column.fieldname === "contractual_margin") {
-			const num = flt(row[column.fieldname]);
+		} else if (fieldname === "realized_margin" || fieldname === "contractual_margin") {
+			const num = flt(row[fieldname]);
 			const color = num >= 0 ? "green-600" : "red-600";
 			formatted = `<span class="eng-rpt-num" style="color:var(--${color})">${formatted}</span>`;
-		} else if (column.fieldname === "project_title" && row.project) {
+		} else if (fieldname === "project_title" && row.project) {
 			formatted = engenharia.reports.link(
 				`Form/Construction Project/${row.project}`,
 				row.project_title || row.project
 			);
-		} else if (column.fieldname === "source_doc" && row.source_doc && row.source_doctype) {
+		} else if (fieldname === "source_doc" && row.source_doc && row.source_doctype) {
 			formatted = engenharia.reports.link(
 				`Form/${row.source_doctype}/${row.source_doc}`,
 				row.source_doc
 			);
-		} else if (column.fieldname === "description" && row.description) {
+		} else if (fieldname === "description" && row.description) {
 			const esc = frappe.utils.escape_html(row.description);
 			formatted = `<span class="eng-rpt-desc" title="${esc}">${esc}</span>`;
 		} else if (
@@ -102,7 +103,13 @@ engenharia.reports.withCommonFormatter = function (customFormatter) {
 				"budget_total",
 				"realized_committed",
 				"realized_paid",
-			].includes(column.fieldname)
+				"contract_value",
+				"received_revenue",
+				"reimbursable_expense",
+				"inflow",
+				"outflow",
+				"balance",
+			].includes(fieldname)
 		) {
 			formatted = `<span class="eng-rpt-num">${formatted}</span>`;
 		}
@@ -171,9 +178,6 @@ function engenharia_patch_query_report() {
 			this.report_settings.get_datatable_options = engenharia.reports.get_datatable_options;
 		}
 		render_datatable.call(this);
-		if (this.datatable?.style?.setDimensions) {
-			this.datatable.style.setDimensions();
-		}
 	};
 
 	proto.refresh = function (...args) {

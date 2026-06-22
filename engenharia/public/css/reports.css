@@ -85,6 +85,11 @@
 
 #page-query-report.eng-report-page .dt-scrollable {
 	border-radius: 6px;
+	overflow-x: auto;
+}
+
+#page-query-report.eng-report-page .report-wrapper .dt-scrollable .dt-row {
+	min-width: max-content;
 }
 
 #page-query-report.eng-report-page .dt-row-header .dt-cell {
@@ -121,8 +126,10 @@
 }
 
 .eng-rpt-desc {
-	max-width: 280px;
+	display: inline-block;
+	max-width: min(280px, 40vw);
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
+	vertical-align: bottom;
 }
