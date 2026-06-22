@@ -3,7 +3,7 @@
 Documento permanente de acompanhamento do projeto de modernização de experiência do usuário.
 
 **Criado:** 2026-06-05  
-**Última atualização:** 2026-06-05 (Etapa 03 concluída)  
+**Última atualização:** 2026-06-05 (Etapa 05 concluída)  
 **App:** `engenharia` (Frappe v16)
 
 ---
@@ -450,7 +450,122 @@ Nunca:
 
 ---
 
-## Decisões Arquiteturais
+### Auditoria pós-Etapa 03 — Regressão e consistência
+
+**Status:** Concluída (somente leitura + validação em `engenharia.local`)
+
+**Data:** 2026-06-05
+
+**Objetivo:** Garantir que mudanças verdes (Etapa 03) não introduziram regressões funcionais; mapear inconsistências residuais.
+
+**Validações executadas:**
+
+| Área | Método | Resultado |
+|------|--------|-----------|
+| Testes automatizados | `run-tests --app engenharia` | **321 OK** |
+| Paridade sidebar código↔JSON | `test_sidebar_json` | **39 links OK** |
+| Sidebar no banco | `tabWorkspace Sidebar Item` pós-`migrate` | **39 links**, labels glossário |
+| Traduções DocType | `tabTranslation` pós-`migrate` | Payment, Permit, Settings, etc. **OK** |
+| Workspace atalhos | `engenharia.json` | Painel, Obras, **Recebimentos**, Prazos, Comissões — rotas válidas |
+| Dashboard API | `get_dashboard_data()` | Payload com `atencao`, KPIs — **sem erro** |
+| Breadcrumbs hub | `eng_hub_nav.js` usa `__(doctype)` | Herda traduções pós-migrate |
+| Permissões | `permissions.py` + roles em reports | Inalterado; débito DIV-010 persiste |
+
+**Veredito regressão:** Nenhuma regressão funcional detectada no código nem após `migrate` no site de dev. Suite verde; links e rotas intactos.
+
+#### Problemas encontrados
+
+| ID | Severidade | Área | Problema | Causa / notas |
+|----|------------|------|----------|----------------|
+| AUD-001 | **Crítico** (ops) | Sidebar / deploy | Antes do `migrate`, o banco tinha **40 links** com labels pré-Etapa 03 (`Protocolos`, `Itens do Projeto`, `Visão de Custos Realizados`) | Código atualizado sem `migrate` imediato; **não é bug de lógica** — exige `bench migrate` em todo deploy |
+| AUD-002 | ~~**Médio**~~ **Resolvido (Etapa 05)** | Dashboard | Tile Zona de Atenção: **Alvarás e Protocolos** | `299de6e` |
+| AUD-003 | ~~**Médio**~~ **Resolvido (Etapa 05)** | Dashboard | Agenda: **Recebimento**, **Alvará e Protocolo** | `646553a` |
+| AUD-004 | ~~**Médio**~~ **Resolvido (Etapa 05)** | Dashboard | Alerta **Recebimento confirmado** | `e376e8e` |
+| AUD-005 | ~~**Médio**~~ **Resolvido (Etapa 05)** | Recebimentos | Mensagens de erro/cancelamento usam **Recebimento** | `a40fd8a` |
+| AUD-006 | ~~**Médio**~~ **Resolvido (Etapa 05)** | Comissões | Section **Recebimentos** | `2e5bbad` |
+| AUD-007 | ~~**Médio**~~ **Resolvido (Etapa 05)** | Compras / Subcontratos | Section **Pagamentos Efetuados** | `9078049` |
+| AUD-008 | ~~**Médio**~~ **Resolvido (Etapa 05)** | Hub da Obra | Painel **Parcelas do Contrato** | `bf173de`, `c557166` |
+| AUD-009 | ~~**Médio**~~ **Resolvido (Etapa 05)** | Hub navegação | Pílula **Itens do Orçamento** | `c557166` |
+| AUD-010 | ~~**Médio**~~ **Resolvido (Etapa 05)** | Relatórios | `report_name` PT nos 3 relatórios EN | `bf2ec3a` |
+| AUD-011 | **Médio** | Permissões | `Engenharia User` em 7 reports financeiros sem read em `Payment`/`Work Cost` (exc. `Subcontract`) | DIV-010 / UX-DT-003; pré-existente |
+| AUD-012 | **Baixo** | Project Item | Campo link **Item Técnico** → `Technical Item` | Glossário: **Catálogo Técnico** no cadastro |
+| AUD-013 | ~~**Baixo**~~ **Resolvido (Etapa 05)** | Relatórios menu | **Compras Avulsas por Obra/Categoria** capitalizado | `bf2ec3a` |
+| AUD-014 | ~~**Baixo**~~ **Resolvido (Etapa 05)** | Notificações | Texto alvará/protocolo e recebimento vencido | `a38e418` |
+| AUD-015 | **Baixo** | Manual | `manual_usuario.md` ainda com termos antigos | DIV-009 → Etapa 05 |
+| AUD-016 | **Baixo** | Kanban | Nome fixture **Engenharia Obras** | DIV-011 |
+
+**Itens verificados sem problema (pós-migrate):**
+
+* Sidebar ↔ `sidebar.py` ↔ JSON (39 links, ordem, `link_to`/`link_type`)
+* Workspace shortcuts e link Financeiro → **Recebimentos**
+* Traduções `Permit`, `Payment`, `Engineering Settings`, `Project Item`, `Technical Item`
+* Hub: painéis Recebimentos, Alvarás e Protocolos, Custos Realizados, Documentos da Obra
+* Aba Obra: **Orçamento da Obra**, campos Permit atualizados
+* Contrato: **Re-sincronizar Recebimentos**, dashboard connections
+* Compras/Subcontratos: rotas e labels de tabela **Pagamentos Efetuados** preservados (correto para saídas)
+* Slugs de relatório e rotas `eng-dashboard` — inalterados
+
+**Recomendação operacional:** incluir `bench migrate` no checklist de deploy pós-merge Etapas 02–05 (resolve AUD-001 e sincroniza `report_name`/notificações).
+
+---
+
+### Etapa 05 — Ajustes risco amarelo (AUD-002–010, AUD-013–014)
+
+**Status:** Concluída
+
+**Data:** 2026-06-05
+
+**Branch:** `ux/step-05-yellow-risk-adjustments`
+
+**Objetivo:** Aplicar exclusivamente itens **médios/amarelos** da auditoria pós-Etapa 03, sem alterar schema, slugs (`name` de Report), rotas, permissões (AUD-011) nem itens baixos (AUD-012, AUD-015, AUD-016).
+
+**Pré-análise (impacto / rollback):**
+
+| ID | Impacto | Arquivos | Estratégia | Rollback |
+|----|---------|----------|------------|----------|
+| AUD-002 | Cosmético dashboard | `dashboard/attention.py` | Label tile `_()` | Revert commit `299de6e` |
+| AUD-003 | Cosmético agenda | `public/js/dashboard/utils.js` | Mapa tipos agenda | Revert `646553a` |
+| AUD-004 | UX feedback + API | `lists.js`, `dashboard/financial.py` | Alerta e `throw` | Revert `e376e8e` |
+| AUD-005 | Mensagens Payment | `financial.py`, `payment.py/js`, `engineering_contract_installment.json` | Só strings `__()` | Revert `a40fd8a` |
+| AUD-006 | Section comissão | `commission.json` | Label section break | Revert `2e5bbad` |
+| AUD-007 | Sections saídas | `work_cost.json`, `subcontract.json` | Alinhar ao child table | Revert `9078049` |
+| AUD-008 | Hub parcelas | `construction_project.json`, `hub.js` | Parcelas do Contrato | Revert `bf173de` + `c557166` (hub) |
+| AUD-009 | Hub pílula | `hub.js` | Itens do Orçamento | Revert `c557166` |
+| AUD-010/013 | UI relatórios | 5× `report/*.json`, `sidebar.py`, `workspace_sidebar` | `report_name` PT; capitalização menu | Revert `bf2ec3a`; slug `name` inalterado |
+| AUD-014 | Notificações | `fixtures/notification.json`, `notifications.py` | Texto alvará/recebimento | Revert `a38e418` |
+
+**Fora de escopo (mantido):** AUD-011 permissões (DIV-010), AUD-012 campo Item Técnico, AUD-015 manual, AUD-016 Kanban, Print Format “Recibo de Pagamento”.
+
+**Validações pós-implementação:**
+
+| Área | Método | Resultado |
+|------|--------|-----------|
+| Testes automatizados | `run-tests --app engenharia` | **321 OK** |
+| Paridade sidebar | `test_sidebar_json` | **39/39 OK** |
+| Migrate | `bench migrate` | OK (report_name, notifications, sidebar) |
+| Dashboard API | `get_dashboard_data(period_days=7)` | Payload completo — **OK** |
+| Slugs / rotas | `link_to` reports inalterados | **OK** |
+
+**Commits:**
+
+| Hash | AUD | Mensagem |
+|------|-----|----------|
+| `299de6e` | 002 | `[UX-STEP-05] Refactor: AUD-002 dashboard attention tile Alvarás e Protocolos` |
+| `646553a` | 003 | `[UX-STEP-05] Refactor: AUD-003 dashboard agenda type labels` |
+| `e376e8e` | 004 | `[UX-STEP-05] Refactor: AUD-004 dashboard confirm receipt alert` |
+| `a40fd8a` | 005 | `[UX-STEP-05] Refactor: AUD-005 Payment user messages Recebimento` |
+| `2e5bbad` | 006 | `[UX-STEP-05] Refactor: AUD-006 commission section Recebimentos` |
+| `9078049` | 007 | `[UX-STEP-05] Refactor: AUD-007 section Pagamentos Efetuados` |
+| `bf173de` | 008 | `[UX-STEP-05] Refactor: AUD-008 hub Parcelas do Contrato` |
+| `c557166` | 009 | `[UX-STEP-05] Refactor: AUD-009 hub pill Itens do Orçamento` |
+| `bf2ec3a` | 010/013 | `[UX-STEP-05] Refactor: AUD-010 AUD-013 report_name PT` |
+| `a38e418` | 014 | `[UX-STEP-05] Refactor: AUD-014 notification texts` |
+
+**Pendências residuais:** AUD-011 (permissões), AUD-012 (label campo Technical Item), AUD-015 (manual), AUD-016 (Kanban).
+
+**Próximas etapas:** manual do usuário (AUD-015 / DIV-009); revisão permissões reports (DIV-010).
+
+---
 
 ### DEC-001
 
@@ -627,7 +742,7 @@ Validar continuamente:
 * [x] Nenhuma rota alterada (Etapa 01)
 * [x] Nenhum placeholder Word alterado (Etapa 01)
 * [x] Nenhum schema alterado (Etapa 01)
-* [x] Glossário risco verde aplicado (Etapa 03)
+* [x] Auditoria pós-Etapa 03: sem regressão funcional; migrate obrigatório no deploy
 * [x] Nenhum slug de relatório alterado (Etapa 03)
 
 ---
