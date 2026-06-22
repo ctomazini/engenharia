@@ -159,7 +159,7 @@ engenharia.dashboard.lists = {
 				args: { payment_name: name },
 				freeze: true,
 				callback() {
-					frappe.show_alert({ message: __("Pagamento recebido"), indicator: "green" });
+					frappe.show_alert({ message: __("Recebimento confirmado"), indicator: "green" });
 					const page = frappe.pages["eng-dashboard"]?.page;
 					if (page) eng_dashboard_load(page);
 				},

@@ -210,7 +210,7 @@ def mark_payment_received(payment_name, received_date=None):
 	frappe.has_permission("Payment", "write", throw=True)
 	doc = frappe.get_doc("Payment", payment_name)
 	if doc.status == "Recebido":
-		frappe.throw(_("Pagamento já está recebido."))
+		frappe.throw(_("Recebimento já está confirmado."))
 	doc.status = "Recebido"
 	doc.received_amount = doc.amount
 	doc.received_date = received_date or today()
