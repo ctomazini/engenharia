@@ -546,15 +546,15 @@
   {
    "fieldname": "sec_installments_hub",
    "fieldtype": "Section Break",
-   "label": "Parcelas",
+   "label": "Parcelas do Contrato",
    "permlevel": 1,
    "idx": 61
   },
   {
    "fieldname": "installments_panel",
    "fieldtype": "HTML",
-   "label": "Parcelas",
-   "options": "<p class=\"text-muted\">Carregando parcelas...</p>",
+   "label": "Parcelas do Contrato",
+   "options": "<p class=\"text-muted\">Carregando parcelas do contrato...</p>",
    "permlevel": 1,
    "idx": 62
   },
