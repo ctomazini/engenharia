@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import frappe
 from frappe import _
+from frappe.query_builder.functions import Count, Sum
 from frappe.utils import flt, getdate
 
 from engenharia.work_costs import FUNDED_BY_OFFICE
@@ -52,6 +53,128 @@ def build_consolidated_costs_summary(project: str, office_only: bool = False) ->
 	if office_only:
 		items = [row for row in items if _is_office_cash_flow_item(row)]
 	return _build_summary(items)
+
+
+def build_consolidated_costs_summary_batch(
+	project_names: list[str],
+	office_only: bool = False,
+) -> dict[str, dict]:
+	"""Totais consolidados por obra em batch (3 queries em vez de 3×N)."""
+	if not project_names:
+		return {}
+
+	project_names = list(dict.fromkeys(project_names))
+	result = {name: _empty_cost_summary() for name in project_names}
+
+	_add_batch_work_cost_totals(result, project_names, office_only)
+	_add_batch_reimbursable_totals(result, project_names)
+	_add_batch_subcontract_totals(result, project_names, office_only)
+
+	return result
+
+
+def _empty_cost_summary() -> dict:
+	return {
+		"total_amount": 0.0,
+		"total_paid": 0.0,
+		"total_outstanding": 0.0,
+		"by_source": {},
+		"by_category": {},
+		"by_funded_by": {},
+	}
+
+
+def _merge_batch_source_row(bucket: dict, source_label: str, row: dict) -> None:
+	amount = flt(row.total_amount)
+	paid = flt(row.total_paid)
+	outstanding = flt(row.total_outstanding)
+	count = int(row.count or 0)
+
+	bucket["total_amount"] += amount
+	bucket["total_paid"] += paid
+	bucket["total_outstanding"] += outstanding
+
+	if not (amount or paid or outstanding or count):
+		return
+
+	source_bucket = bucket["by_source"].setdefault(
+		source_label,
+		{"amount": 0, "paid": 0, "outstanding": 0, "count": 0},
+	)
+	source_bucket["amount"] += amount
+	source_bucket["paid"] += paid
+	source_bucket["outstanding"] += outstanding
+	source_bucket["count"] += count
+
+
+def _add_batch_work_cost_totals(result: dict, project_names: list[str], office_only: bool) -> None:
+	wc = frappe.qb.DocType("Work Cost")
+	query = (
+		frappe.qb.from_(wc)
+		.select(
+			wc.project,
+			Sum(wc.amount).as_("total_amount"),
+			Sum(wc.total_paid).as_("total_paid"),
+			Sum(wc.outstanding).as_("total_outstanding"),
+			Count(wc.name).as_("count"),
+		)
+		.where(wc.project.isin(project_names))
+		.where(wc.status != "Cancelled")
+		.groupby(wc.project)
+	)
+	if office_only:
+		query = query.where(wc.funded_by == FUNDED_BY_OFFICE)
+
+	source_label = SOURCE_META[SOURCE_WORK_COST]["label"]
+	for row in query.run(as_dict=True):
+		if row.project in result:
+			_merge_batch_source_row(result[row.project], source_label, row)
+
+
+def _add_batch_reimbursable_totals(result: dict, project_names: list[str]) -> None:
+	re = frappe.qb.DocType("Reimbursable Expense")
+	rows = (
+		frappe.qb.from_(re)
+		.select(
+			re.project,
+			Sum(re.amount).as_("total_amount"),
+			Sum(re.total_office_paid).as_("total_paid"),
+			Sum(re.office_outstanding).as_("total_outstanding"),
+			Count(re.name).as_("count"),
+		)
+		.where(re.project.isin(project_names))
+		.where(re.status != "Cancelado")
+		.groupby(re.project)
+	).run(as_dict=True)
+
+	source_label = SOURCE_META[SOURCE_REIMBURSABLE]["label"]
+	for row in rows:
+		if row.project in result:
+			_merge_batch_source_row(result[row.project], source_label, row)
+
+
+def _add_batch_subcontract_totals(result: dict, project_names: list[str], office_only: bool) -> None:
+	sc = frappe.qb.DocType("Subcontract")
+	query = (
+		frappe.qb.from_(sc)
+		.select(
+			sc.project,
+			Sum(sc.total_value).as_("total_amount"),
+			Sum(sc.total_paid).as_("total_paid"),
+			Sum(sc.outstanding).as_("total_outstanding"),
+			Count(sc.name).as_("count"),
+		)
+		.where(sc.project.isin(project_names))
+		.where(sc.status != "Cancelled")
+		.groupby(sc.project)
+	)
+	if office_only:
+		query = query.where(sc.funded_by == FUNDED_BY_OFFICE)
+
+	source_label = SOURCE_META[SOURCE_SUBCONTRACT]["label"]
+	for row in query.run(as_dict=True):
+		if row.project in result:
+			_merge_batch_source_row(result[row.project], source_label, row)
 
 
 def _is_office_cash_flow_item(row: dict) -> bool:

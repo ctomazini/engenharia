@@ -2,7 +2,7 @@ import frappe
 from frappe import _
 from frappe.utils import flt
 
-from engenharia.engenharia.api.costs import build_consolidated_costs_summary
+from engenharia.engenharia.api.costs import build_consolidated_costs_summary_batch
 from engenharia.report_visuals import REPORT_COLORS, bar_chart, currency_summary, int_summary, percent_summary
 
 
@@ -70,7 +70,7 @@ def _get_data(filters):
 		"Construction Project",
 		filters=project_filters,
 		fields=["name", "title", "status", "spec_project_total"],
-		limit=500,
+		limit_page_length=10000,
 	)
 
 	data = []
@@ -80,9 +80,12 @@ def _get_data(filters):
 	used_pcts: list[float] = []
 	over_budget_count = 0
 
+	project_names = [project.name for project in projects]
+	all_summaries = build_consolidated_costs_summary_batch(project_names)
+
 	for project in projects:
 		budget = flt(project.spec_project_total)
-		summary = build_consolidated_costs_summary(project.name)
+		summary = all_summaries.get(project.name, frappe._dict())
 		committed = flt(summary.get("total_amount"))
 		paid = flt(summary.get("total_paid"))
 		outstanding = flt(summary.get("total_outstanding"))
