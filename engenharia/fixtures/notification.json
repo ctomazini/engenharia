@@ -49,7 +49,7 @@
   "document_type": "Permit",
   "enabled": 1,
   "event": "Days Before",
-  "message": "<p>O protocolo {{ doc.permit_type }} ({{ doc.name }}) da obra {{ doc.project }} expira em {{ frappe.utils.formatdate(doc.expiry_date) }}.</p>",
+  "message": "<p>O alvará ou protocolo {{ doc.permit_type }} ({{ doc.name }}) da obra {{ doc.project }} expira em {{ frappe.utils.formatdate(doc.expiry_date) }}.</p>",
   "message_type": "Markdown",
   "module": "Engenharia",
   "name": "Engenharia - Protocolo expirando",
@@ -58,7 +58,7 @@
     "receiver_by_role": "Engenharia Manager"
    }
   ],
-  "subject": "Protocolo expira em 30 dias: {{ doc.permit_type }}"
+  "subject": "Alvará ou protocolo expira em 30 dias: {{ doc.permit_type }}"
  },
  {
   "channel": "System Notification",

@@ -235,12 +235,12 @@ def notify_overdue_payments():
 
 	count = 0
 	for row in payments:
-		subject = _("Pagamento vencido: {0}").format(row.name)
+		subject = _("Recebimento vencido: {0}").format(row.name)
 		if _notification_already_sent("Payment", row.name, subject):
 			continue
 		origin = row.contract or row.project or _("N/A")
 		message = _(
-			"O pagamento {0} ({1}) venceu em {2}. Origem: {3}."
+			"O recebimento {0} ({1}) venceu em {2}. Origem: {3}."
 		).format(
 			row.name,
 			row.title or row.name,
