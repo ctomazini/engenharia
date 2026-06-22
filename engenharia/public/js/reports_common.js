@@ -159,7 +159,6 @@ engenharia.reports.ENG_REPORTS = [
 	"work_cost_by_category",
 	"project_margin",
 	"cash_flow",
-	"projects_by_status",
 ];
 
 function engenharia_patch_query_report() {

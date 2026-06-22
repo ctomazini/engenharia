@@ -36,7 +36,6 @@ fixtures = [
 			"Engenharia - Compras avulsas por categoria (Resumo)",
 			"Engenharia - Margem por Obra (Resumo)",
 			"Engenharia - Margem por Obra (Paisagem)",
-			"Engenharia - Obras por Status (Resumo)",
 		]]],
 	},
 	{

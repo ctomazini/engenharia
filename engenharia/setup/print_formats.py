@@ -17,7 +17,6 @@ PRINT_FORMAT_NAMES = (
 	"Engenharia - Compras avulsas por categoria (Resumo)",
 	"Engenharia - Margem por Obra (Resumo)",
 	"Engenharia - Margem por Obra (Paisagem)",
-	"Engenharia - Obras por Status (Resumo)",
 )
 
 _DOCTYPE_PRINT_FORMATS = (
@@ -101,11 +100,6 @@ _REPORT_PRINT_FORMATS = (
 		"report": "project_margin",
 		"parts": ("reports/_header.html", "reports/_table_all.html", "reports/_footer.html"),
 		"landscape": True,
-	},
-	{
-		"name": "Engenharia - Obras por Status (Resumo)",
-		"report": "projects_by_status",
-		"parts": ("reports/_header.html", "reports/_table_all.html", "reports/_footer.html"),
 	},
 )
 

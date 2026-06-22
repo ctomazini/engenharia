@@ -36,7 +36,6 @@ SIDEBAR_LINK_ORDER = (
 	("Compras Avulsas por Categoria", "work_cost_by_category", "Report"),
 	("Fluxo de Caixa", "cash_flow", "Report"),
 	("Margem por Obra", "project_margin", "Report"),
-	("Obras por Status", "projects_by_status", "Report"),
 	# Cadastros
 	("Clientes", "Customer", "DocType"),
 	("Fornecedores", "Supplier", "DocType"),
