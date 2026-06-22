@@ -3,7 +3,7 @@
 Documento permanente de acompanhamento do projeto de modernização de experiência do usuário.
 
 **Criado:** 2026-06-05  
-**Última atualização:** 2026-06-05 (Etapa 05 concluída)  
+**Última atualização:** 2026-06-05 (Backlog pós-Etapa 05 organizado)  
 **App:** `engenharia` (Frappe v16)
 
 ---
@@ -561,9 +561,141 @@ Nunca:
 | `bf2ec3a` | 010/013 | `[UX-STEP-05] Refactor: AUD-010 AUD-013 report_name PT` |
 | `a38e418` | 014 | `[UX-STEP-05] Refactor: AUD-014 notification texts` |
 
-**Pendências residuais:** AUD-011 (permissões), AUD-012 (label campo Technical Item), AUD-015 (manual), AUD-016 (Kanban).
+**Pendências residuais:** ver [Backlog pós-Etapa 05](#backlog-pós-etapa-05) (verificado em `engenharia.local`).
 
-**Próximas etapas:** manual do usuário (AUD-015 / DIV-009); revisão permissões reports (DIV-010).
+**Próximas etapas:** **Etapa 06** — permissões reports (AUD-011) + manual (AUD-015); cosméticos AUD-012/016.
+
+---
+
+## Backlog pós-Etapa 05
+
+**Verificado:** 2026-06-05 · branch `ux/step-05-yellow-risk-adjustments` · pós-`migrate`
+
+Fila priorizada para próximas etapas. Nenhum item abaixo bloqueia merge da Etapa 05.
+
+### Resumo executivo
+
+| Prioridade | ID | Item | Risco | Etapa sugerida | Esforço |
+|:----------:|:---|:-----|:------|:---------------|:-------|
+| **P0** | AUD-001 | Checklist `bench migrate` em deploy | Ops | Contínuo | — |
+| **P1** | AUD-011 | Reports financeiros × `Engenharia User` | Médio / funcional | **06** | Médio |
+| **P2** | AUD-015 | `manual_usuario.md` desalinhado do glossário | Baixo / docs | **06** | Médio |
+| **P2** | AUD-012 | Label campo link **Item Técnico** em `Project Item` | Baixo / cosmético | **06** | Baixo |
+| **P2** | AUD-016 | Kanban **Engenharia Obras** → **Tarefas da Obra** (UI) | Baixo / cosmético | **06** | Baixo |
+| **P3** | AUD-017 | Print Format **Recibo de Pagamento** → Recebimento | Baixo / cosmético | **06+** | Baixo |
+| **P3** | — | Comentários/log internos `financial.py` (“pagamento”) | Nenhum | Opcional | Trivial |
+
+---
+
+### AUD-001 — Deploy: migrate obrigatório
+
+| | |
+|---|---|
+| **Problema** | Sidebar, traduções, `report_name`, fixtures de notificação só sincronizam após `bench migrate` |
+| **Verificação** | Confirmado — drift 40→39 links pré-migrate na auditoria |
+| **Ação** | Incluir `bench migrate` no checklist de deploy pós-merge Etapas 02–05 |
+| **Rollback** | N/A (processo) |
+
+---
+
+### AUD-011 — Permissões: reports financeiros × Engenharia User
+
+| | |
+|---|---|
+| **DIV** | DIV-010 / UX-DT-003 |
+| **Causa** | `report/*.json` concede role `Engenharia User`; `permissions.py` nega read em `Payment` e `Work Cost` (exc. `Subcontract` read-only) |
+| **Arquivos** | `setup/permissions.py`, 7× `report/*.json`, `tests/test_permissions.py` |
+
+**Comportamento verificado (`run` como Engenharia User):**
+
+| Report | `ref_doctype` | Resultado |
+|--------|---------------|-----------|
+| `cash_flow` | Payment | **PermissionError** (Recebimento) |
+| `work_cost_by_project` | Work Cost | **PermissionError** (Compra ou NF Avulsa) |
+| `work_cost_by_category` | Work Cost | **PermissionError** |
+| `project_margin` | Construction Project | **Executa** — expõe margem financeira |
+| `budget_vs_actual` | Construction Project | **Executa** — expõe orçado vs realizado |
+| `consolidated_cost` | Construction Project | Exige filtro obra; OK operacional |
+| `projects_by_status` | Construction Project | OK — operacional |
+
+**Opções de resolução (decisão de produto):**
+
+1. **Restritiva:** remover `Engenharia User` dos 5 reports financeiros no JSON (menu + erro sumem).
+2. **Permissiva:** conceder read-only em `Payment`/`Work Cost` só para report (quebra modelo “User não vê financeiro”).
+3. **Híbrida:** manter role no report mas filtrar dados no script + checagem explícita (mais trabalho).
+
+**Recomendação:** opção **1** para os 3 bloqueados + revisar `project_margin` e `budget_vs_actual` (vazamento de dados). Requer teste de permissão novo.
+
+**Rollback:** revert commit de `permissions.py` / reports.
+
+---
+
+### AUD-012 — Project Item: label do link Technical Item
+
+| | |
+|---|---|
+| **Estado atual** | `project_item.json` — campo `technical_item`, label **Item Técnico** |
+| **Glossário** | Cadastro = **Catálogo Técnico**; linha da obra = **Item do Orçamento** |
+| **Proposta** | Label **Item do Catálogo Técnico** ou **Catálogo Técnico** (só JSON, sem schema) |
+| **Arquivos** | `engenharia/doctype/project_item/project_item.json` |
+| **Rollback** | Revert label |
+
+---
+
+### AUD-015 — Manual do usuário
+
+| | |
+|---|---|
+| **Arquivo** | `engenharia/docs/manual_usuario.md` |
+| **DIV** | DIV-009 |
+
+**Divergências confirmadas (amostra):**
+
+| Seção | Atual | Oficial |
+|-------|-------|---------|
+| §4 título | Projetos de Obra | **Obras** |
+| §4 navegação | Engenharia → **Projetos** | Engenharia → **Obras** |
+| §3 / §4 | **Itens técnicos** / **Itens do Projeto** | **Catálogo Técnico** / **Itens do Orçamento** |
+| §5 contratos | gera **Pagamento** / tabela **Pagamentos** | **Recebimento** / **Recebimentos** |
+| §2 painel | agenda cita **protocolos** (sem alvará) | **Alvarás e Protocolos** |
+| §9 | mistura **Protocolo** como conceito | alinhar ao glossário §9 |
+
+**Nota:** perfil User já documentado corretamente como sem acesso financeiro.
+
+**Rollback:** revert markdown.
+
+---
+
+### AUD-016 — Kanban board label
+
+| | |
+|---|---|
+| **Estado atual** | Fixture `kanban_board.json` — `name` / `kanban_board_name`: **Engenharia Obras** |
+| **Glossário** | **Tarefas da Obra** |
+| **Restrição** | `name` do fixture é identificador — alterar exige patch/migrate idempotente ou só `kanban_board_name` (label visível) |
+| **Arquivos** | `fixtures/kanban_board.json`, `hooks.py`, `tests/test_task.py` |
+| **Rollback** | Revert fixture + test |
+
+---
+
+### AUD-017 — Print Format Recebimento (novo débito)
+
+| | |
+|---|---|
+| **Estado atual** | `Engenharia - Recibo de Pagamento` — título HTML “Recibo de Pagamento” |
+| **Glossário** | Payment = **Recebimento** |
+| **Arquivos** | `fixtures/print_format.json`, `setup/print_formats.py`, `payment.json` `default_print_format`, `print_formats/recibo.html`, `tests/test_print_formats.py` |
+| **Risco** | Médio se renomear `name` do Print Format (quebra default); baixo se só alterar título HTML |
+| **Etapa** | 06+ (após decisão sobre renomear fixture) |
+
+---
+
+### Etapa 06 proposta (rascunho)
+
+1. **AUD-011** — decisão produto + ajuste reports/permissões + testes
+2. **AUD-015** — revisão completa `manual_usuario.md`
+3. **AUD-012** + **AUD-016** — labels cosméticos (1 commit cada)
+4. **AUD-017** — opcional, se aprovado renomear título do recibo
 
 ---
 
