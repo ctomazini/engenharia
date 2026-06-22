@@ -243,8 +243,8 @@ engenharia.dashboard.utils = {
 		const map = {
 			deadline: __("Prazo"),
 			task: __("Tarefa"),
-			payment: __("Pagamento"),
-			permit: __("Protocolo"),
+			payment: __("Recebimento"),
+			permit: __("Alvará e Protocolo"),
 		};
 		return map[type] || __("Compromisso");
 	},
