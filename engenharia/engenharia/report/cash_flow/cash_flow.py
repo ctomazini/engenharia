@@ -50,7 +50,7 @@ def _get_data(filters):
 		filters={"status": "Recebido", "received_date": ["between", [start, end]]},
 		fields=["name", "description", "received_date", "received_amount", "amount"],
 		order_by="received_date asc",
-		limit=0,
+		limit_page_length=10000,
 	):
 		transactions.append(
 			{
@@ -62,19 +62,27 @@ def _get_data(filters):
 			}
 		)
 
-	for row in frappe.get_all(
+	work_cost_payments = frappe.get_all(
 		"Work Cost Payment",
 		filters={"payment_date": ["between", [start, end]]},
 		fields=["parent", "payment_date", "amount"],
 		order_by="payment_date asc",
-		limit=0,
-	):
-		parent = frappe.db.get_value(
+		limit_page_length=10000,
+	)
+	wc_parent_names = list({row.parent for row in work_cost_payments if row.parent})
+	if wc_parent_names:
+		wc_parents = frappe.get_all(
 			"Work Cost",
-			row.parent,
-			["name", "title", "description", "status", "funded_by"],
-			as_dict=True,
+			filters={"name": ["in", wc_parent_names]},
+			fields=["name", "title", "description", "status", "funded_by"],
+			limit_page_length=0,
 		)
+		wc_lookup = {p.name: p for p in wc_parents}
+	else:
+		wc_lookup = {}
+
+	for row in work_cost_payments:
+		parent = wc_lookup.get(row.parent)
 		if not parent or parent.status == "Cancelled" or parent.funded_by != FUNDED_BY_OFFICE:
 			continue
 		transactions.append(
@@ -87,19 +95,27 @@ def _get_data(filters):
 			}
 		)
 
-	for row in frappe.get_all(
+	reimbursable_payments = frappe.get_all(
 		"Reimbursable Expense Payment",
 		filters={"payment_date": ["between", [start, end]]},
 		fields=["parent", "payment_date", "amount"],
 		order_by="payment_date asc",
-		limit=0,
-	):
-		parent = frappe.db.get_value(
+		limit_page_length=10000,
+	)
+	re_parent_names = list({row.parent for row in reimbursable_payments if row.parent})
+	if re_parent_names:
+		re_parents = frappe.get_all(
 			"Reimbursable Expense",
-			row.parent,
-			["name", "title", "description", "status"],
-			as_dict=True,
+			filters={"name": ["in", re_parent_names]},
+			fields=["name", "title", "description", "status"],
+			limit_page_length=0,
 		)
+		re_lookup = {p.name: p for p in re_parents}
+	else:
+		re_lookup = {}
+
+	for row in reimbursable_payments:
+		parent = re_lookup.get(row.parent)
 		if not parent or parent.status == "Cancelado":
 			continue
 		transactions.append(
@@ -120,7 +136,7 @@ def _get_data(filters):
 		},
 		fields=["name", "title", "description", "payment_date", "amount"],
 		order_by="payment_date asc",
-		limit=0,
+		limit_page_length=10000,
 	):
 		transactions.append(
 			{
@@ -132,19 +148,27 @@ def _get_data(filters):
 			}
 		)
 
-	for row in frappe.get_all(
+	subcontract_payments = frappe.get_all(
 		"Subcontract Payment",
 		filters={"payment_date": ["between", [start, end]]},
 		fields=["parent", "payment_date", "amount"],
 		order_by="payment_date asc",
-		limit=0,
-	):
-		parent = frappe.db.get_value(
+		limit_page_length=10000,
+	)
+	sc_parent_names = list({row.parent for row in subcontract_payments if row.parent})
+	if sc_parent_names:
+		sc_parents = frappe.get_all(
 			"Subcontract",
-			row.parent,
-			["name", "title", "description", "status", "funded_by"],
-			as_dict=True,
+			filters={"name": ["in", sc_parent_names]},
+			fields=["name", "title", "description", "status", "funded_by"],
+			limit_page_length=0,
 		)
+		sc_lookup = {p.name: p for p in sc_parents}
+	else:
+		sc_lookup = {}
+
+	for row in subcontract_payments:
+		parent = sc_lookup.get(row.parent)
 		if not parent or parent.status == "Cancelled" or parent.funded_by != FUNDED_BY_OFFICE:
 			continue
 		transactions.append(
