@@ -170,6 +170,7 @@ after_migrate = [
 	"engenharia.setup.kanban.ensure_engenharia_kanban_board",
 	"engenharia.setup.print_formats.ensure_engenharia_print_formats",
 	"engenharia.setup.workspace.ensure_engenharia_workspace",
+	"engenharia.patches.sync_report_settings.execute",
 ]
 
 # Uninstallation
