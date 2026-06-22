@@ -3,8 +3,12 @@ import os
 import frappe
 
 # Ordem canônica da sidebar Engenharia (espelha workspace_sidebar/engenharia.json).
-# Seções: Dia a Dia | Obras | Orçamento | Receitas | Despesas | Relatórios | Cadastros | Administração
+# Seções: Comece Aqui | Dia a Dia | Obras | Orçamento | Receitas | Despesas | Relatórios | Cadastros | Administração
 SIDEBAR_LINK_ORDER = (
+	# Comece Aqui
+	("Painel — Guia inicial", "eng-dashboard", "Page"),
+	("Clientes", "Customer", "DocType"),
+	("Nova Obra", "Construction Project", "DocType"),
 	# Dia a Dia
 	("Painel", "eng-dashboard", "Page"),
 	("Prazos", "Deadline", "DocType"),
@@ -57,6 +61,7 @@ SIDEBAR_LINK_ORDER = (
 SIDEBAR_SECTIONS = (
 	# Frappe v16: Section Break com filhos exige collapsible=1, senão toggle() quebra
 	# ao fechar a sidebar (evento sidebar-expand) e o scroll do desk trava.
+	{"label": "Comece Aqui", "collapsible": 1, "keep_closed": 0},
 	{"label": "Dia a Dia", "collapsible": 1, "keep_closed": 0},
 	{"label": "Obras", "collapsible": 1, "keep_closed": 0},
 	{"label": "Orçamento", "collapsible": 1, "keep_closed": 1},
