@@ -51,7 +51,7 @@ def _protocolos_tile(permits_hoje, permits_amanha, hoje, tomorrow):
 		total,
 		tone,
 		"clipboard-check",
-		_("Protocolos"),
+		_("Alvarás e Protocolos"),
 		{"doctype": "Permit", "filters": filters},
 		meta=meta,
 		pulse=True,
