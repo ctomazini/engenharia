@@ -31,7 +31,6 @@ SIDEBAR_LINK_ORDER = (
 	("Despesas do Escritório", "Office Expense", "DocType"),
 	("Custos Realizados", "consolidated_cost", "Report"),
 	# Relatórios
-	("Visão de Custos Realizados", "consolidated_cost", "Report"),
 	("Orçado vs Realizado", "budget_vs_actual", "Report"),
 	("Compras avulsas por obra", "work_cost_by_project", "Report"),
 	("Compras avulsas por categoria", "work_cost_by_category", "Report"),
