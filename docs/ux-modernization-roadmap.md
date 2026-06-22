@@ -3,7 +3,7 @@
 Documento permanente de acompanhamento do projeto de modernização de experiência do usuário.
 
 **Criado:** 2026-06-05  
-**Última atualização:** 2026-06-05 (Etapa 07 — organização de formulários)  
+**Última atualização:** 2026-06-05 (Etapa 08 — onboarding)  
 **App:** `engenharia` (Frappe v16)
 
 ---
@@ -614,6 +614,58 @@ Nunca:
 | `093e375` | Reimbursable Expense |
 
 **Fora de escopo (backlog UX reavaliação):** hub banner duplicado (P0-01), CTA Receber no hub (P1-04), status Select em PT (exige migração de dados), print format AUD-017.
+
+---
+
+### Etapa 08 — Onboarding e experiência inicial
+
+**Status:** Concluída
+
+**Data:** 2026-06-05
+
+**Branch:** `ux/step-08-onboarding`
+
+**Objetivo:** Melhorar onboarding reutilizando componentes existentes (empty states, budget banner, summary bar, workspace/sidebar) — sem novos frameworks nem endpoints.
+
+**Auditoria prévia (componentes reutilizados):**
+
+| Componente existente | Reuso |
+|---------------------|-------|
+| `utils.render_empty` / `.eng-dash-empty-state` | Jornada Inicial no painel |
+| `quick_actions.js` chips + `frappe.model.can_create` | Ações simplificadas por contexto |
+| `kpis.active_projects` (payload existente) | Gatilho onboarding sem backend novo |
+| `.eng-hub-budget-banner--info` | Checklist da Obra no hub |
+| `eng_hub_nav_new_doc` / `get_project_counts` | CTAs do checklist |
+| `Workspace` + `Workspace Sidebar` fixtures | Seção Comece Aqui |
+
+**Implementado:**
+
+| Entrega | Onde | Comportamento |
+|---------|------|---------------|
+| **Jornada Inicial** | Dashboard `operational.js` | Quando `active_projects === 0`: 3 passos (Cliente → Obra → checklist na obra) |
+| **Quick Actions simplificadas** | `quick_actions.js` | Onboarding: só Cliente, Obra, Prazo, Tarefa; hint contextual |
+| **Mensagem Engenharia User** | `eng_dashboard.js` | Zona financeira explica perfil Manager vs User |
+| **Workspace Comece Aqui** | `workspace/engenharia.json` | Card + atalhos Clientes/Painel/Obras; header no grid |
+| **Sidebar Comece Aqui** | `sidebar.py` + `workspace_sidebar` | +3 links (42 total); seção aberta por padrão |
+| **Checklist da Obra** | `hub.js` | Exibe enquanto faltam etapas/itens/contrato; CTAs `+` via nav existente |
+
+**Validação:**
+
+| Teste | Resultado |
+|-------|-----------|
+| `run-tests --app engenharia` | **321 OK** |
+| `test_sidebar_json` | **42/42 OK** |
+| `bench migrate` | OK |
+
+**Commits:**
+
+| Hash | Escopo |
+|------|--------|
+| `3b4fac9` | Dashboard (jornada + quick actions + hint User) |
+| `e2f1075` | Workspace + sidebar Comece Aqui |
+| `6f83a37` | Checklist da Obra (hub) |
+
+**Pendências (não escopo Etapa 08):** P0-01 banner duplicado hub; P1-02 pílulas vazias; AUD-011 permissões reports.
 
 ---
 
