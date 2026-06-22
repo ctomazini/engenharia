@@ -80,7 +80,7 @@
   {
    "fieldname": "sec_values",
    "fieldtype": "Section Break",
-   "label": "Valores"
+   "label": "Valores e Condições"
   },
   {
    "fieldname": "base_value",
@@ -94,7 +94,7 @@
    "fieldtype": "Currency",
    "label": "Valor Atual",
    "read_only": 1,
-   "description": "Valor atual considerando aditivos. Calculado automaticamente."
+   "description": "Valor atual considerando aditivos. Calculado automaticamente — não edite diretamente; use a tabela de Aditivos."
   },
   {
    "fieldname": "col_break_2",
@@ -123,19 +123,19 @@
    "fieldname": "daily_interest_pct",
    "fieldtype": "Float",
    "label": "Juros Diários %",
-   "description": "Juros diários aplicados após o vencimento."
+   "description": "Juros diários após vencimento. Use este campo ou Juros Mensais — não é necessário preencher ambos."
   },
   {
    "fieldname": "monthly_interest_pct",
    "fieldtype": "Percent",
    "label": "Juros Mensais (%)",
-   "description": "Juros mensais por inadimplência (ex: 1%)"
+   "description": "Juros mensais por inadimplência (ex.: 1%). Use este campo ou Juros Diários — não é necessário preencher ambos."
   },
   {
    "fieldname": "installment_count",
    "fieldtype": "Int",
    "label": "Número de Parcelas",
-   "description": "Quantidade de parcelas planejadas."
+   "description": "Quantidade de parcelas planejadas. Depois clique em Gerar Parcelas e salve o contrato para criar os Recebimentos."
   },
   {
    "fieldname": "first_installment_date",
@@ -158,14 +158,14 @@
   {
    "fieldname": "sec_installments",
    "fieldtype": "Section Break",
-   "label": "Parcelas"
+   "label": "Parcelas do Contrato"
   },
   {
    "fieldname": "installments",
    "fieldtype": "Table",
-   "label": "Parcelas",
+   "label": "Parcelas do Contrato",
    "options": "Engineering Contract Installment",
-   "description": "Parcelas do contrato. Ao salvar, o sistema gera ou atualiza os pagamentos correspondentes."
+   "description": "Plano de parcelas. Ao salvar, o sistema sincroniza os Recebimentos automaticamente."
   },
   {
    "fieldname": "sec_amendments",

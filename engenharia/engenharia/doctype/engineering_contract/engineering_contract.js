@@ -3,6 +3,22 @@ frappe.ui.form.on("Engineering Contract", {
 		sum_installments(frm);
 
 		if (!frm.is_new()) {
+			frm.set_intro(
+				__(
+					"Fluxo: valores e parcelas → Gerar Parcelas → Salvar (sincroniza Recebimentos). Aditivos: preencha a tabela e use Aplicar Aditivo."
+				),
+				"blue"
+			);
+		} else {
+			frm.set_intro(
+				__(
+					"Preencha a obra e os valores, defina as parcelas, clique em Gerar Parcelas e salve para criar os Recebimentos."
+				),
+				"blue"
+			);
+		}
+
+		if (!frm.is_new()) {
 			frm.add_custom_button(__("Re-sincronizar Recebimentos"), () => {
 				frappe.confirm(
 					__(
