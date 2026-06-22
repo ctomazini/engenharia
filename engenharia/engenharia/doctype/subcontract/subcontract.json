@@ -163,7 +163,7 @@
   {
    "fieldname": "sec_payments",
    "fieldtype": "Section Break",
-   "label": "Pagamentos"
+   "label": "Pagamentos Efetuados"
   },
   {
    "fieldname": "payments",
