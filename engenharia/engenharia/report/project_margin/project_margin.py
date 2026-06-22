@@ -73,7 +73,7 @@ def _get_data(filters):
 		"Engineering Contract",
 		filters={"status": ["in", ["Vigente", "Quitado"]]},
 		fields=["project", "current_value"],
-		limit=0,
+		limit_page_length=10000,
 	):
 		contract_by_project[row.project] = contract_by_project.get(row.project, 0) + flt(row.current_value)
 
@@ -82,7 +82,7 @@ def _get_data(filters):
 		"Payment",
 		filters={"status": "Recebido"},
 		fields=["project", "received_amount", "amount"],
-		limit=0,
+		limit_page_length=10000,
 	):
 		if not row.project:
 			continue
@@ -96,7 +96,7 @@ def _get_data(filters):
 		"Work Cost",
 		filters={"status": ["!=", "Cancelled"]},
 		fields=["project", "total_paid", "funded_by"],
-		limit=0,
+		limit_page_length=10000,
 	):
 		if not row.project:
 			continue
@@ -115,7 +115,7 @@ def _get_data(filters):
 		"Reimbursable Expense",
 		filters={"status": ["!=", "Cancelado"]},
 		fields=["project", "total_office_paid"],
-		limit=0,
+		limit_page_length=10000,
 	):
 		reimbursable_by_project[row.project] = reimbursable_by_project.get(row.project, 0) + flt(
 			row.total_office_paid
@@ -123,7 +123,7 @@ def _get_data(filters):
 
 	project_titles = {
 		p.name: p.title
-		for p in frappe.get_all("Construction Project", fields=["name", "title"], limit=0)
+		for p in frappe.get_all("Construction Project", fields=["name", "title"], limit_page_length=10000)
 	}
 	projects = (
 		set(contract_by_project)

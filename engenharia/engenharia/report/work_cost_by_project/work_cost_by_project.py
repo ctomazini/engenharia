@@ -36,7 +36,7 @@ def _get_data(filters):
 		"Work Cost",
 		filters=query_filters,
 		fields=["project", "amount"],
-		limit=0,
+		limit_page_length=10000,
 	)
 	agg = {}
 	for row in rows:
@@ -46,7 +46,7 @@ def _get_data(filters):
 
 	project_titles = {
 		p.name: p.title
-		for p in frappe.get_all("Construction Project", fields=["name", "title"], limit=0)
+		for p in frappe.get_all("Construction Project", fields=["name", "title"], limit_page_length=10000)
 	}
 	total = sum(values["total_cost"] for values in agg.values())
 	data = []
