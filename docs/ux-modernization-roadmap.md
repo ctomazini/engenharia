@@ -374,10 +374,9 @@ Nunca:
 
 | Hash | Mensagem |
 |------|----------|
-| *(ver git log na branch)* | `[UX-STEP-01] Docs: add ux modernization roadmap` |
-| *(ver git log na branch)* | `[UX-STEP-02] Fix: synchronize workspace_sidebar.json with sidebar.py` |
-| *(ver git log na branch)* | `[UX-STEP-02] Test: add sidebar link order parity test` |
-| *(ver git log na branch)* | `[UX-STEP-02] Docs: update modernization roadmap` |
+| `b3568f3` | `[UX-STEP-01] Docs: add ux modernization roadmap` (+ registro Etapa 02) |
+| `803a932` | `[UX-STEP-02] Fix: synchronize workspace_sidebar.json with sidebar.py` |
+| `3c6466f` | `[UX-STEP-02] Test: add sidebar link order parity test` |
 
 ---
 
