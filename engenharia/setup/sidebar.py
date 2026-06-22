@@ -32,8 +32,8 @@ SIDEBAR_LINK_ORDER = (
 	("Custos Realizados", "consolidated_cost", "Report"),
 	# Relatórios
 	("Orçado vs Realizado", "budget_vs_actual", "Report"),
-	("Compras avulsas por obra", "work_cost_by_project", "Report"),
-	("Compras avulsas por categoria", "work_cost_by_category", "Report"),
+	("Compras Avulsas por Obra", "work_cost_by_project", "Report"),
+	("Compras Avulsas por Categoria", "work_cost_by_category", "Report"),
 	("Fluxo de Caixa", "cash_flow", "Report"),
 	("Margem por Obra", "project_margin", "Report"),
 	("Obras por Status", "projects_by_status", "Report"),

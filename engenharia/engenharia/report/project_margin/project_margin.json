@@ -17,7 +17,7 @@
  "owner": "Administrator",
  "prepared_report": 0,
  "ref_doctype": "Construction Project",
- "report_name": "project_margin",
+ "report_name": "Margem por Obra",
  "report_type": "Script Report",
  "roles": [
   {

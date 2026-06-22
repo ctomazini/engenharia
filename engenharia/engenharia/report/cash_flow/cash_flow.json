@@ -17,7 +17,7 @@
  "owner": "Administrator",
  "prepared_report": 0,
  "ref_doctype": "Payment",
- "report_name": "cash_flow",
+ "report_name": "Fluxo de Caixa",
  "report_type": "Script Report",
  "roles": [
   {
