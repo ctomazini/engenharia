@@ -675,7 +675,7 @@ Nunca:
 | `e2f1075` | Workspace Comece Aqui (grid) |
 | `6f83a37` | Checklist da Obra (hub) |
 | `2f6ab82` | Registro Etapa 08 inicial |
-| *(este commit)* | Sidebar revert, customer sync, download-only docs + roadmap |
+| `7b380a1` | Sidebar revert, customer sync, download-only docs + roadmap |
 
 **Pendências (não escopo Etapa 08):** P0-01 banner duplicado hub; P1-02 pílulas vazias; AUD-011 permissões reports; limpeza de `Project Document` / `File` legados com origem *Gerado pelo App* (dados pré-mudança).
 
