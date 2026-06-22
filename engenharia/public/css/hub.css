@@ -464,6 +464,42 @@
 	background: var(--orange-500);
 }
 
+.eng-hub-setup-checklist__list {
+	list-style: none;
+	margin: 10px 0 0;
+	padding: 0;
+	display: grid;
+	gap: 6px;
+}
+
+.eng-hub-setup-checklist__item {
+	font-size: var(--text-sm);
+	color: var(--text-color);
+}
+
+.eng-hub-setup-checklist__item--done {
+	color: var(--green-700, var(--text-muted));
+}
+
+.eng-hub-setup-checklist__btn {
+	border: 0;
+	background: transparent;
+	padding: 0;
+	font: inherit;
+	color: var(--blue-600, var(--text-color));
+	cursor: pointer;
+	text-align: left;
+}
+
+.eng-hub-setup-checklist__btn:hover {
+	text-decoration: underline;
+}
+
+.eng-hub-setup-checklist__optional {
+	color: var(--text-muted);
+	font-size: 12px;
+}
+
 .eng-hub-stacked-bar {
 	display: flex;
 	height: 8px;

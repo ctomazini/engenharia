@@ -800,6 +800,81 @@ function eng_hub_render_commissions_hub(frm, commissions) {
 	});
 }
 
+function _eng_hub_setup_incomplete(counts) {
+	const done = [
+		(counts.stages || 0) > 0,
+		(counts.items || 0) > 0,
+		(counts.contracts || 0) > 0,
+	].filter(Boolean).length;
+	return done < 3;
+}
+
+function _eng_hub_setup_checklist_html(frm, counts) {
+	if (!_eng_hub_setup_incomplete(counts)) {
+		return "";
+	}
+
+	const steps = [
+		{
+			label: __("Cadastrar etapas"),
+			doctype: "Project Stage",
+			fieldname: "project",
+			done: (counts.stages || 0) > 0,
+		},
+		{
+			label: __("Montar orçamento (itens)"),
+			doctype: "Project Item",
+			fieldname: "project",
+			done: (counts.items || 0) > 0,
+		},
+		{
+			label: __("Registrar contrato de honorários"),
+			doctype: "Engineering Contract",
+			fieldname: "project",
+			done: (counts.contracts || 0) > 0,
+		},
+		{
+			label: __("Incluir prazos"),
+			doctype: "Deadline",
+			fieldname: "project",
+			done: (counts.deadlines || 0) > 0,
+			optional: true,
+		},
+	];
+
+	const rows = steps
+		.map((step) => {
+			const mark = step.done ? "✓" : "○";
+			const optional = step.optional
+				? ` <span class="eng-hub-setup-checklist__optional">(${__("opcional")})</span>`
+				: "";
+			const cls = step.done ? " eng-hub-setup-checklist__item--done" : "";
+			if (step.done) {
+				return `<li class="eng-hub-setup-checklist__item${cls}">${mark} ${frappe.utils.escape_html(
+					step.label
+				)}${optional}</li>`;
+			}
+			return `<li class="eng-hub-setup-checklist__item${cls}">
+				<button type="button" class="eng-hub-setup-checklist__btn"
+					data-doctype="${frappe.utils.escape_html(step.doctype)}"
+					data-fieldname="${frappe.utils.escape_html(step.fieldname)}">
+					${mark} ${frappe.utils.escape_html(step.label)}${optional}
+				</button>
+			</li>`;
+		})
+		.join("");
+
+	return `<div class="eng-hub-budget-banner eng-hub-budget-banner--info eng-hub-setup-checklist">
+		<div class="eng-hub-budget-banner__head">
+			<strong>${__("Checklist da Obra")}</strong>
+			<span class="eng-hub-budget-banner__hint">${__(
+				"Configure o básico antes de operar o dia a dia"
+			)}</span>
+		</div>
+		<ul class="eng-hub-setup-checklist__list">${rows}</ul>
+	</div>`;
+}
+
 function eng_hub_render_summary_bar(frm, counts) {
 	const $w = frm.fields_dict.hub_summary_bar?.$wrapper;
 	if (!$w) return;
@@ -940,8 +1015,15 @@ function eng_hub_render_summary_bar(frm, counts) {
 		})
 		.join("");
 
-	$w.html(`<div class="eng-hub-summary-bar">${pills}</div>`);
+	const checklistHtml = _eng_hub_setup_checklist_html(frm, counts);
 
+	$w.html(`${checklistHtml}<div class="eng-hub-summary-bar">${pills}</div>`);
+
+	$w.find(".eng-hub-setup-checklist__btn").on("click", function () {
+		const doctype = $(this).attr("data-doctype");
+		const fieldname = $(this).attr("data-fieldname");
+		eng_hub_nav_new_doc(doctype, { [fieldname]: project });
+	});
 	$w.find(".eng-hub-summary-pill__link").on("click", function (e) {
 		e.preventDefault();
 		const doctype = $(this).attr("data-doctype");
