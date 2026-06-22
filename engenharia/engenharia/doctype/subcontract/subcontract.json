@@ -21,9 +21,8 @@
   "total_value",
   "total_paid",
   "outstanding",
-  "sec_status",
-  "status",
   "amendment_remarks",
+  "status",
   "sec_payments",
   "payments"
  ],
@@ -31,7 +30,7 @@
   {
    "fieldname": "sec_details",
    "fieldtype": "Section Break",
-   "label": "Detalhes"
+   "label": "Vínculos e Serviço"
   },
   {
    "fieldname": "project",
@@ -64,7 +63,7 @@
    "label": "Prestador",
    "options": "Supplier",
    "reqd": 1,
-   "description": "Fornecedor ou prestador de serviço contratado (ex.: pedreiro, eletricista)."
+   "description": "Prestador de serviço (cadastro em Fornecedores). Mesmo cadastro usado em Compras e NF Avulsas."
   },
   {
    "fieldname": "col_break_1",
@@ -114,7 +113,7 @@
   {
    "fieldname": "sec_values",
    "fieldtype": "Section Break",
-   "label": "Valores"
+   "label": "Valores e Situação"
   },
   {
    "fieldname": "total_value",
@@ -136,11 +135,18 @@
    "fieldtype": "Currency",
    "label": "Saldo a Pagar",
    "read_only": 1,
-   "description": "Quanto ainda falta pagar (Valor Total menos Total Pago). Calculado automaticamente."
+   "description": "Quanto ainda falta pagar ao prestador (Valor Total menos Total Pago). Calculado automaticamente."
+  },
+  {
+   "fieldname": "amendment_remarks",
+   "fieldtype": "Small Text",
+   "label": "Observações de Aditivo",
+   "description": "Obrigatório ao alterar o Valor Total — registre o motivo do ajuste contratual."
   },
   {
    "fieldname": "sec_status",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Status"
   },
   {
@@ -149,16 +155,10 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Status",
+   "label": "Status de Pagamento",
    "options": "Open\nPartially Paid\nPaid\nCancelled",
    "read_only": 1,
-   "description": "Atualiza sozinho: Aberta, Parcial, Paga ou Cancelada (manual)."
-  },
-  {
-   "fieldname": "amendment_remarks",
-   "fieldtype": "Small Text",
-   "label": "Observações de Aditivo",
-   "description": "Registre aqui o motivo quando alterar o Valor Total acordado."
+   "description": "Atualiza automaticamente: Aberta (Open), Parcial (Partially Paid), Paga (Paid) ou Cancelada (Cancelled)."
   },
   {
    "fieldname": "sec_payments",
