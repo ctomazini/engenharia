@@ -2702,3 +2702,37 @@
 	}
 }
 
+/* === Orçado vs Realizado + Margem por Obra === */
+.eng-dash-budget-margin-host {
+	margin-top: var(--eng-dash-gap);
+}
+
+.eng-dash-budget-section,
+.eng-dash-margin-section {
+	margin-bottom: var(--eng-dash-gap);
+}
+
+.eng-dash-kpi-grid--compact {
+	margin-top: 12px;
+	margin-bottom: 12px;
+}
+
+.eng-dash-budget-bars,
+.eng-dash-margin-bars {
+	margin-top: 8px;
+}
+
+.eng-dash-chart-row--link {
+	display: grid;
+	width: 100%;
+	border: none;
+	background: transparent;
+	padding: 0;
+	margin: 0;
+	text-align: left;
+	cursor: pointer;
+}
+
+.eng-dash-chart-row--link:hover .eng-dash-chart-label {
+	color: var(--text-color);
+}
