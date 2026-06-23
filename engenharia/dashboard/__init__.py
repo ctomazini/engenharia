@@ -4,6 +4,7 @@ from frappe.utils import add_days, cint, get_first_day, get_last_day, today
 
 from engenharia.dashboard import agenda as dashboard_agenda
 from engenharia.dashboard import attention as dashboard_attention
+from engenharia.dashboard import budget_margin as dashboard_budget_margin
 from engenharia.dashboard import commissions as dashboard_commissions
 from engenharia.dashboard import subcontracts as dashboard_subcontracts
 from engenharia.dashboard import deadlines as dashboard_deadlines
@@ -169,6 +170,8 @@ def get(
 				"total_despesas_mes": total_despesas_mes,
 				"commission_kpis": commission_kpis,
 				"pending_commissions": pending_commissions[:commissions_cap],
+				"budget_overview": dashboard_budget_margin.build_budget_overview(),
+				"margin_by_project": dashboard_budget_margin.build_margin_by_project(),
 			}
 		)
 
