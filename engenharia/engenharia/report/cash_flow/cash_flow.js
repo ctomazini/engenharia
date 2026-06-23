@@ -1,4 +1,13 @@
 frappe.query_reports["cash_flow"] = {
+	onload(report) {
+		engenharia.reports.applyReportPage(report);
+		engenharia.reports.enhanceReportSettings("cash_flow");
+	},
+
+	get_datatable_options(options) {
+		return engenharia.reports.get_datatable_options(options);
+	},
+
 	filters: [
 		{
 			fieldname: "months",

@@ -1,4 +1,13 @@
 frappe.query_reports["budget_vs_actual"] = {
+	onload(report) {
+		engenharia.reports.applyReportPage(report);
+		engenharia.reports.enhanceReportSettings("budget_vs_actual");
+	},
+
+	get_datatable_options(options) {
+		return engenharia.reports.get_datatable_options(options);
+	},
+
 	filters: [
 		{
 			fieldname: "project",

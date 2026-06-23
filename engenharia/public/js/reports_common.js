@@ -152,41 +152,6 @@ engenharia.reports.enhanceReportSettings = function (reportName) {
 	settings._eng_visual_enhanced = true;
 };
 
-engenharia.reports.ENG_REPORTS = [
-	"consolidated_cost",
-	"budget_vs_actual",
-	"work_cost_by_project",
-	"work_cost_by_category",
-	"project_margin",
-	"cash_flow",
-];
-
-function engenharia_patch_query_report() {
-	if (engenharia.reports._query_report_patched || !frappe.views?.QueryReport) {
-		return;
-	}
-	engenharia.reports._query_report_patched = true;
-
-	const proto = frappe.views.QueryReport.prototype;
-	const render_datatable = proto.render_datatable;
-	const refresh = proto.refresh;
-
-	proto.render_datatable = function () {
-		this.report_settings = this.report_settings || {};
-		if (!this.report_settings.get_datatable_options) {
-			this.report_settings.get_datatable_options = engenharia.reports.get_datatable_options;
-		}
-		render_datatable.call(this);
-	};
-
-	proto.refresh = function (...args) {
-		if (this.report_name && engenharia.reports.ENG_REPORTS.includes(this.report_name)) {
-			engenharia.reports.enhanceReportSettings(this.report_name);
-			this.page?.main?.addClass?.("eng-report-page");
-		}
-		return refresh.apply(this, args);
-	};
-}
-
-engenharia_patch_query_report();
-$(document).on("app_ready", engenharia_patch_query_report);
+engenharia.reports.applyReportPage = function (report) {
+	report.page?.main?.addClass?.("eng-report-page");
+};
