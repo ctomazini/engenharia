@@ -1,5 +1,5 @@
 frappe.query_reports["project_margin"] = {
-	onload(report) {
+	refresh(report) {
 		engenharia.reports.applyReportPage(report);
 		engenharia.reports.enhanceReportSettings("project_margin");
 	},

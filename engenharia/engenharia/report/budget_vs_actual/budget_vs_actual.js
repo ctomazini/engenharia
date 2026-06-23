@@ -1,5 +1,5 @@
 frappe.query_reports["budget_vs_actual"] = {
-	onload(report) {
+	refresh(report) {
 		engenharia.reports.applyReportPage(report);
 		engenharia.reports.enhanceReportSettings("budget_vs_actual");
 	},

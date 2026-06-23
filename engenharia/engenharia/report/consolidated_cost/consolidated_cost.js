@@ -1,5 +1,5 @@
 frappe.query_reports["consolidated_cost"] = {
-	onload(report) {
+	refresh(report) {
 		engenharia.reports.applyReportPage(report);
 		engenharia.reports.enhanceReportSettings("consolidated_cost");
 	},

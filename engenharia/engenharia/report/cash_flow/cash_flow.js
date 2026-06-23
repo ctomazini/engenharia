@@ -1,5 +1,5 @@
 frappe.query_reports["cash_flow"] = {
-	onload(report) {
+	refresh(report) {
 		engenharia.reports.applyReportPage(report);
 		engenharia.reports.enhanceReportSettings("cash_flow");
 	},

@@ -1,5 +1,5 @@
 frappe.query_reports["work_cost_by_category"] = {
-	onload(report) {
+	refresh(report) {
 		engenharia.reports.applyReportPage(report);
 		engenharia.reports.enhanceReportSettings("work_cost_by_category");
 	},
