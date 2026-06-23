@@ -57,3 +57,5 @@ eng_hub_nav.debug_breadcrumbs()
 
 - `hub.js` e `construction_project.js` usam os helpers `eng_hub_nav_*`.
 - `customer_from_project.js` reutiliza `eng_hub_nav.SATELLITE_DOCTYPES`.
+
+*Última atualização: 2026-06-23 23:24 UTC — app v1.1.0*

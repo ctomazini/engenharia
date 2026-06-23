@@ -1,8 +1,8 @@
 # CODEBASE — App Engenharia (Frappe v16)
 
-> Gerado em **2026-06-11** — inventário técnico do app greenfield EN. Frappe puro, **sem ERPNext**.
+> Gerado em **2026-06-23** — inventário técnico do app greenfield EN. Frappe puro, **sem ERPNext**.
 
-> **HEAD:** `c61dbd4 2026-06-11 11:45:03 +0000 fix(project): clarify DIC field description as municipal lot registry`
+> **HEAD:** `f708bfe 2026-06-23 22:13:17 +0000 fix(hub): espelhar layout de pills do advocacia no desktop`
 
 ---
 
@@ -11,15 +11,15 @@
 | Item | Valor |
 | --- | --- |
 | Nome | engenharia |
-| Versão | 1.0.0 (`pyproject.toml`) |
+| Versão | 1.1.0 (`pyproject.toml`) |
 | Framework | Frappe v16 |
 | Licença | MIT |
 | Site dev | engenharia.local |
-| Linhas Python | ~18867 |
-| Linhas JavaScript | ~6631 |
-| Métodos de teste | 314 (60 arquivos) |
+| Linhas Python | ~19313 |
+| Linhas JavaScript | ~7190 |
+| Métodos de teste | 320 (60 arquivos) |
 | DocTypes | 49 (`custom: 0`) |
-| Script Reports | 7 |
+| Script Reports | 6 |
 | Print Formats | 15 |
 
 **Propósito:** gestão de obras — projetos, contratos, custos (obra + escritório), subcontratos, comissões, prazos, protocolos, pagamentos, painel modular, documentos `.docx`, impressão PDF de relatórios.
@@ -28,18 +28,18 @@
 
 **Commits recentes:**
 ```text
-c61dbd4 fix(project): clarify DIC field description as municipal lot registry
-db03922 feat(settings,project): add document generation fields
-9e64ba6 docs: sync all documentation with current app state
-caec325 feat(reports): add print formats for script reports with office branding
-d66fe00 feat(dashboard): integrate office expenses and replace cost chart with bars
-066ffe7 feat: add Office Expense DocType for office operating costs
-7f4eede feat(reports): align script report visuals with hub KPI styling
-43ba466 feat(report): add Budget vs Actual script report
-f06cadf feat(hub): add budget vs realized banner and align financial KPIs
-fc8b6f6 docs: add budget vs realized costs section to user manual
-7184dc6 feat(ux): align nomenclature for realized costs vs budget planning
-bc7aeb8 refactor(sidebar): reorganize sections by budget, revenue and expenses
+f708bfe fix(hub): espelhar layout de pills do advocacia no desktop
+824b041 feat(dashboard): render budget vs actual and margin sections
+46f1ac2 feat(dashboard): add budget overview and margin by project data
+d8ef40f refactor: remove orphaned donut_chart and PROJECT_STATUS_COLORS
+d8af6e9 refactor: remove orphaned donut_chart and PROJECT_STATUS_COLORS
+8a54530 refactor: replace QueryReport.prototype patch with explicit per-report calls
+7ddb19f perf: add query limits to project_margin, work_cost_by_project, work_cost_by_category
+727bae4 refactor: remove projects_by_status report
+9e1c1e8 perf: batch cost summary in budget_vs_actual report
+aa271f9 fix: add idempotent after_migrate patch for add_total_row sync
+492f716 perf: eliminate N+1 queries and add limits in cash_flow report
+543de71 fix: correct add_total_row and broken filter in script reports
 ```
 
 ## 2. Árvore de Arquivos (anotada)
@@ -50,7 +50,7 @@ engenharia/
 └── engenharia/
     ├── hooks.py, boot.py, dashboard_api.py, agent_api.py, documents.py
     ├── financial.py, work_costs.py, report_visuals.py, titles.py, validators.py
-    ├── dashboard/ (kpis, financial, deadlines, timeline, attention, health, …)
+    ├── dashboard/ (kpis, financial, budget_margin, deadlines, timeline, attention, health, …)
     ├── public/js/ (masks, list_nav, hub, reports_common, dashboard/*)
     ├── public/css/ (reports, hub, list_filters, sidebar_fix)
     ├── setup/ (install, sidebar, workspace, reports, print_formats, permissions, seed)
@@ -65,7 +65,6 @@ engenharia/
 | work_cost_by_project | Compras avulsas por obra | Resumo |
 | work_cost_by_category | Compras avulsas por categoria | Resumo |
 | cash_flow | Fluxo de Caixa | Resumo + Paisagem |
-| projects_by_status | Obras por Status | Resumo |
 | project_margin | Margem por Obra | Resumo + Paisagem |
 | consolidated_cost | Custos Realizados | Resumo + Detalhado + Paisagem |
 | budget_vs_actual | Orçado vs Realizado | Resumo + Paisagem |
@@ -88,7 +87,7 @@ engenharia/
 
 | fieldname | label | fieldtype | options | reqd | unique |
 | --- | --- | --- | --- | --- | --- |
-| construction_project | Projeto | Link | Construction Project | ✓ |  |
+| construction_project | Obra | Link | Construction Project | ✓ |  |
 | commission_type | Tipo de Comissão | Select | Pré-Moldado Outro | ✓ |  |
 | supplier_name | Fornecedor | Data |  | ✓ |  |
 | supplier_tax_id | CNPJ do Fornecedor | Data |  |  |  |
@@ -97,8 +96,8 @@ engenharia/
 | total_value | Valor Total | Currency |  | ✓ |  |
 | total_paid | Total Pago | Currency |  |  |  |
 | outstanding | Saldo a Receber | Currency |  |  |  |
-| status | Status | Select | Open Partially Paid Paid Cancelled |  |  |
-| payments | Pagamentos Recebidos | Table | Commission Payment |  |  |
+| status | Status de Recebimento | Select | Open Partially Paid Paid Cancelled |  |  |
+| payments | Recebimentos de Comissão | Table | Commission Payment |  |  |
 
 ### Communication Log
 
@@ -124,6 +123,7 @@ engenharia/
 
 | fieldname | label | fieldtype | options | reqd | unique |
 | --- | --- | --- | --- | --- | --- |
+| form_help |  | HTML | <div class="form-message blue"><p><strong>Boletim de medi... |  |  |
 | project | Obra | Link | Construction Project | ✓ |  |
 | customer | Cliente | Link | Customer | ✓ |  |
 | title | Título | Data |  |  |  |
@@ -182,22 +182,22 @@ engenharia/
 | stages_panel | Painel de Etapas | HTML | <p class="text-muted">Carregando etapas...</p> |  |  |
 | budget_revisions | Revisões de orçamento | Table | Project Budget Revision |  |  |
 | financial_summary_panel | Resumo Financeiro | HTML | <p class="text-muted">Carregando resumo...</p> |  |  |
-| installments_panel | Parcelas | HTML | <p class="text-muted">Carregando parcelas...</p> |  |  |
-| costs_panel | Custos Realizados | HTML | <p class="text-muted">Carregando custos...</p> |  |  |
-| payments_panel | Pagamentos | HTML |  |  |  |
-| reimbursables_panel | Despesas Reembolsáveis | HTML |  |  |  |
+| installments_panel | Parcelas do Contrato | HTML | <p class="text-muted">Plano de vencimentos do contrato. A... |  |  |
+| costs_panel | Custos Realizados | HTML | <p class="text-muted">Compras avulsas, subcontratos e ree... |  |  |
+| payments_panel | Recebimentos | HTML |  |  |  |
+| reimbursables_panel | Despesas Reembolsáveis | HTML | <p class="text-muted">Despesas pagas pelo escritório a se... |  |  |
 | commissions_hub_panel | Comissões | HTML |  |  |  |
 | deadlines_panel | Prazos | HTML | <p class="text-muted">Carregando prazos...</p> |  |  |
-| permits_panel | Alvarás e Protocolos | HTML | <p class="text-muted">Carregando protocolos...</p> |  |  |
+| permits_panel | Alvarás e Protocolos | HTML | <p class="text-muted">Carregando alvarás e protocolos...</p> |  |  |
 | tasks_panel | Tarefas | HTML | <p class="text-muted">Carregando tarefas...</p> |  |  |
 | communications_panel | Comunicações | HTML | <p class="text-muted">Carregando comunicações...</p> |  |  |
 | measurements_panel | Medições | HTML | <p class="text-muted">Carregando medições...</p> |  |  |
 | timelogs_panel | Horas Trabalhadas | HTML | <p class="text-muted">Carregando horas...</p> |  |  |
 | documents_panel | Documentos da Obra | HTML | <p class="text-muted">Carregando documentos...</p> |  |  |
-| specs_help | Itens técnicos | HTML | <p class="text-muted">Use <b>Adicionar especificação</b>,... |  |  |
-| spec_preview_panel | Prévia das especificações | HTML | <p class="text-muted">Carregando prévia...</p> |  |  |
-| spec_items_summary_panel | Especificações da Obra | HTML | <p class="text-muted">Carregando especificações...</p> |  |  |
-| spec_project_total | Total especificações (obra) | Currency |  |  |  |
+| specs_help | Itens do Orçamento | HTML | <p class="text-muted">Use <b>Adicionar item do orçamento<... |  |  |
+| spec_preview_panel | Prévia do Orçamento | HTML | <p class="text-muted">Carregando prévia...</p> |  |  |
+| spec_items_summary_panel | Itens do Orçamento | HTML | <p class="text-muted">Carregando itens do orçamento...</p> |  |  |
+| spec_project_total | Total do Orçamento | Currency |  |  |  |
 | observations | Observações | Text Editor |  |  |  |
 
 ### Customer
@@ -211,10 +211,12 @@ engenharia/
 | trade_name | Nome Fantasia | Data |  |  |  |
 | cpf | CPF | Data |  |  | ✓ |
 | rg | RG | Data |  |  |  |
+| rg_issuer | Órgão Emissor do RG | Data |  |  |  |
 | cnpj | CNPJ | Data |  |  | ✓ |
 | nationality | Nacionalidade | Data |  |  |  |
 | marital_status | Estado Civil | Select |  Solteiro(a) Casado(a) Divorciado(a) Viúvo(a) União Estável |  |  |
 | profession | Profissão | Data |  |  |  |
+| birth_date | Data de Nascimento | Date |  |  |  |
 | legal_representative | Representante Legal | Data |  |  |  |
 | legal_representative_cpf | CPF do Representante | Data |  |  |  |
 | legal_representative_role | Cargo | Data |  |  |  |
@@ -267,6 +269,7 @@ engenharia/
 
 | fieldname | label | fieldtype | options | reqd | unique |
 | --- | --- | --- | --- | --- | --- |
+| form_help |  | HTML | <div class="form-message blue"><p>Modelos Word (.docx) co... |  |  |
 | template_name | Nome do Template | Data |  | ✓ | ✓ |
 | document_type | Tipo | Select | Contrato Proposta Relatório Outro |  |  |
 | description | Descrição | Small Text |  |  |  |
@@ -290,11 +293,12 @@ engenharia/
 | technical_retention_pct | Retenção Técnica % | Percent |  |  |  |
 | late_fee_pct | Multa Mora % | Percent |  |  |  |
 | daily_interest_pct | Juros Diários % | Float |  |  |  |
+| monthly_interest_pct | Juros Mensais (%) | Percent |  |  |  |
 | installment_count | Número de Parcelas | Int |  |  |  |
 | first_installment_date | Data da Primeira Parcela | Date |  |  |  |
 | installment_value | Valor da Parcela | Currency |  |  |  |
 | generate_installments | Gerar Parcelas | Button |  |  |  |
-| installments | Parcelas | Table | Engineering Contract Installment |  |  |
+| installments | Parcelas do Contrato | Table | Engineering Contract Installment |  |  |
 | amendments | Aditivos | Table | Engineering Contract Amendment |  |  |
 | apply_amendment | Aplicar Aditivo | Button |  |  |  |
 | observations | Observações | Text Editor |  |  |  |
@@ -337,7 +341,7 @@ engenharia/
 | manual_override | Edição manual (não sincronizar) | Check |  |  |  |
 | amount | Valor | Currency |  | ✓ |  |
 | received_amount | Valor Recebido | Currency |  |  |  |
-| due_date | Vencimento | Date |  | ✓ |  |
+| due_date | Vencimento | Date |  |  |  |
 | received_date | Data de Recebimento | Date |  |  |  |
 | status | Status | Select | Pendente Vencido Recebido Cancelado Renegociado | ✓ |  |
 | nf_number | Nº Nota Fiscal | Data |  |  |  |
@@ -355,11 +359,11 @@ engenharia/
 | project | Obra | Link | Construction Project | ✓ |  |
 | customer | Cliente | Link | Customer | ✓ |  |
 | title | Título | Data |  |  |  |
-| permit_type | Tipo de Protocolo | Link | Permit Type | ✓ |  |
-| permit_number | Número do Protocolo | Data |  |  |  |
+| permit_type | Tipo de Alvará e Protocolo | Link | Permit Type | ✓ |  |
+| permit_number | Número do Alvará ou Protocolo | Data |  |  |  |
 | public_agency | Órgão Público | Link | Public Agency |  |  |
 | status | Status | Select | Pendente Em análise Aprovado Indeferido Vencido Cancelado |  |  |
-| protocol_date | Data do Protocolo | Date |  |  |  |
+| protocol_date | Data do Alvará ou Protocolo | Date |  |  |  |
 | expiry_date | Data de Validade | Date |  |  |  |
 | document | Documento | Attach |  |  |  |
 | art_rrt_number | Nº ART/RRT | Data |  |  |  |
@@ -393,8 +397,9 @@ engenharia/
 
 | fieldname | label | fieldtype | options | reqd | unique |
 | --- | --- | --- | --- | --- | --- |
+| form_help |  | HTML | <div class="form-message blue"><p><strong>Item do orçamen... |  |  |
 | project | Obra | Link | Construction Project | ✓ |  |
-| technical_item | Item Técnico | Link | Technical Item | ✓ |  |
+| technical_item | Item do Catálogo Técnico | Link | Technical Item | ✓ |  |
 | instance_label | Identificação | Data |  |  |  |
 | stage | Etapa / Pavimento | Link | Project Stage |  |  |
 | quantity | Quantidade | Int |  |  |  |
@@ -422,7 +427,7 @@ engenharia/
 | expense_category | Categoria | Link | Cost Category |  |  |
 | supplier | Fornecedor | Link | Supplier |  |  |
 | description | Descrição | Data |  | ✓ |  |
-| payment | Pagamento | Link | Payment |  |  |
+| payment | Recebimento | Link | Payment |  |  |
 | amount | Valor Total | Currency |  | ✓ |  |
 | total_office_paid | Total Pago pelo Escritório | Currency |  |  |  |
 | office_outstanding | Saldo a Pagar (Escritório) | Currency |  |  |  |
@@ -451,8 +456,8 @@ engenharia/
 | total_value | Valor Total | Currency |  | ✓ |  |
 | total_paid | Total Pago | Currency |  |  |  |
 | outstanding | Saldo a Pagar | Currency |  |  |  |
-| status | Status | Select | Open Partially Paid Paid Cancelled |  |  |
 | amendment_remarks | Observações de Aditivo | Small Text |  |  |  |
+| status | Status de Pagamento | Select | Open Partially Paid Paid Cancelled |  |  |
 | payments | Pagamentos Efetuados | Table | Subcontract Payment |  |  |
 
 ### Task
@@ -510,12 +515,12 @@ engenharia/
 | description | Descrição | Data |  |  |  |
 | nf_number | Nº Nota Fiscal | Data |  |  |  |
 | cost_center | Centro de Custo | Data |  |  |  |
-| date | Data da NF | Date |  |  |  |
+| date | Data do compromisso | Date |  |  |  |
 | funded_by | Quem arca | Select | Escritório Cliente | ✓ |  |
 | amount | Valor Total | Currency |  | ✓ |  |
 | total_paid | Total Pago | Currency |  |  |  |
 | outstanding | Saldo a Pagar | Currency |  |  |  |
-| status | Status | Select | Open Partially Paid Paid Cancelled |  |  |
+| status | Status de Pagamento | Select | Open Partially Paid Paid Cancelled |  |  |
 | payments | Pagamentos Efetuados | Table | Work Cost Payment |  |  |
 
 #### Auxiliares (cadastro rígido)
@@ -695,7 +700,8 @@ engenharia/
 
 | fieldname | label | fieldtype | options | reqd | unique |
 | --- | --- | --- | --- | --- | --- |
-| due_date | Vencimento | Date |  | ✓ |  |
+| payment_condition | Condição | Select | Data fixa Na conclusão Na aprovação A definir |  |  |
+| due_date | Vencimento | Date |  |  |  |
 | amount | Valor | Currency |  |  |  |
 | received_amount | Valor Recebido | Currency |  |  |  |
 | status | Status | Select | Pendente Vencido Recebido Cancelado |  |  |
@@ -705,7 +711,7 @@ engenharia/
 | bank_account | Conta Bancária | Data |  |  |  |
 | late_fee | Juros/Multa | Currency |  |  |  |
 | installment_origin_id | ID de Origem | Data |  |  |  |
-| payment | Pagamento | Link | Payment |  |  |
+| payment | Recebimento | Link | Payment |  |  |
 
 ### Project Budget Revision
 
@@ -873,6 +879,7 @@ engenharia/
 | company_name | Nome do Escritório | Data |  | ✓ |  |
 | company_cnpj | CNPJ da Empresa | Data |  |  |  |
 | company_crea | CREA da Empresa | Data |  |  |  |
+| company_address_full | Endereço do Escritório | Small Text |  |  |  |
 | company_logo | Logo do Escritório | Attach Image |  |  |  |
 | engineer_full_name | Nome Completo | Data |  |  |  |
 | engineer_cpf | CPF | Data |  |  |  |
@@ -893,6 +900,7 @@ engenharia/
 - `/assets/engenharia/css/list_filters.css`
 - `/assets/engenharia/css/reports.css`
 - `/assets/engenharia/css/hub.css`
+- `/assets/engenharia/css/dashboard.css`
 - `/assets/engenharia/css/sidebar_fix.css`
 
 ### app_include_js
@@ -935,6 +943,9 @@ reinstall_child_doctypes → roles → ensure_event_custom_fields → permission
 
 ## 7. Testes
 
-- **314** métodos em **60** arquivos.
+- **320** métodos em **60** arquivos.
 - `bench --site engenharia.local run-tests --app engenharia`
 
+---
+
+*Última atualização: 2026-06-23 23:24 UTC — gerado por `scripts/generate_codebase.py`*

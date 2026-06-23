@@ -1,6 +1,7 @@
 # Relatório Executivo Final — Modernização UX App Engenharia
 
-**Data de encerramento:** 2026-06-05  
+**Data de encerramento UX:** 2026-06-05  
+**Release app:** **1.1.0** (2026-06-23)  
 **App:** `engenharia` (Frappe v16, sem ERPNext)  
 **Branch final:** `ux/step-09-final-polish`  
 **Documento normativo:** `docs/ux-modernization-roadmap.md`
@@ -198,8 +199,26 @@ Mensagens amigáveis na list view nativa do Frappe para: Task, Project Stage, Pr
 
 O projeto **Modernização UX — App Engenharia** é declarado **ENCERRADO** com entregáveis das Etapas 01–09 integrados na branch `ux/step-09-final-polish`, testes verdes e documentação atualizada.
 
-**Próximo passo recomendado:** merge das branches `ux/step-*` para `main` (ou branch de release), `bench migrate` em produção, smoke manual do painel + hub + geração de documento.
+**Próximo passo recomendado:** merge da branch `ux/step-09-final-polish` para `main`, `bench migrate` em produção, smoke manual do painel + hub + relatórios.
+
+---
+
+## 11. Release v1.1.0 (2026-06-23)
+
+Entregas pós-Etapa 09 integradas na mesma branch, antes do merge em `main`:
+
+| Área | Entrega |
+|------|---------|
+| **Versão** | `1.1.0` (`pyproject.toml`, `engenharia/__init__.py`) |
+| **Painel Manager** | Seções **Orçado vs Realizado** e **Margem por Obra** (`budget_margin.py` / `budget_margin.js`) |
+| **Reports** | Remoção monkey-patch global; chamadas explícitas por report; remoção `projects_by_status` |
+| **Performance** | Batch costs, limites de query nos reports |
+| **Testes** | 320 OK |
+
+Detalhes: [`CHANGELOG.md`](../CHANGELOG.md).
 
 ---
 
 *Gerado como parte da Etapa 09 — Polimento final e encerramento do projeto UX.*
+
+*Última atualização: 2026-06-23 23:24 UTC*

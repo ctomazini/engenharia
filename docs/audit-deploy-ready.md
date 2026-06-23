@@ -1,11 +1,14 @@
 # Auditoria Deploy-Ready — Engenharia
 
-**Data:** 2026-06-05 (métricas atualizadas em **2026-06-09**)  
-**Commit auditoria original:** `8c907d2` · **HEAD atual:** ver `git log -1`  
+**Data:** 2026-06-05 (métricas atualizadas em **2026-06-23**)  
+**Versão app:** **1.1.0**  
+**Commit auditoria original:** `8c907d2` · **HEAD atual:** `f708bfe` (`ux/step-09-final-polish`)  
 **Site de referência:** `engenharia.local`  
 **Norma:** `REGRAS_OBRIGATORIAS.md`
 
-> **Delta 2026-06-07 → 2026-06-09:** Office Expense, relatórios `consolidated_cost` e `budget_vs_actual`, 12 Print Formats de Script Report, `boot.py`, integração despesas escritório no painel/caixa, modelos de etapas. Veredito deploy-ready **mantido** — 294 testes OK.
+> **Delta 2026-06-09 → 2026-06-23 (v1.1.0):** Modernização UX (Etapas 01–09), painel **Orçado vs Realizado** + **Margem por Obra**, refactor reports (sem prototype patch), remoção `projects_by_status`, batch costs. **320 testes OK.** Ver `CHANGELOG.md`.
+
+> **Delta 2026-06-07 → 2026-06-09:** Office Expense, relatórios `consolidated_cost` e `budget_vs_actual`, print formats, `boot.py`, despesas escritório no painel. Veredito deploy-ready **mantido**.
 
 ---
 
@@ -17,7 +20,7 @@
 | ⚠️ Atenção (não bloqueante) | 16 |
 | ❌ Bloqueante | 0 |
 
-**Veredito:** o app está **pronto para deploy** em bench nativo. A suíte Python está verde (**294 testes OK** em 2026-06-09), não há Server/Client Scripts no banco, o schema DocType está consistente (**46** DocTypes), os três baldes de reprodutibilidade estão implementados (incl. `print_formats` no `after_migrate`). Permanecem itens de atenção documentados abaixo (cosméticos).
+**Veredito:** o app está **pronto para deploy** em bench nativo. A suíte Python está verde (**320 testes OK** em 2026-06-23), não há Server/Client Scripts no banco, o schema DocType está consistente (**46** DocTypes), os três baldes de reprodutibilidade estão implementados (incl. `print_formats` no `after_migrate`). Permanecem itens de atenção documentados abaixo (cosméticos).
 
 ---
 
@@ -181,10 +184,10 @@
 ### SEÇÃO 6 — Testes
 
 #### 6.1 Testes existem
-✅ **`bench --site engenharia.local run-tests --app engenharia`**: **294 testes, OK** (~30 s).
+✅ **`bench --site engenharia.local run-tests --app engenharia`**: **320 testes, OK** (~35 s).
 
 ✅ Cobertura centralizada em **`engenharia/tests/`** (39 módulos), incluindo:
-- `test_reports.py` — chart + `report_summary` nos 7 Script Reports
+- `test_reports.py` — chart + `report_summary` nos 6 Script Reports
 - `test_documents.py` — placeholders, geração docx, subcontratos no contexto
 
 ⚠️ Apenas **2** pastas de DocType com `test_*.py` local (`permit_type`, `document_kit`) — padrão aceitável.
@@ -228,7 +231,7 @@
 
 | Balde | Conteúdo | Status |
 | --- | --- | --- |
-| **1 — Código** | 46 DocTypes, Page `eng_dashboard`, 7 Script Reports (+ `report_visuals.py`), `documents.py` | ✅ |
+| **1 — Código** | 46 DocTypes, Page `eng_dashboard`, 6 Script Reports (+ `report_visuals.py`), `documents.py` | ✅ |
 | **2 — Fixtures** | 5 JSONs em `engenharia/fixtures/` | ✅ |
 | **3 — Seed** | `after_install` + 9 handlers `after_migrate` | ✅ |
 
@@ -242,7 +245,7 @@
 
 | Gate | Resultado |
 | --- | --- |
-| `run-tests --app engenharia` | ✅ 294 OK |
+| `run-tests --app engenharia` | ✅ 320 OK |
 | `install-app` + `migrate` | ✅ (site `engenharia.local` operacional) |
 | Painel / dashboard API | ✅ smoke via testes + E2E histórico |
 | E2E Playwright (`e2e/`) | ✅ 26/26 passos (sessão 2026-06-07; não reexecutado nesta auditoria) |
@@ -276,11 +279,15 @@
 | Item | Antes | Agora |
 | --- | --- | --- |
 | Bloqueantes normativos | 2 | 0 |
-| Testes Python | 294 | 294 |
-| Script Reports | Tabelas simples | Gráficos + KPIs + formatters JS |
+| Testes Python | 294 | **320** |
+| Versão app | 1.0.0 | **1.1.0** |
+| Script Reports | 7 | **6** (removido `projects_by_status`) |
+| Painel Manager | Fluxo + composição | + **Orçado vs Realizado** + **Margem por Obra** |
 | Placeholders docx | Parcial | Catálogo completo (orçamento, logo, subcontratos) |
-| Commit | `8adb0ae` | `8c907d2` |
+| Commit | `8c907d2` | `f708bfe` |
 
 ---
 
-*Auditoria diagnóstica — nenhum arquivo de código foi alterado durante esta verificação (apenas este relatório).*
+*Auditoria diagnóstica — métricas revisadas para release v1.1.0.*
+
+*Última atualização: 2026-06-23 23:24 UTC*

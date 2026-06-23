@@ -3,8 +3,8 @@
 Documento permanente de acompanhamento do projeto de modernização de experiência do usuário.
 
 **Criado:** 2026-06-05  
-**Última atualização:** 2026-06-05 (Etapa 09 — polimento final · **PROJETO ENCERRADO**)  
-**App:** `engenharia` (Frappe v16)
+**Última atualização:** 2026-06-23 (Release **v1.1.0** — pós-Etapa 09: painel orçado/margem, reports refactor)  
+**App:** `engenharia` (Frappe v16) · **Versão app:** 1.1.0
 
 > **Status do projeto:** ✅ **ENCERRADO** — ver [`docs/ux-final-executive-report.md`](ux-final-executive-report.md) para relatório executivo, métricas e pendências.
 
@@ -142,7 +142,7 @@ Nunca:
 | Compras avulsas por categoria | `work_cost_by_category` | Compras Avulsas por Categoria |
 | Fluxo de caixa | `cash_flow` | Fluxo de Caixa |
 | Margem | `project_margin` | Margem por Obra |
-| Distribuição por status | `projects_by_status` | Obras por Status |
+| Distribuição por status | *(removido v1.1.0)* | — — usar filtros em Orçado vs Realizado |
 
 **Nota:** um único nome oficial por relatório. O atalho duplicado “Visão de Custos Realizados” será eliminado na implementação; nome canônico: **Custos Realizados**.
 
@@ -771,7 +771,7 @@ Fila priorizada para próximas etapas. Nenhum item abaixo bloqueia merge da Etap
 | `project_margin` | Construction Project | **Executa** — expõe margem financeira |
 | `budget_vs_actual` | Construction Project | **Executa** — expõe orçado vs realizado |
 | `consolidated_cost` | Construction Project | Exige filtro obra; OK operacional |
-| `projects_by_status` | Construction Project | OK — operacional |
+| `projects_by_status` | *(removido v1.1.0)* | — |
 
 **Opções de resolução (decisão de produto):**
 
@@ -940,7 +940,7 @@ Fila priorizada para próximas etapas. Nenhum item abaixo bloqueia merge da Etap
 
 ### DEC-008
 
-**Contexto:** Relatórios `cash_flow`, `project_margin`, `projects_by_status` com `report_name` EN.
+**Contexto:** Relatórios `cash_flow`, `project_margin` com `report_name` EN. `projects_by_status` removido em v1.1.0.
 
 **Decisão:** Alterar apenas campo `report_name` para PT oficial; slugs permanecem.
 
@@ -1038,4 +1038,6 @@ Validar continuamente:
 
 ---
 
-*Projeto encerrado em 2026-06-05 (Etapa 09). Atualizações futuras: apenas débitos listados em `ux-final-executive-report.md`.*
+*Projeto UX encerrado em 2026-06-05 (Etapa 09). Release **v1.1.0** (2026-06-23): painel Orçado vs Realizado + Margem por Obra, refactor reports (sem prototype patch), remoção `projects_by_status`. Ver `CHANGELOG.md`.*
+
+*Última atualização: 2026-06-23 23:24 UTC*

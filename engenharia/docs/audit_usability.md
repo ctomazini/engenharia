@@ -1,6 +1,6 @@
 # Seção 3 — Verificação de Usabilidade
 
-**App:** `engenharia` · **Data:** 2026-06-06 (nota 2026-06-09: Office Expense e Modelos de Etapas não auditados neste snapshot)  
+**App:** `engenharia` · **Versão:** 1.1.0 · **Data:** 2026-06-06 (nota 2026-06-23: painel orçado/margem, UX Etapas 01–09)  
 **Revisão pós-UX:** 2026-06-05 — Etapa 09 (empty states, list views Task/Stage, ajuda contextual). Ver `docs/ux-final-executive-report.md`.
 
 ---
@@ -138,3 +138,5 @@ Legenda: ✅ OK · 🟡 Atenção · 🔴 Problema
 ---
 
 *Auditoria somente leitura.*
+
+*Última atualização: 2026-06-23 23:24 UTC*

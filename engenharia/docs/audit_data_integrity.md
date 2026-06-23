@@ -92,3 +92,5 @@ Commission.payments (child)
 ---
 
 *Auditoria somente leitura.*
+
+*Última atualização: 2026-06-23 23:24 UTC — app v1.1.0*

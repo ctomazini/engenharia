@@ -1097,3 +1097,5 @@ flowchart TB
 2. **Stage hooks + pesos** — `after_insert`/`on_trash` em Project Stage; validação/redistribuição de `weight`; `default_weight` em Stage Type.
 3. **Project Stage Template** — novo DocType + seed no Construction Project.
 4. **Hub visual** — Tab Breaks + campos HTML + novo whitelisted `get_project_hub_data(project)` reutilizando submódulos do dashboard filtrados por obra.
+
+*Última atualização: 2026-06-23 23:24 UTC — documento histórico; app v1.1.0*

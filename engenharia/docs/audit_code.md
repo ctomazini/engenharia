@@ -1,9 +1,9 @@
 # Seção 1 — Auditoria de Código Completa
 
-**App:** `engenharia` · **Site:** `engenharia.local` · **Data:** 2026-06-06 (métricas revisadas 2026-06-09)  
+**App:** `engenharia` · **Site:** `engenharia.local` · **Versão:** 1.1.0 · **Data:** 2026-06-06  
 **Referência normativa:** `REGRAS_OBRIGATORIAS.md` na raiz do app.
 
-> **Nota 2026-06-09:** 46 DocTypes, 7 Script Reports, 294 testes, Office Expense, print formats e `boot_session` adicionados após esta auditoria. Detalhes em `CODEBASE.md`.
+> **Nota 2026-06-23:** 46 DocTypes, **6** Script Reports, **320** testes, `budget_margin` no painel. Detalhes em `CODEBASE.md`.
 
 ---
 
@@ -46,7 +46,7 @@
 
 ## 1.2 Cobertura de testes
 
-**Total suite:** 294 testes (`bench run-tests --app engenharia`, 2026-06-09).
+**Total suite:** 320 testes (`bench run-tests --app engenharia`, 2026-06-23).
 
 | DocType / Módulo | Tem teste? | Nº testes* | Funcionalidades testadas | SEM teste |
 |---|---|---|---|---|
@@ -148,3 +148,5 @@
 ---
 
 *Auditoria somente leitura — nenhum código alterado.*
+
+*Última atualização: 2026-06-23 23:24 UTC*

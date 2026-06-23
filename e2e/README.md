@@ -111,3 +111,5 @@ Melhorias futuras possíveis:
 - Smoke dos Script Reports (KPI + gráfico)
 - Mais asserções puramente UI (preenchimento de campos sem `frappe.db.insert`)
 - Job CI com imagem `mcr.microsoft.com/playwright`
+
+*Última atualização: 2026-06-23 23:24 UTC — app alvo v1.1.0*

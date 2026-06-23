@@ -1,6 +1,6 @@
 # Cross-audit: engenharia ↔ advocacia
 
-> **Atualização:** 2026-06-11 — engenharia: 56 DocTypes; advocacia v1.0.0 EN + labels PT (ver `REGRAS_ADVOCACIA.md`).
+> **Atualização:** 2026-06-23 — engenharia **v1.1.0**; 56 DocTypes; advocacia v1.0.0 EN + labels PT (ver `REGRAS_ADVOCACIA.md`).
 
 ## Paridade alcançada
 
@@ -40,3 +40,5 @@ bench --site engenharia.local migrate
 bench build --app engenharia
 bench --site engenharia.local run-tests --app engenharia
 ```
+
+*Última atualização: 2026-06-23 23:24 UTC — engenharia v1.1.0*

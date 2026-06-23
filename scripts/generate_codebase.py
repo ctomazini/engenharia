@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 DT_DIR = ROOT / "engenharia/engenharia/doctype"
 OUT_PATH = ROOT / "CODEBASE.md"
-REPORT_COUNT = 7  # engenharia/setup/reports.py REPORT_JSON_PATHS
+REPORT_COUNT = 6  # engenharia/engenharia/report/* (projects_by_status removido em v1.1.0)
 PRINT_FORMAT_COUNT = 15  # engenharia/setup/print_formats.py PRINT_FORMAT_NAMES
 
 
@@ -134,7 +134,7 @@ def main():
 			["Item", "Valor"],
 			[
 				["Nome", "engenharia"],
-				["Versão", "1.0.0 (`pyproject.toml`)"],
+				["Versão", "1.1.0 (`pyproject.toml`)"],
 				["Framework", "Frappe v16"],
 				["Licença", "MIT"],
 				["Site dev", "engenharia.local"],
@@ -160,7 +160,7 @@ def main():
 	L.append("└── engenharia/\n")
 	L.append("    ├── hooks.py, boot.py, dashboard_api.py, agent_api.py, documents.py\n")
 	L.append("    ├── financial.py, work_costs.py, report_visuals.py, titles.py, validators.py\n")
-	L.append("    ├── dashboard/ (kpis, financial, deadlines, timeline, attention, health, …)\n")
+	L.append("    ├── dashboard/ (kpis, financial, budget_margin, deadlines, timeline, attention, health, …)\n")
 	L.append("    ├── public/js/ (masks, list_nav, hub, reports_common, dashboard/*)\n")
 	L.append("    ├── public/css/ (reports, hub, list_filters, sidebar_fix)\n")
 	L.append("    ├── setup/ (install, sidebar, workspace, reports, print_formats, permissions, seed)\n")
@@ -176,7 +176,6 @@ def main():
 				["work_cost_by_project", "Compras avulsas por obra", "Resumo"],
 				["work_cost_by_category", "Compras avulsas por categoria", "Resumo"],
 				["cash_flow", "Fluxo de Caixa", "Resumo + Paisagem"],
-				["projects_by_status", "Obras por Status", "Resumo"],
 				["project_margin", "Margem por Obra", "Resumo + Paisagem"],
 				["consolidated_cost", "Custos Realizados", "Resumo + Detalhado + Paisagem"],
 				["budget_vs_actual", "Orçado vs Realizado", "Resumo + Paisagem"],
@@ -202,7 +201,7 @@ def main():
 		"Role (2), Kanban Board\n\n"
 	)
 	L.append("### app_include_css\n")
-	for css in ("list_filters.css", "reports.css", "hub.css", "sidebar_fix.css"):
+	for css in ("list_filters.css", "reports.css", "hub.css", "dashboard.css", "sidebar_fix.css"):
 		L.append(f"- `/assets/engenharia/css/{css}`\n")
 	L.append("\n### app_include_js\n")
 	for js in (

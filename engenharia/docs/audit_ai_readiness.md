@@ -1,6 +1,6 @@
 # Seção 7 — Preparação para IA
 
-**App:** `engenharia` · **Status:** Fase 1 implementada · **Data:** 2026-06-07 · **Versão:** 1.0.0
+**App:** `engenharia` · **Status:** Fase 1 implementada · **Versão:** 1.1.0 · **Data:** 2026-06-07
 
 ---
 
@@ -112,4 +112,6 @@ Para **Engenharia User**, chaves em `_FINANCIAL_SUMMARY_KEYS` são omitidas e `f
 
 ---
 
-*Auditoria somente leitura — atualizada na release v1.0.0.*
+*Auditoria somente leitura — release v1.1.0.*
+
+*Última atualização: 2026-06-23 23:24 UTC*

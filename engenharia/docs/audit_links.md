@@ -1,6 +1,6 @@
 # Seção 2 — Cross-check de Links entre DocTypes
 
-**App:** `engenharia` · **Data:** 2026-06-06 (revisão 2026-06-09)
+**App:** `engenharia` · **Versão:** 1.1.0 · **Data:** 2026-06-06 (revisão 2026-06-23)
 
 > **Adições:** `Office Expense` (standalone, sem `project`), `Project Stage Template`, sidebar em `workspace_sidebar/engenharia.json` (~37 itens).
 
@@ -176,3 +176,5 @@ Links operacionais via `setup/sidebar.py` + fixture Workspace **Engenharia**. En
 ---
 
 *Auditoria somente leitura.*
+
+*Última atualização: 2026-06-23 23:24 UTC — app v1.1.0*

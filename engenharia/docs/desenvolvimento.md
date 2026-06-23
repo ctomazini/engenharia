@@ -107,3 +107,7 @@ bench --site engenharia.local execute engenharia.setup.demo_data.teardown
 ```
 
 Não usar seed de demo em produção.
+
+---
+
+*Última atualização: 2026-06-23 23:24 UTC — app v1.1.0, 320 testes*

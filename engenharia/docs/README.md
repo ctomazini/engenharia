@@ -8,7 +8,8 @@
 
 | Documento | Público | Descrição |
 | --- | --- | --- |
-| [`README.md`](../../README.md) | Todos | Visão geral do app, instalação e links principais |
+| [`../../CHANGELOG.md`](../../CHANGELOG.md) | Histórico de versões |
+| [`../../README.md`](../../README.md) | Visão geral do app, instalação e links principais |
 | [`REGRAS_OBRIGATORIAS.md`](../../REGRAS_OBRIGATORIAS.md) | Desenvolvedores | Padrões fechados: DocTypes, dashboard, testes, commits |
 | [`../../docs/audit-deploy-ready.md`](../../docs/audit-deploy-ready.md) | Dev / release | Auditoria deploy-ready |
 | [`../../CODEBASE.md`](../../CODEBASE.md) | Desenvolvedores | Inventário técnico (`scripts/generate_codebase.py`) |
@@ -37,9 +38,9 @@ Módulos de teste relevantes: `test_documents.py`, `test_project_document.py`, `
 
 ---
 
-## Auditorias técnicas (jun/2026, revisão parcial 2026-06-09)
+## Auditorias técnicas (jun/2026, revisão **2026-06-23** — v1.1.0)
 
-Relatórios pontuais de conformidade e UX. Não substituem `REGRAS_OBRIGATORIAS.md`. Métricas (DocTypes, testes, relatórios) foram atualizadas após Office Expense, print formats e relatórios `consolidated_cost` / `budget_vs_actual`.
+Relatórios pontuais de conformidade e UX. Não substituem `REGRAS_OBRIGATORIAS.md`. Métricas: **46** DocTypes, **6** Script Reports, **320** testes, painel com orçado/margem.
 
 | Documento | Escopo |
 | --- | --- |
@@ -67,3 +68,7 @@ Relatórios pontuais de conformidade e UX. Não substituem `REGRAS_OBRIGATORIAS.
 | Guia de dev / CI | `engenharia/docs/desenvolvimento.md` ou `e2e/README.md` |
 | Norma / padrão obrigatório | `REGRAS_OBRIGATORIAS.md` (atualizar no mesmo PR) |
 | Auditoria ou relatório pontual | `engenharia/docs/audit_<tema>.md` + entrada neste índice |
+
+---
+
+*Última atualização: 2026-06-23 23:24 UTC*

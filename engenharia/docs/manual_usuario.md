@@ -49,7 +49,7 @@ O **Painel de Obras** reúne indicadores e atalhos do dia a dia.
 | **Filtros** | Alterar janela de tempo e limites das listas |
 | **Zona de atenção + Próximos compromissos** | Duas colunas lado a lado: tiles de ação imediata e os dois compromissos mais urgentes (prazos, tarefas etc.) |
 | **Agenda / Timeline** | Prazos, tarefas e compromissos operacionais no período (sem pagamentos) |
-| **Zona financeira** *(somente Manager)* | Saúde operacional, KPIs, entradas×saídas do mês, composição de custos, listas de parcelas/despesas |
+| **Zona financeira** *(somente Manager)* | Saúde operacional, KPIs, entradas×saídas do mês, composição de custos, **Orçado vs Realizado**, **Margem por Obra**, listas de parcelas/despesas |
 | **Obras ativas** | Lista com filtros de linhas (5/10/15), cores por status e prazo — largura total |
 | **Comissões** *(Manager, acordeão)* | KPIs e lista de comissões — expanda a seção no rodapé para ver detalhes |
 
@@ -70,7 +70,9 @@ O **Painel de Obras** reúne indicadores e atalhos do dia a dia.
 |---|---|
 | **KPIs** | A receber, vencido, a reembolsar, a pagar (prestadores), saídas do mês, margem |
 | **Entradas do mês × saídas do mês** | Valores **fixos do mês corrente** — **não mudam** com o filtro de 7/15/30 dias. Saídas = custos de obra **e parcelas de subcontrato** pagos pelo **escritório** |
-| **Composição de custos** | Donut por **categoria de custo** (custos avulsos + subcontratos do escritório no mês) |
+| **Composição de custos** | Barras horizontais por **categoria de custo** (custos avulsos + subcontratos do escritório no mês) |
+| **Orçado vs Realizado** | Top 10 obras com maior desvio orçamentário — visão **acumulada** (não muda com filtro de período) |
+| **Margem por Obra** | Top 10 obras por margem realizada (recebido − pago) — visão **acumulada** |
 | **Subcontratos (KPI)** | *A pagar (prestadores)* = saldo de subcontratos **do escritório**; subcontratos *Cliente* ficam só no cadastro da obra |
 
 ### Ações rápidas
@@ -372,15 +374,14 @@ No **Painel** (Manager), despesas pendentes ou atrasadas aparecem na zona financ
 
 ### 6.8 Relatórios operacionais
 
-Os **sete Script Reports** da sidebar (Engenharia → Relatórios) exibem **cards KPI coloridos** no topo e um **gráfico** (barras ou donut) acima da tabela. Use os filtros de cada relatório para refinar a visão.
+Os **seis Script Reports** da sidebar (Engenharia → Relatórios) exibem **cards KPI coloridos** no topo e um **gráfico de barras** acima da tabela. Use os filtros de cada relatório para refinar a visão.
 
 | Relatório | Gráfico | KPIs principais | Filtros |
 |---|---|---|---|
-| **Obras por Status** | Donut por status | Total, em andamento, em orçamento, concluídas | — |
-| **Custo por Categoria** | Donut (top 8) | Compras avulsas pagas, nº categorias | Categoria |
+| **Custo por Categoria** | Barras (top categorias) | Compras avulsas pagas, nº categorias | Categoria |
 | **Compras avulsas por obra** | Barras (top 10) | Total pago, nº obras, média | Obra |
 | **Custos Realizados** | — | WC + Subcontratos + Reembolsáveis | Obra, período |
-| **Orçado vs Realizado** | Barras (top 10) | Total orçado, realizado, saldo, obras acima do orçamento | Obra, status |
+| **Orçado vs Realizado** | Barras agrupadas (top 10) | Total orçado, realizado, saldo, obras acima do orçamento | Obra, status |
 | **Fluxo de Caixa** | Barras mensais entradas × saídas | Total entradas, saídas, saldo líquido | Horizonte 3/6/12 meses |
 | **Margem por Obra** | Barras margem realizada (top 10) | Valor contratado, receita, margem, % recebido médio | Obra |
 
@@ -662,4 +663,6 @@ Contratos, pagamentos, custos, despesas reembolsáveis, comissões, totais de or
 
 ---
 
-*Manual versão 1.1 — junho/2026. Alinhado ao app engenharia no Frappe v16.*
+*Manual versão 1.2 — app **1.1.0** (jun/2026). Alinhado ao Frappe v16.*
+
+*Última atualização: 2026-06-23 23:24 UTC*

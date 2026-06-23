@@ -6,6 +6,7 @@
 
 | Documento | Descrição |
 | --- | --- |
+| [`../CHANGELOG.md`](../CHANGELOG.md) | Histórico de versões |
 | [`../README.md`](../README.md) | Visão geral, instalação, testes |
 | [`../REGRAS_OBRIGATORIAS.md`](../REGRAS_OBRIGATORIAS.md) | Padrões normativos do app |
 | [`../CODEBASE.md`](../CODEBASE.md) | Inventário técnico (gerado) |
@@ -39,3 +40,7 @@ Auditorias pontuais em [`../engenharia/docs/`](../engenharia/docs/) (`audit_*.md
 ## Placeholders docx
 
 Catálogo único em `engenharia/documents.py` (`PLACEHOLDER_REFERENCE`). UI: botão **Ver Placeholders** em Document Template. Manual: §10.
+
+---
+
+*Última atualização: 2026-06-23 23:24 UTC*

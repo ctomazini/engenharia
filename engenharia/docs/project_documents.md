@@ -71,3 +71,5 @@ Renomeação via `shutil.move` no `validate()` quando categoria, versão ou desc
 - `tests/test_documents.py` (geração sem persistência)
 - `tests/test_project_document.py`
 - `tests/test_project_hub.py` (contagens de documentos)
+
+*Última atualização: 2026-06-23 23:24 UTC — app v1.1.0*
