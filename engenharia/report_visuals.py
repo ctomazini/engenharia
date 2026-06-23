@@ -20,14 +20,6 @@ REPORT_COLORS = {
 
 CASH_IN_OUT = [REPORT_COLORS["green"], REPORT_COLORS["red"]]
 
-PROJECT_STATUS_COLORS = {
-	"Orçamento": REPORT_COLORS["blue"],
-	"Em andamento": REPORT_COLORS["teal"],
-	"Paralisada": REPORT_COLORS["amber"],
-	"Concluída": REPORT_COLORS["green"],
-	"Cancelada": REPORT_COLORS["slate"],
-}
-
 
 def month_label(dt) -> str:
 	dt = getdate(dt)
@@ -46,19 +38,6 @@ def bar_chart(labels: list, datasets: list[dict], colors: list[str] | None = Non
 		"data": {"labels": [short_label(label, 32) for label in labels], "datasets": datasets},
 		"type": "bar",
 		"height": 280,
-	}
-	if colors:
-		chart["colors"] = colors
-	return chart
-
-
-def donut_chart(labels: list, values: list, colors: list[str] | None = None) -> dict:
-	chart = {
-		"data": {"labels": [short_label(label) for label in labels], "datasets": [{"values": values}]},
-		"type": "donut",
-		"height": 300,
-		"truncateLegends": True,
-		"maxLegendPoints": 8,
 	}
 	if colors:
 		chart["colors"] = colors
