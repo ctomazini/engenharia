@@ -1074,18 +1074,20 @@ function eng_hub_render_summary_bar(frm, counts) {
 			return `<div class="eng-hub-summary-pill${
 				hasData ? " eng-hub-summary-pill--active" : ""
 			}">
+			<button type="button" class="eng-hub-summary-pill__add"
+				data-doctype="${frappe.utils.escape_html(item.doctype)}"
+				data-fieldname="${frappe.utils.escape_html(item.fieldname)}"
+				title="${frappe.utils.escape_html(__("Criar {0}", [item.label]))}">+</button>
 			<a class="eng-hub-summary-pill__link" href="${listUrl}"
 				data-doctype="${frappe.utils.escape_html(item.doctype)}"
 				data-fieldname="${frappe.utils.escape_html(item.fieldname)}"
 				title="${frappe.utils.escape_html(__("Ver lista de {0}", [item.label]))}">
-				<span class="eng-hub-summary-pill__icon">${item.icon}</span>
+				<span class="eng-hub-summary-pill__head">
+					<span class="eng-hub-summary-pill__count">${item.count || 0}</span>
+					<span class="eng-hub-summary-pill__icon">${item.icon}</span>
+				</span>
 				<span class="eng-hub-summary-pill__label">${item.label}</span>
-				<span class="eng-hub-summary-pill__count">${item.count || 0}</span>
 			</a>
-			<span class="eng-hub-summary-pill__add"
-				data-doctype="${frappe.utils.escape_html(item.doctype)}"
-				data-fieldname="${frappe.utils.escape_html(item.fieldname)}"
-				title="${frappe.utils.escape_html(__("Criar {0}", [item.label]))}">+</span>
 		</div>`;
 		})
 		.join("");
@@ -1106,6 +1108,7 @@ function eng_hub_render_summary_bar(frm, counts) {
 		eng_hub_nav_set_route("List", doctype, { [fieldname]: project });
 	});
 	$w.find(".eng-hub-summary-pill__add").on("click", function (e) {
+		e.preventDefault();
 		e.stopPropagation();
 		const doctype = $(this).attr("data-doctype");
 		const fieldname = $(this).attr("data-fieldname");
