@@ -579,7 +579,11 @@ function eng_update_bulk_dialog_primary_action(dialog) {
 	);
 }
 
-function eng_download_generated_file(file_name, file_content_base64) {
+// Object URL é mantido vivo para servir tanto o download automático quanto o
+// link clicável de fallback no diálogo; revogado depois (parity com TTL do advocacia).
+const ENG_DOC_URL_TTL_MS = 300000;
+
+function eng_object_url_from_base64(file_content_base64) {
 	const binary = atob(file_content_base64);
 	const bytes = new Uint8Array(binary.length);
 	for (let i = 0; i < binary.length; i++) {
@@ -588,14 +592,22 @@ function eng_download_generated_file(file_name, file_content_base64) {
 	const blob = new Blob([bytes], {
 		type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 	});
-	const url = URL.createObjectURL(blob);
+	return URL.createObjectURL(blob);
+}
+
+// Âncora com download é confiável em Firefox/Chrome.
+function eng_trigger_download(url, file_name) {
+	if (!url) {
+		return;
+	}
 	const link = document.createElement("a");
 	link.href = url;
-	link.download = file_name;
+	link.download = file_name || "";
+	link.rel = "noopener";
+	link.style.display = "none";
 	document.body.appendChild(link);
 	link.click();
-	document.body.removeChild(link);
-	URL.revokeObjectURL(url);
+	window.setTimeout(() => link.remove(), 1000);
 }
 
 function eng_generate_documents_batch(frm, template_names, permit_name) {
@@ -616,26 +628,53 @@ function eng_generate_documents_batch(frm, template_names, permit_name) {
 			let html = "";
 
 			if (data.generated && data.generated.length) {
-				data.generated.forEach((item, index) => {
-					if (item.file_content) {
-						setTimeout(() => {
-							eng_download_generated_file(item.file_name, item.file_content);
-						}, index * 250);
+				const object_urls = [];
+				data.generated.forEach((item) => {
+					item._object_url = item.file_content
+						? eng_object_url_from_base64(item.file_content)
+						: "";
+					if (item._object_url) {
+						object_urls.push(item._object_url);
 					}
 				});
+				// Revoga as URLs após o TTL para liberar memória sem matar o fallback.
+				if (object_urls.length) {
+					window.setTimeout(() => {
+						object_urls.forEach((url) => URL.revokeObjectURL(url));
+					}, ENG_DOC_URL_TTL_MS);
+				}
+
+				data.generated.forEach((item, index) => {
+					if (item._object_url) {
+						setTimeout(() => {
+							eng_trigger_download(item._object_url, item.file_name);
+						}, index * 400);
+					}
+				});
+
 				html += "<p><strong>" + __("Documentos gerados:") + "</strong></p><ul>";
 				data.generated.forEach((item) => {
-					html +=
-						"<li>" +
+					const label =
 						frappe.utils.escape_html(item.title || item.template) +
 						" — " +
-						frappe.utils.escape_html(item.file_name) +
-						"</li>";
+						frappe.utils.escape_html(item.file_name);
+					if (item._object_url) {
+						html +=
+							'<li><a href="' +
+							frappe.utils.escape_html(item._object_url) +
+							'" download="' +
+							frappe.utils.escape_html(item.file_name || "") +
+							'">' +
+							label +
+							"</a></li>";
+					} else {
+						html += "<li>" + label + "</li>";
+					}
 				});
 				html +=
 					"</ul><p class=\"text-muted\">" +
 					__(
-						"Os arquivos foram baixados automaticamente. Para arquivar na obra, use + Documento e faça upload manualmente."
+						"Os arquivos foram baixados automaticamente. Se o download não iniciar, clique no nome do arquivo acima. Para arquivar na obra, use + Documento e faça upload manualmente."
 					) +
 					"</p>";
 			}
