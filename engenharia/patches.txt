@@ -15,3 +15,4 @@ engenharia.patches.v16_0.backfill_work_cost_payments
 engenharia.patches.v16_0.backfill_reimbursable_expense_payments
 engenharia.patches.v16_0.migrate_building_type_to_link
 engenharia.patches.v16_0.migrate_project_document_category_to_link
+engenharia.patches.v16_0.backfill_primary_contract
