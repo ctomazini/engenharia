@@ -12,6 +12,7 @@
   "title",
   "col_break_1",
   "status",
+  "is_primary",
   "sec_values",
   "base_value",
   "current_value",
@@ -76,6 +77,13 @@
    "label": "Status",
    "options": "Vigente\nEncerrado\nCancelado\nQuitado",
    "description": "Situação: Vigente, Encerrado, Cancelado ou Quitado."
+  },
+  {
+   "default": "0",
+   "fieldname": "is_primary",
+   "fieldtype": "Check",
+   "label": "Contrato Principal",
+   "description": "Marque o contrato principal da obra. É o contrato usado por padrão na geração de documentos quando a obra tem mais de um contrato."
   },
   {
    "fieldname": "sec_values",

@@ -140,6 +140,30 @@ class TestEngineeringContract(FrappeTestCase):
 		value = frappe.db.get_value("Construction Project", project.name, "current_contract_value")
 		self.assertEqual(flt(value), 15000)
 
+	def test_single_primary_per_project(self):
+		project = create_test_construction_project()
+		c1 = create_test_engineering_contract(
+			project=project.name, base_value=10000, installment_count=1, is_primary=1
+		)
+		self.assertEqual(frappe.db.get_value("Engineering Contract", c1.name, "is_primary"), 1)
+		c2 = create_test_engineering_contract(
+			project=project.name, base_value=5000, installment_count=1, is_primary=1
+		)
+		self.assertEqual(frappe.db.get_value("Engineering Contract", c1.name, "is_primary"), 0)
+		self.assertEqual(frappe.db.get_value("Engineering Contract", c2.name, "is_primary"), 1)
+
+	def test_primary_not_affected_across_projects(self):
+		p1 = create_test_construction_project()
+		p2 = create_test_construction_project()
+		c1 = create_test_engineering_contract(
+			project=p1.name, base_value=10000, installment_count=1, is_primary=1
+		)
+		c2 = create_test_engineering_contract(
+			project=p2.name, base_value=8000, installment_count=1, is_primary=1
+		)
+		self.assertEqual(frappe.db.get_value("Engineering Contract", c1.name, "is_primary"), 1)
+		self.assertEqual(frappe.db.get_value("Engineering Contract", c2.name, "is_primary"), 1)
+
 	def test_installment_without_due_date(self):
 		"""Parcela com payment_condition != Data fixa pode ter due_date vazio."""
 		contract = create_test_engineering_contract(

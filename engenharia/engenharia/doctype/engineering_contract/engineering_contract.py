@@ -23,6 +23,7 @@ class EngineeringContract(Document):
 
 	def on_update(self):
 		self._sync_project_contract_value()
+		self._enforce_single_primary()
 
 	def on_trash(self):
 		if self.project:
@@ -98,6 +99,18 @@ class EngineeringContract(Document):
 		if not self.project:
 			return
 		sync_project_contract_value(self.project)
+
+	def _enforce_single_primary(self):
+		if not self.is_primary or not self.project:
+			return
+		others = frappe.get_all(
+			"Engineering Contract",
+			filters={"project": self.project, "is_primary": 1, "name": ["!=", self.name]},
+			pluck="name",
+			limit_page_length=0,
+		)
+		for name in others:
+			frappe.db.set_value("Engineering Contract", name, "is_primary", 0, update_modified=False)
 
 	def regenerate_future_installments(self):
 		received_rows = [row for row in self.installments or [] if row.status == "Recebido"]
