@@ -117,8 +117,8 @@ PLACEHOLDER_REFERENCE = [
 			{"placeholder": "project_dic", "label": "DIC (cadastro municipal do lote)"},
 			{"placeholder": "project_construction_area", "label": "Área construída (m²) — valor numérico"},
 			{"placeholder": "project_construction_area_fmt", "label": "Área construída (m²) — formatado"},
-			{"placeholder": "project_current_contract_value", "label": "Valor atual do contrato (R$)"},
-			{"placeholder": "project_current_contract_value_fmt", "label": "Valor atual do contrato (formatado)"},
+			{"placeholder": "project_current_contract_value", "label": "Soma dos contratos da obra (R$) — total, não um contrato"},
+			{"placeholder": "project_current_contract_value_fmt", "label": "Soma dos contratos da obra (formatado)"},
 			{"placeholder": "project_physical_progress", "label": "Avanço físico global (%) — valor numérico"},
 			{"placeholder": "project_physical_progress_fmt", "label": "Avanço físico global (%) — formatado"},
 			{"placeholder": "project_responsible_engineer", "label": "Responsável técnico"},
@@ -259,7 +259,7 @@ PLACEHOLDER_REFERENCE = [
 	{
 		"grupo": "Contrato",
 		"condicional": True,
-		"condicional_motivo": "Quando há contrato vigente na obra",
+		"condicional_motivo": "Refere-se a UM contrato (selecionado na geração, ou o contrato principal da obra). Diferente de project_current_contract_value, que é a soma de todos os contratos.",
 		"items": [
 			{"placeholder": "contract_name", "label": "Código do contrato"},
 			{"placeholder": "contract_title", "label": "Título do contrato"},

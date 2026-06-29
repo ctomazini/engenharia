@@ -1,8 +1,8 @@
 # CODEBASE — App Engenharia (Frappe v16)
 
-> Gerado em **2026-06-23** — inventário técnico do app greenfield EN. Frappe puro, **sem ERPNext**.
+> Gerado em **2026-06-29** — inventário técnico do app greenfield EN. Frappe puro, **sem ERPNext**.
 
-> **HEAD:** `f708bfe 2026-06-23 22:13:17 +0000 fix(hub): espelhar layout de pills do advocacia no desktop`
+> **HEAD:** `cded271 2026-06-29 21:51:24 +0000 feat(construction-project): contract selector in document dialog`
 
 ---
 
@@ -15,9 +15,9 @@
 | Framework | Frappe v16 |
 | Licença | MIT |
 | Site dev | engenharia.local |
-| Linhas Python | ~19313 |
-| Linhas JavaScript | ~7190 |
-| Métodos de teste | 320 (60 arquivos) |
+| Linhas Python | ~19539 |
+| Linhas JavaScript | ~7276 |
+| Métodos de teste | 329 (60 arquivos) |
 | DocTypes | 49 (`custom: 0`) |
 | Script Reports | 6 |
 | Print Formats | 15 |
@@ -28,18 +28,18 @@
 
 **Commits recentes:**
 ```text
+cded271 feat(construction-project): contract selector in document dialog
+d9cb5a2 feat(documents): resolve contract by explicit/primary/fallback
+16af34b feat(patches): backfill primary contract for single-contract projects
+113ffd0 feat(engineering-contract): add primary contract flag with uniqueness
+87573e2 fix(documents): add pt-BR formatted variants for numeric placeholders
+8bc9010 fix(documents): keep object URL alive with clickable download fallback
+7005d1d chore(release): bump version to 1.1.0 and sync documentation
 f708bfe fix(hub): espelhar layout de pills do advocacia no desktop
 824b041 feat(dashboard): render budget vs actual and margin sections
 46f1ac2 feat(dashboard): add budget overview and margin by project data
 d8ef40f refactor: remove orphaned donut_chart and PROJECT_STATUS_COLORS
 d8af6e9 refactor: remove orphaned donut_chart and PROJECT_STATUS_COLORS
-8a54530 refactor: replace QueryReport.prototype patch with explicit per-report calls
-7ddb19f perf: add query limits to project_margin, work_cost_by_project, work_cost_by_category
-727bae4 refactor: remove projects_by_status report
-9e1c1e8 perf: batch cost summary in budget_vs_actual report
-aa271f9 fix: add idempotent after_migrate patch for add_total_row sync
-492f716 perf: eliminate N+1 queries and add limits in cash_flow report
-543de71 fix: correct add_total_row and broken filter in script reports
 ```
 
 ## 2. Árvore de Arquivos (anotada)
@@ -287,6 +287,7 @@ engenharia/
 | customer | Cliente | Link | Customer | ✓ |  |
 | title | Título | Data |  |  |  |
 | status | Status | Select | Vigente Encerrado Cancelado Quitado |  |  |
+| is_primary | Contrato Principal | Check |  |  |  |
 | base_value | Valor Base | Currency |  | ✓ |  |
 | current_value | Valor Atual | Currency |  |  |  |
 | adjustment_index | Índice de Reajuste | Select |  INCC IPCA IGP-M Nenhum |  |  |
@@ -943,9 +944,6 @@ reinstall_child_doctypes → roles → ensure_event_custom_fields → permission
 
 ## 7. Testes
 
-- **320** métodos em **60** arquivos.
+- **329** métodos em **60** arquivos.
 - `bench --site engenharia.local run-tests --app engenharia`
 
----
-
-*Última atualização: 2026-06-23 23:24 UTC — gerado por `scripts/generate_codebase.py`*

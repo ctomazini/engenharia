@@ -219,6 +219,7 @@ No projeto, use a aba **Conexões** para abrir contratos, pagamentos, custos, co
 | Valor Base | Valor original antes de aditivos |
 | Valor Atual | Calculado com aditivos (somente leitura) |
 | Status | Vigente, Encerrado, Cancelado ou Quitado |
+| Contrato Principal | Marque o contrato principal da obra. É o usado por padrão ao **Gerar Documentos** quando a obra tem mais de um contrato. Só um por obra (ao marcar outro, o anterior é desmarcado) |
 | Parcelas | Datas e valores; gera pagamentos ao salvar |
 
 ### Parcelas
@@ -523,7 +524,9 @@ No formulário **Modelo de Documento**, use o botão **Ver Placeholders Disponí
 {% endfor %}
 ```
 
-**Contrato** *(preenchido quando existe contrato vigente na obra):*
+**Contrato** *(refere-se a **um** contrato — o selecionado na geração, ou o **contrato principal** da obra):*
+
+> Diferença importante: os placeholders `contract_*` são de **um** contrato. Já `project_current_contract_value` / `_fmt` é a **soma de todos** os contratos da obra. Em documentos contratuais, use `contract_value_fmt`.
 
 | Placeholder | Conteúdo |
 |---|---|
@@ -568,9 +571,10 @@ Agrupe vários modelos em um **Kit** para gerar pacotes completos de uma vez.
 Na **Obra**, use o botão **Gerar Documentos**:
 
 1. Escolha um ou mais modelos (ou um **Kit**).
-2. Opcionalmente selecione um **Protocolo** vinculado à obra (placeholders do grupo Protocolo).
-3. O sistema preenche placeholders com dados do escritório, cliente, obra, orçamento (itens da revisão vigente), contrato (incluindo parcelas) e subcontratos.
-4. O `.docx` é **baixado no navegador** — não é arquivado automaticamente na obra.
+2. Se a obra tiver **mais de um contrato**, escolha o **Contrato** que alimentará os placeholders `contract_*` (o **contrato principal** vem pré-selecionado). Com um único contrato, esse campo não aparece e o sistema o usa automaticamente.
+3. Opcionalmente selecione um **Protocolo** vinculado à obra (placeholders do grupo Protocolo).
+4. O sistema preenche placeholders com dados do escritório, cliente, obra, orçamento (itens da revisão vigente), contrato selecionado (incluindo parcelas) e subcontratos.
+5. O `.docx` é **baixado no navegador** — não é arquivado automaticamente na obra.
 
 Para guardar na obra, use **+ Enviar documento** na aba Documentos (upload manual).
 
@@ -663,6 +667,6 @@ Contratos, pagamentos, custos, despesas reembolsáveis, comissões, totais de or
 
 ---
 
-*Manual versão 1.2 — app **1.1.0** (jun/2026). Alinhado ao Frappe v16.*
+*Manual versão 1.3 — app **1.1.0** (jun/2026). Alinhado ao Frappe v16.*
 
-*Última atualização: 2026-06-23 23:24 UTC*
+*Última atualização: 2026-06-29 21:45 UTC*
