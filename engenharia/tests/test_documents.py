@@ -115,6 +115,20 @@ class TestDocuments(FrappeTestCase):
 		self.assertIn("Engenheiro responsável", groups)
 		self.assertIn("Protocolo", groups)
 
+	def test_currency_format_is_brazilian_regardless_of_settings(self):
+		from engenharia.documents import _fmt_currency, _fmt_number
+
+		original = frappe.db.get_default("number_format")
+		try:
+			frappe.db.set_default("number_format", "#,###.##")
+			frappe.local.system_settings = None
+			self.assertEqual(_fmt_currency(1234567.89), "1.234.567,89")
+			self.assertEqual(_fmt_number(3250), "3.250,00")
+			self.assertEqual(_fmt_number(38.8), "38,80")
+		finally:
+			frappe.db.set_default("number_format", original or "#.###,##")
+			frappe.local.system_settings = None
+
 	def test_value_in_words(self):
 		result = _value_in_words(8000)
 		self.assertIn("oito mil", result)

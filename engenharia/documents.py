@@ -479,12 +479,17 @@ def _fmt_date(value) -> str:
 	return formatdate(getdate(value))
 
 
+# Documentos contratuais devem sair sempre em padrão BR (milhar "." e decimal ","),
+# independente do number_format do site onde o app está instalado.
+_BR_NUMBER_FORMAT = "#.###,##"
+
+
 def _fmt_currency(value) -> str:
-	return fmt_money(flt(value))
+	return fmt_money(flt(value), format=_BR_NUMBER_FORMAT)
 
 
 def _fmt_number(value, precision: int = 2) -> str:
-	return fmt_money(flt(value), precision=precision)
+	return fmt_money(flt(value), precision=precision, format=_BR_NUMBER_FORMAT)
 
 
 def _value_in_words(value) -> str:
