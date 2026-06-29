@@ -440,14 +440,30 @@ function eng_open_generate_documents_dialog(frm) {
 			frappe.call({
 				method: "engenharia.documents.get_available_kits",
 				callback(r_kits) {
-					eng_mount_generate_documents_dialog(frm, templates, r_kits.message || []);
+					const kits = r_kits.message || [];
+					frappe.call({
+						method: "engenharia.documents.get_project_contracts",
+						args: { project_name: frm.doc.name },
+						callback(r_contracts) {
+							eng_mount_generate_documents_dialog(
+								frm,
+								templates,
+								kits,
+								r_contracts.message || []
+							);
+						},
+					});
 				},
 			});
 		},
 	});
 }
 
-function eng_mount_generate_documents_dialog(frm, templates, kits) {
+function eng_mount_generate_documents_dialog(frm, templates, kits, contracts) {
+	contracts = contracts || [];
+	const has_multiple_contracts = contracts.length > 1;
+	const primary_contract = contracts.find((c) => c.is_primary) || contracts[0];
+
 	const grouped = {};
 	templates.forEach((tpl) => {
 		const doc_type = tpl.document_type || __("Outro");
@@ -489,34 +505,55 @@ function eng_mount_generate_documents_dialog(frm, templates, kits) {
 		});
 	checklist_html += "</div>";
 
+	const fields = [];
+	if (has_multiple_contracts) {
+		fields.push({
+			fieldname: "contract",
+			fieldtype: "Link",
+			label: __("Contrato"),
+			options: "Engineering Contract",
+			reqd: 1,
+			default: primary_contract ? primary_contract.name : "",
+			description: __(
+				"Esta obra tem mais de um contrato. Os placeholders de contrato usam o selecionado. Padrão: contrato principal."
+			),
+			get_query() {
+				return {
+					filters: { project: frm.doc.name, status: ["!=", "Cancelado"] },
+				};
+			},
+		});
+	}
+	fields.push(
+		{
+			fieldname: "permit",
+			fieldtype: "Link",
+			label: __("Alvará e Protocolo (opcional)"),
+			options: "Permit",
+			description: __("Preenche placeholders de alvará/protocolo no documento gerado"),
+			get_query() {
+				return {
+					filters: { project: frm.doc.name },
+				};
+			},
+		},
+		{
+			fieldname: "kit",
+			fieldtype: "Select",
+			label: __("Kit (opcional)"),
+			options: ["", ...kits.map((k) => k.name)],
+			description: __("Pré-seleciona os templates de um kit"),
+		},
+		{
+			fieldname: "templates_html",
+			fieldtype: "HTML",
+			options: checklist_html,
+		}
+	);
+
 	const dialog = new frappe.ui.Dialog({
 		title: __("Gerar Documentos"),
-		fields: [
-			{
-				fieldname: "permit",
-				fieldtype: "Link",
-				label: __("Alvará e Protocolo (opcional)"),
-				options: "Permit",
-				description: __("Preenche placeholders de alvará/protocolo no documento gerado"),
-				get_query() {
-					return {
-						filters: { project: frm.doc.name },
-					};
-				},
-			},
-			{
-				fieldname: "kit",
-				fieldtype: "Select",
-				label: __("Kit (opcional)"),
-				options: ["", ...kits.map((k) => k.name)],
-				description: __("Pré-seleciona os templates de um kit"),
-			},
-			{
-				fieldname: "templates_html",
-				fieldtype: "HTML",
-				options: checklist_html,
-			},
-		],
+		fields,
 		primary_action_label: __("Gerar documentos"),
 		primary_action() {
 			const selected = [];
@@ -527,8 +564,17 @@ function eng_mount_generate_documents_dialog(frm, templates, kits) {
 				frappe.msgprint(__("Selecione ao menos um template."));
 				return;
 			}
+			if (has_multiple_contracts && !dialog.get_value("contract")) {
+				frappe.msgprint(__("Selecione o contrato."));
+				return;
+			}
 			dialog.hide();
-			eng_generate_documents_batch(frm, selected, dialog.get_value("permit"));
+			eng_generate_documents_batch(
+				frm,
+				selected,
+				dialog.get_value("permit"),
+				dialog.get_value("contract")
+			);
 		},
 	});
 
@@ -610,13 +656,14 @@ function eng_trigger_download(url, file_name) {
 	window.setTimeout(() => link.remove(), 1000);
 }
 
-function eng_generate_documents_batch(frm, template_names, permit_name) {
+function eng_generate_documents_batch(frm, template_names, permit_name, contract_name) {
 	frappe.call({
 		method: "engenharia.documents.generate_project_documents",
 		args: {
 			project_name: frm.doc.name,
 			template_names,
 			permit_name: permit_name || null,
+			contract_name: contract_name || null,
 		},
 		freeze: true,
 		freeze_message: __("Gerando documentos..."),
