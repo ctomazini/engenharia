@@ -56,3 +56,6 @@ jspm_packages/
 build_manifest.json
 00_bootstrap.sh
 .cursor/
+
+# Modelos internos (.docx de trabalho — nunca versionar)
+modelos/
