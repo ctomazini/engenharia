@@ -1298,7 +1298,19 @@ def _infer_document_category(template_doc) -> str:
 	return "Outro"
 
 
-def _render_document(project_name, template_doc, context):
+def _render_docx_template(template_doc, context: dict) -> bytes:
+	"""Renderiza o .docx de um Document Template com o contexto Jinja BR.
+
+	Núcleo reutilizável: carrega o arquivo do template, aplica o motor Jinja
+	com filtros BR e retorna os bytes do documento gerado.
+
+	Args:
+		template_doc: doc do Document Template (precisa de document_file).
+		context: dicionário de variáveis Jinja.
+
+	Returns:
+		bytes do .docx renderizado.
+	"""
 	try:
 		from docxtpl import DocxTemplate
 	except ImportError:
@@ -1318,6 +1330,11 @@ def _render_document(project_name, template_doc, context):
 	buffer = io.BytesIO()
 	tpl.save(buffer)
 	buffer.seek(0)
+	return buffer.read()
+
+
+def _render_document(project_name, template_doc, context):
+	content = _render_docx_template(template_doc, context)
 
 	category = _infer_document_category(template_doc)
 	file_name = compose_project_document_filename(
@@ -1328,4 +1345,4 @@ def _render_document(project_name, template_doc, context):
 		".docx",
 	)
 
-	return {"file_name": file_name, "content": buffer.read()}
+	return {"file_name": file_name, "content": content}
