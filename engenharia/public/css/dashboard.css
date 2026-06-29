@@ -1238,6 +1238,12 @@
 	margin-bottom: 16px;
 }
 
+.eng-dash-receivables-host .eng-dash-receivables {
+	display: flex;
+	justify-content: flex-end;
+	margin: var(--padding-sm) 0;
+}
+
 @media (max-width: 900px) {
 	.eng-dash-finance-head {
 		grid-template-columns: 1fr;

@@ -46,6 +46,7 @@ const ENG_DASH_ASSETS = [
 	"/assets/engenharia/js/dashboard/health.js",
 	"/assets/engenharia/js/dashboard/kpis.js",
 	"/assets/engenharia/js/dashboard/financial.js",
+	"/assets/engenharia/js/dashboard/receivables.js",
 	"/assets/engenharia/js/dashboard/budget_margin.js",
 	"/assets/engenharia/js/dashboard/lists.js",
 	"/assets/engenharia/js/dashboard/timeline.js",
@@ -246,6 +247,7 @@ engenharia.dashboard.render_dashboard = function ($container, data, page, option
 	const $health = $('<div class="eng-dash-health-host"></div>').appendTo($financeHead);
 	const $kpis = $('<div class="eng-dash-kpis-host"></div>').appendTo($financeHead);
 	const $fin = $('<div class="eng-dash-finance-host"></div>').appendTo($financeZone);
+	const $receivables = $('<div class="eng-dash-receivables-host"></div>').appendTo($financeZone);
 	const $budgetMargin = $('<div class="eng-dash-budget-margin-host"></div>').appendTo($financeZone);
 	const $lists = $('<div class="eng-dash-lists-host"></div>').appendTo($content);
 
@@ -262,6 +264,9 @@ engenharia.dashboard.render_dashboard = function ($container, data, page, option
 		engenharia.dashboard.health.render($health, data);
 		engenharia.dashboard.kpis.render($kpis, data);
 		engenharia.dashboard.financial.render($fin, data, page);
+		if (engenharia.dashboard.receivables) {
+			engenharia.dashboard.receivables.render($receivables, data);
+		}
 		engenharia.dashboard.budget_margin.render($budgetMargin, data);
 		engenharia.dashboard.lists.render_duo($lists, data, page);
 		const $commissions = $('<div class="eng-dash-commissions-host"></div>').appendTo($content);
