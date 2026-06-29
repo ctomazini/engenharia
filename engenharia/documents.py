@@ -321,14 +321,17 @@ PLACEHOLDER_REFERENCE = [
 
 @frappe.whitelist()
 def generate_project_documents(
-	project_name: str, template_names: str | list, permit_name: str | None = None
+	project_name: str,
+	template_names: str | list,
+	permit_name: str | None = None,
+	contract_name: str | None = None,
 ) -> dict:
 	frappe.has_permission("Construction Project", "write", doc=project_name, throw=True)
 	names = _parse_template_names(template_names)
 	if not names:
 		frappe.throw(_("Selecione ao menos um template."))
 
-	context = _build_context(project_name, permit_name=permit_name)
+	context = _build_context(project_name, permit_name=permit_name, contract_name=contract_name)
 	generated = []
 	failures = []
 
@@ -356,6 +359,18 @@ def generate_project_documents(
 			)
 
 	return {"generated": generated, "failures": failures, "total": len(generated)}
+
+
+@frappe.whitelist()
+def get_project_contracts(project_name: str) -> list[dict]:
+	frappe.has_permission("Engineering Contract", "read", throw=True)
+	return frappe.get_all(
+		"Engineering Contract",
+		filters={"project": project_name, "status": ["!=", "Cancelado"]},
+		fields=["name", "title", "status", "is_primary", "current_value"],
+		order_by="is_primary desc, modified desc",
+		limit_page_length=0,
+	)
 
 
 @frappe.whitelist()
@@ -1028,7 +1043,53 @@ def _get_permit_context(permit_name: str | None) -> dict:
 	}
 
 
-def _build_context(project_name: str, permit_name: str | None = None) -> dict:
+# Prioridade do fallback quando a obra não tem contrato principal definido.
+_CONTRACT_STATUS_PRIORITY = ("Vigente", "Quitado", "Encerrado")
+
+
+def _resolve_contract(project_name: str, contract_name: str | None = None):
+	"""Resolve o contrato da obra: explícito > principal > fallback determinístico."""
+	if contract_name:
+		info = frappe.db.get_value(
+			"Engineering Contract", contract_name, ["project", "status"], as_dict=True
+		)
+		if not info or info.project != project_name:
+			frappe.throw(_("O contrato selecionado não pertence a esta obra."))
+		if info.status == "Cancelado":
+			frappe.throw(_("O contrato selecionado está cancelado."))
+		return frappe.get_doc("Engineering Contract", contract_name)
+
+	primary = frappe.db.get_value(
+		"Engineering Contract",
+		{"project": project_name, "is_primary": 1, "status": ["!=", "Cancelado"]},
+		"name",
+	)
+	if primary:
+		return frappe.get_doc("Engineering Contract", primary)
+
+	rows = frappe.get_all(
+		"Engineering Contract",
+		filters={"project": project_name, "status": ["!=", "Cancelado"]},
+		fields=["name", "status", "modified"],
+		limit_page_length=0,
+	)
+	if not rows:
+		return None
+
+	def _status_priority(status: str) -> int:
+		try:
+			return _CONTRACT_STATUS_PRIORITY.index(status)
+		except ValueError:
+			return len(_CONTRACT_STATUS_PRIORITY)
+
+	rows.sort(key=lambda row: row.modified or "", reverse=True)
+	rows.sort(key=lambda row: _status_priority(row.status))
+	return frappe.get_doc("Engineering Contract", rows[0].name)
+
+
+def _build_context(
+	project_name: str, permit_name: str | None = None, contract_name: str | None = None
+) -> dict:
 	project = frappe.get_doc("Construction Project", project_name)
 	customer = frappe.get_doc("Customer", project.customer) if project.customer else None
 	addr = _primary_customer_address(customer)
@@ -1039,13 +1100,7 @@ def _build_context(project_name: str, permit_name: str | None = None) -> dict:
 		if permit_project != project.name:
 			frappe.throw(_("O protocolo selecionado não pertence a esta obra."))
 
-	contract_name = frappe.db.get_value(
-		"Engineering Contract",
-		{"project": project.name, "status": ["!=", "Cancelado"]},
-		"name",
-		order_by="modified desc",
-	)
-	contract = frappe.get_doc("Engineering Contract", contract_name) if contract_name else None
+	contract = _resolve_contract(project.name, contract_name)
 	settings = frappe.get_single("Engineering Settings")
 
 	context = {}

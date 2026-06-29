@@ -9,12 +9,14 @@ from frappe.utils import getdate
 from engenharia.documents import (
 	_build_context,
 	_get_contract_context,
+	_resolve_contract,
 	_value_in_words,
 	generate_project_documents,
 	get_available_kits,
 	get_available_templates,
 	get_document_placeholder_keys,
 	get_placeholder_reference,
+	get_project_contracts,
 )
 from engenharia.tests.test_setup import (
 	_uid,
@@ -316,6 +318,82 @@ class TestDocuments(FrappeTestCase):
 			},
 		)
 		self.assertEqual(len(attached_files), 0)
+
+	def test_resolve_contract_prefers_primary(self):
+		project = create_test_construction_project()
+		create_test_engineering_contract(
+			project=project.name, base_value=10000, installment_count=1
+		)
+		primary = create_test_engineering_contract(
+			project=project.name, base_value=5000, installment_count=1, is_primary=1
+		)
+		resolved = _resolve_contract(project.name)
+		self.assertEqual(resolved.name, primary.name)
+
+	def test_resolve_contract_explicit(self):
+		project = create_test_construction_project()
+		primary = create_test_engineering_contract(
+			project=project.name, base_value=5000, installment_count=1, is_primary=1
+		)
+		other = create_test_engineering_contract(
+			project=project.name, base_value=8000, installment_count=1
+		)
+		resolved = _resolve_contract(project.name, other.name)
+		self.assertEqual(resolved.name, other.name)
+		self.assertNotEqual(resolved.name, primary.name)
+
+	def test_resolve_contract_explicit_wrong_project_fails(self):
+		from frappe.exceptions import ValidationError
+
+		project_a = create_test_construction_project()
+		project_b = create_test_construction_project()
+		contract_b = create_test_engineering_contract(
+			project=project_b.name, base_value=3000, installment_count=1
+		)
+		with self.assertRaises(ValidationError):
+			_resolve_contract(project_a.name, contract_b.name)
+
+	def test_resolve_contract_fallback_prefers_active_status(self):
+		project = create_test_construction_project()
+		encerrado = create_test_engineering_contract(
+			project=project.name, base_value=7000, installment_count=1
+		)
+		frappe.db.set_value("Engineering Contract", encerrado.name, "status", "Encerrado")
+		vigente = create_test_engineering_contract(
+			project=project.name, base_value=4000, installment_count=1
+		)
+		resolved = _resolve_contract(project.name)
+		self.assertEqual(resolved.name, vigente.name)
+
+	def test_resolve_contract_none_when_no_contract(self):
+		project = create_test_construction_project()
+		self.assertIsNone(_resolve_contract(project.name))
+
+	def test_get_project_contracts_lists_primary_first(self):
+		project = create_test_construction_project()
+		create_test_engineering_contract(
+			project=project.name, base_value=10000, installment_count=1
+		)
+		primary = create_test_engineering_contract(
+			project=project.name, base_value=5000, installment_count=1, is_primary=1
+		)
+		contracts = get_project_contracts(project.name)
+		self.assertEqual(len(contracts), 2)
+		self.assertEqual(contracts[0]["name"], primary.name)
+		self.assertEqual(contracts[0]["is_primary"], 1)
+
+	def test_build_context_uses_explicit_contract(self):
+		_ensure_engineering_settings()
+		project = create_test_construction_project()
+		create_test_engineering_contract(
+			project=project.name, base_value=5000, current_value=5000, installment_count=1, is_primary=1
+		)
+		other = create_test_engineering_contract(
+			project=project.name, base_value=8000, current_value=8000, installment_count=1
+		)
+		context = _build_context(project.name, contract_name=other.name)
+		self.assertEqual(context["contract_name"], other.name)
+		self.assertEqual(context["contract_value"], 8000)
 
 	def test_infer_document_category_from_template_name(self):
 		from engenharia.documents import _infer_document_category
