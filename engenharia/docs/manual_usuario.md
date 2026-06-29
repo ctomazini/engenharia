@@ -398,6 +398,45 @@ Na tabela, valores críticos aparecem com **destaque colorido** (margem negativa
 
 Em qualquer Script Report, abra o menu **Imprimir** e escolha um formato **Engenharia - …** (Resumo, Detalhado ou Paisagem). O cabeçalho usa logo e dados do escritório configurados em **Configurações do Escritório** (Engineering Settings).
 
+### 6.9 Relatório de Recebimentos (Contador)
+
+Gera um documento **Word (.docx)** mensal com os recebimentos do período, parcela a parcela, **agrupados por cliente** com qualificação completa (nome, CPF/CNPJ, endereço) — pronto para o contador emitir as notas fiscais.
+
+**Como usar** (apenas **Engenharia Manager**):
+
+1. Abra o **Painel de Obras** e localize a zona financeira.
+2. Clique em **"Relatório para Contador"**.
+3. Escolha o **Modo**, o **Mês**, o **Ano** e o **Modelo do Documento**.
+4. Clique em **Gerar Relatório** — o `.docx` é baixado automaticamente.
+
+**Modos:**
+
+- **Previsão** — parcelas com **vencimento** no mês (ideal no início do mês).
+- **Realizado** — parcelas efetivamente **recebidas** no mês (ideal no fechamento).
+
+Apenas recebíveis de **Parcela do Contrato** entram no relatório; parcelas **Canceladas** e **Renegociadas** são excluídas.
+
+**Modelo `.docx`:** suba o seu modelo (com cores, fontes e marca d'água) via **Modelo de Documento** (Document Template) e selecione-o no diálogo. Placeholders disponíveis:
+
+Cabeçalho: `{{ report_title }}`, `{{ mode_label }}`, `{{ month_label }}` (ex.: "maio/2026"), `{{ today }}`, além de todos os dados do escritório (`{{ company_name }}`, etc.).
+
+Loop de clientes e parcelas:
+
+```
+{% for c in customers %}
+  {{ c.customer_name }} — {{ c.cpf_cnpj_label }}: {{ c.cpf_cnpj }}
+  {{ c.address_full }}
+  {%tr for i in c.installments %}
+  {{ i.due_date_fmt }} | {{ i.description }} | {{ i.project }} | R$ {{ i.valor_fmt }}
+  {%tr endfor %}
+  Subtotal: R$ {{ c.subtotal_fmt }}
+{% endfor %}
+```
+
+Cada parcela (`i`) expõe ainda: `amount_fmt`, `received_amount_fmt`, `received_date_fmt`, `status`, `nf_number`, `contract`, `installment_number`.
+
+Totais: `{{ total_fmt }}` (total geral formatado) e `{{ count }}` (quantidade de parcelas).
+
 ---
 
 ## 7. Medições
@@ -686,6 +725,6 @@ Contratos, pagamentos, custos, despesas reembolsáveis, comissões, totais de or
 
 ---
 
-*Manual versão 1.5 — app **1.2.0** (jun/2026). Alinhado ao Frappe v16.*
+*Manual versão 1.6 — app **1.3.0** (jun/2026). Alinhado ao Frappe v16.*
 
-*Última atualização: 2026-06-29 22:20 UTC*
+*Última atualização: 2026-06-29 23:30 UTC*

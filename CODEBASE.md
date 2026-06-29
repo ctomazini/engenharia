@@ -2,7 +2,7 @@
 
 > Gerado em **2026-06-29** — inventário técnico do app greenfield EN. Frappe puro, **sem ERPNext**.
 
-> **HEAD:** `7c0d2a7 2026-06-29 22:06:03 +0000 feat(documents): pt-BR jinja filters/functions for computed values`
+> **HEAD:** `6f43c31 2026-06-29 23:13:07 +0000 feat: add receivables report button to eng-dashboard financial tab`
 
 ---
 
@@ -11,13 +11,13 @@
 | Item | Valor |
 | --- | --- |
 | Nome | engenharia |
-| Versão | 1.2.0 (`pyproject.toml`) |
+| Versão | 1.3.0 (`pyproject.toml`) |
 | Framework | Frappe v16 |
 | Licença | MIT |
 | Site dev | engenharia.local |
-| Linhas Python | ~19750 |
-| Linhas JavaScript | ~7352 |
-| Métodos de teste | 333 (60 arquivos) |
+| Linhas Python | ~20248 |
+| Linhas JavaScript | ~7490 |
+| Métodos de teste | 344 (61 arquivos) |
 | DocTypes | 49 (`custom: 0`) |
 | Script Reports | 6 |
 | Print Formats | 15 |
@@ -28,6 +28,10 @@
 
 **Commits recentes:**
 ```text
+6f43c31 feat: add receivables report button to eng-dashboard financial tab
+fb7aa87 feat: add monthly receivables report generator for accountant
+0ff6f0b chore(release): bump version to 1.2.0 and sync documentation
+ee7f7aa feat(document-template): add "how to use placeholders" guide button
 7c0d2a7 feat(documents): pt-BR jinja filters/functions for computed values
 72069c7 fix(documents): force Brazilian number format on all value placeholders
 47545b1 docs: clarify single contract vs project total in placeholders
@@ -36,10 +40,6 @@ d9cb5a2 feat(documents): resolve contract by explicit/primary/fallback
 16af34b feat(patches): backfill primary contract for single-contract projects
 113ffd0 feat(engineering-contract): add primary contract flag with uniqueness
 87573e2 fix(documents): add pt-BR formatted variants for numeric placeholders
-8bc9010 fix(documents): keep object URL alive with clickable download fallback
-7005d1d chore(release): bump version to 1.1.0 and sync documentation
-f708bfe fix(hub): espelhar layout de pills do advocacia no desktop
-824b041 feat(dashboard): render budget vs actual and margin sections
 ```
 
 ## 2. Árvore de Arquivos (anotada)
@@ -945,6 +945,6 @@ reinstall_child_doctypes → roles → ensure_event_custom_fields → permission
 
 ## 7. Testes
 
-- **333** métodos em **60** arquivos.
+- **344** métodos em **61** arquivos.
 - `bench --site engenharia.local run-tests --app engenharia`
 

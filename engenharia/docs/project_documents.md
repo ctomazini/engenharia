@@ -78,10 +78,19 @@ Renomeação via `shutil.move` no `validate()` quando categoria, versão ou desc
 
 `patches/v16_0/migrate_project_document_category_to_link.py` — converte categorias texto livre antigas para Link.
 
+## Relatório de Recebimentos (Contador)
+
+- Endpoint whitelisted `engenharia.receivables.get_monthly_receivables_report(month, year, mode, template_name)` gera `.docx` via `docxtpl` (sem DocType novo).
+- Modos: `previsao` (filtra `due_date` no mês) e `realizado` (filtra `received_date` + `status="Recebido"`); sempre `origin_type="Parcela do Contrato"`, excluindo `Cancelado`/`Renegociado`.
+- Contexto montado em `_build_receivables_context`: parcelas agrupadas por cliente, qualificação via lookup em lote de `Customer` e endereço principal via `_get_primary_addresses_batch` (child `Customer Address`), totais formatados com os helpers BR.
+- Renderização reusa `_render_docx_template` (núcleo extraído de `_render_document`).
+- Frontend: `public/js/dashboard/receivables.js` (botão na zona financeira do `eng-dashboard`, restrito a Manager) com download base64.
+
 ## Testes
 
 - `tests/test_documents.py` (geração sem persistência)
+- `tests/test_receivables.py` (relatório mensal de recebimentos)
 - `tests/test_project_document.py`
 - `tests/test_project_hub.py` (contagens de documentos)
 
-*Última atualização: 2026-06-29 22:20 UTC — app v1.2.0*
+*Última atualização: 2026-06-29 23:30 UTC — app v1.3.0*

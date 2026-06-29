@@ -1,6 +1,6 @@
 # Engenharia
 
-Gestão de obras de engenharia civil no **Frappe v16** (sem ERPNext). **Versão:** 1.2.0
+Gestão de obras de engenharia civil no **Frappe v16** (sem ERPNext). **Versão:** 1.3.0
 
 Especificações técnicas: cadastro em **Technical Item** (parâmetros + fórmulas em **Technical Item Output**); instâncias na obra em **Project Item** (documento ligado a **Construction Project**).
 

@@ -2,7 +2,7 @@
 
 **App alvo:** `engenharia` (greenfield) · **Referência:** `advocacia` (brownfield Frappe v16)  
 **Objetivo:** checklist operacional fechado — nada aqui é proposta em aberto.  
-**Última consolidação:** 2026-06-29 · **Versão app:** 1.2.0
+**Última consolidação:** 2026-06-29 · **Versão app:** 1.3.0
 
 ---
 

@@ -2,6 +2,20 @@
 
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/). Versionamento [SemVer](https://semver.org/).
 
+## [1.3.0] — 2026-06-29
+
+### Added
+
+- **Relatório de Recebimentos (Contador):** gerador de `.docx` via `docxtpl` com modos **Previsão** (vencimentos do mês) e **Realizado** (recebidos no mês), parcelas itemizadas e agrupadas por cliente com qualificação completa (CPF/CNPJ, endereço). Endpoint whitelisted `engenharia.receivables.get_monthly_receivables_report` (sem DocType novo, lookups em lote sem N+1).
+- **Botão "Relatório para Contador"** na zona financeira do painel (`eng-dashboard`), restrito a Engenharia Manager, com diálogo de modo/mês/ano/modelo e download automático do `.docx`.
+- Helper reutilizável `_render_docx_template` extraído de `_render_document` para renderização genérica de modelos `.docx`.
+
+### Tests
+
+- Suíte: **343** testes (11 novos em `tests/test_receivables.py`).
+
+---
+
 ## [1.2.0] — 2026-06-29
 
 ### Added
