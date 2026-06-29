@@ -148,7 +148,6 @@ def _build_receivables_context(month: int, year: int, mode: str) -> dict:
 	addresses_data = _get_primary_addresses_batch(customer_names)
 
 	fmt = _document_format_helpers()
-	value_field = "amount" if mode == "previsao" else "received_amount"
 
 	grouped: "OrderedDict[str, list]" = OrderedDict()
 	for p in payments:
@@ -163,7 +162,14 @@ def _build_receivables_context(month: int, year: int, mode: str) -> dict:
 		installments = []
 		subtotal = 0.0
 		for p in parcelas:
-			valor = flt(p.get(value_field))
+			amount_val = flt(p.amount)
+			received_val = flt(p.received_amount)
+			# No modo realizado, parcelas marcadas como recebidas sem o valor
+			# recebido preenchido caem para o valor da parcela (convenção do financeiro).
+			if mode == "previsao":
+				valor = amount_val
+			else:
+				valor = received_val or amount_val
 			subtotal += valor
 			installments.append(
 				{

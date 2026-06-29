@@ -124,6 +124,28 @@ class TestMonthlyReceivablesReport(FrappeTestCase):
 		self.assertTrue(result.get("file_content"))
 		self.assertEqual(result.get("count"), 2)
 
+	def test_realizado_blank_received_amount_falls_back_to_amount(self):
+		# Recebido com "Valor Recebido" em branco = recebeu o total da parcela.
+		for p in self.payments:
+			due = frappe.db.get_value("Payment", p.name, "due_date")
+			if due and due.month == TEST_MONTH and due.year == TEST_YEAR:
+				doc = frappe.get_doc("Payment", p.name)
+				doc.manual_override = 1
+				doc.status = "Recebido"
+				doc.received_amount = 0
+				doc.received_date = f"{TEST_YEAR}-{TEST_MONTH:02d}-25"
+				doc.save(ignore_permissions=True)
+
+		context = _build_receivables_context(TEST_MONTH, TEST_YEAR, "realizado")
+		match = next(
+			(c for c in context["customers"] if c["customer"] == self.customer.name),
+			None,
+		)
+		self.assertIsNotNone(match)
+		self.assertEqual(match["subtotal"], 2000)
+		for inst in match["installments"]:
+			self.assertEqual(inst["valor"], 1000)
+
 	def test_realizado_excludes_unreceived(self):
 		# Sem marcar como recebido, modo realizado não deve trazer parcelas.
 		context = _build_receivables_context(TEST_MONTH, TEST_YEAR, "realizado")

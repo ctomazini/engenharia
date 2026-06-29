@@ -10,9 +10,13 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/). Versionament
 - **Botão "Relatório para Contador"** na zona financeira do painel (`eng-dashboard`), restrito a Engenharia Manager, com diálogo de modo/mês/ano/modelo e download automático do `.docx`.
 - Helper reutilizável `_render_docx_template` extraído de `_render_document` para renderização genérica de modelos `.docx`.
 
+### Fixed
+
+- **Modo Realizado:** parcelas marcadas como recebidas com **Valor Recebido em branco** (= recebeu o total) saíam zeradas no relatório; agora o valor cai para o valor da parcela (`received_amount or amount`).
+
 ### Tests
 
-- Suíte: **343** testes (11 novos em `tests/test_receivables.py`).
+- Suíte: **344** testes (12 em `tests/test_receivables.py`).
 
 ---
 
