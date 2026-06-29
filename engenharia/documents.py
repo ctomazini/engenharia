@@ -115,10 +115,12 @@ PLACEHOLDER_REFERENCE = [
 			{"placeholder": "project_address_full", "label": "Endereço completo da obra"},
 			{"placeholder": "project_location_code", "label": "Código de localização municipal"},
 			{"placeholder": "project_dic", "label": "DIC (cadastro municipal do lote)"},
-			{"placeholder": "project_construction_area", "label": "Área construída (m²)"},
+			{"placeholder": "project_construction_area", "label": "Área construída (m²) — valor numérico"},
+			{"placeholder": "project_construction_area_fmt", "label": "Área construída (m²) — formatado"},
 			{"placeholder": "project_current_contract_value", "label": "Valor atual do contrato (R$)"},
 			{"placeholder": "project_current_contract_value_fmt", "label": "Valor atual do contrato (formatado)"},
-			{"placeholder": "project_physical_progress", "label": "Avanço físico global (%)"},
+			{"placeholder": "project_physical_progress", "label": "Avanço físico global (%) — valor numérico"},
+			{"placeholder": "project_physical_progress_fmt", "label": "Avanço físico global (%) — formatado"},
 			{"placeholder": "project_responsible_engineer", "label": "Responsável técnico"},
 			{"placeholder": "project_crea_number", "label": "CREA do responsável"},
 			{"placeholder": "project_art_number", "label": "Nº ART principal"},
@@ -136,7 +138,8 @@ PLACEHOLDER_REFERENCE = [
 			{"placeholder": "project_property_registration", "label": "Matrícula do imóvel"},
 			{"placeholder": "project_gps_coordinates", "label": "Coordenadas GPS"},
 			{"placeholder": "project_budget_revision", "label": "Revisão vigente do orçamento"},
-			{"placeholder": "project_default_bdi_percent", "label": "BDI padrão da obra (%)"},
+			{"placeholder": "project_default_bdi_percent", "label": "BDI padrão da obra (%) — valor numérico"},
+			{"placeholder": "project_default_bdi_percent_fmt", "label": "BDI padrão da obra (%) — formatado"},
 			{"placeholder": "spec_project_total", "label": "Total do orçamento (R$)"},
 			{"placeholder": "spec_project_total_fmt", "label": "Total do orçamento (formatado)"},
 			{"placeholder": "project_observations", "label": "Observações da obra"},
@@ -465,6 +468,10 @@ def _fmt_currency(value) -> str:
 	return fmt_money(flt(value))
 
 
+def _fmt_number(value, precision: int = 2) -> str:
+	return fmt_money(flt(value), precision=precision)
+
+
 def _value_in_words(value) -> str:
 	"""Converte valor numérico para texto por extenso em PT-BR (moeda)."""
 	amount = flt(value)
@@ -582,9 +589,11 @@ def _get_project_context(project) -> dict:
 		"project_location_code": project.location_code or "",
 		"project_dic": project.dic or "",
 		"project_construction_area": flt(project.construction_area),
+		"project_construction_area_fmt": _fmt_number(project.construction_area),
 		"project_current_contract_value": current_contract_value,
 		"project_current_contract_value_fmt": _fmt_currency(current_contract_value),
 		"project_physical_progress": flt(project.physical_progress),
+		"project_physical_progress_fmt": _fmt_number(project.physical_progress),
 		"project_responsible_engineer": project.responsible_engineer or "",
 		"project_crea_number": project.crea_number or "",
 		"project_art_number": project.art_number or "",
@@ -603,6 +612,7 @@ def _get_project_context(project) -> dict:
 		"project_gps_coordinates": project.gps_coordinates or "",
 		"project_budget_revision": project.budget_revision or 1,
 		"project_default_bdi_percent": flt(project.default_bdi_percent),
+		"project_default_bdi_percent_fmt": _fmt_number(project.default_bdi_percent),
 		"spec_project_total": spec_total,
 		"spec_project_total_fmt": _fmt_currency(spec_total),
 		"project_observations": strip_html(project.observations or ""),
