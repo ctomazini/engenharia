@@ -1122,7 +1122,30 @@ def _build_context(
 			"today_iso": getdate(today()).isoformat(),
 		}
 	)
+	context.update(_document_format_helpers())
 	return context
+
+
+def _document_format_helpers() -> dict:
+	"""Funções de formatação BR usáveis no template (ex.: {{ real(valor / area) }})."""
+	return {
+		"real": _fmt_currency,
+		"moeda": _fmt_currency,
+		"num_br": _fmt_number,
+		"numero": _fmt_number,
+	}
+
+
+def _document_jinja_env():
+	"""Motor Jinja do docxtpl com filtros BR (ex.: {{ (valor / area) | real }})."""
+	import jinja2
+
+	env = jinja2.Environment(autoescape=False)
+	env.filters["real"] = _fmt_currency
+	env.filters["moeda"] = _fmt_currency
+	env.filters["num_br"] = _fmt_number
+	env.filters["numero"] = _fmt_number
+	return env
 
 
 def _infer_document_category(template_doc) -> str:
@@ -1156,7 +1179,7 @@ def _render_document(project_name, template_doc, context):
 		frappe.throw(_("Arquivo do template não encontrado no servidor."))
 
 	tpl = DocxTemplate(file_path)
-	tpl.render(context)
+	tpl.render(context, _document_jinja_env())
 
 	buffer = io.BytesIO()
 	tpl.save(buffer)

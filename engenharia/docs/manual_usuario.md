@@ -473,6 +473,22 @@ Cadastre modelos Word (.docx) com **placeholders** Jinja no formato `{{ nome_do_
 
 No formulário **Modelo de Documento**, use o botão **Ver Placeholders Disponíveis** para a lista completa e atualizada. A lista é gerada automaticamente pelo sistema — sempre reflete os campos suportados.
 
+#### Valores: bruto, `_fmt` e formatação BR em cálculos
+
+- Placeholder **bruto** (ex.: `contract_value`, `project_construction_area`): número puro, ideal para **cálculos** no Jinja.
+- Placeholder **`_fmt`** (ex.: `contract_value_fmt`): já vem formatado em padrão BR (`5.200.000,00`), pronto para exibir — mas é texto, **não serve para cálculo**.
+
+Para **calcular e formatar em BR no mesmo lugar**, use os filtros/funções de formatação disponíveis no template:
+
+| Forma | Exemplo | Resultado |
+|---|---|---|
+| Filtro `real` / `moeda` | `{{ (contract_value / project_construction_area) \| real }}` | `1.083,33` |
+| Função `real` / `moeda` | `{{ real(contract_value / project_construction_area) }}` | `1.083,33` |
+| Filtro `num_br` / `numero` | `{{ project_construction_area \| num_br }} m²` | `3.250,00 m²` |
+| Função `num_br` / `numero` | `R$ {{ real(contract_base_value + 1000) }}` | `R$ 5.201.000,00` |
+
+Assim você faz `valor por m²`, somas e descontos com os valores **brutos** e ainda obtém a saída em padrão brasileiro. A formatação BR é garantida independentemente das configurações do site.
+
 **Grupos disponíveis:**
 
 | Grupo | Conteúdo |
@@ -667,6 +683,6 @@ Contratos, pagamentos, custos, despesas reembolsáveis, comissões, totais de or
 
 ---
 
-*Manual versão 1.3 — app **1.1.0** (jun/2026). Alinhado ao Frappe v16.*
+*Manual versão 1.4 — app **1.1.0** (jun/2026). Alinhado ao Frappe v16.*
 
-*Última atualização: 2026-06-29 21:45 UTC*
+*Última atualização: 2026-06-29 22:05 UTC*

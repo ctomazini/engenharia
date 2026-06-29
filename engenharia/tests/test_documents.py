@@ -129,6 +129,23 @@ class TestDocuments(FrappeTestCase):
 			frappe.db.set_default("number_format", original or "#.###,##")
 			frappe.local.system_settings = None
 
+	def test_document_jinja_br_filters(self):
+		from engenharia.documents import _document_jinja_env
+
+		env = _document_jinja_env()
+		tmpl = env.from_string("{{ (a / b) | real }} | {{ c | num_br }} | {{ c | numero }}")
+		out = tmpl.render(a=5200000, b=4800, c=3250)
+		self.assertEqual(out, "1.083,33 | 3.250,00 | 3.250,00")
+
+	def test_document_format_helpers_in_context(self):
+		_ensure_engineering_settings()
+		project = create_test_construction_project()
+		context = _build_context(project.name)
+		self.assertTrue(callable(context.get("real")))
+		self.assertTrue(callable(context.get("num_br")))
+		self.assertEqual(context["real"](6580), "6.580,00")
+		self.assertEqual(context["num_br"](3250), "3.250,00")
+
 	def test_value_in_words(self):
 		result = _value_in_words(8000)
 		self.assertIn("oito mil", result)
