@@ -101,6 +101,24 @@ class TestDocuments(FrappeTestCase):
 		result = get_available_kits()
 		self.assertIsInstance(result, list)
 
+	def test_get_placeholder_guide_sections(self):
+		from engenharia.documents import get_placeholder_guide
+
+		guide = get_placeholder_guide()
+		self.assertIsInstance(guide, list)
+		self.assertTrue(guide)
+		for section in guide:
+			self.assertIn("titulo", section)
+			self.assertIn("exemplos", section)
+			self.assertIsInstance(section["exemplos"], list)
+			for example in section["exemplos"]:
+				self.assertIn("codigo", example)
+		titles = " ".join(section["titulo"] for section in guide)
+		self.assertIn("real", " ".join(
+			ex["codigo"] for section in guide for ex in section["exemplos"]
+		))
+		self.assertTrue(titles)
+
 	def test_get_placeholder_reference_groups(self):
 		result = get_placeholder_reference()
 		self.assertIsInstance(result, list)

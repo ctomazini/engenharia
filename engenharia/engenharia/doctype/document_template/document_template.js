@@ -12,4 +12,18 @@ frappe.ui.form.on("Document Template", {
 			},
 		});
 	},
+
+	view_placeholder_guide(frm) {
+		frappe.call({
+			method: "engenharia.documents.get_placeholder_guide",
+			freeze: true,
+			freeze_message: __("Carregando guia..."),
+			callback(r) {
+				if (!r.message) {
+					return;
+				}
+				eng_render_placeholder_guide(r.message);
+			},
+		});
+	},
 });

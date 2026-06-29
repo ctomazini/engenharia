@@ -319,6 +319,134 @@ PLACEHOLDER_REFERENCE = [
 ]
 
 
+# Guia de uso (tutoriais) exibido pelo botão "Como usar os placeholders".
+# Cada seção: titulo, descricao e lista de exemplos {codigo, resultado, nota}.
+PLACEHOLDER_GUIDE = [
+	{
+		"titulo": "1. Sintaxe básica",
+		"descricao": "Insira o nome do campo entre chaves duplas. O sistema substitui pelo valor da obra ao gerar o .docx.",
+		"exemplos": [
+			{
+				"codigo": "Cliente: {{ customer_name }}",
+				"resultado": "Cliente: Construtora Exemplo Ltda",
+				"nota": "Texto simples. Use a lista 'Ver Placeholders Disponíveis' para todos os campos.",
+			},
+			{
+				"codigo": "Obra {{ project }} — {{ project_city }}/{{ project_address_uf }}",
+				"resultado": "Obra PROJ-2026-0278 — São Leopoldo/RS",
+				"nota": "Vários placeholders no mesmo parágrafo.",
+			},
+		],
+	},
+	{
+		"titulo": "2. Valores: bruto x formatado (_fmt)",
+		"descricao": "Todo valor numérico tem duas formas: o bruto (número puro, para cálculo) e o _fmt (texto já formatado em padrão BR, para exibir).",
+		"exemplos": [
+			{
+				"codigo": "Valor: R$ {{ contract_value_fmt }}",
+				"resultado": "Valor: R$ 5.200.000,00",
+				"nota": "Use _fmt para exibir direto. Já vem com milhar '.' e decimal ','.",
+			},
+			{
+				"codigo": "{{ contract_value }}",
+				"resultado": "5200000.0",
+				"nota": "O bruto NÃO é formatado — use apenas em cálculos, não para exibir.",
+			},
+		],
+	},
+	{
+		"titulo": "3. Cálculos com formatação BR (filtros real / num_br)",
+		"descricao": "Para calcular e exibir em padrão BR, faça a conta com os valores BRUTOS e aplique o filtro 'real' (moeda) ou 'num_br' (número). Também funciona como função: real(...).",
+		"exemplos": [
+			{
+				"codigo": "Valor unitário: R$ {{ (contract_base_value / project_construction_area) | real }}/m²",
+				"resultado": "Valor unitário: R$ 1.083,33/m²",
+				"nota": "Filtro 'real' = moeda. Calcule com o bruto; o filtro formata o resultado.",
+			},
+			{
+				"codigo": "Área: {{ project_construction_area | num_br }} m²",
+				"resultado": "Área: 4.800,00 m²",
+				"nota": "Filtro 'num_br' (= 'numero') para áreas/quantidades. Escreva 'm²' no texto.",
+			},
+			{
+				"codigo": "Total com taxa: R$ {{ real(contract_base_value * 1.1) }}",
+				"resultado": "Total com taxa: R$ 5.720.000,00",
+				"nota": "Forma de função: real(...) e num_br(...). Apelidos: real=moeda, num_br=numero.",
+			},
+		],
+	},
+	{
+		"titulo": "4. Listas (loops) — orçamento, parcelas, subcontratos",
+		"descricao": "Use {% for ... %} ... {% endfor %} para repetir linhas. Dentro do loop, acesse os campos pela variável do item.",
+		"exemplos": [
+			{
+				"codigo": "{% for item in project_items %}\n{{ item.title }} — {{ item.total_value_fmt }}\n{% endfor %}",
+				"resultado": "Concreto FCK30 — 11.106,00\nAço CA-50 — 4.200,00",
+				"nota": "Itens do orçamento (revisão vigente). Cada item já traz _fmt.",
+			},
+			{
+				"codigo": "{% for i in contract_installments %}\n{{ i.due_date_fmt }}: {{ i.amount_fmt }} ({{ i.status }})\n{% endfor %}",
+				"resultado": "01/09/2025: 520.000,00 (Recebido)\n01/12/2025: 520.000,00 (Pendente)",
+				"nota": "Parcelas do contrato selecionado.",
+			},
+			{
+				"codigo": "{% for s in subcontracts %}\n{{ s.supplier_name }}: {{ s.total_value_fmt }}\n{% endfor %}",
+				"resultado": "João Pedreiro: 5.000,00",
+				"nota": "Subcontratos da obra. Para tabelas Word, coloque o for na linha da tabela.",
+			},
+		],
+	},
+	{
+		"titulo": "5. Condicionais (mostrar só quando houver valor)",
+		"descricao": "Use {% if %} para exibir trechos apenas quando o campo estiver preenchido.",
+		"exemplos": [
+			{
+				"codigo": "{% if project_art_number %}ART nº {{ project_art_number }}{% endif %}",
+				"resultado": "ART nº 1234567",
+				"nota": "Se vazio, nada é impresso.",
+			},
+			{
+				"codigo": "{% if contract_name %}Contrato {{ contract_name }} no valor de R$ {{ contract_value_fmt }}.{% else %}Obra sem contrato.{% endif %}",
+				"resultado": "Contrato CNTR-2026-0317 no valor de R$ 5.200.000,00.",
+				"nota": "if/else para textos alternativos.",
+			},
+		],
+	},
+	{
+		"titulo": "6. Contrato: um contrato x soma da obra",
+		"descricao": "Os campos 'contract_*' referem-se a UM contrato (o selecionado ao gerar, ou o contrato principal). Já 'project_current_contract_value' é a SOMA de todos os contratos da obra.",
+		"exemplos": [
+			{
+				"codigo": "Valor deste contrato: R$ {{ contract_value_fmt }}",
+				"resultado": "Valor deste contrato: R$ 5.200.000,00",
+				"nota": "Em documentos contratuais, use contract_value_fmt.",
+			},
+			{
+				"codigo": "Total contratado na obra: R$ {{ project_current_contract_value_fmt }}",
+				"resultado": "Total contratado na obra: R$ 6.700.000,00",
+				"nota": "Soma de todos os contratos — use só quando quiser o total da obra.",
+			},
+		],
+	},
+	{
+		"titulo": "7. Datas, valor por extenso e logotipo",
+		"descricao": "Datas têm versão _fmt (dd/mm/aaaa). O valor do contrato tem versão por extenso. O logotipo é a URL configurada no Escritório.",
+		"exemplos": [
+			{
+				"codigo": "São Leopoldo, {{ today }}.",
+				"resultado": "São Leopoldo, 29/06/2026.",
+				"nota": "'today' já vem formatado. Datas de campos usam _fmt (ex.: contract_first_installment_date).",
+			},
+			{
+				"codigo": "Valor de R$ {{ contract_value_fmt }} ({{ contract_value_words }}).",
+				"resultado": "Valor de R$ 5.200.000,00 (cinco milhões e duzentos mil reais).",
+				"nota": "contract_value_words = valor por extenso.",
+			},
+		],
+	},
+]
+
+
 @frappe.whitelist()
 def generate_project_documents(
 	project_name: str,
@@ -421,6 +549,12 @@ def get_available_kits() -> list[dict]:
 def get_placeholder_reference() -> list[dict]:
 	frappe.has_permission("Document Template", "read", throw=True)
 	return PLACEHOLDER_REFERENCE
+
+
+@frappe.whitelist()
+def get_placeholder_guide() -> list[dict]:
+	frappe.has_permission("Document Template", "read", throw=True)
+	return PLACEHOLDER_GUIDE
 
 
 def get_document_placeholder_keys() -> set[str]:

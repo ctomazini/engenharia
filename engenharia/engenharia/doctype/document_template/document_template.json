@@ -16,7 +16,8 @@
   "document_file",
   "enabled",
   "sec_placeholders",
-  "view_placeholders"
+  "view_placeholders",
+  "view_placeholder_guide"
  ],
  "fields": [
   {
@@ -75,6 +76,12 @@
    "fieldtype": "Button",
    "label": "Ver Placeholders Disponíveis",
    "description": "Abre a lista completa e atualizada de placeholders suportados pelo gerador (inclui loops de orçamento, subcontratos, parcelas de contrato e protocolo)."
+  },
+  {
+   "fieldname": "view_placeholder_guide",
+   "fieldtype": "Button",
+   "label": "Como Usar os Placeholders",
+   "description": "Abre um guia com exemplos práticos: sintaxe, valores brutos vs formatados, cálculos com formatação BR, loops, condicionais e contrato."
   }
  ],
  "index_web_pages_for_search": 1,
