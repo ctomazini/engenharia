@@ -2,7 +2,7 @@
 
 > Gerado em **2026-06-29** — inventário técnico do app greenfield EN. Frappe puro, **sem ERPNext**.
 
-> **HEAD:** `cded271 2026-06-29 21:51:24 +0000 feat(construction-project): contract selector in document dialog`
+> **HEAD:** `7c0d2a7 2026-06-29 22:06:03 +0000 feat(documents): pt-BR jinja filters/functions for computed values`
 
 ---
 
@@ -11,13 +11,13 @@
 | Item | Valor |
 | --- | --- |
 | Nome | engenharia |
-| Versão | 1.1.0 (`pyproject.toml`) |
+| Versão | 1.2.0 (`pyproject.toml`) |
 | Framework | Frappe v16 |
 | Licença | MIT |
 | Site dev | engenharia.local |
-| Linhas Python | ~19539 |
-| Linhas JavaScript | ~7276 |
-| Métodos de teste | 329 (60 arquivos) |
+| Linhas Python | ~19750 |
+| Linhas JavaScript | ~7352 |
+| Métodos de teste | 333 (60 arquivos) |
 | DocTypes | 49 (`custom: 0`) |
 | Script Reports | 6 |
 | Print Formats | 15 |
@@ -28,6 +28,9 @@
 
 **Commits recentes:**
 ```text
+7c0d2a7 feat(documents): pt-BR jinja filters/functions for computed values
+72069c7 fix(documents): force Brazilian number format on all value placeholders
+47545b1 docs: clarify single contract vs project total in placeholders
 cded271 feat(construction-project): contract selector in document dialog
 d9cb5a2 feat(documents): resolve contract by explicit/primary/fallback
 16af34b feat(patches): backfill primary contract for single-contract projects
@@ -37,9 +40,6 @@ d9cb5a2 feat(documents): resolve contract by explicit/primary/fallback
 7005d1d chore(release): bump version to 1.1.0 and sync documentation
 f708bfe fix(hub): espelhar layout de pills do advocacia no desktop
 824b041 feat(dashboard): render budget vs actual and margin sections
-46f1ac2 feat(dashboard): add budget overview and margin by project data
-d8ef40f refactor: remove orphaned donut_chart and PROJECT_STATUS_COLORS
-d8af6e9 refactor: remove orphaned donut_chart and PROJECT_STATUS_COLORS
 ```
 
 ## 2. Árvore de Arquivos (anotada)
@@ -276,6 +276,7 @@ engenharia/
 | document_file | Arquivo .docx | Attach |  | ✓ |  |
 | enabled | Habilitado | Check |  |  |  |
 | view_placeholders | Ver Placeholders Disponíveis | Button |  |  |  |
+| view_placeholder_guide | Como Usar os Placeholders | Button |  |  |  |
 
 ### Engineering Contract
 
@@ -944,6 +945,6 @@ reinstall_child_doctypes → roles → ensure_event_custom_fields → permission
 
 ## 7. Testes
 
-- **329** métodos em **60** arquivos.
+- **333** métodos em **60** arquivos.
 - `bench --site engenharia.local run-tests --app engenharia`
 

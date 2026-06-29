@@ -2,6 +2,33 @@
 
 Formato baseado em [Keep a Changelog](https://keepachangelog.com/). Versionamento [SemVer](https://semver.org/).
 
+## [1.2.0] — 2026-06-29
+
+### Added
+
+- **Contrato principal:** campo `is_primary` em Engineering Contract (um por obra), com patch de backfill para obras de contrato único.
+- **Seletor de contrato** no diálogo *Gerar Documentos* quando a obra tem mais de um contrato (padrão: contrato principal).
+- **Resolução determinística de contrato** na geração: explícito → principal → fallback (prioridade de status + recência).
+- **Formatação BR garantida** em todos os valores `_fmt` (milhar `.` e decimal `,`), independente do `number_format` do site.
+- **Filtros/funções Jinja** de formatação BR em documentos: `real`/`moeda` e `num_br`/`numero` — permitem calcular com valores brutos e exibir formatado (ex.: `{{ (contract_base_value / project_construction_area) | real }}`).
+- **Variantes `_fmt`** para `project_construction_area`, `project_physical_progress` e `project_default_bdi_percent`.
+- **Botão "Como Usar os Placeholders"** no Modelo de Documento: janela com tutoriais e exemplos práticos (`get_placeholder_guide`).
+
+### Changed
+
+- Placeholders de contrato (`contract_*`) documentados como **um** contrato; `project_current_contract_value` esclarecido como **soma** dos contratos da obra.
+- Download de documentos gerados com object URL mantido vivo + link clicável de fallback.
+
+### Fixed
+
+- Placeholders numéricos brutos saíam sem formatação BR; agora há variantes `_fmt` e filtros para cálculo formatado.
+
+### Tests
+
+- Suíte: **332** testes.
+
+---
+
 ## [1.1.0] — 2026-06-23
 
 ### Added

@@ -134,7 +134,7 @@ def main():
 			["Item", "Valor"],
 			[
 				["Nome", "engenharia"],
-				["Versão", "1.1.0 (`pyproject.toml`)"],
+				["Versão", "1.2.0 (`pyproject.toml`)"],
 				["Framework", "Frappe v16"],
 				["Licença", "MIT"],
 				["Site dev", "engenharia.local"],

@@ -471,7 +471,10 @@ Status incluem deferido, indeferido, cancelado — eventos de calendário são a
 
 Cadastre modelos Word (.docx) com **placeholders** Jinja no formato `{{ nome_do_campo }}` (ex.: `{{ customer_name }}`, `{{ project_address_full }}`).
 
-No formulário **Modelo de Documento**, use o botão **Ver Placeholders Disponíveis** para a lista completa e atualizada. A lista é gerada automaticamente pelo sistema — sempre reflete os campos suportados.
+No formulário **Modelo de Documento**, há dois botões:
+
+- **Ver Placeholders Disponíveis** — lista completa e atualizada de todos os campos suportados (gerada automaticamente pelo sistema).
+- **Como Usar os Placeholders** — guia com **exemplos práticos**: sintaxe, valores brutos vs formatados, **cálculos com formatação BR**, loops, condicionais e contrato.
 
 #### Valores: bruto, `_fmt` e formatação BR em cálculos
 
@@ -683,6 +686,6 @@ Contratos, pagamentos, custos, despesas reembolsáveis, comissões, totais de or
 
 ---
 
-*Manual versão 1.4 — app **1.1.0** (jun/2026). Alinhado ao Frappe v16.*
+*Manual versão 1.5 — app **1.2.0** (jun/2026). Alinhado ao Frappe v16.*
 
-*Última atualização: 2026-06-29 22:05 UTC*
+*Última atualização: 2026-06-29 22:20 UTC*

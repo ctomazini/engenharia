@@ -2,7 +2,7 @@
 
 **App alvo:** `engenharia` (greenfield) · **Referência:** `advocacia` (brownfield Frappe v16)  
 **Objetivo:** checklist operacional fechado — nada aqui é proposta em aberto.  
-**Última consolidação:** 2026-06-23 · **Versão app:** 1.1.0
+**Última consolidação:** 2026-06-29 · **Versão app:** 1.2.0
 
 ---
 
@@ -559,4 +559,4 @@ Use como gate antes de cada commit (uma linha = uma verificação).
 
 *Documento normativo para o app `engenharia`. Alterações de padrão exigem atualização deste arquivo no mesmo PR.*
 
-*Última atualização: 2026-06-23 23:24 UTC*
+*Última atualização: 2026-06-29 22:20 UTC*
