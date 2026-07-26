@@ -35,8 +35,11 @@ class TestCnpjAlfanumerico(FrappeTestCase):
 			validar_cnpj("12.ABC.345/01DE-00")
 
 	def test_cnpj_dv_nao_numerico(self):
+		# Letras no DV são descartadas na normalização → fica com menos de 14 chars.
 		with self.assertRaises(ValidationError):
 			validar_cnpj("12ABC34501DEAB")
+		with self.assertRaises(ValidationError):
+			validar_cnpj("12.ABC.345/01DE-DE")
 
 	def test_cnpj_sequencia_invalida(self):
 		with self.assertRaises(ValidationError):
