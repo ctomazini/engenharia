@@ -101,7 +101,7 @@
    "label": "CNPJ",
    "mandatory_depends_on": "eval:doc.person_type=='Pessoa Jurídica'",
    "unique": 1,
-   "description": "CNPJ do cliente. Apenas dígitos, validado automaticamente. Obrigatório para pessoa jurídica."
+   "description": "CNPJ do cliente (numérico ou alfanumérico). Sem máscara no banco; validado automaticamente. Obrigatório para pessoa jurídica."
   },
   {
    "depends_on": "eval:doc.person_type=='Pessoa Física'",

@@ -102,7 +102,7 @@ Cadastros devem ser criados **antes** ou **conforme** a necessidade nas obras. N
 |---|---|
 | Tipo de Pessoa | Pessoa Física ou Jurídica — define documentos obrigatórios |
 | Nome / Razão social | Nome completo (PF) ou razão social (PJ) |
-| CPF / CNPJ | Apenas dígitos; validação automática |
+| CPF / CNPJ | CPF: apenas dígitos. CNPJ: 14 caracteres (letras A-Z e/ou dígitos; DV numérico), validação automática |
 | Contatos | Telefones e e-mails na tabela inferior |
 | Endereços | Logradouro, CEP, cidade; marque o principal |
 
@@ -115,7 +115,7 @@ Cadastros devem ser criados **antes** ou **conforme** a necessidade nas obras. N
 | Campo | O que preencher |
 |---|---|
 | Nome do Fornecedor | Razão social ou nome — identificador único |
-| CNPJ | Opcional; validado automaticamente |
+| CNPJ | Opcional; numérico ou alfanumérico; validado automaticamente |
 | Categoria | Material, Serviço, Mão de obra ou Outro |
 
 ### 3.3 Tipos de Etapa

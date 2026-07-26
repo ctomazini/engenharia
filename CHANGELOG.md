@@ -13,6 +13,8 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/). Versionament
 ### Fixed
 
 - **Modo Realizado:** parcelas marcadas como recebidas com **Valor Recebido em branco** (= recebeu o total) saíam zeradas no relatório; agora o valor cai para o valor da parcela (`received_amount or amount`).
+- **Hub Obra:** campo `observations` estava no fim da aba Orçamento e passava despercebido; agora fica na aba **Observações** no final do formulário.
+- **CNPJ alfanumérico:** validação e máscaras aceitam o padrão Receita (12 chars A-Z/0-9 + DV numérico, ASCII−48); CNPJs numéricos existentes continuam válidos.
 
 ### Tests
 

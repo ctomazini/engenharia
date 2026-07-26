@@ -36,7 +36,7 @@
    "fieldtype": "Data",
    "label": "CNPJ",
    "unique": 1,
-   "description": "CNPJ do fornecedor (opcional). Validado automaticamente."
+   "description": "CNPJ do fornecedor (opcional; numérico ou alfanumérico). Validado automaticamente."
   },
   {
    "fieldname": "category",

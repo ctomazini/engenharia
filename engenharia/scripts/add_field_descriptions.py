@@ -44,7 +44,7 @@ DESCRIPTIONS: dict[str, dict[str, str]] = {
 		"trade_name": "Nome fantasia da empresa (apenas pessoa jurídica).",
 		"cpf": "CPF do cliente. Apenas dígitos, validado automaticamente. Obrigatório para pessoa física.",
 		"rg": "Documento de identidade (pessoa física).",
-		"cnpj": "CNPJ do cliente. Apenas dígitos, validado automaticamente. Obrigatório para pessoa jurídica.",
+		"cnpj": "CNPJ do cliente (numérico ou alfanumérico). Sem máscara no banco; validado automaticamente. Obrigatório para pessoa jurídica.",
 		"nationality": "Nacionalidade do cliente (pessoa física).",
 		"marital_status": "Estado civil (pessoa física).",
 		"profession": "Profissão declarada (pessoa física).",

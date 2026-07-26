@@ -408,7 +408,7 @@ Extraídas da auditoria consolidada do advocacia (código atual).
 | 12 | Sem `except Exception: pass` — `frappe.log_error` + exceção tipada | — |
 | 13 | Sem `eval` / `exec` | — |
 | 14 | Indentação **tabs** em `.py` e `.js` | — |
-| 15 | IDs (CPF/CNPJ/telefone) só dígitos no DB; email lower | `validators.py` + controllers |
+| 15 | CPF/telefone só dígitos no DB; CNPJ 14 chars A-Z/0-9 (sem máscara, maiúsculas); email lower | `validators.py` + controllers |
 | 16 | Repo público: sem credenciais, CPF/CNPJ/OAB reais, domínio prod | usar placeholders em testes |
 
 ### 9.1 `ignore_permissions` — mapa de referência advocacia
