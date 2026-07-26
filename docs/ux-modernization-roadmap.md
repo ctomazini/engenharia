@@ -3,8 +3,8 @@
 Documento permanente de acompanhamento do projeto de modernização de experiência do usuário.
 
 **Criado:** 2026-06-05  
-**Última atualização:** 2026-06-23 (Release **v1.1.0** — pós-Etapa 09: painel orçado/margem, reports refactor)  
-**App:** `engenharia` (Frappe v16) · **Versão app:** 1.1.0
+**Última atualização:** 2026-07-11 (aba Observações no hub Construction Project)  
+**App:** `engenharia` (Frappe v16) · **Versão app:** 1.3.0
 
 > **Status do projeto:** ✅ **ENCERRADO** — ver [`docs/ux-final-executive-report.md`](ux-final-executive-report.md) para relatório executivo, métricas e pendências.
 
@@ -595,7 +595,7 @@ Nunca:
 
 | DocType | Organização |
 |---------|-------------|
-| **Construction Project** | Observações movidas para aba Detalhes; seção **Revisões de Orçamento** (vs aba Orçamento da Obra); ajuda nos painéis Financeiro |
+| **Construction Project** | Aba **Observações** no final do formulário (campo `observations`); seção **Revisões de Orçamento** (vs aba Orçamento da Obra); ajuda nos painéis Financeiro |
 | **Engineering Contract** | Seções renomeadas; tooltips juros diário/mensal; intro de fluxo no form JS |
 | **Payment** | Vínculos → Valores → Comprovantes → Sincronização (colapsável) |
 | **Work Cost** | Vínculos primeiro; status na seção Valores; mapeamento EN→PT na descrição |

@@ -62,8 +62,6 @@
   "budget_revision",
   "default_bdi_percent",
   "budget_revisions",
-  "sec_obs",
-  "observations",
   "tab_progress",
   "sec_progress_global",
   "sec_stages_hub",
@@ -102,7 +100,10 @@
   "specs_help",
   "spec_preview_panel",
   "spec_items_summary_panel",
-  "spec_project_total"
+  "spec_project_total",
+  "tab_observations",
+  "sec_obs",
+  "observations"
  ],
  "fields": [
   {
@@ -764,18 +765,23 @@
    "idx": 90
   },
   {
-   "collapsible": 1,
-   "fieldname": "sec_obs",
-   "fieldtype": "Section Break",
+   "fieldname": "tab_observations",
+   "fieldtype": "Tab Break",
    "label": "Observações",
    "idx": 91
+  },
+  {
+   "fieldname": "sec_obs",
+   "fieldtype": "Section Break",
+   "label": "Observações da Obra",
+   "idx": 92
   },
   {
    "fieldname": "observations",
    "fieldtype": "Text Editor",
    "label": "Observações",
    "description": "Observações gerais sobre a obra.",
-   "idx": 92
+   "idx": 93
   }
  ],
  "index_web_pages_for_search": 1,

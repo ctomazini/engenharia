@@ -26,6 +26,16 @@ class TestConstructionProject(FrappeTestCase):
 		project.delete(ignore_permissions=True)
 		self.assertFalse(frappe.db.exists("Construction Project", name))
 
+	def test_observations_field_at_end_of_form(self):
+		meta = frappe.get_meta("Construction Project")
+		names = [f.fieldname for f in meta.fields]
+		self.assertEqual(names[-3:], ["tab_observations", "sec_obs", "observations"])
+		project = create_test_construction_project(observations="Nota de teste da obra")
+		self.assertEqual(
+			frappe.db.get_value("Construction Project", project.name, "observations"),
+			"Nota de teste da obra",
+		)
+
 	def test_compose_title_with_customer_and_city(self):
 		customer = create_test_customer(customer_name=f"Construtora {_uid()}")
 		project = create_test_construction_project(
